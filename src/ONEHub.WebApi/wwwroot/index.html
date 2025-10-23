@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONEHub Admin</title>
+    <script>
+        // Check authentication via cookie (HttpOnly - can't access directly)
+        // Try to fetch user info from /api/auth/me
+        fetch('/api/auth/me', {
+            credentials: 'include'
+        })
+        .then(response => {
+            if (response.ok) {
+                // Already logged in, redirect to home panel
+                window.location.href = '/portal/home';
+            } else {
+                // Not logged in, redirect to login
+                window.location.href = '/portal/login';
+            }
+        })
+        .catch(error => {
+            // Error or not authenticated, redirect to login
+            console.error('Auth check error:', error);
+            window.location.href = '/portal/login';
+        });
+    </script>
+</head>
+<body>
+    <p style="text-align: center; margin-top: 50px;">Redirecting...</p>
+</body>
+</html>

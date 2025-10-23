@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Fanex.Data.ProxyClient" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DNAide">
+      <HintPath>..\..\lib\DNAide.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Utilities\" />
+  </ItemGroup>
+
+</Project>

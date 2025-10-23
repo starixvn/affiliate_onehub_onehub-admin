@@ -1,0 +1,54 @@
+# Build outputs
+bin/
+obj/
+src/*/bin/
+src/*/obj/
+tests/*/bin/
+tests/*/obj/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.cursor/
+.claude/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+
+# Testing
+coverage/
+*.lcov
+tests/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Husky
+.husky/
+
+# Server-specific (.NET)
+.vs/
+
+# Misc
+*.swp
+*.swo
+*~

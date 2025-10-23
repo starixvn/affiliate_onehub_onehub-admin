@@ -1,0 +1,77 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup Label="Core Packages">
+    <PackageVersion Include="DNAide" Version="2.1.4477.18436" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.10" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Dapper" Version="2.1.35" />
+    <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
+  </ItemGroup>
+  <ItemGroup Label="Logging">
+    <PackageVersion Include="Serilog" Version="4.2.0" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Http" Version="9.2.0" />
+    <PackageVersion Include="Serilog.Sinks.Network" Version="3.0.0" />
+    <PackageVersion Include="Fanex.Logging" Version="2.0.1.1" />
+    <PackageVersion Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
+  </ItemGroup>
+  <ItemGroup Label="Fanex Data">
+    <PackageVersion Include="Fanex.Data.ProxyClient" Version="1.0.6.1" />
+  </ItemGroup>
+  <ItemGroup Label="CQRS">
+    <PackageVersion Include="MediatR" Version="12.4.1" />
+    <PackageVersion Include="FluentValidation" Version="11.11.0" />
+    <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />
+  </ItemGroup>
+  <ItemGroup Label="Caching">
+    <PackageVersion Include="StackExchange.Redis" Version="2.8.24" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
+    <PackageVersion Include="MessagePack" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup Label="Authentication">
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />
+    <PackageVersion Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
+  </ItemGroup>
+  <ItemGroup Label="Secrets Management">
+    <PackageVersion Include="VaultSharp" Version="1.17.5.1" />
+  </ItemGroup>
+  <ItemGroup Label="API Documentation">
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.7" />
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.2.0" />
+  </ItemGroup>
+  <ItemGroup Label="Image Processing">
+    <PackageVersion Include="SkiaSharp" Version="3.119.0" />
+  </ItemGroup>
+  <ItemGroup Label="Testing">
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="FluentAssertions" Version="7.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageVersion Include="coverlet.collector" Version="6.0.2" />
+  </ItemGroup>
+  <ItemGroup Label="Mail">
+    <PackageVersion Include="MailKit" Version="4.9.0" />
+  </ItemGroup>
+  <ItemGroup Label="HTTP Client">
+    <PackageVersion Include="Refit" Version="8.0.0" />
+  </ItemGroup>
+  <ItemGroup Label="Health Checks">
+    <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.2" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.1" />
+  </ItemGroup>
+  <ItemGroup Label="Utilities">
+    <PackageVersion Include="SharpZipLib" Version="1.4.2" />
+    <PackageVersion Include="SkiaSharp" Version="3.119.0" />
+  </ItemGroup>
+</Project>
