@@ -1,7 +1,7 @@
-
-#ignore thumbnails created by windows
+# Windows
 Thumbs.db
-#Ignore files build by Visual Studio
+
+# Visual Studio / .NET
 *.obj
 *.exe
 *.pdb
@@ -29,20 +29,38 @@ packages/
 [Rr]elease*/
 _ReSharper*/
 [Tt]est[Rr]esult*
+*StyleCop.Cache
+.vs/
+.vscode/
+CoverageReport/
+*.UnitTestCoverage_*.xml
+logs/
+
+node_modules/
+
+# pnpm
+.pnpm-store/
+
+# Frontend Build Output
+.tanstack/
+node_modules/
+
+# Old Frontend Build Output (legacy, in backend wwwroot)
+/src/ONEHub.WebApi/wwwroot/assets/*
+
+# Keep static assets
+src/ONEHub.WebApi/wwwroot/favicon.ico
+src/ONEHub.WebApi/wwwroot/index.html
+
+# Legacy paths (can be removed after cleanup)
 /Aff12BET_DB/*.dbmdl
 /Affiliate/Logs
 /Affiliate Admin/Logs
 Affiliate/Report.csv
 /AffiliateAdmin/Banner
-*StyleCop.Cache
-.vs/
-.vscode/
 /Fanex.Affiliate.User.Site/Properties/PublishProfiles/
-node_modules
-CoverageReport/
-node_modules
 /Fanex.Affiliate.DataService/packages
 /Fanex.Affiliate.User.Site/coverage
 /Admin/AffiliateAdmin/coverage
-*.UnitTestCoverage_*.xml
-logs/
+
+

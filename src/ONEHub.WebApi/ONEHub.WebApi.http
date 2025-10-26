@@ -1,6 +1,0 @@
-@ONEHub.WebApi_HostAddress = http://localhost:5132
-
-GET {{ONEHub.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###

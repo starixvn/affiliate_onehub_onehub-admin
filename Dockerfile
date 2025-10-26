@@ -1,47 +1,60 @@
-# Stage 1: Build .NET Backend
-FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
+# Stage 1: Build Frontend
+FROM hub.nexdev.net/base/node:22-alpine-25h2 AS node
 
 WORKDIR /app
 
-# Copy solution and project files
-COPY ONEHub.Admin.sln ./
+RUN npm install -g pnpm
+
+COPY client-app/package.json client-app/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+
+COPY client-app/ ./
+RUN pnpm run build:only
+
+# Stage 2: Build .NET Backend
+FROM hub.nexdev.net/base/dotnet/core/sdk:9.0-alpine-25h2 AS builder
+
+WORKDIR /app
+
 COPY nuget.config ./
+RUN dotnet nuget add source https://nuget.nexdev.net/api/v2
+
+COPY Directory.Build.props ./
+COPY Directory.Packages.props ./
+COPY ONEHub.Admin.sln ./
 COPY src/ONEHub.Domain/*.csproj ./src/ONEHub.Domain/
 COPY src/ONEHub.Application/*.csproj ./src/ONEHub.Application/
 COPY src/ONEHub.Infrastructure/*.csproj ./src/ONEHub.Infrastructure/
 COPY src/ONEHub.WebApi/*.csproj ./src/ONEHub.WebApi/
 
-# Restore dependencies
 RUN dotnet restore
 
-# Copy the rest of the server source code
 COPY src ./src
 
-# Build and publish the .NET application
+COPY --from=node /app/dist ./src/ONEHub.WebApi/wwwroot/
+
 RUN dotnet publish src/ONEHub.WebApi/ONEHub.WebApi.csproj \
     --configuration Release \
     --no-restore \
     --output /app/publish
 
-# Stage 2: Runtime Image
-FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine
+# Stage 3: Runtime Image
+FROM hub.nexdev.net/base/dotnet/core/aspnet:9.0-alpine
 
-WORKDIR /app
+# Don't run as root
+RUN adduser --disabled-password \
+    --home /app \
+    --gecos '' dotnetuser && chown -R dotnetuser /app && chown -R dotnetuser /tmp
+USER dotnetuser
+#
 
-# Copy published application
-COPY --from=build /app/publish .
+WORKDIR "/app"
 
-# Create a non-root user
-RUN adduser -D -u 1000 appuser && \
-    chown -R appuser:appuser /app
-USER appuser
+COPY --from=builder /app/publish .
+ENV TZ="America/La_Paz"
 
-# Expose ports
-EXPOSE 5000
-
-# Set environment variables
 ENV ASPNETCORE_URLS=http://+:5000
-ENV ASPNETCORE_ENVIRONMENT=Production
+EXPOSE 5000
 
 # Start the application
 ENTRYPOINT ["dotnet", "ONEHub.WebApi.dll"]

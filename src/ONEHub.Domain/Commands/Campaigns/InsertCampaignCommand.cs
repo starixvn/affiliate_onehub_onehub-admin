@@ -4,7 +4,7 @@ namespace ONEHub.Domain.Commands.Campaigns;
 
 public class InsertCampaignCommand : NonQueryCommand
 {
-    private const string SP_NAME = "Aff_LandingPage_Campaign_Ins";
+    private const string SP_NAME = "OH_Campaign_Ins";
 
     public override string GetSettingKey() => SP_NAME;
 

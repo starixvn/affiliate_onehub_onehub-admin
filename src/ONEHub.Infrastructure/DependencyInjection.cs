@@ -1,11 +1,11 @@
 using Fanex.Data;
+using Fanex.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ONEHub.Domain.Interfaces;
 using ONEHub.Infrastructure.Authentication;
 using ONEHub.Infrastructure.Caching;
 using ONEHub.Infrastructure.Data;
-using ONEHub.Infrastructure.Interfaces;
 using ONEHub.Infrastructure.Logging;
 using ONEHub.Infrastructure.Services;
 
@@ -20,7 +20,7 @@ public static class DependencyInjection
             .Register(configuration)
             .Run();
 
-        services.AddSingleton<Fanex.Logging.ILogger, Fanex.Logging.Logger>();
+        services.AddSingleton<ILogger, Logger>();
         services.AddSingleton<ILogProvider, LogProvider>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
         services.AddSingleton<ICacheService, RedisCacheService>();

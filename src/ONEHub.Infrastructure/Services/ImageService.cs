@@ -60,7 +60,7 @@ public class ImageService : IImageService
                 {
                     return new ResultInfo
                     {
-                        Code = ErrCode.GeneralErrorCode,
+                        Code = ErrorCodes.GeneralErrorCode,
                         Message = $"Image dimensions ({width}x{height}) exceed maximum allowed size ({maxWidth}x{maxHeight})"
                     };
                 }

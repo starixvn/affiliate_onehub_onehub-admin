@@ -1,9 +1,9 @@
+using System.Security.Claims;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Criterias.Administrators;
 using ONEHub.Domain.DTOs.Common;
 using ONEHub.Domain.Entities.Administrators;
 using ONEHub.Domain.Interfaces;
-using System.Security.Claims;
 
 namespace ONEHub.Infrastructure.Services;
 
@@ -48,7 +48,7 @@ public class AuthService : IAuthService
 
     private static Claim BuildClaimFromPermission(UserPermission p)
     {
-        var claimValue = p.IsHost ? Function.WritePermission : string.Empty;
+        var claimValue = p.IsHost ? Functions.WritePermission : string.Empty;
         var claim = new Claim(p.FunctionName, claimValue);
         return claim;
     }

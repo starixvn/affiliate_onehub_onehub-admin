@@ -1,4 +1,4 @@
-﻿import React, { PureComponent } from 'react';
+import React, { PureComponent } from 'react';
 import { Alert, Form, FormGroup, Label, Input } from 'reactstrap';
 import Loader from '../../../components/Loader';
 
@@ -60,13 +60,11 @@ export default class AppContainer extends PureComponent {
             if (response) {
                 const { data } = response;
 
-                // JWT is now stored in HttpOnly cookie by the server
-                // No need to store in localStorage
-                if (data.IsSuccessful) {
-                    window.location.href = '/portal/home';
+                if (data.errorCode === 0 && data.result) {
+                    window.location.href = '/portal/campaignmanagement';
                     return;
                 } else {
-                    this._handleShowAlert(false, data.Message || "Login failed");
+                    this._handleShowAlert(false, data.errorMessage || "Login failed");
                 }
             } else {
                 this._handleShowAlert(false, "An error occurred while processing your request");

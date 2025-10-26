@@ -3,87 +3,143 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ONEHub.Application.Campaigns.Commands;
 using ONEHub.Application.Campaigns.Queries;
+using ONEHub.Application.DTOs.Campaigns;
 using ONEHub.Domain.DTOs.Campaigns;
 using ONEHub.Domain.Interfaces;
+using ONEHub.WebApi.Models;
 
 namespace ONEHub.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/campaign-management")]
 [Authorize]
-public class CampaignManagementController : ControllerBase
+public class CampaignManagementController(
+    IMediator mediator,
+    ISessionService sessionService) : ControllerBase
 {
-    private readonly IMediator _mediator;
-    private readonly ISessionService _sessionService;
-
-    public CampaignManagementController(
-        IMediator mediator,
-        ISessionService sessionService)
-    {
-        _mediator = mediator;
-        _sessionService = sessionService;
-    }
-
-    [HttpPost("GetDashboard")]
-    public async Task<IActionResult> GetDashboard()
+    [HttpGet("summary")]
+    public async Task<ActionResult<IApiResponse<CampaignDashboardDto>>> GetDashboard()
     {
         var query = new GetCampaignDashboardQuery();
-        var result = await _mediator.Send(query);
-        return Ok(result);
+        var result = await mediator.Send(query);
+        var campaignDashboardDto = new CampaignDashboardDto
+        {
+            Total = result.TotalCampaigns,
+            Active = result.ActiveCampaigns,
+            Draft = result.DraftCampaigns,
+            Inactive = result.InactiveCampaigns,
+            Paused = result.PausedCampaigns
+        };
+        return Ok(ApiResponse<CampaignDashboardDto>.Success(campaignDashboardDto));
     }
 
-    [HttpPost("GetAllCampaignStatus")]
-    public async Task<IActionResult> GetAllCampaignStatus()
-    {
-        var query = new GetAllCampaignStatusQuery();
-        var result = await _mediator.Send(query);
-        return Ok(result);
-    }
-
-    [HttpPost("GetCampaignList")]
-    public async Task<IActionResult> GetCampaignList([FromBody] GetCampaignListRequest request)
+    [HttpGet]
+    public async Task<ActionResult<IApiResponse<PagingResponse<CampaignDetailInfo>>>> GetCampaignList([FromQuery] GetCampaignListRequest request)
     {
         var query = new GetCampaignListQuery(
             request.Search,
-            request.StatusIds,
-            request.Description,
+            request.Status,
             request.PageIndex,
             request.PageSize,
             request.IsExportExcel
         );
 
-        var result = await _mediator.Send(query);
-        return Ok(result);
+        var result = await mediator.Send(query);
+
+        var pagingResponse = new PagingResponse<CampaignDetailInfo>
+        {
+            Items = result.MainData,
+            TotalCount = result.TotalItem,
+            PageIndex = request.PageIndex,
+            PageSize = request.PageSize
+        };
+
+        return Ok(ApiResponse<PagingResponse<CampaignDetailInfo>>.Success(pagingResponse));
     }
 
-    [HttpPost("UpdateCampaign")]
-    public async Task<IActionResult> UpdateCampaign([FromBody] UpdateCampaignRequest request)
-    {
-        var command = new UpdateCampaignCommand(
-            request.CampaignId,
-            request.CampaignName,
-            request.Description,
-            request.StatusId,
-            _sessionService.UserId,
-            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty
-        );
-
-        var result = await _mediator.Send(command);
-        return Ok(result);
-    }
-
-    [HttpPost("InsertCampaign")]
-    public async Task<IActionResult> InsertCampaign([FromBody] InsertCampaignRequest request)
+    [HttpPost]
+    public async Task<ActionResult<IApiResponse>> CreateCampaign([FromBody] InsertCampaignRequest request)
     {
         var command = new InsertCampaignCommand(
             request.CampaignName,
             request.Description,
             request.StatusId,
-            _sessionService.UserId,
+            sessionService.UserId,
             HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty
         );
 
-        var result = await _mediator.Send(command);
-        return Ok(result);
+        var result = await mediator.Send(command);
+
+        if (!result.IsSuccessful)
+        {
+            return Ok(ApiResponse.Error(result.Code, result.Message));
+        }
+
+        return Ok(ApiResponse.Success());
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<IApiResponse>> UpdateCampaign(int id, [FromBody] UpdateCampaignRequest request)
+    {
+        if (id != request.CampaignId)
+        {
+            return Ok(ApiResponse.Error(-1, "Campaign ID mismatch"));
+        }
+
+        var command = new UpdateCampaignCommand(
+            request.CampaignId,
+            request.CampaignName,
+            request.Description,
+            request.StatusId,
+            sessionService.UserId,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty
+        );
+
+        var result = await mediator.Send(command);
+
+        if (!result.IsSuccessful)
+        {
+            return Ok(ApiResponse.Error(result.Code, result.Message));
+        }
+
+        return Ok(ApiResponse.Success());
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<IApiResponse>> DeleteCampaign(int id)
+    {
+        var command = new DeleteCampaignsCommand(
+            [id],
+            sessionService.UserId,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty
+        );
+
+        var result = await mediator.Send(command);
+
+        if (!result.IsSuccessful)
+        {
+            return Ok(ApiResponse.Error(result.Code, result.Message));
+        }
+
+        return Ok(ApiResponse.Success());
+    }
+
+    [HttpDelete]
+    public async Task<ActionResult<IApiResponse>> DeleteCampaigns([FromBody] DeleteCampaignRequest request)
+    {
+        var command = new DeleteCampaignsCommand(
+            request.CampaignIds,
+            sessionService.UserId,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty
+        );
+
+        var result = await mediator.Send(command);
+
+        if (!result.IsSuccessful)
+        {
+            return Ok(ApiResponse.Error(result.Code, result.Message));
+        }
+
+        return Ok(ApiResponse.Success());
     }
 }

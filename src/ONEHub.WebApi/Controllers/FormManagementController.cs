@@ -1,3 +1,4 @@
+using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,6 @@ using ONEHub.Domain.Constants;
 using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.DTOs.LandingPages;
 using ONEHub.Domain.Interfaces;
-using System.Net;
 
 namespace ONEHub.WebApi.Controllers;
 
@@ -79,7 +79,7 @@ public class FormManagementController : ControllerBase
             return BadRequest("Please select valid files to upload.");
         }
 
-        var command = new Application.LandingPages.AssetUploader.Commands.UploadAssetsCommand(
+        var command = new UploadAssetsCommand(
             Files: files,
             ModuleId: LandingPageConstants.ModuleIds.RegistrationForm,
             TargetCountryCode: WebUtility.HtmlEncode(request.TargetCountryCode),
@@ -88,7 +88,7 @@ public class FormManagementController : ControllerBase
             InputMediaNames: WebUtility.HtmlEncode(request.InputMediaNames),
             UserId: _sessionService.UserId,
             Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: Function.RegistrationFormUploader
+            FunctionName: Functions.RegistrationFormUploader
         );
 
         var result = await _mediator.Send(command);
@@ -112,7 +112,7 @@ public class FormManagementController : ControllerBase
             return BadRequest("Please select valid file to update.");
         }
 
-        var command = new Application.LandingPages.AssetUploader.Commands.UpdateAssetCommand(
+        var command = new UpdateAssetCommand(
             File: file,
             MediaId: request.MediaId,
             ModuleId: LandingPageConstants.ModuleIds.RegistrationForm,
@@ -122,7 +122,7 @@ public class FormManagementController : ControllerBase
             InputMediaName: WebUtility.HtmlEncode(request.InputMediaNames),
             UserId: _sessionService.UserId,
             Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: Function.RegistrationFormUploader
+            FunctionName: Functions.RegistrationFormUploader
         );
 
         var result = await _mediator.Send(command);
@@ -138,11 +138,11 @@ public class FormManagementController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        var command = new Application.LandingPages.AssetUploader.Commands.DeleteAssetsCommand(
+        var command = new DeleteAssetsCommand(
             MediaIds: request.MediaIds,
             UserId: _sessionService.UserId,
             Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: Function.RegistrationFormUploader
+            FunctionName: Functions.RegistrationFormUploader
         );
 
         var result = await _mediator.Send(command);
@@ -163,7 +163,7 @@ public class FormManagementController : ControllerBase
             StatusId: request.StatusId,
             UserId: _sessionService.UserId,
             Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: Function.RegistrationFormUploader
+            FunctionName: Functions.RegistrationFormUploader
         );
 
         var result = await _mediator.Send(command);

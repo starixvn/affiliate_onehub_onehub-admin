@@ -1,13 +1,13 @@
+using System.Text;
 using Fanex.Logging;
-using Fanex.Logging.Sentry.RavenClient;
+using Fanex.Logging.Sentry;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
 using ONEHub.Application;
 using ONEHub.Infrastructure;
+using Sentry;
 using Serilog;
-using SharpRaven;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,29 +97,20 @@ builder.Services.AddSession(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
 });
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
-    });
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
+    // allow all origins, headers, and methods - adjust as needed for production
     options.AddDefaultPolicy(policy =>
     {
-        // IMPORTANT: AllowCredentials() requires specific origins (cannot use AllowAnyOrigin)
-        policy.WithOrigins(
-                "https://localhost:7137",
-                "https://localhost:5001",
-                "http://localhost:5001",
-                "http://localhost:7137"
-            )
-            .AllowAnyMethod()
+        policy
+            .AllowAnyOrigin()
             .AllowAnyHeader()
-            .AllowCredentials();  // Required for HttpOnly cookies
+            .AllowAnyMethod();
     });
 });
 
@@ -133,7 +124,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // URL Rewriting for extensionless HTML files
 var rewriteOptions = new RewriteOptions()
@@ -214,6 +205,8 @@ app.MapControllers();
 
 app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }))
     .WithName("HealthCheck");
+
+app.MapFallbackToFile("/index.html");
 
 try
 {

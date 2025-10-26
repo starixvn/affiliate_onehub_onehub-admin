@@ -4,7 +4,6 @@ using ONEHub.Domain.Common;
 using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Interfaces;
-using ONEHub.Infrastructure.Interfaces;
 using DeleteCommand = ONEHub.Domain.Commands.LandingPages.DeleteAssetsCommand;
 
 namespace ONEHub.Application.LandingPages.AssetUploader.Commands;

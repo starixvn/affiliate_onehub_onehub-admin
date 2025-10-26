@@ -1,3 +1,6 @@
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
@@ -7,10 +10,6 @@ using ONEHub.Domain.Constants;
 using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Interfaces;
-using ONEHub.Infrastructure.Interfaces;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
 using UpdateCommand = ONEHub.Domain.Commands.LandingPages.UpdateAssetCommand;
 
 namespace ONEHub.Application.LandingPages.AssetUploader.Commands;
@@ -57,7 +56,7 @@ public class UpdateAssetCommandHandler(
             {
                 return new ResultInfo
                 {
-                    Code = ErrCode.GeneralErrorCode,
+                    Code = ErrorCodes.GeneralErrorCode,
                     Message = AssetNotFoundMessage
                 };
             }
@@ -254,7 +253,7 @@ public class UpdateAssetCommandHandler(
 
                 return new ResultInfo
                 {
-                    Code = ErrCode.ErrTheFileNameAlreadyExists,
+                    Code = ErrorCodes.ErrTheFileNameAlreadyExists,
                     Message = string.Format(FileAlreadyExistsMessage, fileName)
                 };
             }

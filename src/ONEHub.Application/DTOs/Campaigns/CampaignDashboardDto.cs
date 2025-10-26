@@ -2,11 +2,11 @@ namespace ONEHub.Application.DTOs.Campaigns
 {
     public class CampaignDashboardDto
     {
-        public int TotalCampaigns { get; set; }
-        public int DraftCampaigns { get; set; }
-        public int ActiveCampaigns { get; set; }
-        public int InactiveCampaigns { get; set; }
-        public int PausedCampaigns { get; set; }
+        public int Total { get; set; }
+        public int Draft { get; set; }
+        public int Active { get; set; }
+        public int Inactive { get; set; }
+        public int Paused { get; set; }
     }
 }
 

@@ -1,227 +1,335 @@
-# ONEHub Admin - .NET 9 Migration
+# ONEHub Admin - Backend API
 
-## Project Overview
+.NET 9 backend with Clean Architecture for the ONEHub Affiliate Admin system.
 
-Migration of ONEHub Affiliate Admin from .NET Framework 4.7.2 to .NET 9 with Clean Architecture.
+**Tech Stack:** .NET 9, ASP.NET Core, MediatR (CQRS), Dapper, Redis, Serilog
 
-**Status:** 68% Complete (47/57 services migrated)
-
-**Location:** `D:\Nexdev\onehub-admin-net9\`
+[← Back to Main README](../../README.md)
 
 ---
 
-## ✅ What's Working
+## 📁 Project Structure
 
-### Backend (.NET 9)
-- ✅ **Authentication:** JWT-based auth with HS256 algorithm
-- ✅ **Session Management:** Redis-based sessions
-- ✅ **Database:** Dapper + Fanex.Data.ProxyClient with stored procedures
-- ✅ **Logging:** Serilog with TCP/Logstash sink
-- ✅ **Configuration:** All settings migrated from Web.config
-- ✅ **Encryption:** DNAide.dll integrated (hardcoded path - needs improvement)
-
-### Frontend (React 16)
-- ✅ **Login Page:** Working with JWT authentication
-- ✅ **Webpack Build:** Successfully configured and building
-- ✅ **Static Files:** Properly served by ASP.NET Core
-- ✅ **Anti-Forgery Migration:** Removed (JWT is CSRF-immune)
-
-### Services Migrated (47 total)
-- 46 data-access services (Affiliate, Customer, Domain, etc.)
-- SessionService
-- Login & Home functionality
+```
+apps/api/
+├── src/
+│   ├── ONEHub.Domain/              # Core domain logic
+│   │   ├── Entities/               # Domain entities
+│   │   ├── Interfaces/             # Repository interfaces
+│   │   ├── Constants/              # Domain constants
+│   │   ├── Commands/               # CQRS command models
+│   │   └── Criterias/              # Query criteria
+│   ├── ONEHub.Application/         # Business logic (CQRS)
+│   │   ├── Auth/                   # Authentication (Login, JWT, etc.)
+│   │   ├── Home/                   # Dashboard features
+│   │   ├── Affiliates/             # Affiliate management
+│   │   ├── Campaigns/              # Campaign management
+│   │   ├── LandingPages/           # Landing page builder
+│   │   └── [other features]/
+│   ├── ONEHub.Infrastructure/      # External concerns
+│   │   ├── Services/               # Service implementations
+│   │   ├── Data/                   # Database access (Dapper)
+│   │   └── DependencyInjection.cs  # DI registration
+│   └── ONEHub.WebApi/              # Presentation layer
+│       ├── Controllers/            # API endpoints
+│       ├── Program.cs              # Application startup
+│       ├── appsettings.json        # Configuration
+│       └── wwwroot/                # Static files (old frontend)
+├── ONEHub.Admin.sln               # Visual Studio solution
+├── Directory.Build.props           # Shared MSBuild properties
+├── Directory.Packages.props        # Centralized package management
+├── nuget.config                    # NuGet sources
+├── Dockerfile                      # Docker containerization
+└── project.json                    # Nx configuration
+```
 
 ---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-- .NET 9 SDK
-- Node.js 16+ (for webpack)
-- Redis server (10.18.200.194:16379)
-- SQL Server access
 
-### Run the Application
+- **.NET 9 SDK** ([Download](https://dotnet.microsoft.com/download/dotnet/9.0))
+- **SQL Server** (connection strings in appsettings)
+- **Redis Server** (10.18.200.194:16379 or local)
+- **Node.js 22+** (for Nx workspace)
+- **pnpm** (package manager)
 
-```powershell
-# Backend
-cd D:\Nexdev\onehub-admin-net9\src\ONEHub.WebApi
-dotnet run
+### Setup
 
-# Frontend (if you need to rebuild)
-cd D:\Nexdev\onehub-admin-net9\src\ONEHub.WebApi\wwwroot
-npm run build:all:dev
+```bash
+# From repository root
+pnpm install
+
+# Restore NuGet packages
+nx restore api
+# or: cd apps/api && dotnet restore
+```
+
+### Run Development Server
+
+```bash
+# From repository root
+nx serve api
+# or: pnpm api:serve
+
+# Direct dotnet
+cd apps/api
+dotnet run --project src/ONEHub.WebApi/ONEHub.WebApi.csproj
 ```
 
 **Access:**
-- Login: https://localhost:7137/login.html
-- Admin: https://localhost:7137/admin.html
+- API: https://localhost:7137
+- Swagger UI: https://localhost:7137/swagger
+- Health Check: https://localhost:7137/health
 
----
+### Build
 
-## 📚 Essential Documentation
+```bash
+# From repository root
+nx build api
 
-1. **WEBPACK_BUILD_SUCCESS.md** - Webpack configuration and build guide
-2. **ANTI_FORGERY_TOKEN_COMPARISON.md** - Why we removed anti-forgery tokens
-3. **CONFIGURATION_MIGRATION_COMPLETE.md** - Configuration reference
-4. **WEEK4_IMPLEMENTATION_PLAN.md** - Implementation plan for remaining services
-5. **CLAUDE.md** - Instructions for working with AI assistant
+# With configuration
+nx build api --configuration=production
+
+# Direct dotnet
+cd apps/api
+dotnet build ONEHub.Admin.sln -c Release
+```
+
+### Clean
+
+```bash
+nx clean api
+# or: cd apps/api && dotnet clean
+```
 
 ---
 
 ## 🏗️ Architecture
 
-### Backend Structure
+### Clean Architecture Layers
+
 ```
-src/
-├── ONEHub.Application/        # MediatR handlers (CQRS)
-│   ├── Auth/                  # Login, Logout, Refresh Token
-│   ├── Home/                  # Dashboard, Online List
-│   ├── Affiliates/            # Affiliate management
-│   └── [other features]/
-├── ONEHub.Domain/             # Domain models, interfaces
-├── ONEHub.Infrastructure/     # External services (Redis, logging)
-└── ONEHub.WebApi/             # API controllers, Program.cs
-    └── wwwroot/               # React frontend
-        ├── source/            # React source code
-        └── dist/              # Built bundles
+┌─────────────────────────────────────┐
+│          ONEHub.WebApi              │  Presentation Layer
+│  (Controllers, Middleware, Startup) │  - HTTP APIs
+├─────────────────────────────────────┤  - Authentication/Authorization
+│       ONEHub.Application            │  Application Layer
+│    (Handlers, Validators, DTOs)     │  - Business logic (CQRS)
+├─────────────────────────────────────┤  - Use cases
+│         ONEHub.Domain               │  Domain Layer
+│   (Entities, Interfaces, Rules)     │  - Core business models
+├─────────────────────────────────────┤  - Domain logic
+│      ONEHub.Infrastructure          │  Infrastructure Layer
+│  (Data Access, External Services)   │  - Database, Redis, Logging
+└─────────────────────────────────────┘  - Third-party integrations
 ```
 
-### Frontend Structure
-```
-wwwroot/
-├── source/
-│   ├── js/
-│   │   ├── modules/           # Utilities (axios, JWT, etc.)
-│   │   └── pages/             # React pages (login, home, etc.)
-│   └── style/                 # SASS stylesheets
-├── dist/                      # Built files (served to browser)
-└── webpack.config.js          # Build configuration
-```
+### Key Patterns
+
+- **CQRS**: Commands and Queries separated via MediatR
+- **Repository Pattern**: Data access abstracted via interfaces
+- **Dependency Injection**: ASP.NET Core DI container
+- **Options Pattern**: Strongly-typed configuration
 
 ---
 
 ## 🔧 Configuration
 
-### Key Settings (appsettings.Development.json)
+### appsettings.json
+
+Located at: `src/ONEHub.WebApi/appsettings.json`
 
 ```json
 {
   "ConnectionStrings": {
-    "DBReport": "Server=...",
-    "DBAff": "Server=..."
+    "DBReport": "Server=...;Database=...;",
+    "DBAff": "Server=...;Database=...;"
   },
-  "Serilog": {
-    "WriteTo": [
-      { "Name": "TCPSink" }  // Logstash integration
-    ]
-  },
-  "VaultOptions": {
-    "ServerUrl": "http://10.18.200.194:8200",
-    "Token": "[vault-token]"
+  "Jwt": {
+    "SecretKey": "your-secret-key",
+    "Issuer": "ONEHubAdmin",
+    "Audience": "ONEHubAdminUsers",
+    "AccessTokenExpiryMinutes": 60,
+    "RefreshTokenExpiryDays": 7
   },
   "fanex.caching.redis": {
     "Host": "10.18.200.194:16379",
-    "Password": "[redis-password]"
+    "Password": "your-redis-password",
+    "ApplicationName": "ONEHub.Admin"
   },
-  "Jwt": {
-    "SecretKey": "[jwt-secret]",
-    "Issuer": "ONEHubAdmin",
-    "Audience": "ONEHubAdminUsers"
+  "Serilog": {
+    "WriteTo": [
+      { "Name": "Console" },
+      { "Name": "File", "Args": { "path": "logs/app-.log" } }
+    ]
   }
 }
 ```
+
+### Environment-Specific Config
+
+- `appsettings.Development.json` - Local development
+- `appsettings.Staging.json` - Staging environment
+- `appsettings.Production.json` - Production environment
+
+---
+
+## 🔐 Authentication
+
+### JWT Flow
+
+```
+1. POST /api/auth/login
+   → { userName, password }
+   ← { accessToken, refreshToken, expiresIn }
+
+2. Subsequent API calls
+   → Header: Authorization: Bearer {accessToken}
+
+3. Token refresh (before expiry)
+   → POST /api/auth/refresh-token { refreshToken }
+   ← { accessToken, refreshToken, expiresIn }
+
+4. Logout
+   → POST /api/auth/logout
+```
+
+### Cookie-Based Auth
+
+For browser-based clients, JWT is also stored in HttpOnly cookie:
+```csharp
+Cookie: accessToken={jwt}
+```
+
+---
+
+## 📊 Database
+
+### Connection Management
+
+- **Dapper** for data access (micro-ORM)
+- **Stored Procedures** for complex queries
+- **fanex.Data.ProxyClient** for database operations
+
+### Migrations
+
+Database migrations are managed externally (not EF Core migrations).
 
 ---
 
 ## 🧪 Testing
 
-### Test Login
+```bash
+# Run tests
+nx test api
+
+# With coverage
+cd apps/api
+dotnet test --collect:"XPlat Code Coverage"
+```
+
+---
+
+## 📡 API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - User login
+- `POST /api/auth/refresh-token` - Refresh JWT
+- `POST /api/auth/logout` - User logout
+- `GET /api/auth/ping` - Session check
+
+### Affiliates
+- `GET /api/affiliates` - List affiliates
+- `GET /api/affiliates/{id}` - Get affiliate details
+- `PUT /api/affiliates/{id}` - Update affiliate
+
+### Campaigns
+- `GET /api/campaigns` - List campaigns
+- `POST /api/campaigns` - Create campaign
+
+### Landing Pages
+- `GET /api/landingpages` - List landing pages
+- `POST /api/landingpages` - Create landing page
+- `GET /api/landingpages/{id}` - Get page details
+- `PUT /api/landingpages/{id}` - Update page
+
+**Full API documentation:** https://localhost:7137/swagger
+
+---
+
+## 🐳 Docker
+
+### Build Image
 
 ```bash
-curl -X POST https://localhost:7137/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"userName":"admin","password":"yourpassword"}'
+cd apps/api
+docker build -t onehub-admin-api:latest .
 ```
 
-**Expected Response:**
-```json
-{
-  "accessToken": "eyJ...",
-  "refreshToken": "...",
-  "expiresIn": 3600,
-  "userName": "admin"
-}
+### Run Container
+
+```bash
+docker run -d \
+  -p 5000:5000 \
+  -e ASPNETCORE_ENVIRONMENT=Production \
+  -e ConnectionStrings__DBAff="..." \
+  --name onehub-admin-api \
+  onehub-admin-api:latest
 ```
 
 ---
 
-## 📋 TODO (Remaining 10 services)
+## 📦 Dependencies
 
-### High Priority
-- [ ] Operation Services (Deal management)
-- [ ] Report Services (Affiliate, CPA reports)
+### Core Packages
+- `Microsoft.AspNetCore.OpenApi` - OpenAPI/Swagger
+- `Microsoft.AspNetCore.Authentication.JwtBearer` - JWT auth
+- `Microsoft.Extensions.Caching.StackExchangeRedis` - Redis cache
+- `MediatR` - CQRS pattern
+- `FluentValidation` - Input validation
+- `Dapper` - Data access
+- `Serilog.AspNetCore` - Logging
+- `SkiaSharp` - Image processing
 
-### Medium Priority
-- [ ] Landing Page Services
-- [ ] Media Gallery Services
-
-### Low Priority
-- [ ] Additional helper services
-
-**See:** `WEEK4_IMPLEMENTATION_PLAN.md` for details
-
----
-
-## ⚠️ Known Issues
-
-1. **DNAide.dll:** Hardcoded path - needs to be moved to proper location
-2. **Webpack Warnings:** SASS deprecation warnings (safe to ignore)
-3. **React Version:** Still on React 16 (consider upgrade to React 18)
+See [Directory.Packages.props](Directory.Packages.props) for full list.
 
 ---
 
-## 🔐 Authentication Flow
+## 🔍 Troubleshooting
 
-```
-1. User enters credentials on /login.html
-2. POST /api/auth/login → JWT tokens returned
-3. Tokens stored in localStorage
-4. All API calls include: Authorization: Bearer {token}
-5. Token refresh: POST /api/auth/refresh-token
-6. Session check: GET /api/auth/ping
-```
+### Issue: "Cannot connect to database"
+**Solution:** Check connection strings in `appsettings.json`
 
-**Note:** No anti-forgery tokens needed - JWT is CSRF-immune!
+### Issue: "Redis connection failed"
+**Solution:** Ensure Redis is running on configured host/port
 
----
+### Issue: "Unauthorized (401)"
+**Solution:** Check JWT configuration, ensure token is valid and not expired
 
-## 🛠️ Development Workflow
-
-### Making Frontend Changes
-
-1. Edit source files in `wwwroot/source/`
-2. Rebuild: `npm run build:all:dev`
-3. Refresh browser (clear cache if needed)
-
-### Making Backend Changes
-
-1. Edit C# files in `Application/`, `Domain/`, or `WebApi/`
-2. Restart: `dotnet run`
-3. Test endpoints
+### Issue: "DNAide.dll not found"
+**Solution:** Check DNAide.dll path in `ONEHub.Infrastructure/Services`
 
 ---
 
-## 📞 Support
+## 📚 Additional Resources
 
-**Original Project:** `D:\Nexdev\onehub-admin\`  
-**New Project:** `D:\Nexdev\onehub-admin-net9\`
-
-For questions, refer to the documentation files or check the original implementation.
+- [.NET 9 Documentation](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9)
+- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [MediatR Documentation](https://github.com/jbogard/MediatR)
+- [Dapper Documentation](https://github.com/DapperLib/Dapper)
 
 ---
 
-**Last Updated:** October 21, 2025  
-**Version:** .NET 9.0  
-**React Version:** 16.14.0  
-**Build Status:** ✅ Passing (0 errors)
+## 🔗 Related Documentation
+
+- [Main README](../../README.md) - Monorepo overview
+- [Frontend README](../web/README.md) - React frontend
+- [NX_MIGRATION_GUIDE.md](../../NX_MIGRATION_GUIDE.md) - Nx setup guide
+
+---
+
+**Maintainer:** ONEHub Development Team
+**Version:** .NET 9.0
+**Last Updated:** October 24, 2025

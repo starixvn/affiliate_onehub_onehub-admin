@@ -1,3 +1,4 @@
+using System.Net;
 using ONEHub.Domain.Common;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Criterias.Common;
@@ -5,7 +6,6 @@ using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.Entities.Common;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Interfaces;
-using System.Net;
 
 namespace ONEHub.Infrastructure.Services;
 
@@ -36,7 +36,7 @@ public class LandingPageService : ILandingPageService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = InvalidLanguageForTargetCountryMessage
             };
         }

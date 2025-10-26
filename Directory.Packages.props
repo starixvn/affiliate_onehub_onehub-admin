@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup Label="Core Packages">
-    <PackageVersion Include="DNAide" Version="2.1.4477.18436" />
+    <PackageVersion Include="Fanex.Logging.Sentry" Version="1.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.10" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.10" />
@@ -14,15 +14,13 @@
     <PackageVersion Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
   <ItemGroup Label="Logging">
-    <PackageVersion Include="Serilog" Version="4.2.0" />
     <PackageVersion Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="Serilog.Sinks.Http" Version="9.2.0" />
     <PackageVersion Include="Serilog.Sinks.Network" Version="3.0.0" />
-    <PackageVersion Include="Fanex.Logging" Version="2.0.1.1" />
-    <PackageVersion Include="Fanex.Logging.Sentry.RavenClient" Version="2.0.2" />
+    <PackageVersion Include="Fanex.Logging" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup Label="Fanex Data">
     <PackageVersion Include="Fanex.Data.ProxyClient" Version="1.0.6.1" />
@@ -72,6 +70,5 @@
   </ItemGroup>
   <ItemGroup Label="Utilities">
     <PackageVersion Include="SharpZipLib" Version="1.4.2" />
-    <PackageVersion Include="SkiaSharp" Version="3.119.0" />
   </ItemGroup>
 </Project>

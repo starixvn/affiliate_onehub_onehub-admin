@@ -4,7 +4,7 @@ namespace ONEHub.Domain.Criterias.Campaigns;
 
 public class GetCampaignDashboardCriteria : CriteriaBase
 {
-    private const string SP_NAME = "Aff_LandingPage_Campaign_Dashboard_Sel";
+    private const string SP_NAME = "OH_Campaign_Dashboard_Sel";
 
     public override string GetSettingKey() => SP_NAME;
 

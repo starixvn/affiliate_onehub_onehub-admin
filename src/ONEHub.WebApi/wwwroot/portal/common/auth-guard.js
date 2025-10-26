@@ -1,49 +1,37 @@
 function authenticateUser(onSuccess) {
-    Promise.all([
-        fetch('/api/auth/me', { credentials: 'include' }),
-        fetch('/api/auth/menu', { credentials: 'include' })
-    ])
-    .then(([userResponse, menuResponse]) => {
-        if (!userResponse.ok || !menuResponse.ok) {
+    fetch('/api/auth/me', { credentials: 'include' })
+    .then(userResponse => {
+        if (!userResponse.ok) {
             window.location.href = '/portal/login';
             return Promise.reject('Not authenticated');
         }
-        return Promise.all([userResponse.json(), menuResponse.json()]);
+        return userResponse.json();
     })
-    .then(([userData, menuData]) => {
-        if (userData && userData.IsSuccessful) {
+    .then(userData => {
+        if (userData && userData.errorCode === 0 && userData.result) {
+            var user = userData.result;
+
             window.initialState.user = {
-                userId: userData.UserId,
-                userName: userData.UserName,
-                onUserId: userData.OnUserId
+                userId: user.userId,
+                userName: user.userName,
+                onUserId: user.onUserId
             };
-            
-            // Transform claims from array [{ Type, Value }] to object { Type: [Value] }
+
             var transformedClaims = {};
-            if (userData.Claims && Array.isArray(userData.Claims)) {
-                userData.Claims.forEach(function(claim) {
-                    if (!transformedClaims[claim.Type]) {
-                        transformedClaims[claim.Type] = [];
+            if (user.claims && Array.isArray(user.claims)) {
+                user.claims.forEach(function(claim) {
+                    if (!transformedClaims[claim.type]) {
+                        transformedClaims[claim.type] = [];
                     }
-                    transformedClaims[claim.Type].push(claim.Value);
+                    transformedClaims[claim.type].push(claim.value);
                 });
             }
-            
-            window.initialState.claims = transformedClaims;
-            
-            if (menuData && menuData.IsSuccessful) {
-                window.initialState.menus = menuData.Menus || [];
 
-                // Dispatch event to notify React components that menus are ready
-                window.dispatchEvent(new CustomEvent('menusLoaded', { 
-                    detail: window.initialState.menus 
-                }));
-            }
-            
+            window.initialState.claims = transformedClaims;
             window.globalVariables = {
                 claims: transformedClaims
             };
-            
+
             if (typeof onSuccess === 'function') {
                 onSuccess();
             }

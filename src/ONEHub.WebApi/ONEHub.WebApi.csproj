@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
@@ -14,18 +14,12 @@
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Network" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
-    <PackageReference Include="Fanex.Logging" />
-    <PackageReference Include="Fanex.Logging.Sentry.RavenClient" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
   </ItemGroup>
   
   <ItemGroup>
-    <None Remove="App_Data\SpNames.xml" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Include="App_Data\SpNames.xml">
+    <Content Include="SpNames.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -33,10 +27,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ONEHub.Application\ONEHub.Application.csproj" />
     <ProjectReference Include="..\ONEHub.Infrastructure\ONEHub.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="logs\" />
   </ItemGroup>
 
 </Project>

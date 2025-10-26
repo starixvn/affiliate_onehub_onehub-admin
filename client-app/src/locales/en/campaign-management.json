@@ -1,0 +1,115 @@
+{
+  "entity_one": "campaign",
+  "entity_other": "campaigns",
+  "page": {
+    "title": "Campaign Management",
+    "description": "Create and manage marketing campaigns with auto-generated campaign codes",
+    "loading": "Loading campaigns..."
+  },
+  "buttons": {
+    "export": "Export",
+    "create": "Create"
+  },
+  "statusFilters": {
+    "total": "Total Campaigns",
+    "active": "Active Campaigns",
+    "draft": "Draft Campaigns",
+    "paused": "Paused Campaigns",
+    "inactive": "Inactive Campaigns"
+  },
+  "searchToolbar": {
+    "submit": "Search"
+  },
+  "table": {
+    "search": "Search campaigns by name, code, or description...",
+    "noResults": "No results.",
+    "columns": {
+      "select": "Select all",
+      "selectRow": "Select row",
+      "code": "Campaign Code",
+      "name": "Campaign Name",
+      "description": "Campaign Description",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "modifiedDate": "Modified Date",
+      "modifiedBy": "Modified By",
+      "status": "Status",
+      "actions": "Open menu"
+    }
+  },
+  "rowActions": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "bulkActions": {
+    "changeToPaused": "Change to Paused",
+    "changeToPausedCount": "Change to Paused ({{count}} affected)",
+    "changeToActive": "Change to Active",
+    "changeToActiveCount": "Change to Active ({{count}} affected)",
+    "changeToInactive": "Change to Inactive",
+    "changeToInactiveCount": "Change to Inactive ({{count}} affected)",
+    "changeToDraft": "Change to Draft",
+    "changeToDraftCount": "Change to Draft ({{count}} affected)",
+    "deleteSelected": "Delete all selected campaigns"
+  },
+  "bulkActionsToast": {
+    "updating": "Updating campaigns to {{status}}...",
+    "updated_one": "Updated {{count}} campaign to {{status}}",
+    "updated_other": "Updated {{count}} campaigns to {{status}}",
+    "updateFailed": "Failed to update campaigns",
+    "alreadyStatus": "All selected campaigns are already {{status}}"
+  },
+  "dialog": {
+    "create": {
+      "title": "Add New Campaign",
+      "description": "Create new campaign here. Click save when you're done."
+    },
+    "edit": {
+      "title": "Edit Campaign",
+      "description": "Update the campaign here. Click save when you're done."
+    },
+    "form": {
+      "code": "Code",
+      "codePlaceholder": "CAMP001",
+      "name": "Name",
+      "namePlaceholder": "Summer Campaign",
+      "nameRequired": "Name is required.",
+      "description": "Description",
+      "descriptionPlaceholder": "Campaign description...",
+      "descriptionRequired": "Description is required.",
+      "status": "Status",
+      "statusPlaceholder": "Select a status",
+      "statusRequired": "Status is required.",
+      "statusWarning": "Only active campaigns are available for selection when creating a new landing page.",
+      "requiredField": "*"
+    },
+    "saveChanges": "Save changes",
+    "delete": {
+      "title": "Delete Campaign",
+      "message": "Are you sure you want to delete",
+      "description": "This action cannot be undone. This will permanently delete the campaign and all associated data.",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDelete": {
+      "title_one": "Delete {{count}} campaign",
+      "title_other": "Delete {{count}} campaigns",
+      "message": "Are you sure you want to delete the selected campaigns?",
+      "description": "This action cannot be undone. This will permanently delete the selected campaigns and all associated data.",
+      "confirmLabel": "Confirm by typing \"{{word}}\":",
+      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
+      "confirmWord": "DELETE",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDeleteToast": {
+      "deleting": "Deleting campaigns...",
+      "deleted_one": "Deleted {{count}} campaign",
+      "deleted_other": "Deleted {{count}} campaigns",
+      "deleteFailed": "Failed to delete campaigns",
+      "confirmRequired": "Please type \"{{word}}\" to confirm."
+    }
+  }
+}

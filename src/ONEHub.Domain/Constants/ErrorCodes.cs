@@ -2,11 +2,18 @@ namespace ONEHub.Domain.Constants;
 
 public static class ErrorCodes
 {
-    public const int Success = 0;
-    public const int GeneralError = 1;
-    public const int ValidationError = 2;
-    public const int NotFound = 404;
-    public const int Unauthorized = 401;
-    public const int Forbidden = 403;
+    public const int GeneralErrorCode = -999;
+
+    public const int ErrCodeAccessDenied = 403;
+
+    public const int ErrCodeSessionExpired = 401;
+
+    public const int ErrCodeUserAlreadyHasIBCAccount = 102;
+
+    public const int ErrTheFileNameAlreadyExists = 104;
+
+    public const int ErrCanNotAccessFolder = -9999;
+
+    public const int ErrNoPermissionOnAnyFunctions = 1;
 }
 

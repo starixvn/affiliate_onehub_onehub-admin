@@ -1,10 +1,11 @@
 # Build outputs
 bin/
 obj/
-src/*/bin/
-src/*/obj/
+apps/*/src/*/bin/
+apps/*/src/*/obj/
 tests/*/bin/
 tests/*/obj/
+dist/
 
 # IDE
 .vs/
@@ -22,6 +23,11 @@ tests/*/obj/
 .gitignore
 .gitattributes
 
+# Nx
+.nx/
+node_modules/
+.pnpm-store/
+pnpm-lock.yaml
 
 # Testing
 coverage/
@@ -45,8 +51,15 @@ Thumbs.db
 # Husky
 .husky/
 
-# Server-specific (.NET)
-.vs/
+# Frontend (old/legacy)
+apps/api/src/ONEHub.WebApi/wwwroot/node_modules/
+apps/api/src/ONEHub.WebApi/wwwroot/source/
+apps/api/src/ONEHub.WebApi/wwwroot/config-utils/
+apps/api/src/ONEHub.WebApi/wwwroot/portal/
+apps/api/src/ONEHub.WebApi/wwwroot/vendors/
+apps/api/src/ONEHub.WebApi/wwwroot/package*.json
+apps/api/src/ONEHub.WebApi/wwwroot/.babelrc
+apps/api/src/ONEHub.WebApi/wwwroot/webpack*.js
 
 # Misc
 *.swp

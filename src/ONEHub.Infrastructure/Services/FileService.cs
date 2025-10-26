@@ -1,12 +1,11 @@
+using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ONEHub.Domain.Common;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Interfaces;
-using ONEHub.Infrastructure.Interfaces;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace ONEHub.Infrastructure.Services;
 
@@ -66,7 +65,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = string.Format(FileSizeExceededMessage, _maxFileSizeBytes / (1024 * 1024))
             };
         }
@@ -76,7 +75,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = InvalidFileTypeMessage
             };
         }
@@ -96,7 +95,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = "No files provided"
             };
         }
@@ -106,7 +105,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = $"Maximum {maxFiles} files allowed"
             };
         }
@@ -118,7 +117,7 @@ public class FileService : IFileService
         {
             if (file.Length == 0)
             {
-                result.Code = ErrCode.GeneralErrorCode;
+                result.Code = ErrorCodes.GeneralErrorCode;
                 message.AppendLine($"File {file.FileName} is empty.");
                 continue;
             }
@@ -170,20 +169,20 @@ public class FileService : IFileService
 
         if (Regex.IsMatch(inputFileName, RestrictedMultiInputFileNamesPattern))
         {
-            result.Code = ErrCode.GeneralErrorCode;
+            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} cannot contain special characters: \\ / : * ? \" < > # % & +<br />");
         }
 
         var extension = _systemFile.GetExtension(inputFileName).ToLower();
         if (!_allowedExtensions.Contains(extension))
         {
-            result.Code = ErrCode.GeneralErrorCode;
+            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} has invalid file type. Only image files are allowed.<br />");
         }
 
         if (inputFileName.Length > MaxLength)
         {
-            result.Code = ErrCode.GeneralErrorCode;
+            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} exceeds maximum length of 200 characters.<br />");
         }
 
@@ -212,7 +211,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.ErrTheFileNameAlreadyExists,
+                Code = ErrorCodes.ErrTheFileNameAlreadyExists,
                 Message = string.Format(ExistedFileNamesMessage, string.Join(", ", existingFiles))
             };
         }
@@ -233,7 +232,7 @@ public class FileService : IFileService
                 {
                     return new ResultInfo
                     {
-                        Code = ErrCode.GeneralErrorCode,
+                        Code = ErrorCodes.GeneralErrorCode,
                         Message = string.Format(DuplicateFileNameMessage, nameType)
                     };
                 }
@@ -254,7 +253,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = FileNameCanNotContain
             };
         }
@@ -269,7 +268,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = InvalidFileTypeMessage
             };
         }
@@ -278,7 +277,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = MaxLengthFileNameMessage
             };
         }
@@ -297,7 +296,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = FileNameCanNotContain
             };
         }
@@ -306,7 +305,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = "The maximum length of media name is 200."
             };
         }
@@ -362,7 +361,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = FileNameCanNotContain
             };
         }
@@ -371,7 +370,7 @@ public class FileService : IFileService
         {
             return new ResultInfo
             {
-                Code = ErrCode.GeneralErrorCode,
+                Code = ErrorCodes.GeneralErrorCode,
                 Message = "Media name cannot contain special characters"
             };
         }

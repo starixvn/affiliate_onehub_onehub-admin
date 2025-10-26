@@ -7,19 +7,13 @@ namespace ONEHub.Application.Campaigns.Queries;
 
 public record GetCampaignDashboardQuery : IRequest<CampaignDashboard>;
 
-public class GetCampaignDashboardQueryHandler : IRequestHandler<GetCampaignDashboardQuery, CampaignDashboard>
+public class GetCampaignDashboardQueryHandler(IDynamicRepository repository)
+    : IRequestHandler<GetCampaignDashboardQuery, CampaignDashboard>
 {
-    private readonly IDynamicRepository _repository;
-
-    public GetCampaignDashboardQueryHandler(IDynamicRepository repository)
-    {
-        _repository = repository;
-    }
-
     public async Task<CampaignDashboard> Handle(GetCampaignDashboardQuery request, CancellationToken cancellationToken)
     {
         var criteria = new GetCampaignDashboardCriteria();
-        var result = await _repository.GetAsync<CampaignDashboard>(criteria);
+        var result = await repository.GetAsync<CampaignDashboard>(criteria);
         return result;
     }
 }
