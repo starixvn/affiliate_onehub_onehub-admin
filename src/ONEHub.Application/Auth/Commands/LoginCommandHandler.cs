@@ -7,7 +7,6 @@ using ONEHub.Domain.Commands.Auth;
 using ONEHub.Domain.Criterias.Auth;
 using ONEHub.Domain.DTOs.Common;
 using ONEHub.Domain.Interfaces;
-using ONEHub.Infrastructure.Utilities;
 
 namespace ONEHub.Application.Auth.Commands;
 
@@ -17,6 +16,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
     private readonly ISessionService _sessionService;
     private readonly IAuthService _authService;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly ICryptographyService _cryptographyService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<LoginCommandHandler> _logger;
 
@@ -25,6 +25,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
         ISessionService sessionService,
         IAuthService authService,
         IJwtTokenService jwtTokenService,
+        ICryptographyService cryptographyService,
         IConfiguration configuration,
         ILogger<LoginCommandHandler> logger)
     {
@@ -32,6 +33,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
         _sessionService = sessionService;
         _authService = authService;
         _jwtTokenService = jwtTokenService;
+        _cryptographyService = cryptographyService;
         _configuration = configuration;
         _logger = logger;
     }
@@ -43,7 +45,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
             var loginCommand = new LoginCommandData
             {
                 UserName = request.UserName.Trim(),
-                Password = CryptographyHelper.Encrypt(request.Password.Trim()),
+                Password = _cryptographyService.Encrypt(request.Password.Trim()),
                 UserHostName = request.UserHostName,
                 Ip = request.IpAddress
             };

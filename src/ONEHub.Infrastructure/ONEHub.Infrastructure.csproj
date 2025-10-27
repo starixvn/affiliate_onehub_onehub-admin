@@ -19,7 +19,7 @@
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Http" />
     <PackageReference Include="StackExchange.Redis" />
-    <PackageReference Include="System.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Fanex.Data.ProxyClient" />
     <PackageReference Include="Fanex.Logging" />
     <PackageReference Include="Fanex.Logging.Sentry.RavenClient" />
@@ -32,6 +32,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);NU1701</NoWarn>
   </PropertyGroup>
 
 </Project>

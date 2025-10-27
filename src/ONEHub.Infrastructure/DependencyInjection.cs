@@ -33,6 +33,7 @@ public static class DependencyInjection
         services.AddScoped<IFileService, FileService>();
         services.AddScoped<ISystemFile, SystemFileService>();
         services.AddScoped<IImageService, ImageService>();
+        services.AddScoped<ICryptographyService, CryptographyService>();
 
         return services;
     }
