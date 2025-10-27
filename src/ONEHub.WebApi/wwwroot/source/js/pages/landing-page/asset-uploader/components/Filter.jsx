@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import MultipleSelect from '../../../../components/multiple-select';
 import { handleChangeMultipleSelected, convertListToMutilpleSelected } from '../../../../modules/utils';
 
-import { setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList } from '../actions';
+import { setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList, setMaxFileSize, setMaximumFiles, setBannerRootUrl, setAllowedExtensions } from '../actions';
 import { headerText } from '../libs/constants';
 import { assetStatus, moduleTypes } from '../../libs/constants';
 import { globalResource } from '../../../../modules/globalResource';
@@ -22,6 +22,10 @@ export const Filter = ({
     setTargetCountryList,
     setLanguageList,
     setStatusList,
+    setMaxFileSize,
+    setMaximumFiles,
+    setBannerRootUrl,
+    setAllowedExtensions,
 }) => {
     const [filters, setFilters] = useState({
         moduleIds: 'all',
@@ -32,6 +36,8 @@ export const Filter = ({
 
     useEffect(() => {
         const loadFilters = async () => {
+            console.log('Asset Uploader Filter - loadFilters');
+
             if (targetCountryList?.length > 0) return;
 
             if (!window.initialState?.filtersLoaded) {
@@ -42,7 +48,11 @@ export const Filter = ({
                 moduleList: mList = [], 
                 targetCountryList: tcList = [], 
                 allLanguagesInSystem = [],
-                statusList: sList = []
+                statusList: sList = [],
+                maxFileSize,
+                maximumFiles,
+                bannerRootUrl,
+                allowedExtensions,
             } = window.initialState;
 
             const newModuleList = convertListToMutilpleSelected(mList.filter(item => item.ModuleType !== moduleTypes.Form && item.ModuleType !== moduleTypes.Link), 'ModuleId', 'ModuleName');
@@ -53,6 +63,11 @@ export const Filter = ({
             setTargetCountryList(newTargetCountryList);
             setLanguageList(newLanguageList);
             setStatusList(sList);
+
+            setMaxFileSize(maxFileSize);
+            setMaximumFiles(maximumFiles);
+            setBannerRootUrl(bannerRootUrl);
+            setAllowedExtensions(allowedExtensions);
 
             setFilters({
                 moduleIds: newModuleList.filter(item => item.checked).map(item => item.key).join(',') || '',
@@ -187,7 +202,7 @@ function mapStateToProps({ moduleList, targetCountryList, languageList, pagingOp
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList }, dispatch);
+    return bindActionCreators({ setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList, setMaxFileSize, setMaximumFiles, setBannerRootUrl, setAllowedExtensions }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Filter));

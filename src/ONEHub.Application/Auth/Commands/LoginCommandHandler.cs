@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -6,7 +7,7 @@ using ONEHub.Domain.Commands.Auth;
 using ONEHub.Domain.Criterias.Auth;
 using ONEHub.Domain.DTOs.Common;
 using ONEHub.Domain.Interfaces;
-using System.Security.Claims;
+using ONEHub.Infrastructure.Utilities;
 
 namespace ONEHub.Application.Auth.Commands;
 
@@ -42,7 +43,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
             var loginCommand = new LoginCommandData
             {
                 UserName = request.UserName.Trim(),
-                Password = "56E8A2D78170E87C928E480797CC73",//Encryption.CfsEnCode(request.Password.Trim()),
+                Password = CryptographyHelper.Encrypt(request.Password.Trim()),
                 UserHostName = request.UserHostName,
                 Ip = request.IpAddress
             };

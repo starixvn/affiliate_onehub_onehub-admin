@@ -13,7 +13,7 @@ axios.interceptors.response.use(response => Promise.resolve(response),
 
             switch (status) {
                 case 401:
-                    alert("Your session has expired! Please login again.");
+                    alert(response.Message || "Your session has expired! Please login again.");
                     // Cookies are HttpOnly, browser will handle them
                     window.location.href = '/portal/login';
                     break;

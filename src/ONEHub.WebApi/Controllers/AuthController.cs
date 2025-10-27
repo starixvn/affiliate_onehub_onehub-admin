@@ -174,86 +174,44 @@ public class AuthController : ControllerBase
     {
         try
         {
+            if (_sessionService.ClaimIdentities == null || !_sessionService.ClaimIdentities.Any())
+            {
+                _logger.LogWarning("User has no claim identities");
+                return Ok(new { IsSuccessful = true, Menus = new List<MenuDto>() });
+            }
+
             var claims = _sessionService.ClaimIdentities.SelectMany(i => i.Claims).ToList();
             var menus = new List<MenuDto>();
 
-            var menuPermissions = new Dictionary<string, string>
+            var menuDefinitions = new List<(string Key, string DisplayName, string Permission, string? AlternatePermission)>
             {
-                { "Customer", Function.Affiliate },
-                { "Affiliate", Function.Affiliate },
-                { "Operation", Function.Deal },
-                { "Player", Function.Player },
-                { "Report", Function.AffReport },
-                { "MediaGallery", Function.Media },
-                { "Message", Function.HotNews },
-                { "Administrator", Function.UserControl },
-                { "Domain", Function.Domain }
+                //("Customer", "Customer", Function.Affiliate, null),
+                //("Affiliate", "Affiliate", Function.Affiliate, null),
+                //("Operation", "Operation", Function.Deal, null),
+                //("Player", "Player", Function.Player, null),
+                //("Report", "Report", Function.AffReport, Function.TransferPlayerReport),
+                //("MediaGallery", "Media Gallery", Function.Media, null),
+                //("Message", "Message", Function.HotNews, null),
+                //("Administrator", "Administrator", Function.UserControl, null),
+                //("Domain", "Domain", Function.Domain, null)
             };
 
-            var marketingToolsSubmenus = new List<SubmenuDto>();
-
-            if (claims.Any(p => p.Type == Function.PageManagement))
+            foreach (var (key, displayName, permission, alternatePermission) in menuDefinitions)
             {
-                marketingToolsSubmenus.Add(new SubmenuDto
-                {
-                    Key = "LandingPageManagement",
-                    Controller = "LandingPage",
-                    Action = "Index",
-                    DisplayName = "Landing Page Management"
-                });
-            }
-            else if (claims.Any(p => p.Type == Function.AssetUploader))
-            {
-                marketingToolsSubmenus.Add(new SubmenuDto
-                {
-                    Key = "LandingPageManagement",
-                    Controller = "AssetUploader",
-                    Action = "Index",
-                    DisplayName = "Landing Page Management"
-                });
-            }
-            else if (claims.Any(p => p.Type == Function.RegistrationFormUploader))
-            {
-                marketingToolsSubmenus.Add(new SubmenuDto
-                {
-                    Key = "LandingPageManagement",
-                    Controller = "FormManagement",
-                    Action = "Index",
-                    DisplayName = "Landing Page Management"
-                });
-            }
-
-            if (claims.Any(p => p.Type == Function.AllCampaigns))
-            {
-                marketingToolsSubmenus.Add(new SubmenuDto
-                {
-                    Key = "CampaignManagement",
-                    Controller = "CampaignManagement",
-                    Action = "Index",
-                    DisplayName = "Campaign Management"
-                });
-            }
-
-            foreach (var menuItem in menuPermissions)
-            {
-                var hasPermission = menuItem.Key == "Report"
-                    ? claims.Any(p => p.Type == menuItem.Value || p.Type == Function.TransferPlayerReport)
-                    : claims.Any(p => p.Type == menuItem.Value);
+                var hasPermission = claims.Any(p => p.Type == permission) ||
+                                  (alternatePermission != null && claims.Any(p => p.Type == alternatePermission));
 
                 if (hasPermission)
                 {
-                    var menu = new MenuDto
+                    menus.Add(new MenuDto
                     {
-                        Key = menuItem.Key,
-                        DisplayName = GetMenuDisplayName(menuItem.Key)
-                    };
-
-                    menus.Add(menu);
+                        Key = key,
+                        DisplayName = displayName
+                    });
                 }
             }
 
-            // Add Marketing Tools menu if user has any sub-menu permissions
-            // (already checked above when building marketingToolsSubmenus)
+            var marketingToolsSubmenus = BuildMarketingToolsSubmenus(claims);
             if (marketingToolsSubmenus.Any())
             {
                 menus.Add(new MenuDto
@@ -277,15 +235,55 @@ public class AuthController : ControllerBase
         }
     }
 
-    private static string GetMenuDisplayName(string menuKey)
+    private static List<SubmenuDto> BuildMarketingToolsSubmenus(List<System.Security.Claims.Claim> claims)
     {
-        return menuKey switch
+        var submenus = new List<SubmenuDto>();
+
+        if (claims.Any(p => p.Type == Function.PageManagement))
         {
-            "MediaGallery" => "Media Gallery",
-            "MarketingTools" => "Marketing Tools",
-            _ => menuKey
-        };
+            submenus.Add(new SubmenuDto
+            {
+                Key = "LandingPageManagement",
+                Controller = "LandingPage",
+                Action = "Index",
+                DisplayName = "Landing Page Management"
+            });
+        }
+        else if (claims.Any(p => p.Type == Function.AssetUploader))
+        {
+            submenus.Add(new SubmenuDto
+            {
+                Key = "LandingPageManagement",
+                Controller = "AssetUploader",
+                Action = "Index",
+                DisplayName = "Landing Page Management"
+            });
+        }
+        else if (claims.Any(p => p.Type == Function.RegistrationFormUploader))
+        {
+            submenus.Add(new SubmenuDto
+            {
+                Key = "LandingPageManagement",
+                Controller = "FormManagement",
+                Action = "Index",
+                DisplayName = "Landing Page Management"
+            });
+        }
+
+        if (claims.Any(p => p.Type == Function.AllCampaigns))
+        {
+            submenus.Add(new SubmenuDto
+            {
+                Key = "CampaignManagement",
+                Controller = "CampaignManagement",
+                Action = "Index",
+                DisplayName = "Campaign Management"
+            });
+        }
+
+        return submenus;
     }
+
 
     [HttpPost("refresh-token")]
     [AllowAnonymous]

@@ -5,8 +5,16 @@ import { pagingOption } from '../../../../reducers/pagingReducer';
 import { isShowLoader } from '../../../../reducers/loaderReducer';
 import * as types from '../actions/types';
 
-export const landingPageUrl = createReducer(null, {});
-export const allLanguagesInSystem = createReducer(null, {});
+export const landingPageUrl = createReducer(null, {
+    [types.SET_LANDING_PAGE_URL](prevState, action) {
+        return action.data;
+    }
+});
+export const allLanguagesInSystem = createReducer(null, {
+    [types.SET_ALL_LANGUAGES_IN_SYSTEM](prevState, action) {
+        return action.data;
+    }
+});
 export const isModifyInPageManagement = createReducer(false, {});
 
 export const targetCountryList = createReducer(null, {

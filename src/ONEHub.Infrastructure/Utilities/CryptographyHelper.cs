@@ -5,11 +5,11 @@ namespace ONEHub.Infrastructure.Utilities;
 
 public static class CryptographyHelper
 {
-    private const int Num = 30;
-    private const int Two = 2;
-    private const int Twenty = 20;
-    private const int EightTeen = 18;
-    private const int TwentyOne = 21;
+    private const int NUM = 30;
+    private const int TWO = 2;
+    private const int TWENTY = 20;
+    private const int EIGHT_TEEN = 18;
+    private const int SECTION_SIGN_NUMBER = 21;
 
     public static string Encrypt(string inputString)
     {
@@ -18,7 +18,7 @@ public static class CryptographyHelper
 
     private static string CfsEnCode(string codeStr)
     {
-        int num2 = Num - codeStr.Length;
+        int num2 = NUM - codeStr.Length;
 
         var codeBuilder = new StringBuilder();
         codeBuilder.Append(codeStr);
@@ -26,18 +26,18 @@ public static class CryptographyHelper
         {
             for (int i = 1; i <= num2; i++)
             {
-                codeBuilder.Append(Convert.ToChar(TwentyOne));
+                codeBuilder.Append(Convert.ToChar(SECTION_SIGN_NUMBER));
             }
         }
 
         var codeString = codeBuilder.ToString();
         double num3 = 1.0;
-        for (int j = 1; j <= Num; j++)
+        for (int j = 1; j <= NUM; j++)
         {
-            int num4 = Num + Convert.ToInt32(Convert.ToChar(codeString.Substring(j - 1, 1))) * j;
+            int num4 = NUM + Convert.ToInt32(Convert.ToChar(codeString.Substring(j - 1, 1))) * j;
             num3 *= num4;
         }
-        var num3String = num3.ToString(CultureInfo.InvariantCulture);
+        var num3String = num3.ToString("G15", CultureInfo.InvariantCulture);
         var textBuilder = new StringBuilder();
         for (int k = 1; k <= num3String.Length; k++)
         {
@@ -47,7 +47,7 @@ public static class CryptographyHelper
 
         var text = textBuilder.ToString();
         var text2 = new StringBuilder();
-        for (int l = Twenty; l <= text.Length - EightTeen; l += Two)
+        for (int l = TWENTY; l <= text.Length - EIGHT_TEEN; l += TWO)
         {
             text2.Append(text.Substring(l - 1, 1));
         }

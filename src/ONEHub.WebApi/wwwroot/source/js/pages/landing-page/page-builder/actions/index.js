@@ -172,7 +172,7 @@ export const setPreviewUrl = (previewUrl) => ({
 
 export const fetchCampaigns = (selectFirst = false) => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/GetCampaignInfoList';
+        const url = 'api/PageBuilder/GetCampaignInfoList';
         const response = await post(url, { RequestId: uuidv4() });
         
         if (response && response.status === 200) {
@@ -186,7 +186,7 @@ export const fetchCampaigns = (selectFirst = false) => async (dispatch) => {
 
 export const fetchDeals = (campaignId) => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/GetDealList';
+        const url = 'api/PageBuilder/GetDealList';
         const response = await post(url, { 
             campaignId,
             RequestId: uuidv4()
@@ -202,7 +202,7 @@ export const fetchDeals = (campaignId) => async (dispatch) => {
 
 export const fetchNormalDealList = () => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/GetNormalDealList';
+        const url = 'api/PageBuilder/GetNormalDealList';
         const response = await post(url, { RequestId: uuidv4() });
         
         if (response && response.status === 200) {
@@ -218,7 +218,7 @@ export const fetchNormalDealList = () => async (dispatch) => {
 
 export const fetchModuleSources = (moduleId, targetCountryCode = null, languageCode = null) => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/GetMediaSources';
+        const url = 'api/PageBuilder/GetMediaSources';
         const response = await post(url, { 
             moduleId,
             targetCountryCode,
@@ -352,7 +352,7 @@ export const saveLandingPage = (formData, moduleComponents, isReview = false) =>
         });
         
         const isUpdate = formData.pageId && formData.pageId > 0;
-        const url = isUpdate && !isReview ? 'Portal/PageBuilder/UpdatePageBuilder' : 'Portal/PageBuilder/InsertPageBuilder';
+        const url = isUpdate && !isReview ? 'api/PageBuilder/UpdatePageBuilder' : 'api/PageBuilder/InsertPageBuilder';
         
         const payload = {
             PageId: formData.pageId || 0,
@@ -388,7 +388,7 @@ export const generatePreviewUrl = (formData, moduleComponents) => async (dispatc
 
 export const insertLandingPageDeal = (dealId) => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/InsertLandingPageDeal';
+        const url = 'api/PageBuilder/InsertLandingPageDeal';
         const response = await post(url, { 
             dealId,
             RequestId: uuidv4()
@@ -427,7 +427,7 @@ export const insertLandingPageDeal = (dealId) => async (dispatch) => {
 
 export const insertLandingPageCampaign = (campaignName, description) => async (dispatch) => {
     try {
-        const url = 'Portal/PageBuilder/InsertLandingPageCampaign';
+        const url = 'api/PageBuilder/InsertLandingPageCampaign';
         const response = await post(url, { 
             campaignName: campaignName.trim(), 
             description: description.trim(),

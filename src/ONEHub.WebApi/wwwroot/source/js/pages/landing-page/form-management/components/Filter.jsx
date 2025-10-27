@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import MultipleSelect from '../../../../components/multiple-select';
 import { handleChangeMultipleSelected, convertListToMutilpleSelected } from '../../../../modules/utils';
 
-import { setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList } from '../actions';
+import { setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList, setMaxFileSize, setMaximumFiles, setBannerRootUrl, setAllowedExtensions } from '../actions';
 import { headerText } from '../libs/constants';
 import { assetStatus } from '../../libs/constants';
 import { globalResource } from '../../../../modules/globalResource';
@@ -20,6 +20,10 @@ export const Filter = ({
     setTargetCountryList,
     setLanguageList,
     setStatusList,
+    setMaxFileSize,
+    setMaximumFiles,
+    setBannerRootUrl,
+    setAllowedExtensions,
 }) => {
     const [filters, setFilters] = useState({
         mediaName: '',
@@ -39,7 +43,11 @@ export const Filter = ({
             const { 
                 targetCountryList: tcList = [], 
                 allLanguagesInSystem = [],
-                statusList: sList = []
+                statusList: sList = [],
+                maxFileSize,
+                maximumFiles,
+                bannerRootUrl,
+                allowedExtensions,
             } = window.initialState;
 
             const newTargetCountryList = convertListToMutilpleSelected(tcList, 'TargetCountryCode', 'TargetCountryName');
@@ -48,6 +56,11 @@ export const Filter = ({
             setTargetCountryList(newTargetCountryList);
             setLanguageList(newLanguageList);
             setStatusList(sList);
+
+            setMaxFileSize(maxFileSize);
+            setMaximumFiles(maximumFiles);
+            setBannerRootUrl(bannerRootUrl);
+            setAllowedExtensions(allowedExtensions);
 
             setFilters({
                 mediaName: '',
@@ -173,7 +186,7 @@ function mapStateToProps({ moduleList, targetCountryList, languageList, pagingOp
 }
 
 function mapDispatchToProps(dispatch) {
-    return bindActionCreators({ setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList }, dispatch);
+    return bindActionCreators({ setParam, setModuleList, setTargetCountryList, setLanguageList, setStatusList, setMaxFileSize, setMaximumFiles, setBannerRootUrl, setAllowedExtensions }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(React.memo(Filter));

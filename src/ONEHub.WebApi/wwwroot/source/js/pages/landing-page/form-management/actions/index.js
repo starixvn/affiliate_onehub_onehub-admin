@@ -82,6 +82,34 @@ export const setGridData = (data) => {
     }
 }
 
+export const setBannerRootUrl = (data) => {
+    return {
+        type: types.SET_BANNER_ROOT_URL,
+        data
+    }
+}
+
+export const setAllowedExtensions = (data) => {
+    return {
+        type: types.SET_ALLOWED_EXTENSIONS,
+        data
+    }
+}
+
+export const setMaxFileSize = (data) => {
+    return {
+        type: types.SET_MAX_FILE_SIZE,
+        data
+    }
+}
+
+export const setMaximumFiles = (data) => {
+    return {
+        type: types.SET_MAXIMUM_FILES,
+        data
+    }
+}
+
 export const fetchData = (param) => async (dispatch) => {
     dispatch(toggleLoader(true));
 

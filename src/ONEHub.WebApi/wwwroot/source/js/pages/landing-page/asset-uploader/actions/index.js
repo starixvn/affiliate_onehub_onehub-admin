@@ -84,6 +84,34 @@ export const setGridData = (data) => {
     }
 }
 
+export const setMaxFileSize = (data) => {
+    return {
+        type: types.SET_MAX_FILE_SIZE,
+        data
+    }
+}
+
+export const setMaximumFiles = (data) => {
+    return {
+        type: types.SET_MAXIMUM_FILES,
+        data
+    }
+}
+
+export const setBannerRootUrl = (data) => {
+    return {
+        type: types.SET_BANNER_ROOT_URL,
+        data
+    }
+}
+
+export const setAllowedExtensions = (data) => {
+    return {
+        type: types.SET_ALLOWED_EXTENSIONS,
+        data
+    }
+}
+
 export const fetchData = (param) => async (dispatch) => {
     dispatch(toggleLoader(true));
 
@@ -91,7 +119,7 @@ export const fetchData = (param) => async (dispatch) => {
         ...param,
         RequestId: uuidv4()
     };
-    const url = 'Portal/AssetUploader/GetAssetList';
+    const url = 'api/assetuploader/list';
     const response = await post(url, paramWithId);
 
     const data = response && response.status === 200 ? response.data : null;
@@ -123,20 +151,20 @@ export const getAssetDetail = (param) => async () => {
         ...param,
         RequestId: uuidv4()
     };
-    const url = 'Portal/AssetUploader/GetAssetDetail';
+    const url = 'api/assetuploader/detail';
     const response = await post(url, paramWithId);
 
     return response && response.status === 200 ? response.data : null;
 }
 
 export const uploadAssets = (param) => () => {
-    const url = 'Portal/AssetUploader/UploadAssets';
+    const url = 'api/assetuploader/upload';
 
     return handleExcute(url, param);
 }
 
 export const updateAsset = (param) => () => {
-    const url = 'Portal/AssetUploader/UpdateAsset';
+    const url = 'api/assetuploader/update';
 
     return handleExcute(url, param);
 }
@@ -164,7 +192,7 @@ const handleExcute = async (url, param) => {
 }
 
 export const deleteAssets = (mediaIds) => async () => {
-    const url = 'Portal/AssetUploader/DeleteAssets';
+    const url = 'api/assetuploader/delete';
     const response = await post(url, { 
         mediaIds,
         RequestId: uuidv4()
@@ -178,7 +206,7 @@ export const toggleAssetStatus = (param) => async () => {
         ...param,
         RequestId: uuidv4()
     };
-    const url = 'Portal/AssetUploader/ToggleAssetStatus';
+    const url = 'api/assetuploader/status';
     const response = await post(url, paramWithId);
 
     return response && response.status === 200 ? response.data : null;

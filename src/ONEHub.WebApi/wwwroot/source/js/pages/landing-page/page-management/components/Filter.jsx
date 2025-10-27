@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import MultipleSelect from '../../../../components/multiple-select';
 import { handleChangeMultipleSelected, convertListToMutilpleSelected } from '../../../../modules/utils';
 
-import { setParam, setCampaignList, setDealList, setTargetCountryList, setLanguageList, setStatusList } from '../actions';
+import { setParam, setCampaignList, setDealList, setTargetCountryList, setLanguageList, setStatusList, setAllLanguagesInSystem, setLandingPageUrl } from '../actions';
 import { globalResource } from '../libs/constants';
 
 export const Filter = ({ 
@@ -21,7 +21,9 @@ export const Filter = ({
     setDealList,
     setTargetCountryList,
     setLanguageList,
-    setStatusList
+    setStatusList,
+    setAllLanguagesInSystem,
+    setLandingPageUrl,
 }) => {
     const [filters, setFilters] = useState({
         landingPageName: '',
@@ -45,7 +47,9 @@ export const Filter = ({
                 allLanguagesInSystem = [], 
                 dealList: dList = [], 
                 statusList: sList = [], 
-                campaignList: cList = [] 
+                campaignList: cList = [],
+                landingPageUrl: lpUrl = '',
+                allLanguagesInSystem: alList = [],
             } = window.initialState;
 
             const newTargetCountryList = convertListToMutilpleSelected(tcList, 'TargetCountryCode', 'TargetCountryName');
@@ -59,6 +63,8 @@ export const Filter = ({
             setDealList(newDealList);
             setStatusList(newStatusList);
             setCampaignList(newCampaignList);
+            setAllLanguagesInSystem(alList);
+            setLandingPageUrl(lpUrl);
 
             setFilters({
                 landingPageName: '',
@@ -235,7 +241,9 @@ function mapDispatchToProps(dispatch) {
         setDealList, 
         setTargetCountryList, 
         setLanguageList, 
-        setStatusList 
+        setStatusList,
+        setAllLanguagesInSystem,
+        setLandingPageUrl,
     }, dispatch);
 }
 

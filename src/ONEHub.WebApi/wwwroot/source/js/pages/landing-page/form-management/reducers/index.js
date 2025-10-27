@@ -12,10 +12,27 @@ export const statusList = createReducer(null, {
     }
 });
 export const allLanguagesInSystem = createReducer(null, {});
-export const maxFileSize = createReducer(fileUpload.MaxFileSize, {});
-export const maximumFiles = createReducer(fileUpload.MaximumFiles, {});
-export const bannerRootUrl = createReducer(null, {});
-export const allowedExtensions = createReducer(fileUpload.AllowedImageExtensions, {});
+export const maxFileSize = createReducer(fileUpload.MaxFileSize, {
+    [types.SET_MAX_FILE_SIZE](prevState, action) {
+        return action.data;
+    }
+});
+export const maximumFiles = createReducer(fileUpload.MaximumFiles, {
+    [types.SET_MAXIMUM_FILES](prevState, action) {
+        return action.data;
+    }
+});
+export const bannerRootUrl = createReducer(null, {
+    [types.SET_BANNER_ROOT_URL](prevState, action) {
+        console.log(action.data);
+        return action.data;
+    }
+});
+export const allowedExtensions = createReducer(fileUpload.AllowedImageExtensions, {
+    [types.SET_ALLOWED_EXTENSIONS](prevState, action) {
+        return action.data;
+    }
+});
 export const isModifyInFormUploader = createReducer(false, {});
 
 export const moduleList = createReducer(null, {

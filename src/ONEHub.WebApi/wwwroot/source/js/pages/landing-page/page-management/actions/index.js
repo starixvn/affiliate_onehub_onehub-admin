@@ -70,6 +70,20 @@ export const setNotification = (data) => {
     }
 }
 
+export const setLandingPageUrl = (data) => {
+    return {
+        type: types.SET_LANDING_PAGE_URL,
+        data
+    }
+}
+
+export const setAllLanguagesInSystem = (data) => {
+    return {
+        type: types.SET_ALL_LANGUAGES_IN_SYSTEM,
+        data
+    }
+}
+
 export const fetchData = (param) => async (dispatch) => {
     dispatch(toggleLoader(true));
 
@@ -79,7 +93,7 @@ export const fetchData = (param) => async (dispatch) => {
         RequestId: uuidv4()
     };
 
-    const url = 'Portal/PageManagement/GetPageManagementList';
+    const url = 'api/landingpage/list';
     const response = await post(url, paramWithId);
 
     const data = response && response.status === 200 ? response.data : null;
@@ -91,7 +105,7 @@ export const fetchData = (param) => async (dispatch) => {
 }
 
 export const toggleLandingPageStatus = (param) => async () => {
-    const url = 'Portal/PageManagement/ToggleLandingPageStatus';
+    const url = 'api/landingpage/status';
     const response = await post(url, param);
 
     return response && response.status === 200 ? response.data : null;

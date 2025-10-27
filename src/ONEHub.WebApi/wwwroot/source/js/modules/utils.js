@@ -1,8 +1,13 @@
 import moment from "moment";
 
-const _rootUrl = window.initialState && window.initialState.apiBaseUrl || '/api';
+const _rootUrl = window.initialState && window.initialState.apiBaseUrl || 'api';
 
 export const resolveClientUrl = (relativeUrl) => {
+    // If URL already starts with /api, use it as-is (avoid duplicate /api/api)
+    if (relativeUrl.startsWith('api') || relativeUrl.startsWith('/api')) {
+        return relativeUrl;
+    }
+    
     // Remove 'Portal/' prefix for .NET 9 routing
     if (relativeUrl.startsWith('Portal/')) {
         relativeUrl = relativeUrl.replace('Portal/', '');
