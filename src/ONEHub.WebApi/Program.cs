@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.IdentityModel.Tokens;
 using ONEHub.Application;
 using ONEHub.Infrastructure;
+using ONEHub.WebApi.Extensions;
 using Serilog;
 using SharpRaven;
 using System.Text;
@@ -106,6 +107,8 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSiteHealthChecks(builder.Configuration);
+
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
@@ -128,7 +131,7 @@ if (app.Environment.IsDevelopment())
 
 //app.UseSerilogRequestLogging();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // URL Rewriting for extensionless HTML files
 var rewriteOptions = new RewriteOptions()
@@ -205,10 +208,9 @@ app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseSiteHealthChecks(app.Configuration);
 
-app.MapGet("/health", () => Results.Ok(new { status = "Healthy", timestamp = DateTime.UtcNow }))
-    .WithName("HealthCheck");
+app.MapControllers();
 
 try
 {
