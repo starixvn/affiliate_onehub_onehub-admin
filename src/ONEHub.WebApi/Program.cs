@@ -111,12 +111,7 @@ builder.Services.AddCors(options =>
     options.AddDefaultPolicy(policy =>
     {
         // IMPORTANT: AllowCredentials() requires specific origins (cannot use AllowAnyOrigin)
-        policy.WithOrigins(
-                "https://localhost:7137",
-                "https://localhost:5001",
-                "http://localhost:5001",
-                "http://localhost:7137"
-            )
+        policy.WithOrigins()
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();  // Required for HttpOnly cookies
