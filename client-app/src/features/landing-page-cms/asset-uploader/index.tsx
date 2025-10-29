@@ -1,20 +1,21 @@
-import { Button } from '@/components/ui/button'
-import { Main } from '@/components/layout/main'
+import { getRouteApi } from '@tanstack/react-router'
+import { AssetUploaderContent } from './components/asset-uploader-content'
+import { AssetUploaderProvider } from './components/asset-uploader-provider'
+import { AssetDialogs } from './components/dialog/asset-dialogs'
+import { normalizeSearchParams } from './data/constants'
+
+const route = getRouteApi('/iframe/landing-page-cms/asset-uploader/')
 
 export function AssetUploader() {
+  const search = route.useSearch()
+
+  // Normalize search params với defaults
+  const params = normalizeSearchParams(search)
+
   return (
-    <Main>
-      <div className='mb-2 flex items-center justify-between space-y-2'>
-        <h1 className='text-2xl font-bold tracking-tight'>Asset Uploader</h1>
-        <div className='flex items-center space-x-2'>
-          <Button>Upload Asset</Button>
-        </div>
-      </div>
-      <div className='space-y-4'>
-        <p className='text-muted-foreground'>
-          Upload and manage images, videos, and other assets.
-        </p>
-      </div>
-    </Main>
+    <AssetUploaderProvider params={params}>
+      <AssetUploaderContent />
+      <AssetDialogs />
+    </AssetUploaderProvider>
   )
 }
