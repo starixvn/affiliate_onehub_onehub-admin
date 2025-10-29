@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Commit Message Generation Rules
+
+When generating commit messages, ALWAYS follow these strict rules based on our commitlint configuration:
+
+## Format Requirements
+
+- Use format: `<type>(scope): Description`
+- Subject length: 10-72 characters
+- Subject case: Sentence case (first letter capitalized)
+- NO period at end of subject
+- Body line length: max 100 characters per line
+
+## Required Types (use exactly these)
+
+- `feat`: New feature
+- `fix`: Bug fix  
+- `docs`: Documentation changes
+- `style`: Code style/formatting changes
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding/updating tests
+- `build`: Build system changes
+- `ci`: CI/CD changes
+- `chore`: Maintenance tasks
+- `revert`: Revert previous commit
+
+## Required Scopes (use these when applicable)
+
+- `client`: Client-related changes
+- `server`: Server-related changes
+- `script`: Script-related changes
+- `api`: API changes
+- `ui`: UI changes
+- `config`: Configuration changes
+- `deps`: Dependency updates
+
+## Examples of GOOD commit messages
+
+```
+feat(client): Add user authentication form
+fix(api): Resolve database connection timeout
+docs: Update installation instructions
+style(ui): Format button components consistently
+refactor(server): Simplify data validation logic
+perf(api): Optimize database query performance
+test(client): Add unit tests for auth service
+build(config): Update webpack configuration
+ci: Add automated testing workflow
+chore(deps): Update React to version 18
+```
+
+## Examples of BAD commit messages
+
+```
+feat[client]: add auth (wrong brackets, wrong case, too short)
+Fix bug. (no type, has period, too short)
+FEAT(CLIENT): ADD USER AUTH FORM (wrong case)
+feat(client): add user authentication form that allows users to login and register with email and password validation and remember me functionality (too long - over 72 chars)
+```
+
+## Breaking Changes
+
+For breaking changes, add `!` after type/scope:
+```
+feat(api)!: Redesign user authentication endpoints
+```
+
+## When generating commits:
+
+1. Analyze the code changes first
+2. Determine the most appropriate type
+3. Choose relevant scope if applicable
+4. Write clear, concise description
+5. Ensure it follows all format rules
+6. NEVER use square brackets `[]`
+7. ALWAYS use parentheses `()` for scope

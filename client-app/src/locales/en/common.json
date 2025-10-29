@@ -1,0 +1,92 @@
+{
+  "language": {
+    "english": "English",
+    "chinese": "中文",
+    "toggle": "Toggle language"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "toggle": "Toggle theme"
+  },
+  "nav": {
+    "menu": "Menu",
+    "dashboard": "Dashboard",
+    "tasks": "Tasks",
+    "users": "Users",
+    "campaigns": "Campaigns",
+    "campaignManagement": "Campaign Management",
+    "landingPageCMS": "Landing Page CMS",
+    "pageManagement": "Page Management",
+    "pageBuilder": "Page Builder",
+    "assetUploader": "Asset Uploader",
+    "registerFormManagement": "Register Form Management",
+    "linkGenerator": "Link Generator",
+    "generateLink": "Generate Link",
+    "linkManagement": "Link Management",
+    "componentManagement": "Component Management",
+    "pages": "Pages",
+    "settings": "Settings"
+  },
+  "common": {
+    "notifications": "Notifications",
+    "profile": "Profile",
+    "search": "Search",
+    "viewAll": "View all notifications",
+    "settings": "Settings",
+    "others": "Others",
+    "helpCenter": "Help Center",
+    "signOut": "Sign out",
+    "new": "new"
+  },
+  "search": {
+    "placeholder": "Type a command or search...",
+    "noResults": "No results found."
+  },
+  "auth": {
+    "signIn": "Sign in",
+    "signInTitle": "Sign in",
+    "signInDescription": "Enter your account and password below to log into your account",
+    "appTitle": "ONEHub Admin",
+    "username": "Username",
+    "password": "Password",
+    "usernamePlaceholder": "admin",
+    "passwordPlaceholder": "********",
+    "languageLabel": "Language",
+    "validation": {
+      "usernameRequired": "Please enter your username",
+      "passwordRequired": "Please enter your password",
+      "passwordMinLength": "Password must be at least 7 characters long"
+    },
+    "errors": {
+      "loginFailed": "Login failed"
+    }
+  },
+  "dataTable": {
+    "view": "View",
+    "toggleColumns": "Toggle columns",
+    "page": "Page {{current}} of {{total}}",
+    "rowsPerPage": "Rows per page",
+    "reset": "Reset",
+    "submit": "Search",
+    "clear": "Clear",
+    "aria": {
+      "firstPage": "Go to first page",
+      "previousPage": "Go to previous page",
+      "nextPage": "Go to next page",
+      "lastPage": "Go to last page",
+      "goToPage": "Go to page {{page}}"
+    },
+    "bulkActions": {
+      "announcement_one": "{{count}} {{entity}} selected. Bulk actions toolbar is available.",
+      "announcement_other": "{{count}} {{entity}}s selected. Bulk actions toolbar is available.",
+      "ariaLabel_one": "Bulk actions for {{count}} selected {{entity}}",
+      "ariaLabel_other": "Bulk actions for {{count}} selected {{entity}}s",
+      "clearSelection": "Clear selection",
+      "clearSelectionEscape": "Clear selection (Escape)",
+      "selectedCount": "{{count}} selected",
+      "selected": "selected"
+    }
+  }
+}

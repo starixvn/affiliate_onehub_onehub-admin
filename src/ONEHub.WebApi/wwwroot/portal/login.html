@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/favicon.ico">
+    <base href="/" />
+    <link href="/dist/vendors/bootstrap.css?v=4.3.1" rel="stylesheet" />
+    <title>ONEHub Admin - Login</title>
+    
+    <!-- Version Helper (must load first!) -->
+    <script type="text/javascript" src="/portal/common/version-helper.js"></script>
+    <script type="text/javascript" src="/portal/common/script-loader.js"></script>
+</head>
+<body>
+    <!-- Root element for React -->
+    <div id="root"></div>
+    
+    <!-- Initialize state -->
+    <script type="text/javascript">
+        window.initialState = {
+            licenseeName: '12BET Affiliate Admin',
+            apiBaseUrl: '/api'
+        };
+    </script>
+    
+    <!-- Load all scripts with automatic versioning -->
+    <script type="text/javascript">
+        (async function() {
+            try {
+                // Load stylesheets
+                await window.loadStylesheet('/dist/style/login.css');
+                
+                // Load vendor scripts first
+                await window.loadScript('/dist/vendors/react.js');
+                await window.loadScript('/dist/vendors/moment.js');
+                
+                // Load required chunks
+                await window.loadScript('/dist/js/dynamic-chunks/vendors/common.chunk.js');
+                await window.loadScript('/dist/js/dynamic-chunks/common.chunk.js');
+                
+                // Finally load login page bundle
+                await window.loadScript('/dist/js/pages/login.js');
+            } catch (error) {
+                console.error('[Login] Failed to load scripts:', error);
+                document.getElementById('root').innerHTML = '<div style="padding: 20px; color: red;">Failed to load application. Please refresh the page.</div>';
+            }
+        })();
+    </script>
+</body>
+</html>
+

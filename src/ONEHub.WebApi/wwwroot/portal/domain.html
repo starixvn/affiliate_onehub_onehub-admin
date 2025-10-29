@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="icon" href="/favicon.ico">
+    <base href="/" />
+    <title>Domain - ONEHub Admin</title>
+    
+    <!-- Version Helper (must load first!) -->
+    <script type="text/javascript" src="/portal/common/version-helper.js"></script>
+    <script type="text/javascript" src="/portal/common/script-loader.js"></script>
+    <script type="text/javascript" src="/portal/common/common-config.js"></script>
+    <script type="text/javascript" src="/portal/common/auth-guard.js"></script>
+</head>
+<body>
+    <div id="root"></div>
+    <iframe width="0" height="0" style="display: none" src="/api/auth/recheckin"></iframe>
+    
+    <script type="text/javascript">
+        authenticateUser(function() {
+            (async function() {
+                try {
+                    await Promise.all([
+                        window.loadStylesheet('/dist/vendors/bootstrap.css'),
+                        window.loadStylesheet('/dist/style/portalmain.css'),
+                        window.loadStylesheet('/dist/style/layout.css'),
+                        window.loadStylesheet('/dist/style/12bet.css'),
+                        window.loadStylesheet('/dist/style/domain.css')
+                    ]);
+                    
+                    await window.loadScript('/dist/vendors/react.js');
+                    await window.loadScript('/dist/vendors/moment.js');
+                    await window.loadScript('/dist/vendors/bootstrap.js');
+                    
+                    await window.loadScript('/dist/js/dynamic-chunks/vendors/react-core.chunk.js');
+                    await window.loadScript('/dist/js/dynamic-chunks/vendors/common.chunk.js');
+                    await window.loadScript('/dist/js/dynamic-chunks/common.chunk.js');
+                    
+                    await window.loadScript('/dist/js/pages/domain.js');
+                } catch (error) {
+                    console.error('[Domain] Failed to load resources:', error);
+                    document.getElementById('root').innerHTML = '<div style="padding: 20px; color: red;">Failed to load application. Please refresh the page.</div>';
+                }
+            })();
+        });
+    </script>
+</body>
+</html>
+
