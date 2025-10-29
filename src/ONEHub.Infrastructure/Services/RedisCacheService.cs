@@ -1,21 +1,21 @@
-using MessagePack;
-using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 using ONEHub.Domain.Interfaces;
 using StackExchange.Redis;
 
-namespace ONEHub.Infrastructure.Caching;
+namespace ONEHub.Infrastructure.Services;
 
 public class RedisCacheService : ICacheService
 {
     private readonly IConnectionMultiplexer _redis;
     private readonly IDatabase _database;
-
-    public RedisCacheService(IConfiguration configuration)
+    private static readonly JsonSerializerOptions _jsonOptions = new()
     {
-        var connectionString = configuration.GetConnectionString("Redis")
-            ?? throw new InvalidOperationException("Redis connection string not found");
+        PropertyNameCaseInsensitive = true
+    };
 
-        _redis = ConnectionMultiplexer.Connect(connectionString);
+    public RedisCacheService(IConnectionMultiplexer redis)
+    {
+        _redis = redis;
         _database = _redis.GetDatabase();
     }
 
@@ -26,14 +26,13 @@ public class RedisCacheService : ICacheService
         if (value.IsNullOrEmpty)
             return default;
 
-        var bytes = (byte[])value!;
-        return MessagePackSerializer.Deserialize<T>(bytes);
+        return JsonSerializer.Deserialize<T>(value!, _jsonOptions);
     }
 
     public async Task SetAsync<T>(string key, T value, TimeSpan? expiration = null, CancellationToken cancellationToken = default)
     {
-        var bytes = MessagePackSerializer.Serialize(value);
-        await _database.StringSetAsync(key, bytes, expiration);
+        var json = JsonSerializer.Serialize(value, _jsonOptions);
+        await _database.StringSetAsync(key, json, expiration);
     }
 
     public async Task RemoveAsync(string key, CancellationToken cancellationToken = default)

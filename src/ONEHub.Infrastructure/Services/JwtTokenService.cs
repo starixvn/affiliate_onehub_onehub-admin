@@ -7,7 +7,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace ONEHub.Infrastructure.Authentication;
+namespace ONEHub.Infrastructure.Services;
 
 public class JwtTokenService : IJwtTokenService
 {

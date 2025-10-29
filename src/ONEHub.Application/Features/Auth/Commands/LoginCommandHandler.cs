@@ -6,6 +6,7 @@ using ONEHub.Application.DTOs.Auth;
 using ONEHub.Domain.Commands.Auth;
 using ONEHub.Domain.Criterias.Auth;
 using ONEHub.Domain.DTOs.Common;
+using ONEHub.Domain.Entities.Auth;
 using ONEHub.Domain.Interfaces;
 
 namespace ONEHub.Application.Features.Auth.Commands;
@@ -16,6 +17,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
     private readonly ISessionService _sessionService;
     private readonly IAuthService _authService;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly IRefreshTokenService _refreshTokenService;
     private readonly IConfiguration _configuration;
     private readonly ILogger<LoginCommandHandler> _logger;
 
@@ -24,6 +26,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
         ISessionService sessionService,
         IAuthService authService,
         IJwtTokenService jwtTokenService,
+        IRefreshTokenService refreshTokenService,
         IConfiguration configuration,
         ILogger<LoginCommandHandler> logger)
     {
@@ -31,6 +34,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
         _sessionService = sessionService;
         _authService = authService;
         _jwtTokenService = jwtTokenService;
+        _refreshTokenService = refreshTokenService;
         _configuration = configuration;
         _logger = logger;
     }
@@ -101,6 +105,17 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginDto>
             var refreshToken = _jwtTokenService.GenerateRefreshToken();
 
             var expirationMinutes = int.Parse(_configuration["Jwt:AccessTokenExpirationMinutes"] ?? "60");
+            var refreshTokenExpirationDays = int.Parse(_configuration["Jwt:RefreshTokenExpirationDays"] ?? "7");
+
+            var userRefreshToken = new UserRefreshToken
+            {
+                UserId = userId,
+                RefreshToken = refreshToken,
+                ExpiresAt = DateTime.UtcNow.AddDays(refreshTokenExpirationDays),
+                CreatedByIp = request.IpAddress
+            };
+
+            await _refreshTokenService.SaveAsync(userRefreshToken);
 
             _logger.LogInformation("User {UserName} (UserId: {UserId}) logged in successfully", request.UserName, userId);
 

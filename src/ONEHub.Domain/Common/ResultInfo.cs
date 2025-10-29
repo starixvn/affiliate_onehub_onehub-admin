@@ -16,9 +16,9 @@ public class ResultInfo
 
     public static ResultInfo Success => new();
 
-    public static ResultInfo GenerateError(string message = "") => new()
+    public static ResultInfo GenerateError(string message = "", int code = 1) => new()
     {
-        Code = 1,
+        Code = code,
         Message = message
     };
 }
@@ -31,6 +31,13 @@ public class ResultInfo<T> : ResultInfo
     {
         Code = 0,
         Data = data
+    };
+
+    public static ResultInfo<T> GenerateError(string message = "", int code = 1) => new()
+    {
+        Code = code,
+        Message = message,
+        Data = default
     };
 }
 

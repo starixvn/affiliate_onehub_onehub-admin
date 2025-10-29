@@ -81,14 +81,7 @@ apiClient.interceptors.response.use(
       isRefreshing = true
 
       try {
-        const userId = tokenService.getUserId()
-        if (!userId) {
-          throw new Error('No user ID available')
-        }
-
-        const response = await apiClient.post('/auth/refresh', {
-          userId,
-        })
+        const response = await apiClient.post('/auth/refresh')
 
         const { data } = response
         if (data?.errorCode === 0 && data.result?.accessToken) {
@@ -106,6 +99,7 @@ apiClient.interceptors.response.use(
         throw new Error('Token refresh failed')
       } catch (refreshError) {
         tokenService.clearTokens()
+        window.location.href = '/login'
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

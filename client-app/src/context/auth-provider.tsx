@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
@@ -84,6 +90,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await logoutMutation.mutateAsync()
   }
 
+  const attemptTokenRefresh = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await authApi.refreshToken(0)
+
+      if (response.errorCode === 0 && response.result?.accessToken) {
+        const { accessToken } = response.result
+        const userData = tokenService.extractUserData(accessToken)
+
+        if (!userData) {
+          return false
+        }
+
+        const userId = tokenService.getUserIdFromToken(accessToken)
+        tokenService.setAccessToken(accessToken)
+        tokenService.setUserId(userId)
+
+        setUser({ ...userData, isAuthenticated: true } as AuthUser)
+        setAccessToken(accessToken)
+
+        return true
+      }
+
+      return false
+    } catch {
+      return false
+    }
+  }, [setUser, setAccessToken])
+
   useEffect(() => {
     const initializeAuth = async () => {
       const token = tokenService.getAccessToken()
@@ -94,13 +128,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser({ ...userData, isAuthenticated: true } as AuthUser)
           setAccessToken(token)
         }
+      } else {
+        const refreshed = await attemptTokenRefresh()
+        if (!refreshed) {
+          tokenService.clearTokens()
+        }
       }
 
       setIsLoading(false)
     }
 
     initializeAuth()
-  }, [setAccessToken])
+  }, [setAccessToken, attemptTokenRefresh])
 
   const value: AuthContextValue = {
     isAuthenticated: !!user,
@@ -115,6 +154,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {

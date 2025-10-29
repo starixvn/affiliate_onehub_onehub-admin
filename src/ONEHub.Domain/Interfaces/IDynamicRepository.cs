@@ -6,4 +6,3 @@ public interface IDynamicRepository
     Task<IEnumerable<T>> FetchAsync<T>(object criteria) where T : class;
     Task<int> ExecuteAsync(object command);
 }
-

@@ -98,6 +98,18 @@ declare module '@tanstack/react-router' {
 
 function InnerApp() {
   const auth = useAuth()
+
+  if (auth.isLoading) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <div className='text-center'>
+          <div className='mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]' />
+          <p className='text-muted-foreground text-sm'>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return <RouterProvider router={router} context={{ queryClient, auth }} />
 }
 
