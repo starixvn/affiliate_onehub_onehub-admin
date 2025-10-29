@@ -36,6 +36,8 @@ public static class DependencyInjection
             options.KnownProxies.Clear();
         });
 
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+
         services.AddHttpContextAccessor();
 
         services.InstallServices(configuration, typeof(IServiceInstaller).Assembly);

@@ -11,6 +11,10 @@ try
     Log.Information("Starting ONEHub Admin API");
     var app = builder.Build();
 
+    app.UseExceptionHandler(options => { });
+
+    app.UseHttpRequestLogging();
+
     app.UseCors();
 
     app.UsePing();

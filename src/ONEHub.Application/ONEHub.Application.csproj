@@ -13,7 +13,6 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
-        <PackageReference Include="Newtonsoft.Json" />
         <PackageReference Include="Fanex.Logging" />
     </ItemGroup>
 
