@@ -1,15 +1,16 @@
+using System.Net;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using ONEHub.Application.LandingPages.LandingPageService.Queries;
-using ONEHub.Application.LandingPages.PageBuilder.Commands;
-using ONEHub.Application.LandingPages.PageBuilder.Queries;
+using ONEHub.Application.Features.LandingPages.LandingPageService.Queries;
+using ONEHub.Application.Features.LandingPages.PageBuilder.Commands;
+using ONEHub.Application.Features.LandingPages.PageBuilder.Queries;
+using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.DTOs.Campaigns;
 using ONEHub.Domain.DTOs.LandingPages;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Interfaces;
-using System.Net;
 using InsertCampaignDomainCommand = ONEHub.Domain.Commands.Campaigns.InsertCampaignCommand;
 
 namespace ONEHub.WebApi.Controllers;
@@ -55,7 +56,7 @@ public class PageBuilderController : ControllerBase
     [HttpPost("GetMediaSources")]
     public async Task<IActionResult> GetMediaSources([FromBody] MediaSourceRequest request)
     {
-        var criteria = new ONEHub.Domain.Criterias.LandingPages.GetMediaSourceCriteria
+        var criteria = new GetMediaSourceCriteria
         {
             ModuleId = request.ModuleId,
             TargetCountryCode = request.TargetCountryCode,

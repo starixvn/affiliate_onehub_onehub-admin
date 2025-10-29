@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ONEHub.Application.Campaigns.Commands;
-using ONEHub.Application.Campaigns.Queries;
 using ONEHub.Application.DTOs.Campaigns;
+using ONEHub.Application.Features.Campaigns.Commands;
+using ONEHub.Application.Features.Campaigns.Queries;
 using ONEHub.Domain.DTOs.Campaigns;
 using ONEHub.Domain.Interfaces;
 using ONEHub.WebApi.Models;

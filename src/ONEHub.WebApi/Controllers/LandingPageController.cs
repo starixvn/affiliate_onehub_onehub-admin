@@ -1,9 +1,9 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ONEHub.Application.LandingPages.LandingPageService.Queries;
-using ONEHub.Application.LandingPages.PageManagement.Commands;
-using ONEHub.Application.LandingPages.PageManagement.Queries;
+using ONEHub.Application.Features.LandingPages.LandingPageService.Queries;
+using ONEHub.Application.Features.LandingPages.PageManagement.Commands;
+using ONEHub.Application.Features.LandingPages.PageManagement.Queries;
 using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.DTOs.LandingPages;
 using ONEHub.Domain.Interfaces;

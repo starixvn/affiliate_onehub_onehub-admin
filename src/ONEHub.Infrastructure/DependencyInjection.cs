@@ -1,6 +1,4 @@
-using Fanex.Data;
 using Fanex.Logging;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ONEHub.Domain.Interfaces;
 using ONEHub.Infrastructure.Authentication;
@@ -13,19 +11,13 @@ namespace ONEHub.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddInfrastructure(this IServiceCollection services)
     {
-        DbSettingProviderManager
-            .StartNewSession()
-            .Register(configuration)
-            .Run();
-
         services.AddSingleton<ILogger, Logger>();
         services.AddSingleton<ILogProvider, LogProvider>();
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
         services.AddSingleton<ICacheService, RedisCacheService>();
 
-        services.AddHttpContextAccessor();
         services.AddScoped<ISessionService, SessionService>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IJwtTokenService, JwtTokenService>();

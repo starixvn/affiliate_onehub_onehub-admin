@@ -1,7 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ONEHub.Application.Affiliates.Commands;
-using ONEHub.Application.Affiliates.Queries;
+using ONEHub.Application.Features.Affiliates.Commands;
+using ONEHub.Application.Features.Affiliates.Queries;
 
 namespace ONEHub.WebApi.Controllers;
 

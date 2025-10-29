@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using ONEHub.Application.Auth.Commands;
 using ONEHub.Application.DTOs.Auth;
+using ONEHub.Application.Features.Auth.Commands;
 using ONEHub.Domain.Interfaces;
 using ONEHub.WebApi.Models;
 
