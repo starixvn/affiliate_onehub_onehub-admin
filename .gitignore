@@ -45,22 +45,11 @@ node_modules/
 .tanstack/
 node_modules/
 
-# Old Frontend Build Output (legacy, in backend wwwroot)
-/src/ONEHub.WebApi/wwwroot/assets/*
+# wwwroot
+**/wwwroot/assets/*
+**/wwwroot/images/*
+**/wwwroot/favicon.ico
+**/wwwroot/index.html
 
-# Keep static assets
-src/ONEHub.WebApi/wwwroot/favicon.ico
-src/ONEHub.WebApi/wwwroot/index.html
-
-# Legacy paths (can be removed after cleanup)
-/Aff12BET_DB/*.dbmdl
-/Affiliate/Logs
-/Affiliate Admin/Logs
-Affiliate/Report.csv
-/AffiliateAdmin/Banner
-/Fanex.Affiliate.User.Site/Properties/PublishProfiles/
-/Fanex.Affiliate.DataService/packages
-/Fanex.Affiliate.User.Site/coverage
-/Admin/AffiliateAdmin/coverage
 
 

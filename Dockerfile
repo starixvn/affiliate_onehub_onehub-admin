@@ -1,9 +1,9 @@
 # Stage 1: Build Frontend
-FROM hub.nexdev.net/base/node:22-alpine-25h2 AS node
+FROM hub.nexdev.net/base/node:24-alpine-25h2 AS node
 
 WORKDIR /app
 
-# Enable and prepare pnpm using Corepack (built into Node 22)
+# Enable and prepare pnpm using Corepack (built into Node 24)
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
 COPY client-app/package.json client-app/pnpm-lock.yaml ./
