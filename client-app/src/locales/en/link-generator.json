@@ -1,0 +1,54 @@
+{
+  "page": {
+    "title": "Generate Link",
+    "description": "Generate and manage trackable promotional links with custom parameters",
+    "loading": "Loading options..."
+  },
+  "form": {
+    "linkName": "Link Name",
+    "linkNamePlaceholder": "e.g., FTD Bonus - Social Media Campaign",
+    "linkNameRequired": "Link name is required",
+    "identifierCode": "Identifier Code",
+    "identifierCodePlaceholder": "e.g., dis03112 (leave empty for auto-generate)",
+    "campaign": "Campaign",
+    "campaignPlaceholder": "Select campaign",
+    "country": "Country",
+    "countryPlaceholder": "Select country",
+    "language": "Language",
+    "languagePlaceholder": "Select language",
+    "group": "Group",
+    "groupPlaceholder": "Select group",
+    "event": "Event",
+    "eventPlaceholder": "Select event",
+    "domainName": "Domain Name",
+    "domainNamePlaceholder": "Select domain name",
+    "domainReservedNotePlaceholder": "Reserved note *",
+    "shortLinkName": "Short Link Name",
+    "shortLinkNamePlaceholder": "Select short link name",
+    "shortLinkValuePlaceholder": "e.g., wc2016 (leave empty for auto-generate)",
+    "channel": "Channel",
+    "channelPlaceholder": "Select channel",
+    "type": "Type",
+    "typePlaceholder": "Select type",
+    "agency": "Agency",
+    "agencyPlaceholder": "Select agency",
+    "landingPage": "Landing Page",
+    "landingPagePlaceholder": "Select landing page",
+    "note": "Note",
+    "notePlaceholder": "Add any additional notes or description",
+    "requiredField": "*"
+  },
+  "buttons": {
+    "generateLink": "Generate Link",
+    "goToLinkManagement": "Go to Link Management",
+    "reset": "Reset",
+    "auto": "Auto"
+  },
+  "toast": {
+    "generating": "Generating link...",
+    "generated": "Link generated successfully",
+    "generateFailed": "Failed to generate link",
+    "formReset": "Form has been reset"
+  }
+}
+

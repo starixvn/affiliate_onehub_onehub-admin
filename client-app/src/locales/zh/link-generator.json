@@ -1,0 +1,55 @@
+{
+  "page": {
+    "title": "生成链接",
+    "description": "为您的活动创建跟踪链接",
+    "loading": "加载选项中..."
+  },
+  "form": {
+    "linkName": "链接名称",
+    "linkNamePlaceholder": "请输入链接名称",
+    "linkNameRequired": "链接名称为必填项",
+    "identifierCode": "标识码",
+    "identifierCodePlaceholder": "请输入标识码",
+    "campaign": "活动",
+    "campaignPlaceholder": "请选择活动",
+    "country": "国家",
+    "countryPlaceholder": "请选择国家",
+    "language": "语言",
+    "languagePlaceholder": "请选择语言",
+    "group": "分组",
+    "groupPlaceholder": "请选择分组",
+    "event": "事件",
+    "eventPlaceholder": "请选择事件",
+    "domainName": "域名",
+    "domainNamePlaceholder": "请选择域名",
+    "domainReservedNotePlaceholder": "保留备注 *",
+    "shortLinkName": "短链接名称",
+    "shortLinkNamePlaceholder": "请选择短链接名称",
+    "shortLinkValue": "短链接值",
+    "shortLinkValuePlaceholder": "请输入短链接值",
+    "channel": "渠道",
+    "channelPlaceholder": "请选择渠道",
+    "type": "类型",
+    "typePlaceholder": "请选择类型",
+    "agency": "代理",
+    "agencyPlaceholder": "请选择代理",
+    "landingPage": "着陆页",
+    "landingPagePlaceholder": "请选择着陆页",
+    "note": "备注",
+    "notePlaceholder": "请输入备注",
+    "requiredField": "*"
+  },
+  "buttons": {
+    "generateLink": "生成链接",
+    "goToLinkManagement": "前往链接管理",
+    "reset": "重置",
+    "auto": "自动"
+  },
+  "toast": {
+    "generating": "正在生成链接...",
+    "generated": "链接生成成功",
+    "generateFailed": "生成链接失败",
+    "formReset": "表单已重置"
+  }
+}
+

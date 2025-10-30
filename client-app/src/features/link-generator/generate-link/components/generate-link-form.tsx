@@ -1,0 +1,343 @@
+import { useState, useEffect } from 'react'
+import { Controller } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
+import { useGenerateLink } from './generate-link-provider'
+import { getLanguagesByCountry } from '../data/mock-options'
+import { CampaignActionDialog } from '@/features/campaign-management/components/dialog/campaign-action-dialog'
+import type { DropdownOption } from '../types'
+
+export function GenerateLinkForm() {
+  const { t } = useTranslation('link-generator')
+  const { form, options } = useGenerateLink()
+  const { register, control, watch } = form
+
+  const [languages, setLanguages] = useState<DropdownOption[]>([])
+  const [isLoadingLanguages, setIsLoadingLanguages] = useState(false)
+  const [isCampaignDialogOpen, setIsCampaignDialogOpen] = useState(false)
+
+  const selectedCountry = watch('country')
+
+  useEffect(() => {
+    if (selectedCountry) {
+      setIsLoadingLanguages(true)
+      getLanguagesByCountry(selectedCountry)
+        .then((langs) => {
+          setLanguages(langs)
+          if (langs.length > 0) {
+            form.setValue('language', langs[0].value)
+          }
+          setIsLoadingLanguages(false)
+        })
+        .catch(() => {
+          setLanguages([])
+          setIsLoadingLanguages(false)
+        })
+    } else {
+      setLanguages([])
+      form.setValue('language', '')
+    }
+  }, [selectedCountry, form])
+
+  const handleAutoIdentifier = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    let code = ''
+    for (let i = 0; i < 8; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    form.setValue('identifierCode', code)
+  }
+
+  const handleAutoShortLink = () => {
+    form.setValue('shortLinkValue', `${Math.random().toString(36).substring(7)}`)
+  }
+
+  const handleCreateNew = (_type: string) => {
+    setIsCampaignDialogOpen(true)
+  }
+
+  return (
+    <>
+      <CampaignActionDialog
+        open={isCampaignDialogOpen}
+        onOpenChange={setIsCampaignDialogOpen}
+      />
+
+      <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
+      <div className='space-y-3 sm:space-y-4'>
+        <div className='space-y-2'>
+          <Label htmlFor='linkName' className='text-sm'>
+            {t('form.linkName')} <span className='text-destructive'>{t('form.requiredField')}</span>
+          </Label>
+          <Input
+            id='linkName'
+            placeholder={t('form.linkNamePlaceholder')}
+            {...register('linkName')}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='identifierCode' className='text-sm'>{t('form.identifierCode')}</Label>
+          <div className='flex flex-col sm:flex-row gap-2'>
+            <Input
+              id='identifierCode'
+              placeholder={t('form.identifierCodePlaceholder')}
+              {...register('identifierCode')}
+              className='flex-1'
+            />
+            <Button type='button' variant='outline' onClick={handleAutoIdentifier} className='w-full sm:w-auto whitespace-nowrap'>
+              {t('buttons.auto')}
+            </Button>
+          </div>
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='campaign' className='text-sm'>{t('form.campaign')}</Label>
+          <Controller
+            name='campaign'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.campaigns || []}
+                placeholder={t('form.campaignPlaceholder')}
+                searchPlaceholder='Search campaign...'
+                onCreateNew={() => handleCreateNew('campaign')}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='country' className='text-sm'>{t('form.country')}</Label>
+          <Controller
+            name='country'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.countries || []}
+                placeholder={t('form.countryPlaceholder')}
+                searchPlaceholder='Search country...'
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='language' className='text-sm'>{t('form.language')}</Label>
+          <Controller
+            name='language'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={languages}
+                placeholder={
+                  isLoadingLanguages
+                    ? 'Loading languages...'
+                    : !selectedCountry
+                    ? 'Select a country first'
+                    : t('form.languagePlaceholder')
+                }
+                searchPlaceholder='Search language...'
+                disabled={!selectedCountry || isLoadingLanguages}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='group' className='text-sm'>{t('form.group')}</Label>
+          <Controller
+            name='group'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.groups || []}
+                placeholder={t('form.groupPlaceholder')}
+                searchPlaceholder='Search group...'
+                onCreateNew={() => handleCreateNew('group')}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='event' className='text-sm'>{t('form.event')}</Label>
+          <Controller
+            name='event'
+            control={control}
+            render={({ field }) => (
+              <MultipleSelect
+                value={Array.isArray(field.value) ? field.value : []}
+                onValueChange={field.onChange}
+                options={options?.events || []}
+                placeholder={t('form.eventPlaceholder')}
+                searchPlaceholder='Search event...'
+                selectedDisplayPattern='{0} events selected'
+              />
+            )}
+          />
+        </div>
+      </div>
+
+      <div className='space-y-3 sm:space-y-4'>
+        <div className='space-y-2'>
+          <Label htmlFor='domainName' className='text-sm'>
+            {t('form.domainName')} <span className='text-destructive'>{t('form.requiredField')}</span>
+          </Label>
+          <div className='flex flex-col sm:flex-row gap-2'>
+            <div className='w-full sm:w-80 sm:flex-shrink-0'>
+              <Controller
+                name='domainName'
+                control={control}
+                render={({ field }) => (
+                  <SingleSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={options?.domainNames || []}
+                    placeholder={t('form.domainNamePlaceholder')}
+                    searchPlaceholder='Search domain...'
+                  />
+                )}
+              />
+            </div>
+            <Input
+              id='domainReservedNote'
+              placeholder={t('form.domainReservedNotePlaceholder')}
+              {...register('domainReservedNote')}
+              className='flex-1'
+              required
+            />
+          </div>
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='shortLinkName' className='text-sm'>
+            {t('form.shortLinkName')} <span className='text-destructive'>{t('form.requiredField')}</span>
+          </Label>
+          <div className='flex flex-col sm:flex-row gap-2'>
+            <div className='w-full sm:w-80 sm:flex-shrink-0'>
+              <Controller
+                name='shortLinkName'
+                control={control}
+                render={({ field }) => (
+                  <SingleSelect
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    options={options?.shortLinkNames || []}
+                    placeholder={t('form.shortLinkNamePlaceholder')}
+                    searchPlaceholder='Search short link...'
+                  />
+                )}
+              />
+            </div>
+            <div className='flex items-center gap-2 flex-1'>
+              <span className='text-muted-foreground hidden sm:inline'>/</span>
+              <Input
+                id='shortLinkValue'
+                placeholder={t('form.shortLinkValuePlaceholder')}
+                {...register('shortLinkValue')}
+                className='flex-1 min-w-0'
+              />
+              <Button type='button' variant='outline' onClick={handleAutoShortLink} className='whitespace-nowrap'>
+                {t('buttons.auto')}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='channel' className='text-sm'>{t('form.channel')}</Label>
+          <Controller
+            name='channel'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.channels || []}
+                placeholder={t('form.channelPlaceholder')}
+                searchPlaceholder='Search channel...'
+                onCreateNew={() => handleCreateNew('channel')}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='type' className='text-sm'>{t('form.type')}</Label>
+          <Controller
+            name='type'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.types || []}
+                placeholder={t('form.typePlaceholder')}
+                searchPlaceholder='Search type...'
+                onCreateNew={() => handleCreateNew('type')}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='agency' className='text-sm'>{t('form.agency')}</Label>
+          <Controller
+            name='agency'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.agencies || []}
+                placeholder={t('form.agencyPlaceholder')}
+                searchPlaceholder='Search agency...'
+                onCreateNew={() => handleCreateNew('agency')}
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='landingPage' className='text-sm'>{t('form.landingPage')}</Label>
+          <Controller
+            name='landingPage'
+            control={control}
+            render={({ field }) => (
+              <SingleSelect
+                value={field.value}
+                onValueChange={field.onChange}
+                options={options?.landingPages || []}
+                placeholder={t('form.landingPagePlaceholder')}
+                searchPlaceholder='Search landing page...'
+              />
+            )}
+          />
+        </div>
+
+        <div className='space-y-2'>
+          <Label htmlFor='note' className='text-sm'>{t('form.note')}</Label>
+          <Input
+            id='note'
+            placeholder={t('form.notePlaceholder')}
+            {...register('note')}
+          />
+        </div>
+      </div>
+    </div>
+    </>
+  )
+}
+
