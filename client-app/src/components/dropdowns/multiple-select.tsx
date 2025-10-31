@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ChevronsUpDown } from 'lucide-react'
+import { ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -10,6 +10,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
+  CommandSeparator,
 } from '@/components/ui/command'
 import {
   Popover,
@@ -22,16 +23,20 @@ interface MultipleSelectProps {
   value: string[]
   onValueChange: (value: string[]) => void
   options: SelectOption[] | SelectGroup[] | NestedSelectGroup[]
+  labelKey: string
+  valueKey: string
   placeholder?: string
   searchPlaceholder?: string
   disabled?: boolean
   selectedDisplayPattern?: string
   enableGroupSelect?: boolean
+  onCreateNew?: () => void
+  createNewLabel?: string
   className?: string
 }
 
 function isSelectOption(item: unknown): item is SelectOption {
-  return (item as SelectOption).value !== undefined
+  return typeof item === 'object' && item !== null && !isSelectGroup(item) && !isNestedSelectGroup(item)
 }
 
 function isSelectGroup(item: unknown): item is SelectGroup {
@@ -46,33 +51,40 @@ export function MultipleSelect({
   value = [],
   onValueChange,
   options,
+  labelKey,
+  valueKey,
   placeholder = 'Select options',
   searchPlaceholder = 'Search...',
   disabled = false,
   selectedDisplayPattern = '{0} items selected',
   enableGroupSelect = true,
+  onCreateNew,
+  createNewLabel = 'Create new...',
   className,
 }: MultipleSelectProps) {
   const [open, setOpen] = useState(false)
+
+  const getLabel = (option: SelectOption): string => String(option[labelKey])
+  const getValue = (option: SelectOption): string => String(option[valueKey])
 
   const getSelectedLabel = () => {
     if (value.length === 0) return null
     if (value.length === 1) {
       for (const item of options) {
         if (isSelectOption(item)) {
-          if (item.value === value[0]) return item.label
+          if (getValue(item) === value[0]) return getLabel(item)
         } else if (isSelectGroup(item)) {
-          const found = item.options.find((opt) => opt.value === value[0])
-          if (found) return found.label
+          const found = item.options.find((opt: SelectOption) => getValue(opt) === value[0])
+          if (found) return getLabel(found)
         } else if (isNestedSelectGroup(item)) {
           if (item.options) {
-            const found = item.options.find((opt) => opt.value === value[0])
-            if (found) return found.label
+            const found = item.options.find((opt: SelectOption) => getValue(opt) === value[0])
+            if (found) return getLabel(found)
           }
           if (item.groups) {
             for (const group of item.groups) {
-              const found = group.options.find((opt) => opt.value === value[0])
-              if (found) return found.label
+              const found = group.options.find((opt: SelectOption) => getValue(opt) === value[0])
+              if (found) return getLabel(found)
             }
           }
         }
@@ -89,7 +101,7 @@ export function MultipleSelect({
   }
 
   const handleToggleGroup = (groupOptions: SelectOption[]) => {
-    const groupValues = groupOptions.map((opt) => opt.value)
+    const groupValues = groupOptions.map((opt) => getValue(opt))
     const allSelected = groupValues.every((v) => value.includes(v))
     
     if (allSelected) {
@@ -105,8 +117,13 @@ export function MultipleSelect({
     }
   }
 
+  const handleCreateNew = () => {
+    setOpen(false)
+    onCreateNew?.()
+  }
+
   const getGroupCheckboxState = (groupOptions: SelectOption[]): boolean | 'indeterminate' => {
-    const groupValues = groupOptions.map((opt) => opt.value)
+    const groupValues = groupOptions.map((opt) => getValue(opt))
     const selectedCount = groupValues.filter((v) => value.includes(v)).length
     
     if (selectedCount === 0) return false
@@ -122,15 +139,15 @@ export function MultipleSelect({
     if (isSelectOption(firstItem)) {
       return (options as SelectOption[]).map((option) => (
         <CommandItem
-          key={option.value}
-          value={option.label}
-          onSelect={() => handleToggle(option.value)}
+          key={getValue(option)}
+          value={getLabel(option)}
+          onSelect={() => handleToggle(getValue(option))}
         >
           <Checkbox
-            checked={value.includes(option.value)}
+            checked={value.includes(getValue(option))}
             className='mr-2'
           />
-          {option.label}
+          {getLabel(option)}
         </CommandItem>
       ))
     }
@@ -162,15 +179,15 @@ export function MultipleSelect({
             )}
             {group.options.map((option) => (
               <CommandItem
-                key={option.value}
-                value={option.label}
-                onSelect={() => handleToggle(option.value)}
+                key={getValue(option)}
+                value={getLabel(option)}
+                onSelect={() => handleToggle(getValue(option))}
               >
                 <Checkbox
-                  checked={value.includes(option.value)}
+                  checked={value.includes(getValue(option))}
                   className='mr-2'
                 />
-                {option.label}
+                {getLabel(option)}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -209,15 +226,15 @@ export function MultipleSelect({
             )}
             {topGroup.options?.map((option) => (
               <CommandItem
-                key={option.value}
-                value={option.label}
-                onSelect={() => handleToggle(option.value)}
+                key={getValue(option)}
+                value={getLabel(option)}
+                onSelect={() => handleToggle(getValue(option))}
               >
                 <Checkbox
-                  checked={value.includes(option.value)}
+                  checked={value.includes(getValue(option))}
                   className='mr-2'
                 />
-                {option.label}
+                {getLabel(option)}
               </CommandItem>
             ))}
             {topGroup.groups?.map((group) => {
@@ -246,15 +263,15 @@ export function MultipleSelect({
                   )}
                   {group.options.map((option) => (
                     <CommandItem
-                      key={option.value}
-                      value={option.label}
-                      onSelect={() => handleToggle(option.value)}
+                      key={getValue(option)}
+                      value={getLabel(option)}
+                      onSelect={() => handleToggle(getValue(option))}
                     >
                       <Checkbox
-                        checked={value.includes(option.value)}
+                        checked={value.includes(getValue(option))}
                         className='mr-2'
                       />
-                      {option.label}
+                      {getLabel(option)}
                     </CommandItem>
                   ))}
                 </div>
@@ -289,6 +306,17 @@ export function MultipleSelect({
             <CommandEmpty>No option found.</CommandEmpty>
             {renderOptions()}
           </CommandList>
+          {onCreateNew && (
+            <>
+              <CommandSeparator />
+              <CommandGroup>
+                <CommandItem onSelect={handleCreateNew} className='cursor-pointer'>
+                  <Plus className='mr-2 h-4 w-4' />
+                  {createNewLabel}
+                </CommandItem>
+              </CommandGroup>
+            </>
+          )}
         </Command>
       </PopoverContent>
     </Popover>
