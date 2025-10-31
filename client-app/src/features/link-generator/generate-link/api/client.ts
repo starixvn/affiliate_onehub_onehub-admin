@@ -1,19 +1,32 @@
+import { apiClient } from '@/lib/api/client'
 import type {
   GetLinkGeneratorOptionsResponse,
   GenerateLinkRequest,
   GenerateLinkResponse,
 } from '../types'
-import { mockLinkGeneratorOptions } from '../data/mock-options'
+import type { IAxiosResponse } from '@/lib/types/common'
+
+type InsertComponentRequest = {
+  componentName: string
+  componentCode: string
+  componentTypeId: number
+  statusId: number
+}
 
 export const linkGeneratorApi = {
   async getOptions(): Promise<GetLinkGeneratorOptionsResponse> {
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    
-    return {
-      errorCode: 0,
-      errorMessage: '',
-      result: mockLinkGeneratorOptions,
-    }
+    const response = await apiClient.get<GetLinkGeneratorOptionsResponse>(
+      '/link-generator/form-options'
+    )
+    return response.data
+  },
+
+  async insertComponent(data: InsertComponentRequest): Promise<IAxiosResponse> {
+    const response = await apiClient.post<IAxiosResponse>(
+      '/component',
+      data
+    )
+    return response.data
   },
 
   async generateLink(

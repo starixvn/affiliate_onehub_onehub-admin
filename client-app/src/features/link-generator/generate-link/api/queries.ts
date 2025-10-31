@@ -4,6 +4,7 @@ import { linkGeneratorApi } from './client'
 export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
   options: () => [...linkGeneratorKeys.all, 'options'] as const,
+  statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
 }
 
 export function useGetLinkGeneratorOptions() {
@@ -11,6 +12,22 @@ export function useGetLinkGeneratorOptions() {
     queryKey: linkGeneratorKeys.options(),
     queryFn: () => linkGeneratorApi.getOptions(),
     select: (data) => data.result,
+  })
+}
+
+export function useGetStatusOptions() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.statusOptions(),
+    queryFn: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      return {
+        errorCode: 0,
+        data: [
+          { label: 'Active', value: 1 },
+          { label: 'Inactive', value: 0 },
+        ],
+      }
+    },
   })
 }
 

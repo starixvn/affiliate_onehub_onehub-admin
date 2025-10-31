@@ -4,12 +4,17 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useGetLinkGeneratorOptions } from '../api/queries'
 import { generateLinkFormSchema, type GenerateLinkFormValues } from '../data/schema'
 import type { LinkGeneratorOptions } from '../types'
+import useDialogState from '@/hooks/use-dialog-state'
+
+export type DialogType = 'campaign' | 'group' | 'channel' | 'type' | 'agency' | 'event'
 
 type GenerateLinkContextType = {
   form: UseFormReturn<GenerateLinkFormValues>
   options: LinkGeneratorOptions | undefined
   isLoading: boolean
   isError: boolean
+  dialogOpen: DialogType | null
+  setDialogOpen: (type: DialogType | null) => void
 }
 
 const GenerateLinkContext = React.createContext<GenerateLinkContextType | null>(null)
@@ -20,6 +25,7 @@ type GenerateLinkProviderProps = {
 
 export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const { data: options, isLoading, isError } = useGetLinkGeneratorOptions()
+  const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
 
   const form = useForm<GenerateLinkFormValues>({
     resolver: zodResolver(generateLinkFormSchema),
@@ -50,6 +56,8 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
         options,
         isLoading,
         isError,
+        dialogOpen,
+        setDialogOpen,
       }}
     >
       {children}

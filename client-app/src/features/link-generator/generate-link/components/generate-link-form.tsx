@@ -5,19 +5,17 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
-import { useGenerateLink } from './generate-link-provider'
+import { useGenerateLink, type DialogType } from './generate-link-provider'
 import { getLanguagesByCountry } from '../data/mock-options'
-import { CampaignActionDialog } from '@/features/campaign-management/components/dialog/campaign-action-dialog'
 import type { DropdownOption } from '../types'
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
-  const { form, options } = useGenerateLink()
+  const { form, options, setDialogOpen } = useGenerateLink()
   const { register, control, watch } = form
 
   const [languages, setLanguages] = useState<DropdownOption[]>([])
   const [isLoadingLanguages, setIsLoadingLanguages] = useState(false)
-  const [isCampaignDialogOpen, setIsCampaignDialogOpen] = useState(false)
 
   const selectedCountry = watch('country')
 
@@ -55,18 +53,12 @@ export function GenerateLinkForm() {
     form.setValue('shortLinkValue', `${Math.random().toString(36).substring(7)}`)
   }
 
-  const handleCreateNew = (_type: string) => {
-    setIsCampaignDialogOpen(true)
+  const handleCreateNew = (type: DialogType) => {
+    setDialogOpen(type)
   }
 
   return (
-    <>
-      <CampaignActionDialog
-        open={isCampaignDialogOpen}
-        onOpenChange={setIsCampaignDialogOpen}
-      />
-
-      <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
+    <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
       <div className='space-y-3 sm:space-y-4'>
         <div className='space-y-2'>
           <Label htmlFor='linkName' className='text-sm'>
@@ -104,6 +96,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.campaigns || []}
+                labelKey='label'
+                valueKey='value'
                 placeholder={t('form.campaignPlaceholder')}
                 searchPlaceholder='Search campaign...'
                 onCreateNew={() => handleCreateNew('campaign')}
@@ -122,6 +116,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.countries || []}
+                labelKey='targetCountryName'
+                valueKey='targetCountryCode'
                 placeholder={t('form.countryPlaceholder')}
                 searchPlaceholder='Search country...'
               />
@@ -139,6 +135,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={languages}
+                labelKey='label'
+                valueKey='value'
                 placeholder={
                   isLoadingLanguages
                     ? 'Loading languages...'
@@ -163,6 +161,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.groups || []}
+                labelKey='componentName'
+                valueKey='componentId'
                 placeholder={t('form.groupPlaceholder')}
                 searchPlaceholder='Search group...'
                 onCreateNew={() => handleCreateNew('group')}
@@ -181,9 +181,12 @@ export function GenerateLinkForm() {
                 value={Array.isArray(field.value) ? field.value : []}
                 onValueChange={field.onChange}
                 options={options?.events || []}
+                labelKey='componentName'
+                valueKey='componentId'
                 placeholder={t('form.eventPlaceholder')}
                 searchPlaceholder='Search event...'
                 selectedDisplayPattern='{0} events selected'
+                onCreateNew={() => handleCreateNew('event')}
               />
             )}
           />
@@ -205,6 +208,8 @@ export function GenerateLinkForm() {
                     value={field.value}
                     onValueChange={field.onChange}
                     options={options?.domainNames || []}
+                    labelKey='label'
+                    valueKey='value'
                     placeholder={t('form.domainNamePlaceholder')}
                     searchPlaceholder='Search domain...'
                   />
@@ -235,6 +240,8 @@ export function GenerateLinkForm() {
                     value={field.value}
                     onValueChange={field.onChange}
                     options={options?.shortLinkNames || []}
+                    labelKey='label'
+                    valueKey='value'
                     placeholder={t('form.shortLinkNamePlaceholder')}
                     searchPlaceholder='Search short link...'
                   />
@@ -266,6 +273,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.channels || []}
+                labelKey='componentName'
+                valueKey='componentId'
                 placeholder={t('form.channelPlaceholder')}
                 searchPlaceholder='Search channel...'
                 onCreateNew={() => handleCreateNew('channel')}
@@ -284,6 +293,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.types || []}
+                labelKey='componentName'
+                valueKey='componentId'
                 placeholder={t('form.typePlaceholder')}
                 searchPlaceholder='Search type...'
                 onCreateNew={() => handleCreateNew('type')}
@@ -302,6 +313,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.agencies || []}
+                labelKey='componentName'
+                valueKey='componentId'
                 placeholder={t('form.agencyPlaceholder')}
                 searchPlaceholder='Search agency...'
                 onCreateNew={() => handleCreateNew('agency')}
@@ -320,6 +333,8 @@ export function GenerateLinkForm() {
                 value={field.value}
                 onValueChange={field.onChange}
                 options={options?.landingPages || []}
+                labelKey='label'
+                valueKey='value'
                 placeholder={t('form.landingPagePlaceholder')}
                 searchPlaceholder='Search landing page...'
               />
@@ -337,7 +352,6 @@ export function GenerateLinkForm() {
         </div>
       </div>
     </div>
-    </>
   )
 }
 

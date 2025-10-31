@@ -1,22 +1,36 @@
 import type { IAxiosResponse } from '@/lib/types/common'
 
 export interface DropdownOption {
-  value: string
-  label: string
+  [key: string]: string | number | boolean | null | undefined
+}
+
+export type ComponentInfo = {
+  componentId: number
+  componentName: string
+  componentCode: string
+  componentTypeId: number
+  statusId: number
+  status: string
+}
+
+export type TargetCountry = {
+  countryId: number
+  countryName: string
+  countryCode: string
 }
 
 export interface LinkGeneratorOptions {
-  campaigns: DropdownOption[]
-  countries: DropdownOption[]
-  languages: DropdownOption[]
-  groups: DropdownOption[]
-  events: DropdownOption[]
-  channels: DropdownOption[]
-  types: DropdownOption[]
-  agencies: DropdownOption[]
-  landingPages: DropdownOption[]
-  domainNames: DropdownOption[]
-  shortLinkNames: DropdownOption[]
+  campaigns?: DropdownOption[]
+  countries?: TargetCountry[]
+  languages?: DropdownOption[]
+  groups?: ComponentInfo[]
+  events?: ComponentInfo[]
+  channels?: ComponentInfo[]
+  types?: ComponentInfo[]
+  agencies?: ComponentInfo[]
+  landingPages?: DropdownOption[]
+  domainNames?: DropdownOption[]
+  shortLinkNames?: DropdownOption[]
 }
 
 export type GetLinkGeneratorOptionsResponse = IAxiosResponse<LinkGeneratorOptions>

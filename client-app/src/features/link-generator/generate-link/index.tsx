@@ -3,6 +3,7 @@ import { Main } from '@/components/layout/main'
 import { GenerateLinkProvider, useGenerateLink } from './components/generate-link-provider'
 import { GenerateLinkForm } from './components/generate-link-form'
 import { GenerateLinkActions } from './components/generate-link-actions'
+import { GenerateLinkDialogs } from './components/dialogs/generate-link-dialogs'
 
 function GenerateLinkContent() {
   const { t } = useTranslation('link-generator')
@@ -48,6 +49,7 @@ export function GenerateLink() {
   return (
     <GenerateLinkProvider>
       <GenerateLinkContent />
+      <GenerateLinkDialogs />
     </GenerateLinkProvider>
   )
 }
