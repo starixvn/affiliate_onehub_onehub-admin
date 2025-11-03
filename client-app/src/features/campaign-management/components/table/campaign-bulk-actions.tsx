@@ -3,7 +3,6 @@ import { type Table } from '@tanstack/react-table'
 import { Pause, Play, Ban, FileText, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { sleep } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
   Tooltip,
@@ -11,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { useUpdateBatchCampaignStatus } from '../../api/commands'
 import { type Campaign } from '../../data/schema'
 
 type CampaignBulkActionsProps = {
@@ -24,6 +24,7 @@ export function CampaignBulkActions({
 }: CampaignBulkActionsProps) {
   const { t } = useTranslation('campaign-management')
   const selectedRows = table.getFilteredSelectedRowModel().rows
+  const updateBatchStatusMutation = useUpdateBatchCampaignStatus()
 
   const { pausedCount, activeCount, inactiveCount, draftCount } =
     useMemo(() => {
@@ -49,17 +50,23 @@ export function CampaignBulkActions({
       return
     }
 
-    toast.promise(sleep(1500), {
-      loading: t('bulkActionsToast.updating', { status: statusKey }),
-      success: () => {
-        table.resetRowSelection()
-        return t('bulkActionsToast.updated', {
-          count: affectedCampaigns.length,
-          status: statusKey,
-        })
+    const campaignIds = affectedCampaigns
+      .map((row) => row.original.campaignId)
+      .join(',')
+
+    updateBatchStatusMutation.mutate(
+      {
+        campaignIds,
+        statusId: status,
       },
-      error: t('bulkActionsToast.updateFailed'),
-    })
+      {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            table.resetRowSelection()
+          }
+        },
+      }
+    )
   }
 
   return (

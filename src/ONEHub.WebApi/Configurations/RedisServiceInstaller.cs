@@ -1,3 +1,4 @@
+using ONEHub.Domain.Settings;
 using StackExchange.Redis;
 
 namespace ONEHub.WebApi.Configurations;
@@ -6,19 +7,15 @@ public class RedisServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
+        var redisSetting = configuration.GetSection(RedisSetting.SettingName).Get<RedisSetting>();
+
+        ArgumentNullException.ThrowIfNull(redisSetting);
         services.AddStackExchangeRedisCache(options =>
         {
-            var redisConfig = configuration.GetSection("Redis");
-            options.Configuration = redisConfig.GetValue<string>("ConnectionString");
-            options.InstanceName = redisConfig.GetValue<string>("ApplicationName") + ":Session:";
+            options.Configuration = redisSetting.ConnectionString;
+            options.InstanceName = redisSetting.ApplicationName;
         });
 
-        services.AddSingleton<IConnectionMultiplexer>(sp =>
-        {
-            var redisConfig = configuration.GetSection("Redis");
-            var connectionString = redisConfig.GetValue<string>("ConnectionString")
-                ?? throw new InvalidOperationException("Redis ConnectionString not configured");
-            return ConnectionMultiplexer.Connect(connectionString);
-        });
+        services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisSetting.ConnectionString));
     }
 }

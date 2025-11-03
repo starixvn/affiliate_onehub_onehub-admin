@@ -92,7 +92,7 @@ export const getCampaignColumns = (
     enableSorting: false,
   },
   {
-    accessorKey: 'createdDateText',
+    accessorKey: 'createdDate',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -100,7 +100,7 @@ export const getCampaignColumns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='text-nowrap'>{row.getValue('createdDateText')}</div>
+      <div className='text-nowrap'>{row.getValue('createdDate')}</div>
     ),
     meta: {
       displayName: t('table.columns.createdDate'),
@@ -126,7 +126,7 @@ export const getCampaignColumns = (
     enableSorting: false,
   },
   {
-    accessorKey: 'updatedDateText',
+    accessorKey: 'updatedDate',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
@@ -134,7 +134,7 @@ export const getCampaignColumns = (
       />
     ),
     cell: ({ row }) => (
-      <div className='text-nowrap'>{row.getValue('updatedDateText')}</div>
+      <div className='text-nowrap'>{row.getValue('updatedDate')}</div>
     ),
     meta: {
       displayName: t('table.columns.modifiedDate'),

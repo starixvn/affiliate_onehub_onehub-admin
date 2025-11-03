@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { tokenService } from '@/lib/auth/token-service'
 import { handleServerError } from '@/lib/handle-server-error'
+import { isInIframe, getRedirectUrl } from '@/lib/iframe-utils'
 import { AuthProvider, useAuth } from './context/auth-provider'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
@@ -62,8 +63,13 @@ const queryClient = new QueryClient({
           if (!token) {
             toast.error('Session expired!')
             useAuthStore.getState().auth.reset()
-            const redirect = `${router.history.location.href}`
-            router.navigate({ to: '/sign-in', search: { redirect } })
+            const redirect = encodeURIComponent(getRedirectUrl())
+
+            if (isInIframe()) {
+              window.top!.location.href = `/sign-in?redirect=${redirect}`
+            } else {
+              router.navigate({ to: '/sign-in', search: { redirect } })
+            }
           }
         }
         if (error.response?.status === 500) {

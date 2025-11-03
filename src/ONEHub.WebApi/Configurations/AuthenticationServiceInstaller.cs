@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ONEHub.Domain.Settings;
 
 namespace ONEHub.WebApi.Configurations;
 
@@ -8,21 +9,22 @@ public class AuthenticationServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
-        _ = services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        var jwtSetting = configuration.GetSection(JwtSetting.SettingName).Get<JwtSetting>();
+
+        ArgumentNullException.ThrowIfNull(jwtSetting);
+
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                var secretKey = configuration["Jwt:SecretKey"]
-                                ?? throw new InvalidOperationException("JWT SecretKey not configured");
-
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["Jwt:Issuer"],
-                    ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+                    ValidIssuer = jwtSetting.Issuer,
+                    ValidAudience = jwtSetting.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting.SecretKey)),
                     ClockSkew = TimeSpan.Zero
                 };
 
@@ -47,16 +49,6 @@ public class AuthenticationServiceInstaller : IServiceInstaller
                     }
                 };
             });
-
-        services.AddSession(options =>
-        {
-            options.Cookie.Name = "ONEHub.Admin.Session";
-            options.IdleTimeout = TimeSpan.FromMinutes(20);
-            options.Cookie.HttpOnly = true;
-            options.Cookie.IsEssential = true;
-            options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-            options.Cookie.SameSite = SameSiteMode.Lax;
-        });
 
         services.AddAuthorization();
     }

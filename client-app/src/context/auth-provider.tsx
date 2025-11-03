@@ -10,6 +10,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { tokenService } from '@/lib/auth/token-service'
 import { authApi } from '@/features/auth/api/client'
+import { getRedirectUrl } from '@/lib/iframe-utils'
 import type { SignInRequest, AuthUser } from '@/features/auth/types'
 
 type AuthProviderProps = {
@@ -38,17 +39,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     mutationFn: async (credentials: SignInRequest) => {
       const loginResponse = await authApi.login(credentials)
 
-      if (loginResponse.errorCode === 0 && loginResponse.result) {
-        const { accessToken } = loginResponse.result
+      if (loginResponse.errorCode === 0 && loginResponse.data) {
+        const { accessToken } = loginResponse.data
         const userData = tokenService.extractUserData(accessToken)
 
         if (!userData) {
           throw new Error('Failed to extract user data from token')
         }
 
-        const userId = tokenService.getUserIdFromToken(accessToken)
         tokenService.setAccessToken(accessToken)
-        tokenService.setUserId(userId)
 
         return {
           ...userData,
@@ -92,19 +91,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const attemptTokenRefresh = useCallback(async (): Promise<boolean> => {
     try {
-      const response = await authApi.refreshToken(0)
+      const response = await authApi.refreshToken()
 
-      if (response.errorCode === 0 && response.result?.accessToken) {
-        const { accessToken } = response.result
+      if (response.errorCode === 0 && response.data?.accessToken) {
+        const { accessToken } = response.data
         const userData = tokenService.extractUserData(accessToken)
 
         if (!userData) {
           return false
         }
 
-        const userId = tokenService.getUserIdFromToken(accessToken)
         tokenService.setAccessToken(accessToken)
-        tokenService.setUserId(userId)
 
         setUser({ ...userData, isAuthenticated: true } as AuthUser)
         setAccessToken(accessToken)
@@ -128,14 +125,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser({ ...userData, isAuthenticated: true } as AuthUser)
           setAccessToken(token)
         }
+        setIsLoading(false)
       } else {
         const refreshed = await attemptTokenRefresh()
         if (!refreshed) {
           tokenService.clearTokens()
+
+          const currentPath = window.location.pathname
+          const publicRoutes = ['/sign-in', '/forgot-password']
+          const isPublicRoute = publicRoutes.some((route) =>
+            currentPath.startsWith(route)
+          )
+
+          if (!isPublicRoute) {
+            window.location.href = `/sign-in?redirect=${encodeURIComponent(getRedirectUrl())}`
+            return
+          }
+
+          setIsLoading(false)
+        } else {
+          setIsLoading(false)
         }
       }
-
-      setIsLoading(false)
     }
 
     initializeAuth()

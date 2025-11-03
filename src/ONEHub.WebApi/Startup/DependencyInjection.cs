@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.AspNetCore.HttpOverrides;
 using ONEHub.Application;
+using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure;
 using ONEHub.WebApi.Configurations;
 
@@ -10,11 +11,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddDependencyInjection(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<AppSetting>(configuration.GetSection(AppSetting.SettingName));
+        services.Configure<SentrySetting>(configuration.GetSection(SentrySetting.SettingName));
+        services.Configure<RedisSetting>(configuration.GetSection(RedisSetting.SettingName));
+        services.Configure<JwtSetting>(configuration.GetSection(JwtSetting.SettingName));
+
         services
             .AddApplication()
             .AddInfrastructure();
-
-        services.AddControllers();
 
         services.AddCors(options =>
         {

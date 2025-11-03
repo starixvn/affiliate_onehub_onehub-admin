@@ -29,12 +29,10 @@ try
 
     app.UseStaticFiles(builder.Configuration);
 
-    app.UseSession();
-
     app.UseAuthentication();
     app.UseAuthorization();
 
-    app.MapControllers();
+    app.MapEndpoint();
 
     app.MapFallbackToFile("/index.html");
     await app.RunAsync();

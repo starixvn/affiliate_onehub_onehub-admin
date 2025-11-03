@@ -1,4 +1,5 @@
-import type { IAxiosResponse, IPaginatedResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
+import type { IPaginatedResponse } from '@/lib/types/common'
 import type { Campaign } from '../data/schema'
 
 export interface GetCampaignsRequest {
@@ -6,6 +7,7 @@ export interface GetCampaignsRequest {
   status?: string
   pageIndex?: number
   pageSize?: number
+  isExportExcel?: boolean
 }
 
 export type GetCampaignsResponseData = IPaginatedResponse<Campaign>
@@ -54,8 +56,15 @@ export interface UpdateCampaignResponseData {
 
 export type UpdateCampaignResponse = IAxiosResponse<UpdateCampaignResponseData>
 
-export interface DeleteCampaignResponseData {
-  success: boolean
+export interface DeleteBatchCampaignRequest {
+  campaignIds: string
 }
 
-export type DeleteCampaignResponse = IAxiosResponse<DeleteCampaignResponseData>
+export type DeleteCampaignResponse = IAxiosResponse<null>
+
+export interface UpdateBatchCampaignStatusRequest {
+  campaignIds: string
+  statusId: number
+}
+
+export type UpdateBatchCampaignStatusResponse = IAxiosResponse<null>

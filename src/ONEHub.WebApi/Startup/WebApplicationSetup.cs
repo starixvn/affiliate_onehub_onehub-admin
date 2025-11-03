@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using ONEHub.WebApi.Features.Auth;
+using ONEHub.WebApi.Features.Campaign;
 using Serilog;
 using Serilog.Events;
 
@@ -178,6 +180,13 @@ public static class WebApplicationSetup
                 return LogEventLevel.Information;
             };
         });
+        return app;
+    }
+
+    public static WebApplication MapEndpoint(this WebApplication app)
+    {
+        app.RegisterAuthEndpoints();
+        app.RegisterCampaignEndpoints();
         return app;
     }
 }

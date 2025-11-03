@@ -2,7 +2,6 @@ export type {
   SignInRequest,
   LoginResponse,
   LoginResponseData,
-  RefreshTokenRequest,
   RefreshTokenResponse,
   RefreshTokenResponseData,
   GetUserMenuRequest,

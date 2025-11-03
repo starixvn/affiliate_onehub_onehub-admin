@@ -14,7 +14,7 @@ export function useGetCampaigns(params?: GetCampaignsRequest) {
   return useQuery({
     queryKey: campaignKeys.list(params),
     queryFn: () => campaignApi.getCampaigns(params),
-    select: (data) => data.result,
+    select: (data) => data.data,
   })
 }
 
@@ -22,6 +22,6 @@ export function useGetCampaignSummary() {
   return useQuery({
     queryKey: campaignKeys.summary(),
     queryFn: () => campaignApi.getSummary(),
-    select: (data) => data.result,
+    select: (data) => data.data,
   })
 }

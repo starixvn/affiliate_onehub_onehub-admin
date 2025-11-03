@@ -10,7 +10,6 @@
 
     <ItemGroup>
         <PackageReference Include="Fanex.Data.ProxyClient" />
-        <PackageReference Include="Newtonsoft.Json" />
     </ItemGroup>
 
 </Project>

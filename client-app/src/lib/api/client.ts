@@ -4,7 +4,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios'
 import { tokenService } from '@/lib/auth/token-service'
-import type { IAxiosResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 
 export interface IAxiosErrorData extends Error {
   status?: number
@@ -54,7 +54,7 @@ apiClient.interceptors.response.use(
       error.status = response.status
       error.statusText = response.statusText
       error.errorCode = data.errorCode
-      error.data = data.result
+      error.data = data.data
       return Promise.reject(error)
     }
 
@@ -65,7 +65,9 @@ apiClient.interceptors.response.use(
       _retry?: boolean
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh')
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshEndpoint) {
       if (isRefreshing) {
         return new Promise((resolve) => {
           subscribeTokenRefresh((token: string) => {
@@ -84,8 +86,8 @@ apiClient.interceptors.response.use(
         const response = await apiClient.post('/auth/refresh')
 
         const { data } = response
-        if (data?.errorCode === 0 && data.result?.accessToken) {
-          const newToken = data.result.accessToken
+        if (data?.errorCode === 0 && data.data?.accessToken) {
+          const newToken = data.data.accessToken
           tokenService.setAccessToken(newToken)
           onRefreshed(newToken)
 
@@ -99,7 +101,6 @@ apiClient.interceptors.response.use(
         throw new Error('Token refresh failed')
       } catch (refreshError) {
         tokenService.clearTokens()
-        window.location.href = '/login'
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false
