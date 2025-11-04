@@ -1,5 +1,7 @@
 import type { GetAssetListRequest } from '../types'
 
+export const EXCLUDE_MODULE_TYPES = [3, 4] as const;
+
 export const DEFAULT_PARAMS = {
   mediaId: 0,
   mediaName: undefined,

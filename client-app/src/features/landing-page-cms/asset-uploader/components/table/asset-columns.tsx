@@ -1,4 +1,4 @@
-import { type ColumnDef } from '@tanstack/react-table'
+import { PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
@@ -8,11 +8,17 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
+import { useUpdateAssetsStatus } from '../../api/commands'
 import type { AssetDetail } from '../../data/schema'
 import { AssetRowActions } from './asset-row-actions'
-import { useUpdateAssetsStatus } from '../../api/commands'
 
-function StatusCell({ mediaId, initialStatus }: { mediaId: number, initialStatus: number }) {
+function StatusCell({
+  mediaId,
+  initialStatus,
+}: {
+  mediaId: number
+  initialStatus: number
+}) {
   const updateStatusMutation = useUpdateAssetsStatus()
 
   const handleStatusChange = (value: string) => {
@@ -42,7 +48,8 @@ function StatusCell({ mediaId, initialStatus }: { mediaId: number, initialStatus
 }
 
 export const assetColumns = (
-  bannerRootUrl?: string
+  bannerRootUrl?: string,
+  pagination?: PaginationState
 ): ColumnDef<AssetDetail>[] => [
   {
     id: 'select',
@@ -69,7 +76,13 @@ export const assetColumns = (
   {
     accessorKey: 'mediaId',
     header: '#',
-    cell: ({ row }) => <div className='w-10'>{row.index + 1}</div>,
+    cell: ({ row }) => (
+      <div className='w-10'>
+        {row.index +
+          (pagination?.pageIndex ?? 0) * (pagination?.pageSize ?? 10) +
+          1}
+      </div>
+    ),
     enableHiding: false,
   },
   {

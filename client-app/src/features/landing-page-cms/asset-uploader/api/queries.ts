@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { type GetAssetListRequest } from '../types'
 import { assetUploaderApi } from './client'
+import { EXCLUDE_MODULE_TYPES } from '../data/constants'
 
 export const assetUploaderKeys = {
   all: ['asset-uploader'] as const,
@@ -36,7 +37,7 @@ export const useAssetFilters = (params?: GetAssetListRequest) => {
       assetUploaderApi.getAssetFilters(params ?? ({} as GetAssetListRequest)),
     select: (data) => {
       return {
-        modules: data?.moduleList ?? [],
+        modules: data?.moduleList.filter((module) => !EXCLUDE_MODULE_TYPES.includes(module.moduleType as (typeof EXCLUDE_MODULE_TYPES)[number])) ?? [],
         countries: data?.targetCountryList ?? [],
         languages: data?.allLanguagesInSystem ?? [],
         assetStatus:

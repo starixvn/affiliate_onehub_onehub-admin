@@ -73,7 +73,7 @@ export function AssetTable({
 
   const table = useReactTable({
     data,
-    columns: assetColumns(bannerRootUrl),
+    columns: assetColumns(bannerRootUrl, pagination),
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
