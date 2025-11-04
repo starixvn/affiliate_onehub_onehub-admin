@@ -276,7 +276,6 @@ export function AssetActionDialog({
     if (isEdit) {
       const request = prepareUpdateRequest()
       const response = await updateAssetMutation.mutateAsync({
-        id: asset!.mediaId,
         data: request,
       })
 
@@ -332,6 +331,10 @@ export function AssetActionDialog({
     if (open) {
       if (asset) {
         setCountry(asset.targetCountryCode)
+        setLanguageOptions(languages.filter(language => language.targetCountryCode === asset.targetCountryCode).map(language => ({
+          value: language.languageCode,
+          label: language.languageName,
+        })))
         setLanguage(asset.marketId)
         setFileName(asset.mediaName)
         setModuleRows([{ module: asset.moduleId.toString(), files: [] }])

@@ -97,7 +97,6 @@ export const assetUploaderApi = {
   },
 
   async updateAsset(
-    id: number,
     data: UpdateAssetRequest
   ): Promise<UpdateAssetResponse> {
     try {
@@ -120,8 +119,8 @@ export const assetUploaderApi = {
         }
       }
 
-      const response = await apiClient.put<UpdateAssetResponse>(
-        `/asset-uploader/${id}`,
+      const response = await apiClient.post<UpdateAssetResponse>(
+        `/asset-uploader/update`,
         requestData,
         { headers }
       )

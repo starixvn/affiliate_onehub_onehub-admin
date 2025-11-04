@@ -39,6 +39,8 @@ export interface UpdateAssetRequest {
   targetCountryCode: string
   languageCode: string
   files?: File[]
+  inputFileNames?: string[]
+  inputMediaNames?: string[]
 }
 
 export interface UpdateAssetResponseData {
@@ -57,7 +59,8 @@ export interface UpdateAssetsStatusResponseData {
   success: boolean
 }
 
-export type UpdateAssetsStatusResponse = IAxiosResponse<UpdateAssetsStatusResponseData>
+export type UpdateAssetsStatusResponse =
+  IAxiosResponse<UpdateAssetsStatusResponseData>
 
 export interface Module {
   moduleId: number

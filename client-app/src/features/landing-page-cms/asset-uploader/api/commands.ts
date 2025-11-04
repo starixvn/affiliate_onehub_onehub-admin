@@ -23,12 +23,15 @@ export const useCreateAsset = () => {
 export const useUpdateAsset = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateAssetRequest }) =>
-      assetUploaderApi.updateAsset(id, data),
+    mutationFn: ({ data }: { data: UpdateAssetRequest }) =>
+      assetUploaderApi.updateAsset(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success('Asset updated successfully')
+      }
+      else {
+        toast.error(response.errorMessage || 'Failed to update asset')
       }
     },
   })
