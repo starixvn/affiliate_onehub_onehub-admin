@@ -5,7 +5,7 @@ export const Route = createFileRoute(
   '/_authenticated/landing-page-cms/register-form-management/'
 )({
   component: () => (
-    // <IframeContent iframePath='/iframe/landing-page-cms/register-form-management' />
-    <IframeContent iframePath='/portal/formmanagement' />
+    <IframeContent iframePath='/iframe/landing-page-cms/register-form-management' />
+    // <IframeContent iframePath='/portal/formmanagement' />
   ),
 })
