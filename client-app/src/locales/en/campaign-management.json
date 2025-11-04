@@ -59,6 +59,14 @@
     "updateFailed": "Failed to update campaigns",
     "alreadyStatus": "All selected campaigns are already {{status}}"
   },
+  "excel": {
+    "titlePrefix": "CAMPAIGN MANAGEMENT",
+    "allCampaigns": "All Campaigns",
+    "searchPrefix": "Campaign Name",
+    "allStatus": "All Status",
+    "statusPrefix": "Status",
+    "rowNumber": "#"
+  },
   "dialog": {
     "create": {
       "title": "Add New Campaign",

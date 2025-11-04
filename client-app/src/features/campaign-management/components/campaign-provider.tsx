@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useGetCampaigns } from '../api/queries'
@@ -34,6 +35,7 @@ export function CampaignsProvider({
   children,
   params,
 }: CampaignsProviderProps) {
+  const { t } = useTranslation('campaign-management')
   const [open, setOpen] = useDialogState<CampaignsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Campaign | null>(null)
 
@@ -46,7 +48,7 @@ export function CampaignsProvider({
         isExportExcel: true,
       })
 
-      await formatCampaignsForExcel(response.data.items)
+      await formatCampaignsForExcel(response.data.items, t, params)
       toast.success('Campaigns exported successfully')
     } catch (error) {
       toast.error('Failed to export campaigns')

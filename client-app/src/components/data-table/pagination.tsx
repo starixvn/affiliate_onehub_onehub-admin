@@ -45,7 +45,7 @@ export function DataTablePagination<TData>({
           {t('dataTable.totalItems', { count: totalItems })}
         </div>
 
-        <div className='flex items-center gap-2 @max-2xl/content:flex-row-reverse'>
+        <div className='flex items-center gap-1 mr-4 @max-2xl/content:flex-row-reverse'>
           <p className='hidden text-sm font-medium sm:block'>
             {t('dataTable.rowsPerPage')}
           </p>
