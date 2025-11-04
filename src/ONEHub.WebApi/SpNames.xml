@@ -24,6 +24,8 @@
 		<Setting Key="OH_Component_Sel" SpName="OH_Component_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Component_Ins" SpName="OH_Component_Ins_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
+		<Setting Key="OH_Campaign_Sel" SpName="OH_Campaign_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
+		<Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
 	</Function>
 </Functions>
 

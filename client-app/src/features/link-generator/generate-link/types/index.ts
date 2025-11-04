@@ -19,8 +19,25 @@ export type TargetCountry = {
   countryCode: string
 }
 
+export type CampaignInfo = {
+  campaignId: number
+  campaignCode: string
+  campaignName: string
+}
+
+export type LandingPageOption = {
+  pageName: string
+  isComponent: boolean
+  category: string
+}
+
+export type LandingPageGroup = {
+  groupLabel: string
+  options: LandingPageOption[]
+}
+
 export interface LinkGeneratorOptions {
-  campaigns?: DropdownOption[]
+  campaigns?: CampaignInfo[]
   countries?: TargetCountry[]
   languages?: DropdownOption[]
   groups?: ComponentInfo[]
@@ -28,7 +45,7 @@ export interface LinkGeneratorOptions {
   channels?: ComponentInfo[]
   types?: ComponentInfo[]
   agencies?: ComponentInfo[]
-  landingPages?: DropdownOption[]
+  landingPages?: LandingPageGroup[]
   domainNames?: DropdownOption[]
   shortLinkNames?: DropdownOption[]
 }

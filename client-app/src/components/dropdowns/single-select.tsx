@@ -30,6 +30,7 @@ interface SingleSelectProps {
   onCreateNew?: () => void
   createNewLabel?: string
   className?: string
+  formatOptionLabel?: (option: SelectOption) => string
 }
 
 function isSelectGroup(item: unknown): item is SelectGroup {
@@ -48,11 +49,14 @@ export function SingleSelect({
   onCreateNew,
   createNewLabel = 'Create new...',
   className,
+  formatOptionLabel,
 }: SingleSelectProps) {
   const [open, setOpen] = useState(false)
 
   const getLabel = (option: SelectOption): string => String(option[labelKey])
   const getValue = (option: SelectOption): string => String(option[valueKey])
+  const getDisplayLabel = (option: SelectOption): string => 
+    formatOptionLabel ? formatOptionLabel(option) : getLabel(option)
 
   const getSelectedLabel = () => {
     if (!value) return null
@@ -60,9 +64,9 @@ export function SingleSelect({
     for (const item of options) {
       if (isSelectGroup(item)) {
         const found = item.options.find((opt: SelectOption) => getValue(opt) === value)
-        if (found) return getLabel(found)
+        if (found) return getDisplayLabel(found)
       } else {
-        if (getValue(item) === value) return getLabel(item)
+        if (getValue(item) === value) return getDisplayLabel(item)
       }
     }
     return null
@@ -98,7 +102,7 @@ export function SingleSelect({
                   value === getValue(option) ? 'opacity-100' : 'opacity-0'
                 )}
               />
-              {getLabel(option)}
+              {getDisplayLabel(option)}
             </CommandItem>
           ))}
         </CommandGroup>
@@ -117,7 +121,7 @@ export function SingleSelect({
             value === getValue(option) ? 'opacity-100' : 'opacity-0'
           )}
         />
-        {getLabel(option)}
+        {getDisplayLabel(option)}
       </CommandItem>
     ))
   }

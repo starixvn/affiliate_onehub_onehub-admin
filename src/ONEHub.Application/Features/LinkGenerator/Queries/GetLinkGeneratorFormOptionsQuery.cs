@@ -1,7 +1,11 @@
 using MediatR;
 using ONEHub.Application.DTOs.LinkGenerator;
+using ONEHub.Domain.Criterias.Campaigns;
 using ONEHub.Domain.Criterias.Components;
+using ONEHub.Domain.Criterias.LandingPages;
+using ONEHub.Domain.DTOs.Campaigns;
 using ONEHub.Domain.DTOs.Components;
+using ONEHub.Domain.DTOs.LandingPages;
 using ONEHub.Domain.Interfaces;
 
 namespace ONEHub.Application.Features.LinkGenerator.Queries;
@@ -15,6 +19,9 @@ public class GetLinkGeneratorFormOptionsQueryHandler(IDynamicRepository reposito
         GetLinkGeneratorFormOptionsQuery request,
         CancellationToken cancellationToken)
     {
+        var campaignsCriteria = new GetCampaignDropdownCriteria { StatusIds = "1" };
+        var campaigns = await repository.FetchAsync<CampaignInfo>(campaignsCriteria);
+
         var eventsCriteria = new GetComponentListCriteria { ComponentTypeId = 1 };
         var events = await repository.FetchAsync<ComponentInfo>(eventsCriteria);
 
@@ -33,14 +40,28 @@ public class GetLinkGeneratorFormOptionsQueryHandler(IDynamicRepository reposito
         var countriesCriteria = new GetTargetCountryCriteria { IsDefault = true };
         var countries = await repository.FetchAsync<TargetCountry>(countriesCriteria);
 
+        var landingPagesCriteria = new GetLandingPageDropdownCriteria();
+        var landingPages = await repository.FetchAsync<LandingPageOption>(landingPagesCriteria);
+
+        var groupedLandingPages = landingPages
+            .GroupBy(x => x.Category)
+            .Select(g => new LandingPageGroup
+            {
+                GroupLabel = g.Key,
+                Options = g.ToList()
+            })
+            .ToList();
+
         return new LinkGeneratorFormOptionsDto
         {
+            Campaigns = campaigns,
             Events = events,
             Groups = groups,
             Channels = channels,
             Agencies = agencies,
             Types = types,
-            Countries = countries
+            Countries = countries,
+            LandingPages = groupedLandingPages
         };
     }
 }
