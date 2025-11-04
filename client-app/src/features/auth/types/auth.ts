@@ -38,6 +38,14 @@ export interface GetUserMenuResponseData {
 
 export type GetUserMenuResponse = IAxiosResponse<GetUserMenuResponseData>
 
+export interface UserProfileData {
+  userId: number
+  userName: string
+  avatar: string
+}
+
+export type UserProfileResponse = IAxiosResponse<UserProfileData>
+
 export interface AuthUser {
   userId: string
   username: string

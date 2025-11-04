@@ -1,10 +1,10 @@
 using System.Collections.Concurrent;
 using Fanex.Data.Repository;
-using ONEHub.Domain.Constants;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
+using ONEHub.Infrastructure.Repositories.Criterias;
 
 namespace ONEHub.Infrastructure.Repositories;
 
@@ -13,56 +13,40 @@ public class AuthRepository(
     )
     : BaseRepository(dynamicRepository), IAuthRepository
 {
-    private static readonly ConcurrentDictionary<int, User> MockUsers = new(
-        new Dictionary<int, User>
-        {
-            [1] = new User
-            {
-                UserId = 1,
-                UserName = "admin",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123"),
-                Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=admin",
-                IsAdmin = true,
-                Roles = []
-            },
-            [2] = new User
-            {
-                UserId = 2,
-                UserName = "testuser",
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword("test123"),
-                Avatar = "https://api.dicebear.com/7.x/avataaars/svg?seed=testuser",
-                IsAdmin = false,
-                Roles = [Roles.PROFILE]
-            }
-        });
-
     private static readonly ConcurrentDictionary<int, List<string>> RefreshTokens = [];
 
-    public Task<Result<User>> GetUserByUserNameAsync(string userName)
+    public async Task<Result<User>> GetUserByUserNameAsync(string userName)
     {
-        var user = MockUsers.Values.FirstOrDefault(u =>
-            u.UserName.Equals(userName, StringComparison.OrdinalIgnoreCase));
-
-        if (user is null)
+        var criteria = new GetUserByUserNameCriteria
         {
-            return Task.FromResult(Result<User>.Failure(AuthError.UserNotFound));
+            UserName = userName
+        };
+
+        var result = await GetDataAsync<User>(criteria);
+
+        if (result.IsSuccess && result.Data is null)
+        {
+            return Result<User>.Failure(AuthError.UserNotFound);
         }
 
-        var result = Result<User>.Success(user);
-        return Task.FromResult(result);
+        return result;
     }
 
-    public Task<Result<User>> GetUserByUserIdAsync(int userId)
+    public async Task<Result<User>> GetUserByUserIdAsync(int userId)
     {
-        var user = MockUsers.Values.FirstOrDefault(u => u.UserId == userId);
-
-        if (user is null)
+        var criteria = new GetUserByUserIdCriteria
         {
-            return Task.FromResult(Result<User>.Failure(AuthError.UserNotFound));
+            UserId = userId
+        };
+
+        var result = await GetDataAsync<User>(criteria);
+
+        if (result.IsSuccess && result.Data is null)
+        {
+            return Result<User>.Failure(AuthError.UserNotFound);
         }
 
-        var result = Result<User>.Success(user);
-        return Task.FromResult(result);
+        return result;
     }
 
     public Task<Result> StoreRefreshTokenByUserIdAsync(int userId, string refreshToken)

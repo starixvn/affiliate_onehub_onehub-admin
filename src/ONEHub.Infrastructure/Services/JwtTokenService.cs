@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using ONEHub.Application.Services;
@@ -28,10 +29,19 @@ public class JwtTokenService(
             new Claim(ClaimTypes.Name, user.UserName),
         };
 
-        // Build roles list
-        var roles = new List<string>(user.Roles);
+        var roles = new List<string>();
+        if (!string.IsNullOrWhiteSpace(user.Roles))
+        {
+            try
+            {
+                roles = JsonSerializer.Deserialize<List<string>>(user.Roles) ?? [];
+            }
+            catch
+            {
+                roles = [];
+            }
+        }
 
-        // If user is admin, automatically add Admin role
         if (user.IsAdmin && !roles.Contains(Roles.ADMIN))
         {
             roles.Add(Roles.ADMIN);

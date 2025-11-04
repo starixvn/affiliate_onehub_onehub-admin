@@ -6,6 +6,7 @@ export type {
   RefreshTokenResponseData,
   GetUserMenuRequest,
   GetUserMenuResponse,
+  UserProfileResponse,
   MenuItemData,
   AuthUser,
 } from './auth'

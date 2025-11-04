@@ -23,7 +23,7 @@ public static class AuthEndpoints
         groupEndpoint.MapPost("/login", Login).AllowAnonymous();
         groupEndpoint.MapPost("/refresh", Refresh).AllowAnonymous();
         groupEndpoint.MapPost("/logout", Logout).AllowAnonymous();
-        groupEndpoint.MapPost("/me", Profile);
+        groupEndpoint.MapGet("/me", Profile);
 
         return groupEndpoint;
     }
@@ -99,7 +99,6 @@ public static class AuthEndpoints
     }
 
     private static async Task<Ok<Result<UserResponse>>> Profile(
-        ICurrentUserService currentUserService,
         IMediator mediator)
     {
         var query = new GetUserQuery();

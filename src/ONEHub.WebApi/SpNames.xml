@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Functions SiteId="1" SiteName="ONEHub Admin">
 	<Function Name="Auth">
+		<Setting Key="OH_User_Login_UserInfoSel" SpName="OH_User_Login_UserInfoSel" DbName="DBOH.ONEHub.wsv_oh" />
 	</Function>
 	<Functions Name="Campaign Management">
 		<Setting Key="OH_Campaign_Dashboard_Sel" SpName="OH_Campaign_Dashboard_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
