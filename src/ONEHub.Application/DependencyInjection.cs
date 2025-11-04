@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using ONEHub.Application.Features.Shared;
 
@@ -8,7 +7,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        var assembly = Assembly.GetExecutingAssembly();
+        var assembly = AssemblyReference.Assembly;
 
         services.AddMediatR(cfg =>
         {
