@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/select'
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
 
-interface AssetFormFieldsProps {
+interface AssetBasicFieldsProps {
   countryOptions: { value: string; label: string }[]
   languageOptions: { value: string; label: string }[]
   country: string
@@ -22,7 +22,7 @@ interface AssetFormFieldsProps {
   onLanguageBlur: () => void
 }
 
-export function AssetFormFields({
+export function AssetBasicFields({
   countryOptions,
   languageOptions,
   country,
@@ -33,7 +33,7 @@ export function AssetFormFields({
   onLanguageChange,
   onCountryBlur,
   onLanguageBlur,
-}: AssetFormFieldsProps) {
+}: AssetBasicFieldsProps) {
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
       <div className='space-y-2'>
@@ -86,7 +86,13 @@ export function AssetFormFields({
               touched.language && errors.language ? 'border-destructive' : ''
             }
           >
-            <SelectValue placeholder={!country || languageOptions.length === 0 ? 'Please select target country first' : 'Select language'} />
+            <SelectValue
+              placeholder={
+                !country || languageOptions.length === 0
+                  ? 'Please select target country first'
+                  : 'Select language'
+              }
+            />
           </SelectTrigger>
           <SelectContent>
             {languageOptions.map((l) => (

@@ -4,17 +4,17 @@ import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteAssets } from '../../api/commands'
 import type { AssetDetail } from '../../data/schema'
 
-type AssetMultiDeleteDialogProps = {
+type AssetBulkDeleteDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   table: Table<AssetDetail>
 }
 
-export function AssetMultiDeleteDialog({
+export function AssetBulkDeleteDialog({
   open,
   onOpenChange,
   table,
-}: AssetMultiDeleteDialogProps) {
+}: AssetBulkDeleteDialogProps) {
   const deleteMutation = useDeleteAssets()
   const selectedRows = table.getFilteredSelectedRowModel().rows
 

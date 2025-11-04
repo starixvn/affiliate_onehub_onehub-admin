@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Play, Square, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -23,14 +22,13 @@ export function AssetBulkActions({
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const updateStatusMutation = useUpdateAssetsStatus()
 
-  const { activeCount, inactiveCount } = useMemo(() => {
-    return {
-      activeCount: selectedRows.filter((row) => row.original.statusId !== 1)
-        .length,
-      inactiveCount: selectedRows.filter((row) => row.original.statusId !== 2)
-        .length,
-    }
-  }, [selectedRows])
+  const { activeCount, inactiveCount } = (() => {
+    const activeCount = selectedRows.filter((row) => row.original.statusId !== 1)
+      .length
+    const inactiveCount = selectedRows.filter((row) => row.original.statusId !== 2)
+      .length
+    return { activeCount, inactiveCount }
+  })()
 
   const handleStatusChange = (statusId: number) => {
     const affectedAssets = selectedRows.filter(

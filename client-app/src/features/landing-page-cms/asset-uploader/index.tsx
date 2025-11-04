@@ -1,7 +1,7 @@
 import { getRouteApi } from '@tanstack/react-router'
 import { AssetUploaderContent } from './components/asset-uploader-content'
 import { AssetUploaderProvider } from './components/asset-uploader-provider'
-import { AssetDialogs } from './components/dialog/asset-dialogs'
+import { AssetDialogManager } from './components/dialog/asset-dialog-manager'
 import { normalizeSearchParams } from './data/constants'
 
 const route = getRouteApi('/iframe/landing-page-cms/asset-uploader/')
@@ -15,7 +15,7 @@ export function AssetUploader() {
   return (
     <AssetUploaderProvider params={params}>
       <AssetUploaderContent />
-      <AssetDialogs />
+      <AssetDialogManager />
     </AssetUploaderProvider>
   )
 }

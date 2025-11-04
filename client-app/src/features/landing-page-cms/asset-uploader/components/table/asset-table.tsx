@@ -23,7 +23,7 @@ import {
 import { DataTablePagination } from '@/components/data-table'
 import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
-import { AssetMultiDeleteDialog } from '../dialog/asset-multi-delete-dialog'
+import { AssetBulkDeleteDialog } from '../dialog/asset-bulk-delete-dialog'
 import { AssetBulkActions } from './asset-bulk-actions'
 import { assetColumns } from './asset-columns'
 
@@ -155,7 +155,7 @@ export function AssetTable({
         table={table}
         onDeleteClick={() => setIsDeleteDialogOpen(true)}
       />
-      <AssetMultiDeleteDialog
+      <AssetBulkDeleteDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         table={table}

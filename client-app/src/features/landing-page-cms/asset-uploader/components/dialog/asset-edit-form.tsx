@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/select'
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
 
-interface AssetEditFieldsProps {
+interface AssetEditFormProps {
   moduleValue: string
   fileName: string
   errors: ValidationErrors
@@ -22,7 +22,7 @@ interface AssetEditFieldsProps {
   onFileChange: (files: FileList | null) => void
 }
 
-export function AssetEditFields({
+export function AssetEditForm({
   moduleValue: initialModule,
   fileName: initialFileName,
   errors,
@@ -31,7 +31,7 @@ export function AssetEditFields({
   onModuleChange,
   onModuleBlur,
   onFileChange,
-}: AssetEditFieldsProps) {
+}: AssetEditFormProps) {
   const [moduleValue, setModuleValue] = useState(initialModule)
   const [fileName, setFileName] = useState(initialFileName)
 
