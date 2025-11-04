@@ -14,7 +14,7 @@ public class GetCampaignListQuery : PagingQuery<CampaignResponse>
 
     public string? StatusIds { get; set; } = string.Empty;
 
-    public bool IsExportExcel { get; set; } = false;
+    public bool IsExportExcel { get; set; }
 }
 
 public record CampaignResponse(

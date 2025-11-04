@@ -18,7 +18,7 @@ public static class HttpContextUtils
         options ??= new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
+            Secure = true,
             SameSite = SameSiteMode.Lax,
             Path = "/"
         };

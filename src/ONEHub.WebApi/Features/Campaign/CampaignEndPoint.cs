@@ -28,7 +28,6 @@ public static class CampaignEndPoint
     }
 
     private static async Task<Results<Ok<Result<CampaignDashboardResponse>>, ValidationProblem>> Summary(
-        IHttpContextAccessor contextAccessor,
         IMediator mediator)
     {
         var query = new GetCampaignDashboardQuery();
@@ -40,7 +39,6 @@ public static class CampaignEndPoint
 
     private static async Task<Results<Ok<Result<PagingData<CampaignResponse>>>, ValidationProblem>> GetList(
         [AsParameters] GetCampaignListRequest request,
-        IHttpContextAccessor contextAccessor,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -63,7 +61,6 @@ public static class CampaignEndPoint
 
     private static async Task<Results<Ok<Result<PagingData<CampaignResponse>>>, ValidationProblem>> ExportList(
         [AsParameters] GetCampaignListRequest request,
-        IHttpContextAccessor contextAccessor,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -87,7 +84,6 @@ public static class CampaignEndPoint
 
     private static async Task<Results<Ok<Result>, ValidationProblem>> Create(
         [FromBody] CreateCampaignRequest request,
-        IHttpContextAccessor contextAccessor,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))

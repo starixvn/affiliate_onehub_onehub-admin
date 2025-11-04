@@ -1,5 +1,6 @@
 using Fanex.Logging;
 using Fanex.Logging.Sentry;
+using ONEHub.Domain.Settings;
 using Sentry;
 using Serilog;
 
@@ -9,18 +10,18 @@ public class LoggingServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
-        var env = configuration["Sentry:Environment"];
-        var backEndDsn = configuration["Sentry:Dsn"];
-        var category = configuration["Sentry:LogCategory"];
+        var sentrySetting = configuration.GetSection(SentrySetting.SettingName).Get<SentrySetting>();
 
-        if (!string.IsNullOrEmpty(backEndDsn) && !string.IsNullOrEmpty(category))
+        ArgumentNullException.ThrowIfNull(sentrySetting);
+
+        if (!string.IsNullOrEmpty(sentrySetting.Dsn) && !string.IsNullOrEmpty(sentrySetting.LogCategory))
         {
-            LogManager.SetDefaultLogCategory(category).Use(new List<ILogEngine>
+            LogManager.SetDefaultLogCategory(sentrySetting.LogCategory).Use(new List<ILogEngine>
             {
                 new SentryLogging(new SentryEngineOptions
                 {
-                    Dsn = new Dsn(backEndDsn),
-                    Environment = env
+                    Dsn = new Dsn(sentrySetting.Dsn),
+                    Environment = sentrySetting.Environment
                 })
             });
         }

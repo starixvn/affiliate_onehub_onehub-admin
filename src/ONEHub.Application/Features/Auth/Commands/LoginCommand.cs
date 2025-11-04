@@ -35,7 +35,7 @@ public class LoginHandler(
             return Result<LoginResponse>.Failure(loginResult.Error);
         }
 
-        if (BCrypt.Net.BCrypt.Verify(request.Password, loginResult.Data.PasswordHash) == false)
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, loginResult.Data.PasswordHash))
         {
             return Result<LoginResponse>.Failure(AuthError.InvalidCredentials);
         }

@@ -90,8 +90,7 @@ public static class AuthEndpoints
     }
 
     private static Task<Ok<Result>> Logout(
-        IHttpContextAccessor contextAccessor,
-        IMediator mediator)
+        IHttpContextAccessor contextAccessor)
     {
         HttpContextUtils.ClearCookie(contextAccessor.HttpContext, ACCESS_TOKEN_KEY);
         HttpContextUtils.ClearCookie(contextAccessor.HttpContext, REFRESH_TOKEN_KEY);
@@ -103,8 +102,6 @@ public static class AuthEndpoints
         ICurrentUserService currentUserService,
         IMediator mediator)
     {
-        var userId = currentUserService.GetUserId();
-
         var query = new GetUserQuery();
 
         var result = await mediator.Send(query);
