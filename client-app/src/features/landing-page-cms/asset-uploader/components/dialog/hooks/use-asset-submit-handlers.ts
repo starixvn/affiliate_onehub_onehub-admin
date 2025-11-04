@@ -1,4 +1,7 @@
+import { AssetDetail } from '../../../data/schema';
+
 interface UseAssetSubmitHandlersProps {
+  asset: AssetDetail
   country: string
   language: string
   moduleRows: Array<{ module: string; files: File[] }>
@@ -9,6 +12,7 @@ interface UseAssetSubmitHandlersProps {
 }
 
 export function useAssetSubmitHandlers({
+  asset,
   country,
   language,
   moduleRows,
@@ -26,14 +30,18 @@ export function useAssetSubmitHandlers({
   }
 
   const prepareUpdateRequest = () => {
+    const mediaId = asset?.mediaId
+    const inputFileName = moduleRows[0].files?.[0]?.name || asset?.mediaName
     const moduleId = Number(moduleRows[0].module)
-    const files = moduleRows[0].files
+    const file = moduleRows[0].files[0]
 
     return {
+      mediaId,
       moduleId,
       targetCountryCode: country,
       languageCode: language,
-      files,
+      inputFileName,
+      file
     }
   }
 

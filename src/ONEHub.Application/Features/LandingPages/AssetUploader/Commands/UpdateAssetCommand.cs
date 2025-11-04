@@ -28,6 +28,7 @@ public record UpdateAssetCommand(
 
 public class UpdateAssetCommandHandler(
     IDynamicRepository repository,
+    IStorageService storageService,
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
@@ -92,23 +93,13 @@ public class UpdateAssetCommandHandler(
         var oldFilePath = oldAssetInfo.FileName;
         var folder = landingPageService.GetAssetFolder(request.ModuleId, request.TargetCountryCode, request.LanguageCode);
         var inputFileName = string.IsNullOrEmpty(request.InputFileName) ? request.File?.FileName : request.InputFileName;
-        var inputMediaName = request.InputMediaName;
+        var inputMediaName = request.InputFileName;
         var path = $"{folder}/{inputFileName}";
 
         var result = await CheckFileInFolderForUpdate(path, oldFilePath, inputFileName);
         if (!result.IsSuccessful)
         {
             return result;
-        }
-
-        if (string.IsNullOrEmpty(inputMediaName))
-        {
-            var allowedExtensions = configuration["AppSettings:AllowedImageExtensions"]!.Split(',');
-
-            var extensionPattern = string.Join("|", allowedExtensions.Select(ext => ext.StartsWith(".") ? ext.Substring(1) : ext));
-            var extensionRemovalRegex = new Regex(@"\.(" + extensionPattern + ")$", RegexOptions.IgnoreCase);
-
-            inputMediaName = extensionRemovalRegex.Replace(inputFileName ?? string.Empty, string.Empty);
         }
 
         return request.File != null
@@ -122,20 +113,17 @@ public class UpdateAssetCommandHandler(
         string oldFilePath,
         string inputMediaName)
     {
-        if (request.File == null)
+        string dimension;
+        await using (var stream = request.File!.OpenReadStream())
         {
-            return ResultInfo.GenerateError("File is required");
-        }
+            dimension = imageService.ExtractImageDimensions(stream);
 
-        await using var stream = request.File.OpenReadStream();
-        var result = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
-        if (!result.IsSuccessful)
-        {
-            return result;
+            var result = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
+            if (!result.IsSuccessful)
+            {
+                return result;
+            }
         }
-
-        stream.Position = 0;
-        var dimension = imageService.ExtractImageDimensions(stream);
 
         var filesXml = BuildSingleFileXml(inputMediaName, path, dimension);
 
@@ -151,16 +139,16 @@ public class UpdateAssetCommandHandler(
             FunctionName = request.FunctionName
         };
 
-        var rowsAffected = await repository.ExecuteAsync(command);
+        await repository.ExecuteAsync(command);
 
-        if (rowsAffected > 0)
+        if (command.ErrCode == 0)
         {
             fileService.DeleteFile(oldFilePath);
             await fileService.UploadFileAsync(request.File, path);
             return ResultInfo.Success;
         }
 
-        return ResultInfo.GenerateError("Update asset failed");
+        return ResultInfo.GenerateError(command.ErrMsg);
     }
 
     private async Task<ResultInfo> ProcessMetadataUpdate(
@@ -185,42 +173,22 @@ public class UpdateAssetCommandHandler(
             FunctionName = request.FunctionName
         };
 
-        var rowsAffected = await repository.ExecuteAsync(command);
+        await repository.ExecuteAsync(command);
 
-        if (rowsAffected > 0 && !string.Equals(path, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
+        if (command.ErrCode == 0 && !string.Equals(path, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
         {
-            MoveFile(path, oldFilePath);
+            await MoveFile(path, oldFilePath);
         }
 
-        return rowsAffected > 0
+        return command.ErrCode == 0
             ? ResultInfo.Success
-            : ResultInfo.GenerateError("Update asset failed");
+            : ResultInfo.GenerateError(command.ErrMsg);
     }
 
-    private void MoveFile(string newFilePath, string oldFilePath)
+    private async Task MoveFile(string newFilePath, string oldFilePath)
     {
-        var bannerFolders = (configuration["AppSettings:BannerFolders"] ?? string.Empty)
-            .Split(';')
-            .Select(f => f.Trim())
-            .Where(f => !string.IsNullOrEmpty(f))
-            .ToArray();
-
-        foreach (var serverPath in bannerFolders)
-        {
-            var oldFullPath = Path.Combine(serverPath, oldFilePath);
-            var newFullPath = Path.Combine(serverPath, newFilePath);
-
-            if (File.Exists(oldFullPath))
-            {
-                var directoryPath = Path.GetDirectoryName(newFullPath);
-                if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
-                {
-                    Directory.CreateDirectory(directoryPath);
-                }
-
-                File.Move(oldFullPath, newFullPath);
-            }
-        }
+        _ = await storageService.CopyFileAsync(oldFilePath, newFilePath);
+        _ = await storageService.DeleteFileAsync(oldFilePath);
     }
 
     private async Task<ResultInfo> CheckFileInFolderForUpdate(string? filePath, string? oldFilePath, string? fileName)
@@ -230,29 +198,20 @@ public class UpdateAssetCommandHandler(
             return ResultInfo.Success;
         }
 
-        var bannerFolders = (configuration["AppSettings:BannerFolders"] ?? string.Empty)
-            .Split(';')
-            .Select(f => f.Trim())
-            .Where(f => !string.IsNullOrEmpty(f))
-            .ToArray();
-
-        foreach (var serverPath in bannerFolders)
+        var fileExisting = await storageService.FileExistsAsync(filePath);
+        if (fileExisting)
         {
-            var fullPath = Path.Combine(serverPath, filePath);
-            if (File.Exists(fullPath))
+            if (!string.IsNullOrEmpty(oldFilePath)
+                && string.Equals(filePath, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
             {
-                if (!string.IsNullOrEmpty(oldFilePath) &&
-                    string.Equals(filePath, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    return ResultInfo.Success;
-                }
-
-                return new ResultInfo
-                {
-                    Code = ErrorCodes.ErrTheFileNameAlreadyExists,
-                    Message = string.Format(FILE_ALREADY_EXISTS_MESSAGE, fileName)
-                };
+                return ResultInfo.Success;
             }
+
+            return new ResultInfo
+            {
+                Code = ErrorCodes.ErrTheFileNameAlreadyExists,
+                Message = string.Format(FILE_ALREADY_EXISTS_MESSAGE, fileName)
+            };
         }
 
         return ResultInfo.Success;

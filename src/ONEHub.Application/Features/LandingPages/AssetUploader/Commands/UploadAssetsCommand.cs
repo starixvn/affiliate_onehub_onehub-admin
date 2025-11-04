@@ -114,37 +114,7 @@ public class UploadAssetsCommandHandler(
         string ip,
         string functionName)
     {
-        var filePaths = new List<string>();
-        var moduleMedias = new List<ModuleMedia>();
-        foreach (var moduleRow in moduleRows)
-        {
-            var moduleMedia = new ModuleMedia
-            {
-                ModuleId = moduleRow.ModuleId,
-                Files = []
-            };
-
-            var folder = landingPageService.GetAssetFolder(
-                moduleRow.ModuleId,
-                targetCountryCode,
-                languageCode
-            );
-            foreach (var file in moduleRow.Files)
-            {
-                await using var stream = file.OpenReadStream();
-                var dimension = imageService.ExtractImageDimensions(stream);
-                var fileName = $"{folder}/{file.FileName}";
-
-                filePaths.Add(fileName);
-                moduleMedia.Files.Add(new MediaItem
-                {
-                    FileName = WebUtility.HtmlEncode(fileName),
-                    MediaName = WebUtility.HtmlEncode(file.FileName),
-                    Dimension = dimension,
-                });
-            }
-            moduleMedias.Add(moduleMedia);
-        }
+        var (filePaths, moduleMedias) = await BuildModel(moduleRows, targetCountryCode, languageCode);
 
         try
         {
@@ -178,5 +148,42 @@ public class UploadAssetsCommandHandler(
             fileService.CleanupUploadedFiles(filePaths);
             return ResultInfo.GenerateError(DATABASE_INSERTION_FAILS_MESSAGE);
         }
+    }
+
+    private async Task<(List<string>, List<ModuleMedia>)> BuildModel(List<ModuleRow> moduleRows, string targetCountryCode, string languageCode)
+    {
+        var filePaths = new List<string>();
+        var moduleMedias = new List<ModuleMedia>();
+        foreach (var moduleRow in moduleRows)
+        {
+            var moduleMedia = new ModuleMedia
+            {
+                ModuleId = moduleRow.ModuleId,
+                Files = []
+            };
+
+            var folder = landingPageService.GetAssetFolder(
+                moduleRow.ModuleId,
+                targetCountryCode,
+                languageCode
+            );
+            foreach (var file in moduleRow.Files)
+            {
+                await using var stream = file.OpenReadStream();
+                var dimension = imageService.ExtractImageDimensions(stream);
+                var fileName = $"{folder}/{file.FileName}";
+
+                filePaths.Add(fileName);
+                moduleMedia.Files.Add(new MediaItem
+                {
+                    FileName = WebUtility.HtmlEncode(fileName),
+                    MediaName = WebUtility.HtmlEncode(file.FileName),
+                    Dimension = dimension,
+                });
+            }
+            moduleMedias.Add(moduleMedia);
+        }
+
+        return (filePaths, moduleMedias);
     }
 }

@@ -38,7 +38,10 @@ export const assetUploaderApi = {
       formData.append('languageCode', data.languageCode)
 
       data.moduleRows.forEach((moduleRow, index) => {
-        formData.append(`moduleRows[${index}].moduleId`, moduleRow.module.toString())
+        formData.append(
+          `moduleRows[${index}].moduleId`,
+          moduleRow.module.toString()
+        )
         moduleRow.files.forEach((file) => {
           formData.append(`moduleRows[${index}].files`, file)
         })
@@ -96,37 +99,27 @@ export const assetUploaderApi = {
     }
   },
 
-  async updateAsset(
-    data: UpdateAssetRequest
-  ): Promise<UpdateAssetResponse> {
+  async updateAsset(data: UpdateAssetRequest): Promise<UpdateAssetResponse> {
     try {
-      let requestData: any = data
-      let headers = {}
-
-      if (data.files && data.files.length > 0) {
-        const formData = new FormData()
-        formData.append('moduleId', data.moduleId.toString())
-        formData.append('targetCountryCode', data.targetCountryCode)
-        formData.append('languageCode', data.languageCode)
-
-        data.files.forEach((file) => {
-          formData.append(`files`, file)
-        })
-
-        requestData = formData
-        headers = {
-          'Content-Type': 'multipart/form-data',
-        }
-      }
+      const formData = new FormData()
+      formData.append('mediaId', data.mediaId.toString())
+      formData.append('moduleId', data.moduleId.toString())
+      formData.append('targetCountryCode', data.targetCountryCode)
+      formData.append('languageCode', data.languageCode)
+      formData.append('inputFileName', data.inputFileName)
+      formData.append('file', data.file)
 
       const response = await apiClient.post<UpdateAssetResponse>(
-        `/asset-uploader/update`,
-        requestData,
-        { headers }
+        '/asset-uploader/update',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       )
       return response.data
     } catch (error: any) {
-      console.error('Update error:', error)
       return {
         errorCode: error?.errorCode || 1,
         errorMessage:

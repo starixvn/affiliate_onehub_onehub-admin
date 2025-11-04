@@ -2,6 +2,7 @@ import type {
   ModuleWithFiles,
   ValidationErrors,
   TouchedFields,
+  AssetDetail,
 } from '../../../data/schema'
 import type { Language } from '../../../types'
 import { useAssetFieldHandlers } from './use-asset-field-handlers'
@@ -10,6 +11,7 @@ import { useAssetModuleHandlers } from './use-asset-module-handlers'
 import { useAssetSubmitHandlers } from './use-asset-submit-handlers'
 
 interface UseAssetFormHandlersProps {
+  asset: AssetDetail | null | undefined
   country: string
   language: string
   fileName: string
@@ -38,6 +40,7 @@ interface UseAssetFormHandlersProps {
 
 export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
   const {
+    asset,
     country,
     language,
     fileName,
@@ -92,6 +95,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
   })
 
   const submitHandlers = useAssetSubmitHandlers({
+    asset: asset as AssetDetail,
     country,
     language,
     moduleRows,

@@ -7,10 +7,11 @@ using ONEHub.Domain.Interfaces;
 
 namespace ONEHub.Infrastructure.Services;
 
-public class S3StorageService : IStorageService
+public sealed class S3StorageService : IStorageService, IDisposable
 {
     private readonly string _bucketName;
-    private readonly IAmazonS3 _s3Client;
+    private readonly AmazonS3Client _s3Client;
+    private bool _disposed;
 
     public S3StorageService(IConfiguration config)
     {
@@ -49,6 +50,21 @@ public class S3StorageService : IStorageService
         return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
     }
 
+    public async Task<bool> CopyFileAsync(string sourceKey, string destinationKey)
+    {
+        var copyRequest = new CopyObjectRequest
+        {
+            SourceBucket = _bucketName,
+            SourceKey = sourceKey,
+            DestinationBucket = _bucketName,
+            DestinationKey = destinationKey
+        };
+
+        var response = await _s3Client.CopyObjectAsync(copyRequest);
+
+        return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
+    }
+
     public async Task<bool> FileExistsAsync(string key)
     {
         try
@@ -59,6 +75,24 @@ public class S3StorageService : IStorageService
         catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return false;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                _s3Client?.Dispose();
+            }
+            _disposed = true;
         }
     }
 }

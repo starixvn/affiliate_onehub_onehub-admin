@@ -2,7 +2,7 @@ namespace ONEHub.Domain.Commands.LandingPages;
 
 public class UpdateAssetCommand : CreateAssetsCommand
 {
-    private const string SP_NAME = "Aff_LandingPage_AssetUploader_Upd";
+    private const string SP_NAME = "OH_AssetUploader_Upd";
 
     public int ModuleId { get; set; }
 

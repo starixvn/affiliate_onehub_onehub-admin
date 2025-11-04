@@ -35,12 +35,13 @@ export interface CreateAssetResponseData {
 export type CreateAssetResponse = IAxiosResponse<CreateAssetResponseData>
 
 export interface UpdateAssetRequest {
+  mediaId: number
   moduleId: number
   targetCountryCode: string
   languageCode: string
-  files?: File[]
-  inputFileNames?: string[]
-  inputMediaNames?: string[]
+  file: File
+  inputFileName: string
+  inputMediaName: string
 }
 
 export interface UpdateAssetResponseData {

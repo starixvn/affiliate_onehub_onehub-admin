@@ -59,6 +59,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
   } = useAssetFormState(asset)
 
   const handlers = useAssetFormHandlers({
+    asset,
     country,
     language,
     fileName,

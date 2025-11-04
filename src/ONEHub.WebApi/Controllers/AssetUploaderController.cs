@@ -98,34 +98,38 @@ public class AssetUploaderController(
     [HttpPost("update")]
     [RequestSizeLimit(100_000_000)]
     [RequestFormLimits(MultipartBodyLengthLimit = 100_000_000)]
-    public async Task<IActionResult> UpdateAsset([FromForm] UpdateAssetRequest request)
+    public async Task<ActionResult<IApiResponse>> UpdateAsset([FromForm] UpdateAssetRequest request)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        var file = Request.Form.Files.FirstOrDefault();
-        if (string.IsNullOrEmpty(request.InputFileNames) && file == null)
+        if (string.IsNullOrEmpty(request.InputFileName) && request.File == null)
         {
             return BadRequest("Please select valid file to update.");
         }
 
         var command = new UpdateAssetCommand(
-            File: file,
+            File: request.File,
             MediaId: request.MediaId,
             ModuleId: request.ModuleId,
             TargetCountryCode: WebUtility.HtmlEncode(request.TargetCountryCode),
             LanguageCode: WebUtility.HtmlEncode(request.LanguageCode),
-            InputFileName: WebUtility.HtmlEncode(request.InputFileNames),
-            InputMediaName: WebUtility.HtmlEncode(request.InputMediaNames),
+            InputFileName: WebUtility.HtmlEncode(request.InputFileName),
+            InputMediaName: WebUtility.HtmlEncode(request.InputMediaName),
             UserId: 1000000008,
             Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
             FunctionName: FUNCTION_NAME
         );
 
         var result = await mediator.Send(command);
-        return Ok(result);
+        if (!result.IsSuccessful)
+        {
+            return Ok(ApiResponse.Error(result.Code, result.Message));
+        }
+
+        return Ok(ApiResponse.Success());
     }
 
     [HttpDelete("delete/{mediaIds}")]
