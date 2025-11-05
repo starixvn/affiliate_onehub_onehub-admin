@@ -1,6 +1,6 @@
 using MediatR;
 using ONEHub.Domain.Criterias.Components;
-using ONEHub.Domain.DTOs.Components;
+using ONEHub.Domain.Entities;
 using ONEHub.Domain.Interfaces;
 
 namespace ONEHub.Application.Features.Components.Queries;

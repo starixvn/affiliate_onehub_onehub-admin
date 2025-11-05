@@ -12,7 +12,7 @@ export function useGetLinkGeneratorOptions() {
   return useQuery({
     queryKey: linkGeneratorKeys.options(),
     queryFn: () => linkGeneratorApi.getOptions(),
-    select: (data) => data.result,
+    select: (data) => data.data,
   })
 }
 
@@ -20,7 +20,7 @@ export function useGetLanguagesByCountry(countryCode: string) {
   return useQuery({
     queryKey: linkGeneratorKeys.languages(countryCode),
     queryFn: () => linkGeneratorApi.getLanguagesByCountry(countryCode),
-    select: (data) => data.result,
+    select: (data) => data.data,
     enabled: !!countryCode,
   })
 }

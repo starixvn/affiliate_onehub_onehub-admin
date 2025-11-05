@@ -17,6 +17,7 @@ public static class CampaignEndPoint
         var groupEndpoint = endpoints.MapGroup("/api/campaign").RequireAuthorization();
 
         groupEndpoint.MapGet("/summary", Summary);
+        groupEndpoint.MapGet("/dropdown", GetDropdownList);
         groupEndpoint.MapGet("/", GetList);
         groupEndpoint.MapGet("/export", ExportList);
         groupEndpoint.MapPost("/", Create);
@@ -31,6 +32,16 @@ public static class CampaignEndPoint
         IMediator mediator)
     {
         var query = new GetCampaignDashboardQuery();
+
+        var result = await mediator.Send(query);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result<IEnumerable<CampaignDropdownOption>>>, ValidationProblem>> GetDropdownList(
+        IMediator mediator)
+    {
+        var query = new GetCampaignDropdownQuery();
 
         var result = await mediator.Send(query);
 

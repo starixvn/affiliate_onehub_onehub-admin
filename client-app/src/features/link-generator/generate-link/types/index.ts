@@ -1,4 +1,4 @@
-import type { IAxiosResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 
 export interface DropdownOption {
   [key: string]: string | number | boolean | null | undefined

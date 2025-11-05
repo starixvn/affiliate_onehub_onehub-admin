@@ -1,21 +1,25 @@
 using Fanex.Logging;
 using MediatR;
-using ONEHub.Domain.DTOs.Common;
+using ONEHub.Application.Features.Shared;
+using ONEHub.Domain.Errors;
 using ONEHub.Domain.Interfaces;
+using ONEHub.Domain.Results;
 using InsertCommand = ONEHub.Domain.Commands.Components.InsertComponentCommand;
 
 namespace ONEHub.Application.Features.Components.Commands;
 
-public record InsertComponentCommand(
-    string ComponentName,
-    string ComponentCode,
-    int ComponentTypeId,
-    int StatusId,
-    int UserId,
-    string Ip
-) : IRequest<ResultInfo>;
+public class InsertComponentCommand : BaseNonResultCommand
+{
+    public string ComponentName { get; set; } = string.Empty;
 
-public class InsertComponentCommandHandler : IRequestHandler<InsertComponentCommand, ResultInfo>
+    public string ComponentCode { get; set; } = string.Empty;
+
+    public int ComponentTypeId { get; set; }
+
+    public int StatusId { get; set; }
+}
+
+public class InsertComponentCommandHandler : IRequestHandler<InsertComponentCommand, Result>
 {
     private readonly IDynamicRepository _repository;
     private readonly ILogger _logger;
@@ -28,7 +32,7 @@ public class InsertComponentCommandHandler : IRequestHandler<InsertComponentComm
         _logger = logger;
     }
 
-    public async Task<ResultInfo> Handle(InsertComponentCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(InsertComponentCommand request, CancellationToken cancellationToken)
     {
         try
         {
@@ -47,23 +51,15 @@ public class InsertComponentCommandHandler : IRequestHandler<InsertComponentComm
             if (command.ErrCode != 0)
             {
                 _logger.Error($"InsertComponent failed: {command.ErrMsg}");
-                return new ResultInfo
-                {
-                    Code = command.ErrCode,
-                    Message = command.ErrMsg ?? "Error creating component"
-                };
+                return Result.Failure(new Error(command.ErrCode, command.ErrMsg ?? "Error creating component"));
             }
 
-            return ResultInfo.Success;
+            return Result.Success();
         }
         catch (Exception ex)
         {
             _logger.Error($"Error creating component: {ex.Message}", ex);
-            return new ResultInfo
-            {
-                Code = -1,
-                Message = $"Error creating component: {ex.Message}"
-            };
+            return Result.Failure(new Error(-1, $"Error creating component: {ex.Message}"));
         }
     }
 }

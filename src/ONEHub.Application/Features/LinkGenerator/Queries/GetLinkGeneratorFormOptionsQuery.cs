@@ -1,47 +1,47 @@
 using MediatR;
 using ONEHub.Application.DTOs.LinkGenerator;
-using ONEHub.Domain.Criterias.Campaigns;
-using ONEHub.Domain.Criterias.Components;
 using ONEHub.Domain.Criterias.LandingPages;
-using ONEHub.Domain.DTOs.Campaigns;
-using ONEHub.Domain.DTOs.Components;
 using ONEHub.Domain.DTOs.LandingPages;
-using ONEHub.Domain.Interfaces;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LinkGenerator.Queries;
 
-public record GetLinkGeneratorFormOptionsQuery() : IRequest<LinkGeneratorFormOptionsDto>;
+public record GetLinkGeneratorFormOptionsQuery() : IRequest<Result<LinkGeneratorFormOptionsDto>>;
 
-public class GetLinkGeneratorFormOptionsQueryHandler(IDynamicRepository repository)
-    : IRequestHandler<GetLinkGeneratorFormOptionsQuery, LinkGeneratorFormOptionsDto>
+public class GetLinkGeneratorFormOptionsQueryHandler(ICampaignRepository campaignRepository, IComponentRepository componentRepository, ISettingsRepository settingsRepository)
+    : IRequestHandler<GetLinkGeneratorFormOptionsQuery, Result<LinkGeneratorFormOptionsDto>>
 {
-    public async Task<LinkGeneratorFormOptionsDto> Handle(
+    public async Task<Result<LinkGeneratorFormOptionsDto>> Handle(
         GetLinkGeneratorFormOptionsQuery request,
         CancellationToken cancellationToken)
     {
-        var campaignsCriteria = new GetCampaignDropdownCriteria { StatusIds = "1" };
-        var campaigns = await repository.FetchAsync<CampaignInfo>(campaignsCriteria);
+        var campaigns = await campaignRepository.GetCampaignInfoAsync(new GetCampaignInfoParam { StatusIds = "1" });
 
-        var eventsCriteria = new GetComponentListCriteria { ComponentTypeId = 1 };
-        var events = await repository.FetchAsync<ComponentInfo>(eventsCriteria);
+        var events = await componentRepository.GetComponentAsync(new GetComponentParam { ComponentTypeId = 1 });
 
-        var groupsCriteria = new GetComponentListCriteria { ComponentTypeId = 2 };
-        var groups = await repository.FetchAsync<ComponentInfo>(groupsCriteria);
+        var groups = await componentRepository.GetComponentAsync(new GetComponentParam { ComponentTypeId = 2 });
 
-        var channelsCriteria = new GetComponentListCriteria { ComponentTypeId = 3 };
-        var channels = await repository.FetchAsync<ComponentInfo>(channelsCriteria);
+        var channels = await componentRepository.GetComponentAsync(new GetComponentParam { ComponentTypeId = 3 });
 
-        var agenciesCriteria = new GetComponentListCriteria { ComponentTypeId = 4 };
-        var agencies = await repository.FetchAsync<ComponentInfo>(agenciesCriteria);
+        var agencies = await componentRepository.GetComponentAsync(new GetComponentParam { ComponentTypeId = 4 });
 
-        var typesCriteria = new GetComponentListCriteria { ComponentTypeId = 5 };
-        var types = await repository.FetchAsync<ComponentInfo>(typesCriteria);
+        var types = await componentRepository.GetComponentAsync(new GetComponentParam { ComponentTypeId = 5 });
 
-        var countriesCriteria = new GetTargetCountryCriteria { IsDefault = true };
-        var countries = await repository.FetchAsync<TargetCountry>(countriesCriteria);
+        var countries = await settingsRepository.GetTargetCountryListAsync();
 
         var landingPagesCriteria = new GetLandingPageDropdownCriteria();
-        var landingPages = await repository.FetchAsync<LandingPageOption>(landingPagesCriteria);
+        var landingPages = new List<LandingPageOption>
+        {
+            new() { Category = "Mobile", PageName = "Landing page mobile 1", IsComponent = true },
+            new() { Category = "Mobile", PageName = "Landing page mobile 2" , IsComponent = true},
+            new() { Category = "Mobile", PageName = "Landing page mobile 3", IsComponent = true},
+            new() { Category = "Desktop & Mobile", PageName = "Landing page 1", IsComponent = true},
+            new() { Category = "Desktop & Mobile", PageName = "Landing page 2", IsComponent = true},
+            new() { Category = "Desktop & Mobile", PageName = "Landing page 3", IsComponent = true},
+            new() { Category = "Desktop & Mobile", PageName = "Landing page 4", IsComponent = true},
+        };
 
         var groupedLandingPages = landingPages
             .GroupBy(x => x.Category)
@@ -52,17 +52,19 @@ public class GetLinkGeneratorFormOptionsQueryHandler(IDynamicRepository reposito
             })
             .ToList();
 
-        return new LinkGeneratorFormOptionsDto
+        var data = new LinkGeneratorFormOptionsDto
         {
-            Campaigns = campaigns,
-            Events = events,
-            Groups = groups,
-            Channels = channels,
-            Agencies = agencies,
-            Types = types,
-            Countries = countries,
+            Campaigns = campaigns.Data,
+            Events = events.Data,
+            Groups = groups.Data,
+            Channels = channels.Data,
+            Agencies = agencies.Data,
+            Types = types.Data,
+            Countries = countries.Data,
             LandingPages = groupedLandingPages
         };
+
+        return Result<LinkGeneratorFormOptionsDto>.Success(data);
     }
 }
 

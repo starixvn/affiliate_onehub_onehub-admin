@@ -101,4 +101,15 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
 
         return result;
     }
+
+    public async Task<Result<IEnumerable<Component>>> GetComponentAsync(GetComponentParam param)
+    {
+        var criteria = new GetComponentCriteria
+        {
+            ComponentTypeId = param.ComponentTypeId,
+            ComponentId = param.ComponentId
+        };
+
+        return await FetchDataAsync<Component>(criteria);
+    }
 }

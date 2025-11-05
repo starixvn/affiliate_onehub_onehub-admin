@@ -1,19 +1,21 @@
 using MediatR;
 using ONEHub.Domain.Criterias.Components;
 using ONEHub.Domain.DTOs.Components;
+using ONEHub.Domain.Errors;
 using ONEHub.Domain.Interfaces;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Components.Queries;
 
 public record GetComponentsByTypeQuery(
     int ComponentTypeId,
     int? ComponentId = null
-) : IRequest<IEnumerable<ComponentInfo>>;
+) : IRequest<Result<IEnumerable<ComponentInfo>>>;
 
 public class GetComponentsByTypeQueryHandler(IDynamicRepository repository)
-    : IRequestHandler<GetComponentsByTypeQuery, IEnumerable<ComponentInfo>>
+    : IRequestHandler<GetComponentsByTypeQuery, Result<IEnumerable<ComponentInfo>>>
 {
-    public async Task<IEnumerable<ComponentInfo>> Handle(
+    public async Task<Result<IEnumerable<ComponentInfo>>> Handle(
         GetComponentsByTypeQuery request,
         CancellationToken cancellationToken)
     {
@@ -24,7 +26,13 @@ public class GetComponentsByTypeQueryHandler(IDynamicRepository repository)
         };
 
         var results = await repository.FetchAsync<ComponentInfo>(criteria);
-        return results;
+
+        if (results == null)
+        {
+            return Result<IEnumerable<ComponentInfo>>.Failure(Error.NoData);
+        }
+
+        return Result<IEnumerable<ComponentInfo>>.Success(results);
     }
 }
 

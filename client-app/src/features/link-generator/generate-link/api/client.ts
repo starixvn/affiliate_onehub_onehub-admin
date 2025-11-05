@@ -5,7 +5,7 @@ import type {
   GenerateLinkResponse,
   TargetCountry,
 } from '../types'
-import type { IAxiosResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 
 type InsertComponentRequest = {
   componentName: string
@@ -17,14 +17,15 @@ type InsertComponentRequest = {
 export const linkGeneratorApi = {
   async getOptions(): Promise<GetLinkGeneratorOptionsResponse> {
     const response = await apiClient.get<GetLinkGeneratorOptionsResponse>(
-      '/link-generator/form-options'
+      '/generate-link/form-options'
     )
     return response.data
   },
 
   async getLanguagesByCountry(countryCode: string): Promise<IAxiosResponse<TargetCountry[]>> {
     const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
-      `/link-generator/languages/${countryCode}`
+      `/settings/language`,
+      { params: { countryCode } }
     )
     return response.data
   },
@@ -45,7 +46,7 @@ export const linkGeneratorApi = {
     return {
       errorCode: 0,
       errorMessage: '',
-      result: {
+      data: {
         fullLink: `https://example.com/track/${Date.now()}`,
         shortLink: `https://short.link/${Math.random().toString(36).substring(7)}`,
       },

@@ -40,3 +40,9 @@ public class DeleteBatchCampaignParam : BaseParam
 {
     public string CampaignIds { get; set; } = string.Empty;
 }
+
+public class GetCampaignInfoParam
+{
+    public int? CampaignId { get; set; }
+    public string StatusIds { get; set; } = string.Empty;
+}

@@ -17,4 +17,6 @@ public interface ICampaignRepository
     public Task<Result> UpdateBatchCampaignStatusAsync(UpdateBatchCampaignStatusParam param);
 
     public Task<Result> DeleteBatchCampaignAsync(DeleteBatchCampaignParam param);
+
+    public Task<Result<IEnumerable<CampaignBase>>> GetCampaignInfoAsync(GetCampaignInfoParam param);
 }

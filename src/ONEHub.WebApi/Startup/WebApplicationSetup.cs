@@ -8,6 +8,8 @@ using ONEHub.Domain.Settings;
 using ONEHub.WebApi.Features.Auth;
 using ONEHub.WebApi.Features.Campaign;
 using ONEHub.WebApi.Features.Component;
+using ONEHub.WebApi.Features.GenerateLink;
+using ONEHub.WebApi.Features.Settings;
 using Serilog;
 using Serilog.Events;
 
@@ -223,6 +225,8 @@ public static class WebApplicationSetup
         app.RegisterAuthEndpoints();
         app.RegisterCampaignEndpoints();
         app.RegisterComponentEndpoints();
+        app.RegisterGenerateLinkEndpoints();
+        app.RegisterSettingsEndpoints();
         return app;
     }
 }

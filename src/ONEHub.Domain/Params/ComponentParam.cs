@@ -13,6 +13,13 @@ public class ComponentListParam : PagingParam
     public bool IsExportExcel { get; set; }
 }
 
+public class GetComponentParam : BaseParam
+{
+    public int ComponentTypeId { get; set; }
+
+    public int? ComponentId { get; set; }
+}
+
 public class CreateComponentParam : BaseParam
 {
     public int CategoryId { get; set; }

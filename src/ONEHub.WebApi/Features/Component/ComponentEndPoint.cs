@@ -2,10 +2,9 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
-using ONEHub.Application.Features.Component.Commands;
-using ONEHub.Application.Features.Component.Queries;
-using ONEHub.Domain.Entities;
-using ONEHub.Domain.Errors;
+using ONEHub.Application.Features.Components.Commands;
+using ONEHub.Application.Features.Components.Queries;
+using ONEHub.Domain.DTOs.Components;
 using ONEHub.Domain.Results;
 
 namespace ONEHub.WebApi.Features.Component;
@@ -23,6 +22,7 @@ public static class ComponentEndPoint
         groupEndpoint.MapPut("/{id}", Update);
         groupEndpoint.MapPut("/status/batch", UpdateBatchStatus);
         groupEndpoint.MapDelete("/batch", DeleteBatch);
+        groupEndpoint.MapGet("/", GetListByCategory);
 
         return groupEndpoint;
     }
@@ -160,6 +160,24 @@ public static class ComponentEndPoint
             ComponentIds = request.ComponentIds
         };
         var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+    private static async Task<Results<Ok<Result<IEnumerable<ComponentInfo>>>, ValidationProblem>> GetListByCategory(
+        [AsParameters] GetComponentsByTypeRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var query = new GetComponentsByTypeQuery(
+            request.ComponentTypeId,
+            request.ComponentId
+        );
+
+        var result = await mediator.Send(query);
 
         return TypedResults.Ok(result);
     }
