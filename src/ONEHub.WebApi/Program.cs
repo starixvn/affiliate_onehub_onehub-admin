@@ -1,3 +1,4 @@
+using Fanex.Logging;
 using ONEHub.WebApi.Startup;
 using Serilog;
 
@@ -8,10 +9,10 @@ builder.Services.AddDependencyInjection(builder.Configuration);
 
 try
 {
-    Log.Information("Starting ONEHub Admin API");
+    LogService.Info("Starting ONEHub Admin API");
     var app = builder.Build();
 
-    app.UseExceptionHandler(options => { });
+    app.UseExceptionHandler(_ => { });
 
     app.UseHttpRequestLogging();
 
@@ -39,9 +40,5 @@ try
 }
 catch (Exception ex)
 {
-    Log.Fatal(ex, "Application terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
+    LogService.Critical("Application terminated unexpectedly", ex);
 }
