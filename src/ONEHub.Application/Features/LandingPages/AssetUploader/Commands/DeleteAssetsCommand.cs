@@ -39,7 +39,7 @@ public class DeleteAssetsCommandHandler(
             await repository.ExecuteAsync(command);
             if (command.ErrCode == 0)
             {
-                DeleteFiles(fileNameList);
+                await DeleteFilesAsync(fileNameList);
                 return ResultInfo.Success;
             }
 
@@ -61,7 +61,7 @@ public class DeleteAssetsCommandHandler(
         {
             if (int.TryParse(mediaId.Trim(), out var id))
             {
-                var criteria = new GetAssetDetailCriteria()
+                var criteria = new GetAssetDetailCriteria
                 {
                     MediaId = id,
                     UserId = userId
@@ -78,13 +78,13 @@ public class DeleteAssetsCommandHandler(
         return fileNameList;
     }
 
-    private void DeleteFiles(List<string> fileList)
+    private async Task DeleteFilesAsync(List<string> fileList)
     {
         foreach (var filePath in fileList)
         {
             try
             {
-                fileService.DeleteFile(filePath);
+                await fileService.DeleteFileAsync(filePath);
             }
             catch (Exception ex)
             {

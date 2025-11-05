@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
@@ -43,11 +44,11 @@ public class S3FileService : IFileService
 
         _allowedExtensions = _configuration["AppSettings:AllowedImageExtensions"]!.Split(',');
 
-        var maxFileSizeMb = int.Parse(_configuration["AppSettings:MaxFileSize"]!);
+        var maxFileSizeMb = int.Parse(_configuration["AppSettings:MaxFileSize"]!, CultureInfo.InvariantCulture);
         _maxFileSizeBytes = maxFileSizeMb * 1024 * 1024;
 
-        _maxImageWidth = int.Parse(_configuration["AppSettings:MaxImageWidth"]!);
-        _maxImageHeight = int.Parse(_configuration["AppSettings:MaxImageHeight"]!);
+        _maxImageWidth = int.Parse(_configuration["AppSettings:MaxImageWidth"]!, CultureInfo.InvariantCulture);
+        _maxImageHeight = int.Parse(_configuration["AppSettings:MaxImageHeight"]!, CultureInfo.InvariantCulture);
     }
 
     public ResultInfo ValidateFile(string fileName, long contentLength, Stream inputStream)
@@ -61,7 +62,7 @@ public class S3FileService : IFileService
             };
         }
 
-        var extension = Path.GetExtension(fileName).ToLower();
+        var extension = Path.GetExtension(fileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
             return new ResultInfo
@@ -91,7 +92,7 @@ public class S3FileService : IFileService
             };
         }
 
-        var maxFiles = int.Parse(_configuration["AppSettings:MaximumFiles"] ?? "50");
+        var maxFiles = int.Parse(_configuration["AppSettings:MaximumFiles"] ?? "50", CultureInfo.InvariantCulture);
         if (files.Count > maxFiles)
         {
             return new ResultInfo
@@ -158,13 +159,13 @@ public class S3FileService : IFileService
             return result;
         }
 
-        if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN))
+        if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
             result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} cannot contain special characters: \\ / : * ? \" < > # % & +<br />");
         }
 
-        var extension = Path.GetExtension(inputFileName).ToLower();
+        var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
             result.Code = ErrorCodes.GeneralErrorCode;
@@ -180,13 +181,13 @@ public class S3FileService : IFileService
         return result;
     }
 
-    private async Task<ResultInfo> CheckMultipleFilesInBucketAsync(string[] inputFileNames, string prefix = "")
+    public async Task<ResultInfo> CheckMultipleFilesInFolderAsync(string[] inputFileNames, string folder)
     {
         var existingFiles = new List<string>();
 
         foreach (var fileName in inputFileNames)
         {
-            var key = string.IsNullOrEmpty(prefix) ? fileName : $"{prefix}/{fileName}";
+            var key = string.IsNullOrEmpty(folder) ? fileName : $"{folder}/{fileName}";
 
             try
             {
@@ -243,7 +244,7 @@ public class S3FileService : IFileService
             return ResultInfo.Success;
         }
 
-        if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN))
+        if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
             return new ResultInfo
             {
@@ -252,7 +253,7 @@ public class S3FileService : IFileService
             };
         }
 
-        var extension = Path.GetExtension(inputFileName).ToLower();
+        var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
             return new ResultInfo
@@ -281,7 +282,7 @@ public class S3FileService : IFileService
             return ResultInfo.Success;
         }
 
-        if (Regex.IsMatch(inputMediaName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN))
+        if (Regex.IsMatch(inputMediaName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
             return new ResultInfo
             {
@@ -302,21 +303,21 @@ public class S3FileService : IFileService
         return ResultInfo.Success;
     }
 
-    public async Task UploadFileAsync(IFormFile file, string key)
+    public async Task UploadFileAsync(IFormFile file, string filePath)
     {
-        var success = await _storageService.UploadFileAsync(file, key);
+        var success = await _storageService.UploadFileAsync(file, filePath);
         if (!success)
         {
-            throw new Exception($"Failed to upload file to S3: {key}");
+            _logger.LogWarning("Failed to upload file to S3: {Key}", filePath);
         }
     }
 
-    private async Task DeleteFileAsync(string key)
+    public async Task DeleteFileAsync(string filePath)
     {
-        var success = await _storageService.DeleteFileAsync(key);
+        var success = await _storageService.DeleteFileAsync(filePath);
         if (!success)
         {
-            _logger.LogWarning("Failed to delete file from S3: {Key}", key);
+            _logger.LogWarning("Failed to delete file from S3: {Key}", filePath);
         }
     }
 
@@ -338,7 +339,7 @@ public class S3FileService : IFileService
             return result;
         }
 
-        if (!string.IsNullOrEmpty(inputFileNames) && Regex.IsMatch(inputFileNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN))
+        if (!string.IsNullOrEmpty(inputFileNames) && Regex.IsMatch(inputFileNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
             return new ResultInfo
             {
@@ -347,7 +348,7 @@ public class S3FileService : IFileService
             };
         }
 
-        if (!string.IsNullOrEmpty(inputMediaNames) && Regex.IsMatch(inputMediaNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN))
+        if (!string.IsNullOrEmpty(inputMediaNames) && Regex.IsMatch(inputMediaNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
             return new ResultInfo
             {
@@ -359,9 +360,9 @@ public class S3FileService : IFileService
         return ResultInfo.Success;
     }
 
-    private async Task CleanupUploadedFilesAsync(List<string> keys)
+    public async Task CleanupUploadedFilesAsync(List<string> filePaths)
     {
-        foreach (var key in keys)
+        foreach (var key in filePaths)
         {
             try
             {
@@ -372,23 +373,5 @@ public class S3FileService : IFileService
                 _logger.LogWarning(ex, "Failed to cleanup file: {Key}", key);
             }
         }
-    }
-
-    public ResultInfo CheckMultipleFilesInFolder(string[] inputFileNames, string folder)
-    {
-        var task = CheckMultipleFilesInBucketAsync(inputFileNames, folder);
-        return task.GetAwaiter().GetResult();
-    }
-
-    public void DeleteFile(string key)
-    {
-        var task = DeleteFileAsync(key);
-        task.GetAwaiter().GetResult();
-    }
-
-    public void CleanupUploadedFiles(List<string> keys)
-    {
-        var task = CleanupUploadedFilesAsync(keys);
-        task.GetAwaiter().GetResult();
     }
 }

@@ -37,12 +37,9 @@ public class UploadAssetsCommandHandler(
         try
         {
             var allFiles = new FormFileCollection();
-            foreach (var row in request.ModuleRows)
+            foreach (var row in request.ModuleRows.Where(row => row.Files.Any()))
             {
-                if (row.Files.Any())
-                {
-                    allFiles.AddRange(row.Files);
-                }
+                allFiles.AddRange(row.Files);
             }
 
             var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
@@ -70,7 +67,7 @@ public class UploadAssetsCommandHandler(
                     request.LanguageCode
                 );
 
-                var folderCheck = fileService.CheckMultipleFilesInFolder(inputFileNames, folder);
+                var folderCheck = await fileService.CheckMultipleFilesInFolderAsync(inputFileNames, folder);
                 if (!folderCheck.IsSuccessful)
                 {
                     return folderCheck;
@@ -136,7 +133,7 @@ public class UploadAssetsCommandHandler(
 
             if (command.ErrCode != 0)
             {
-                fileService.CleanupUploadedFiles(filePaths);
+                await fileService.CleanupUploadedFilesAsync(filePaths);
                 return ResultInfo.GenerateError(command.ErrMsg);
             }
 
@@ -145,7 +142,7 @@ public class UploadAssetsCommandHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error saving assets to database");
-            fileService.CleanupUploadedFiles(filePaths);
+            await fileService.CleanupUploadedFilesAsync(filePaths);
             return ResultInfo.GenerateError(DATABASE_INSERTION_FAILS_MESSAGE);
         }
     }

@@ -78,11 +78,7 @@ public sealed class S3StorageService : IStorageService, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+    public void Dispose() => Dispose(true);
 
     private void Dispose(bool disposing)
     {
@@ -90,7 +86,7 @@ public sealed class S3StorageService : IStorageService, IDisposable
         {
             if (disposing)
             {
-                _s3Client?.Dispose();
+                _s3Client.Dispose();
             }
             _disposed = true;
         }

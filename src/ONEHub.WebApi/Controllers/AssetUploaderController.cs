@@ -35,7 +35,7 @@ public class AssetUploaderController(
             Status = request.Status,
             MediaId = request.MediaId,
             MediaName = request.MediaName,
-            UserId = 1000000008,
+            UserId = 1_000_000_008,
             FunctionName = FUNCTION_NAME
         };
 
@@ -81,7 +81,7 @@ public class AssetUploaderController(
             request.ModuleRows,
             WebUtility.HtmlEncode(request.TargetCountryCode),
             WebUtility.HtmlEncode(request.LanguageCode),
-            1000000008,
+            1_000_000_008,
             HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
             FUNCTION_NAME
         );
@@ -111,16 +111,16 @@ public class AssetUploaderController(
         }
 
         var command = new UpdateAssetCommand(
-            File: request.File,
-            MediaId: request.MediaId,
-            ModuleId: request.ModuleId,
-            TargetCountryCode: WebUtility.HtmlEncode(request.TargetCountryCode),
-            LanguageCode: WebUtility.HtmlEncode(request.LanguageCode),
-            InputFileName: WebUtility.HtmlEncode(request.InputFileName),
-            InputMediaName: WebUtility.HtmlEncode(request.InputMediaName),
-            UserId: 1000000008,
-            Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: FUNCTION_NAME
+            request.File,
+            request.MediaId,
+            request.ModuleId,
+            WebUtility.HtmlEncode(request.TargetCountryCode),
+            WebUtility.HtmlEncode(request.LanguageCode),
+            WebUtility.HtmlEncode(request.InputFileName),
+            WebUtility.HtmlEncode(request.InputMediaName),
+            1_000_000_008,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            FUNCTION_NAME
         );
 
         var result = await mediator.Send(command);
@@ -141,10 +141,10 @@ public class AssetUploaderController(
         }
 
         var command = new DeleteAssetsCommand(
-            MediaIds: mediaIds,
-            UserId: 1000000008,
-            Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: FUNCTION_NAME
+            mediaIds,
+            1_000_000_008,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            FUNCTION_NAME
         );
 
         var result = await mediator.Send(command);
@@ -165,11 +165,11 @@ public class AssetUploaderController(
         }
 
         var command = new ToggleAssetStatusCommand(
-            MediaIds: request.MediaIds,
-            StatusId: request.StatusId,
-            UserId: 1000000008,
-            Ip: HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
-            FunctionName: FUNCTION_NAME
+            request.MediaIds,
+            request.StatusId,
+            1_000_000_008,
+            HttpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty,
+            FUNCTION_NAME
         );
 
         var result = await mediator.Send(command);

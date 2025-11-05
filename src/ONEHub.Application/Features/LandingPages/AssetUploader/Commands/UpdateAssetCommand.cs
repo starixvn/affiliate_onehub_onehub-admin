@@ -1,9 +1,7 @@
 using System.Net;
 using System.Text;
-using System.Text.RegularExpressions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using ONEHub.Domain.Common;
 using ONEHub.Domain.Constants;
@@ -32,7 +30,6 @@ public class UpdateAssetCommandHandler(
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
-    IConfiguration configuration,
     ILogger<UpdateAssetCommandHandler> logger)
     : IRequestHandler<UpdateAssetCommand, ResultInfo>
 {
@@ -143,7 +140,7 @@ public class UpdateAssetCommandHandler(
 
         if (command.ErrCode == 0)
         {
-            fileService.DeleteFile(oldFilePath);
+            await fileService.DeleteFileAsync(oldFilePath);
             await fileService.UploadFileAsync(request.File, path);
             return ResultInfo.Success;
         }

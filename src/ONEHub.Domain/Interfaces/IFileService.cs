@@ -11,7 +11,7 @@ public interface IFileService
 
     ResultInfo ValidateAllInputFileNames(string[] inputFileNames);
 
-    ResultInfo CheckMultipleFilesInFolder(string[] inputFileNames, string folder);
+    Task<ResultInfo> CheckMultipleFilesInFolderAsync(string[] inputFileNames, string folder);
 
     ResultInfo CheckDuplicateFileNames(string[] inputFileNames, string nameType = "File");
 
@@ -21,12 +21,12 @@ public interface IFileService
 
     Task UploadFileAsync(IFormFile file, string filePath);
 
-    void DeleteFile(string filePath);
+    Task DeleteFileAsync(string filePath);
 
     string[] PrepareInputFileNames(IFormFileCollection files, string inputFileNames);
 
     ResultInfo ValidateUploadRequest(IFormFileCollection files, string inputFileNames, string? inputMediaNames = null);
 
-    void CleanupUploadedFiles(List<string> filePaths);
+    Task CleanupUploadedFilesAsync(List<string> filePaths);
 }
 
