@@ -26,6 +26,7 @@
     "columns": {
       "select": "Select all",
       "selectRow": "Select row",
+      "no": "#",
       "code": "Campaign Code",
       "name": "Campaign Name",
       "description": "Campaign Description",

@@ -25,6 +25,7 @@
     "columns": {
       "select": "全选",
       "selectRow": "选择行",
+      "no": "#",
       "code": "活动代码",
       "name": "活动名称",
       "description": "活动描述",

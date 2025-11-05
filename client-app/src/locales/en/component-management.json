@@ -1,0 +1,106 @@
+{
+  "entity_one": "component",
+  "entity_other": "components",
+  "page": {
+    "title": "Component Management",
+    "description": "Manage reusable parameters for link generation",
+    "loading": "Loading components..."
+  },
+  "buttons": {
+    "export": "Export",
+    "create": "Create"
+  },
+  "categoryFilters": {
+    "event": {
+      "title": "Event"
+    },
+    "group": {
+      "title": "Group"
+    },
+    "channel": {
+      "title": "Channel"
+    },
+    "agency": {
+      "title": "Agency"
+    },
+    "type": {
+      "title": "Type"
+    },
+    "landingPage": {
+      "title": "Landing Page"
+    }
+  },
+  "statusFilters": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "searchToolbar": {
+    "submit": "Search"
+  },
+  "table": {
+    "search": "Search components...",
+    "noResults": "No results.",
+    "columns": {
+      "select": "Select all",
+      "selectRow": "Select row",
+      "no": "#",
+      "code": "Code",
+      "name": "Name",
+      "category": "Category",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "modifiedDate": "Modified Date",
+      "modifiedBy": "Modified By",
+      "status": "Status"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "rowActions": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "bulkActions": {
+    "changeToActive": "Change to Active",
+    "changeToActiveCount": "Change to Active ({{count}} affected)",
+    "changeToInactive": "Change to Inactive",
+    "changeToInactiveCount": "Change to Inactive ({{count}} affected)",
+    "deleteSelected": "Delete all selected components"
+  },
+  "bulkActionsToast": {
+    "statusChanged": "Updated {{count}} component(s) to {{status}}",
+    "alreadyStatus": "All selected components are already {{status}}"
+  },
+  "createDialog": {
+    "title": "Create New Component",
+    "description": "Create new component here. Click save when you're done.",
+    "formPlaceholder": "Form will be implemented when API is ready",
+    "cancel": "Cancel",
+    "confirm": "Create",
+    "success": "Component created successfully"
+  },
+  "updateDialog": {
+    "title": "Update Component",
+    "description": "Update the component here. Click save when you're done.",
+    "formPlaceholder": "Editing: {{name}}",
+    "cancel": "Cancel",
+    "confirm": "Update",
+    "success": "Component updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Component",
+    "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "multiTitle_one": "Delete {{count}} component",
+    "multiTitle_other": "Delete {{count}} components",
+    "multiDescription_one": "Are you sure you want to delete {{count}} component? This action cannot be undone.",
+    "multiDescription_other": "Are you sure you want to delete {{count}} components? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "success": "Component deleted successfully",
+    "multiSuccess_one": "Deleted {{count}} component",
+    "multiSuccess_other": "Deleted {{count}} components"
+  }
+}

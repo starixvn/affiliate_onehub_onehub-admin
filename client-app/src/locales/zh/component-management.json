@@ -1,0 +1,105 @@
+{
+  "entity_other": "组件",
+  "page": {
+    "title": "组件管理",
+    "description": "管理链接生成的可重用参数",
+    "loading": "加载组件中..."
+  },
+  "buttons": {
+    "export": "导出",
+    "create": "创建"
+  },
+  "categoryFilters": {
+    "event": {
+      "title": "活动"
+    },
+    "group": {
+      "title": "群组"
+    },
+    "channel": {
+      "title": "渠道"
+    },
+    "agency": {
+      "title": "代理商"
+    },
+    "type": {
+      "title": "类型"
+    },
+    "landingPage": {
+      "title": "落地页"
+    }
+  },
+  "statusFilters": {
+    "active": "启用",
+    "inactive": "停用"
+  },
+  "searchToolbar": {
+    "submit": "搜索"
+  },
+  "table": {
+    "search": "搜索组件...",
+    "noResults": "未找到结果。",
+    "columns": {
+      "select": "全选",
+      "selectRow": "选择行",
+      "no": "#",
+      "code": "代码",
+      "name": "名称",
+      "category": "类别",
+      "createdDate": "创建日期",
+      "createdBy": "创建人",
+      "modifiedDate": "修改日期",
+      "modifiedBy": "修改人",
+      "status": "状态"
+    },
+    "actions": {
+      "openMenu": "打开菜单",
+      "edit": "编辑",
+      "delete": "删除"
+    }
+  },
+  "rowActions": {
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "bulkActions": {
+    "changeToActive": "更改为启用",
+    "changeToActiveCount": "更改为启用（影响 {{count}} 个）",
+    "changeToInactive": "更改为停用",
+    "changeToInactiveCount": "更改为停用（影响 {{count}} 个）",
+    "deleteSelected": "删除所有选中的组件"
+  },
+  "bulkActionsToast": {
+    "statusChanged": "已更新 {{count}} 个组件为{{status}}",
+    "alreadyStatus": "所有选中的组件已经是{{status}}"
+  },
+  "createDialog": {
+    "title": "创建新组件",
+    "description": "在此创建新组件。完成后点击保存。",
+    "formPlaceholder": "表单将在 API 准备就绪时实现",
+    "cancel": "取消",
+    "confirm": "创建",
+    "success": "组件创建成功"
+  },
+  "updateDialog": {
+    "title": "更新组件",
+    "description": "在此更新组件。完成后点击保存。",
+    "formPlaceholder": "正在编辑：{{name}}",
+    "cancel": "取消",
+    "confirm": "更新",
+    "success": "组件更新成功"
+  },
+  "deleteDialog": {
+    "title": "删除组件",
+    "description": "您确定要删除 {{name}} 吗？此操作无法撤销。",
+    "multiTitle_one": "删除 {{count}} 个组件",
+    "multiTitle_other": "删除 {{count}} 个组件",
+    "multiDescription_one": "您确定要删除 {{count}} 个组件吗？此操作无法撤销。",
+    "multiDescription_other": "您确定要删除 {{count}} 个组件吗？此操作无法撤销。",
+    "cancel": "取消",
+    "confirm": "删除",
+    "success": "组件删除成功",
+    "multiSuccess_one": "已删除 {{count}} 个组件",
+    "multiSuccess_other": "已删除 {{count}} 个组件"
+  }
+}

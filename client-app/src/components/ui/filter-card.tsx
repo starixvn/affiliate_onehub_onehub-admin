@@ -91,6 +91,23 @@ const iconVariants = cva(
   }
 )
 
+const titleVariants = cva('text-sm font-medium transition-colors', {
+  variants: {
+    variant: {
+      default: 'text-primary',
+      rainbow: 'text-purple-600 dark:text-purple-400',
+      success: 'text-green-600 dark:text-green-500',
+      warning: 'text-orange-600 dark:text-orange-500',
+      info: 'text-blue-600 dark:text-blue-500',
+      danger: 'text-red-600 dark:text-red-500',
+      secondary: 'text-gray-600 dark:text-gray-500',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+})
+
 interface FilterCardProps
   extends React.ComponentProps<typeof Card>,
     VariantProps<typeof filterCardVariants> {
@@ -123,7 +140,7 @@ function FilterCard({
       {...props}
     >
       <CardHeader className='pb-0'>
-        <CardTitle className='text-muted-foreground text-sm font-medium'>
+        <CardTitle className={cn(titleVariants({ variant }))}>
           {title}
         </CardTitle>
         <CardAction>
@@ -139,5 +156,5 @@ function FilterCard({
   )
 }
 
-export { FilterCard, filterCardVariants, iconVariants }
+export { FilterCard, filterCardVariants, iconVariants, titleVariants }
 export type { FilterCardProps }
