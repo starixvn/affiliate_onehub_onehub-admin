@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ONEHub.Application.DTOs.LinkGenerator;
 using ONEHub.Application.Features.LinkGenerator.Queries;
+using ONEHub.Domain.DTOs.Components;
 using ONEHub.WebApi.Models;
 
 namespace ONEHub.WebApi.Controllers;
@@ -18,6 +19,14 @@ public class LinkGeneratorController(IMediator mediator) : ControllerBase
         var query = new GetLinkGeneratorFormOptionsQuery();
         var result = await mediator.Send(query);
         return Ok(ApiResponse<LinkGeneratorFormOptionsDto>.Success(result));
+    }
+
+    [HttpGet("languages/{countryCode}")]
+    public async Task<ActionResult<IApiResponse<IEnumerable<TargetCountry>>>> GetLanguagesByCountry(string countryCode)
+    {
+        var query = new GetLanguagesByCountryQuery(countryCode);
+        var result = await mediator.Send(query);
+        return Ok(ApiResponse<IEnumerable<TargetCountry>>.Success(result));
     }
 }
 

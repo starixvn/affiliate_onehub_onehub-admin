@@ -5,6 +5,7 @@ export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
   options: () => [...linkGeneratorKeys.all, 'options'] as const,
   statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
+  languages: (countryCode: string) => [...linkGeneratorKeys.all, 'languages', countryCode] as const,
 }
 
 export function useGetLinkGeneratorOptions() {
@@ -12,6 +13,15 @@ export function useGetLinkGeneratorOptions() {
     queryKey: linkGeneratorKeys.options(),
     queryFn: () => linkGeneratorApi.getOptions(),
     select: (data) => data.result,
+  })
+}
+
+export function useGetLanguagesByCountry(countryCode: string) {
+  return useQuery({
+    queryKey: linkGeneratorKeys.languages(countryCode),
+    queryFn: () => linkGeneratorApi.getLanguagesByCountry(countryCode),
+    select: (data) => data.result,
+    enabled: !!countryCode,
   })
 }
 

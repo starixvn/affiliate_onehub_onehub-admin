@@ -3,6 +3,7 @@ import type {
   GetLinkGeneratorOptionsResponse,
   GenerateLinkRequest,
   GenerateLinkResponse,
+  TargetCountry,
 } from '../types'
 import type { IAxiosResponse } from '@/lib/types/common'
 
@@ -17,6 +18,13 @@ export const linkGeneratorApi = {
   async getOptions(): Promise<GetLinkGeneratorOptionsResponse> {
     const response = await apiClient.get<GetLinkGeneratorOptionsResponse>(
       '/link-generator/form-options'
+    )
+    return response.data
+  },
+
+  async getLanguagesByCountry(countryCode: string): Promise<IAxiosResponse<TargetCountry[]>> {
+    const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
+      `/link-generator/languages/${countryCode}`
     )
     return response.data
   },
