@@ -16,7 +16,6 @@ interface TokenPayload {
 }
 
 const ACCESS_TOKEN_KEY = 'accessToken'
-const USER_ID_KEY = 'userId'
 
 export const tokenService = {
   getAccessToken(): string | null {
@@ -27,18 +26,8 @@ export const tokenService = {
     setLocalStorageItem(ACCESS_TOKEN_KEY, token)
   },
 
-  getUserId(): number | null {
-    const userId = getLocalStorageItem(USER_ID_KEY)
-    return userId ? parseInt(userId, 10) : null
-  },
-
-  setUserId(userId: number): void {
-    setLocalStorageItem(USER_ID_KEY, userId.toString())
-  },
-
   clearTokens(): void {
     removeLocalStorageItem(ACCESS_TOKEN_KEY)
-    removeLocalStorageItem(USER_ID_KEY)
   },
 
   decodeToken(token: string): TokenPayload | null {

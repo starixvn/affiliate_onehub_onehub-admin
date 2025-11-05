@@ -2,11 +2,11 @@ export type {
   SignInRequest,
   LoginResponse,
   LoginResponseData,
-  RefreshTokenRequest,
   RefreshTokenResponse,
   RefreshTokenResponseData,
   GetUserMenuRequest,
   GetUserMenuResponse,
+  UserProfileResponse,
   MenuItemData,
   AuthUser,
 } from './auth'

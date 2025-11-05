@@ -1,12 +1,11 @@
 import { createFileRoute, redirect } from '@tanstack/react-router'
-import { tokenService } from '@/lib/auth/token-service'
 import { AuthenticatedLayout } from '@/components/layout/authenticated-layout'
 
 export const Route = createFileRoute('/_authenticated')({
-  beforeLoad: async ({ location }) => {
-    const token = tokenService.getAccessToken()
+  beforeLoad: async ({ location, context }) => {
+    const { auth } = context
 
-    if (!token) {
+    if (!auth.isAuthenticated) {
       throw redirect({
         to: '/sign-in',
         search: {

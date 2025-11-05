@@ -57,6 +57,14 @@
     "updateFailed": "更新活动失败",
     "alreadyStatus": "所有选中的活动已经是{{status}}"
   },
+  "excel": {
+    "titlePrefix": "活动管理",
+    "allCampaigns": "全部活动",
+    "searchPrefix": "活动名称",
+    "allStatus": "全部状态",
+    "statusPrefix": "状态",
+    "rowNumber": "#"
+  },
   "dialog": {
     "create": {
       "title": "添加新活动",

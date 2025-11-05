@@ -1,4 +1,4 @@
-import type { IAxiosResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 
 export interface SignInRequest {
   username: string
@@ -8,22 +8,12 @@ export interface SignInRequest {
 export interface LoginResponseData {
   accessToken: string
   refreshToken: string
-  expiresAt: string
-  userId: number
-  userName: string
-  fullName: string
 }
 
 export type LoginResponse = IAxiosResponse<LoginResponseData>
 
-export interface RefreshTokenRequest {
-  userId: number
-}
-
 export interface RefreshTokenResponseData {
   accessToken: string
-  refreshToken: string
-  expiresAt: string
 }
 
 export type RefreshTokenResponse = IAxiosResponse<RefreshTokenResponseData>
@@ -47,6 +37,14 @@ export interface GetUserMenuResponseData {
 }
 
 export type GetUserMenuResponse = IAxiosResponse<GetUserMenuResponseData>
+
+export interface UserProfileData {
+  userId: number
+  userName: string
+  avatar: string
+}
+
+export type UserProfileResponse = IAxiosResponse<UserProfileData>
 
 export interface AuthUser {
   userId: string

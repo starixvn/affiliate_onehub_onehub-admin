@@ -67,6 +67,8 @@
     "view": "View",
     "toggleColumns": "Toggle columns",
     "page": "Page {{current}} of {{total}}",
+    "totalItems_one": "Total: {{count}} item",
+    "totalItems_other": "Total: {{count}} items",
     "rowsPerPage": "Rows per page",
     "reset": "Reset",
     "submit": "Search",

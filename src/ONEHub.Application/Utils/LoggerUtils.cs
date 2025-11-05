@@ -52,6 +52,11 @@ public static class LoggerUtils
 
     private static IDictionary<string, object?> GetRequestInfo(HttpContext? context)
     {
+        if (context is null)
+        {
+            return new Dictionary<string, object?>();
+        }
+
         var request = context.Request;
         return new Dictionary<string, object?>
         {

@@ -28,6 +28,7 @@ export function DataTablePagination<TData>({
   const { t } = useTranslation('common')
   const currentPage = table.getState().pagination.pageIndex + 1
   const totalPages = table.getPageCount()
+  const totalItems = table.getRowCount()
   const pageNumbers = getPageNumbers(currentPage, totalPages)
 
   return (
@@ -41,9 +42,13 @@ export function DataTablePagination<TData>({
     >
       <div className='flex w-full items-center justify-between'>
         <div className='flex w-[100px] items-center justify-center text-sm font-medium @2xl/content:hidden'>
-          {t('dataTable.page', { current: currentPage, total: totalPages })}
+          {t('dataTable.totalItems', { count: totalItems })}
         </div>
-        <div className='flex items-center gap-2 @max-2xl/content:flex-row-reverse'>
+
+        <div className='flex items-center gap-1 mr-4 @max-2xl/content:flex-row-reverse'>
+          <p className='hidden text-sm font-medium sm:block'>
+            {t('dataTable.rowsPerPage')}
+          </p>
           <Select
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => {
@@ -61,9 +66,6 @@ export function DataTablePagination<TData>({
               ))}
             </SelectContent>
           </Select>
-          <p className='hidden text-sm font-medium sm:block'>
-            {t('dataTable.rowsPerPage')}
-          </p>
         </div>
       </div>
 

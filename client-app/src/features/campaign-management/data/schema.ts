@@ -8,13 +8,9 @@ export const campaignSchema = z.object({
   statusId: z.number(),
   status: z.string(),
   creator: z.string(),
-  creatorId: z.number(),
   createdDate: z.string(),
-  createdDateText: z.string(),
   updatedBy: z.string(),
-  updatedById: z.number(),
   updatedDate: z.string(),
-  updatedDateText: z.string(),
   rowIdx: z.number(),
 })
 

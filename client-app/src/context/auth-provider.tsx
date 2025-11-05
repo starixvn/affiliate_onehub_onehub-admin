@@ -1,9 +1,16 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { tokenService } from '@/lib/auth/token-service'
 import { authApi } from '@/features/auth/api/client'
+import { getRedirectUrl } from '@/lib/iframe-utils'
 import type { SignInRequest, AuthUser } from '@/features/auth/types'
 
 type AuthProviderProps = {
@@ -32,17 +39,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     mutationFn: async (credentials: SignInRequest) => {
       const loginResponse = await authApi.login(credentials)
 
-      if (loginResponse.errorCode === 0 && loginResponse.result) {
-        const { accessToken } = loginResponse.result
+      if (loginResponse.errorCode === 0 && loginResponse.data) {
+        const { accessToken } = loginResponse.data
         const userData = tokenService.extractUserData(accessToken)
 
         if (!userData) {
           throw new Error('Failed to extract user data from token')
         }
 
-        const userId = tokenService.getUserIdFromToken(accessToken)
         tokenService.setAccessToken(accessToken)
-        tokenService.setUserId(userId)
 
         return {
           ...userData,
@@ -84,6 +89,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await logoutMutation.mutateAsync()
   }
 
+  const attemptTokenRefresh = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await authApi.refreshToken()
+
+      if (response.errorCode === 0 && response.data?.accessToken) {
+        const { accessToken } = response.data
+        const userData = tokenService.extractUserData(accessToken)
+
+        if (!userData) {
+          return false
+        }
+
+        tokenService.setAccessToken(accessToken)
+
+        setUser({ ...userData, isAuthenticated: true } as AuthUser)
+        setAccessToken(accessToken)
+
+        return true
+      }
+
+      return false
+    } catch {
+      return false
+    }
+  }, [setUser, setAccessToken])
+
   useEffect(() => {
     const initializeAuth = async () => {
       const token = tokenService.getAccessToken()
@@ -94,13 +125,32 @@ export function AuthProvider({ children }: AuthProviderProps) {
           setUser({ ...userData, isAuthenticated: true } as AuthUser)
           setAccessToken(token)
         }
-      }
+        setIsLoading(false)
+      } else {
+        const refreshed = await attemptTokenRefresh()
+        if (!refreshed) {
+          tokenService.clearTokens()
 
-      setIsLoading(false)
+          const currentPath = window.location.pathname
+          const publicRoutes = ['/sign-in', '/forgot-password']
+          const isPublicRoute = publicRoutes.some((route) =>
+            currentPath.startsWith(route)
+          )
+
+          if (!isPublicRoute) {
+            window.location.href = `/sign-in?redirect=${encodeURIComponent(getRedirectUrl())}`
+            return
+          }
+
+          setIsLoading(false)
+        } else {
+          setIsLoading(false)
+        }
+      }
     }
 
     initializeAuth()
-  }, [setAccessToken])
+  }, [setAccessToken, attemptTokenRefresh])
 
   const value: AuthContextValue = {
     isAuthenticated: !!user,
@@ -115,6 +165,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext)
   if (context === undefined) {

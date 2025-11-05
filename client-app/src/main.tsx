@@ -11,6 +11,7 @@ import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { tokenService } from '@/lib/auth/token-service'
 import { handleServerError } from '@/lib/handle-server-error'
+import { isInIframe, getRedirectUrl } from '@/lib/iframe-utils'
 import { AuthProvider, useAuth } from './context/auth-provider'
 import { DirectionProvider } from './context/direction-provider'
 import { FontProvider } from './context/font-provider'
@@ -62,8 +63,13 @@ const queryClient = new QueryClient({
           if (!token) {
             toast.error('Session expired!')
             useAuthStore.getState().auth.reset()
-            const redirect = `${router.history.location.href}`
-            router.navigate({ to: '/sign-in', search: { redirect } })
+            const redirect = encodeURIComponent(getRedirectUrl())
+
+            if (isInIframe()) {
+              window.top!.location.href = `/sign-in?redirect=${redirect}`
+            } else {
+              router.navigate({ to: '/sign-in', search: { redirect } })
+            }
           }
         }
         if (error.response?.status === 500) {
@@ -98,6 +104,18 @@ declare module '@tanstack/react-router' {
 
 function InnerApp() {
   const auth = useAuth()
+
+  if (auth.isLoading) {
+    return (
+      <div className='flex h-screen items-center justify-center'>
+        <div className='text-center'>
+          <div className='mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]' />
+          <p className='text-muted-foreground text-sm'>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
   return <RouterProvider router={router} context={{ queryClient, auth }} />
 }
 

@@ -1,7 +1,7 @@
 import { getRouteApi } from '@tanstack/react-router'
-import { BarChart3, CheckCircle2, PenLine, Pause, Trash2 } from 'lucide-react'
+import { BarChart3, Play, FileText, Pause, Ban } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { StatusFilterCard } from '@/components/ui/status-filter-card'
+import { FilterCard } from '@/components/ui/filter-card'
 import { useGetCampaignSummary } from '../api/queries'
 
 const route = getRouteApi('/iframe/campaign-management/')
@@ -30,7 +30,7 @@ export function CampaignStatusFilters({
 
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-5'>
-      <StatusFilterCard
+      <FilterCard
         title={t('statusFilters.total')}
         count={data?.total ?? 0}
         icon={BarChart3}
@@ -38,23 +38,23 @@ export function CampaignStatusFilters({
         selected={selectedStatus === '0,1,2,3'}
         onClick={() => handleStatusClick('0,1,2,3')}
       />
-      <StatusFilterCard
+      <FilterCard
         title={t('statusFilters.active')}
         count={data?.active ?? 0}
-        icon={CheckCircle2}
+        icon={Play}
         variant='success'
         selected={selectedStatus === '1'}
         onClick={() => handleStatusClick('1')}
       />
-      <StatusFilterCard
+      <FilterCard
         title={t('statusFilters.draft')}
         count={data?.draft ?? 0}
-        icon={PenLine}
+        icon={FileText}
         variant='warning'
         selected={selectedStatus === '0'}
         onClick={() => handleStatusClick('0')}
       />
-      <StatusFilterCard
+      <FilterCard
         title={t('statusFilters.paused')}
         count={data?.paused ?? 0}
         icon={Pause}
@@ -62,10 +62,10 @@ export function CampaignStatusFilters({
         selected={selectedStatus === '2'}
         onClick={() => handleStatusClick('2')}
       />
-      <StatusFilterCard
+      <FilterCard
         title={t('statusFilters.inactive')}
         count={data?.inactive ?? 0}
-        icon={Trash2}
+        icon={Ban}
         variant='secondary'
         selected={selectedStatus === '3'}
         onClick={() => handleStatusClick('3')}

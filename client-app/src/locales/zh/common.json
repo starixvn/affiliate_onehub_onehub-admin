@@ -67,6 +67,7 @@
     "view": "视图",
     "toggleColumns": "切换列",
     "page": "第 {{current}} 页，共 {{total}} 页",
+    "totalItems_other": "总计: {{count}} 条",
     "rowsPerPage": "每页行数",
     "reset": "重置",
     "submit": "搜索",

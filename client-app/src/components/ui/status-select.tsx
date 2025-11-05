@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { Badge } from '@/components/ui/badge'
 import {
   Select,
   SelectContent,
@@ -39,7 +38,7 @@ const colorVariants: Record<StatusColor, string> = {
   orange: 'bg-orange-100 text-orange-800',
   blue: 'bg-blue-100 text-blue-800',
   red: 'bg-red-100 text-red-800',
-  gray: 'bg-gray-100 text-gray-800',
+  gray: 'bg-gray-200 text-gray-800',
   purple: 'bg-purple-100 text-purple-800',
   yellow: 'bg-yellow-100 text-yellow-800',
   pink: 'bg-pink-100 text-pink-800',
@@ -69,20 +68,20 @@ export function StatusSelect<T extends string | number>({
       }}
       disabled={disabled}
     >
-      <SelectTrigger size={size} className={cn('w-full', className)}>
+      <SelectTrigger
+        size={size}
+        className={cn(
+          'w-full',
+          selectedOption && colorVariants[selectedOption.color],
+          className
+        )}
+      >
         <SelectValue placeholder={placeholder}>
-          {selectedOption && (
-            <Badge
-              variant='secondary'
-              className={cn('text-sm', colorVariants[selectedOption.color])}
-            >
-              {selectedOption.label}
-            </Badge>
-          )}
+          {selectedOption?.label}
         </SelectValue>
       </SelectTrigger>
-      <SelectContent>
-        <div className='flex flex-col gap-2'>
+      <SelectContent className='w-full min-w-full'>
+        <div className='flex flex-col gap-1 w-full'>
           {options.map((option) => {
             const isCurrentValue = String(option.value) === String(value)
             return (
@@ -90,13 +89,9 @@ export function StatusSelect<T extends string | number>({
                 key={String(option.value)}
                 value={String(option.value)}
                 disabled={isCurrentValue}
+                className={cn('px-0 transition-colors w-full', colorVariants[option.color])}
               >
-                <Badge
-                  variant='secondary'
-                  className={cn('text-sm', colorVariants[option.color])}
-                >
-                  {option.label}
-                </Badge>
+                <span className='w-full px-2'>{option.label}</span>
               </SelectItem>
             )
           })}

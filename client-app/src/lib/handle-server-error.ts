@@ -1,6 +1,6 @@
 import { AxiosError } from 'axios'
 import { toast } from 'sonner'
-import type { IAxiosResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 
 export function handleServerError(error: unknown) {
   if (error instanceof AxiosError) {

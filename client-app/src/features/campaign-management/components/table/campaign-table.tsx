@@ -63,6 +63,7 @@ export function CampaignTable({
     data,
     columns,
     pageCount,
+    rowCount: totalCount,
     state: {
       sorting,
       pagination: {

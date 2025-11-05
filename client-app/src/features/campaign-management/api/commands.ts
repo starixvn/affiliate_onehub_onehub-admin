@@ -1,6 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import type { CreateCampaignRequest, UpdateCampaignRequest } from '../types'
+import type {
+  CreateCampaignRequest,
+  UpdateCampaignRequest,
+  UpdateBatchCampaignStatusRequest,
+} from '../types'
 import { campaignApi } from './client'
 import { campaignKeys } from './queries'
 
@@ -69,6 +73,26 @@ export function useDeleteCampaigns() {
         toast.success('Campaigns deleted successfully')
       } else {
         toast.error(response.errorMessage || 'Failed to delete campaigns')
+      }
+    },
+  })
+}
+
+export function useUpdateBatchCampaignStatus() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: UpdateBatchCampaignStatusRequest) =>
+      campaignApi.updateBatchCampaignStatus(data),
+    onSuccess: (response) => {
+      if (response.errorCode === 0) {
+        queryClient.invalidateQueries({ queryKey: campaignKeys.lists() })
+        queryClient.invalidateQueries({ queryKey: campaignKeys.summary() })
+        toast.success('Campaign statuses updated successfully')
+      } else {
+        toast.error(
+          response.errorMessage || 'Failed to update campaign statuses'
+        )
       }
     },
   })

@@ -5,6 +5,10 @@ export function isInIframe(): boolean {
   return window.self !== window.top
 }
 
+export function getRedirectUrl(): string {
+  return isInIframe() ? window.top!.location.href : window.location.href
+}
+
 export type IframeMessageType =
   | 'THEME_CHANGE'
   | 'LANGUAGE_CHANGE'

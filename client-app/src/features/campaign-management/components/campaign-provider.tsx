@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useGetCampaigns } from '../api/queries'
+import { campaignApi } from '../api/client'
+import { formatCampaignsForExcel } from './campaign-export-excel'
 import { type Campaign } from '../data/schema'
 import type { GetCampaignsRequest } from '../types'
 
-type CampaignsDialogType = 'create' | 'update' | 'delete' | 'import'
+type CampaignsDialogType = 'create' | 'update' | 'delete'
 
 type CampaignsContextType = {
   open: CampaignsDialogType | null
@@ -17,6 +21,7 @@ type CampaignsContextType = {
   pageSize: number
   isLoading: boolean
   isError: boolean
+  exportCampaigns: () => Promise<void>
 }
 
 const CampaignsContext = React.createContext<CampaignsContextType | null>(null)
@@ -30,10 +35,26 @@ export function CampaignsProvider({
   children,
   params,
 }: CampaignsProviderProps) {
+  const { t } = useTranslation('campaign-management')
   const [open, setOpen] = useDialogState<CampaignsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Campaign | null>(null)
 
   const { data, isLoading, isError } = useGetCampaigns(params)
+
+  const exportCampaigns = async () => {
+    try {
+      const response = await campaignApi.exportCampaigns({
+        ...params,
+        isExportExcel: true,
+      })
+
+      await formatCampaignsForExcel(response.data.items, t, params)
+      toast.success('Campaigns exported successfully')
+    } catch (error) {
+      toast.error('Failed to export campaigns')
+      throw error
+    }
+  }
 
   return (
     <CampaignsContext
@@ -43,11 +64,12 @@ export function CampaignsProvider({
         currentRow,
         setCurrentRow,
         campaigns: data?.items ?? [],
-        totalCount: data?.totalCount ?? 0,
+        totalCount: data?.totalItem ?? 0,
         pageIndex: data?.pageIndex ?? 1,
         pageSize: data?.pageSize ?? 10,
         isLoading,
         isError,
+        exportCampaigns,
       }}
     >
       {children}

@@ -1,10 +1,5 @@
-export interface IAxiosResponse<T> {
+export interface IAxiosResponse<T = unknown> {
   data: T
   errorCode: number
-  message: string
-  totalPages?: number
-  pageNumber?: number
-  rowCount?: number
-  rawErrorCode?: string
-  rawMessage?: string
+  errorMessage: string
 }

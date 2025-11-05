@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using ONEHub.Domain.Settings;
+using ONEHub.WebApi.Features.Auth;
+using ONEHub.WebApi.Features.Campaign;
 using Serilog;
 using Serilog.Events;
 
@@ -78,7 +81,9 @@ public static class WebApplicationSetup
 
     public static WebApplication UseHealthCheck(this WebApplication app, IConfiguration configuration)
     {
-        var accessKey = configuration["AppSettings:AccessKey"];
+        var appSetting = configuration.GetSection(AppSetting.SettingName).Get<AppSetting>();
+        ArgumentNullException.ThrowIfNull(appSetting);
+
         app.UseHealthChecks("/WhoAmI", new HealthCheckOptions
         {
             AllowCachingResponses = false,
@@ -99,7 +104,7 @@ public static class WebApplicationSetup
 
         async Task CustomResponseWriter(HttpContext context, HealthReport report)
         {
-            if (!IsValidRequest(accessKey, context))
+            if (!IsValidRequest(appSetting.AccessKey, context))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                 await context.Response.WriteAsync("Invalid or missing access key");
@@ -178,6 +183,13 @@ public static class WebApplicationSetup
                 return LogEventLevel.Information;
             };
         });
+        return app;
+    }
+
+    public static WebApplication MapEndpoint(this WebApplication app)
+    {
+        app.RegisterAuthEndpoints();
+        app.RegisterCampaignEndpoints();
         return app;
     }
 }
