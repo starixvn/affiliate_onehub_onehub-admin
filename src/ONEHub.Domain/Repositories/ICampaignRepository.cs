@@ -6,15 +6,15 @@ namespace ONEHub.Domain.Repositories;
 
 public interface ICampaignRepository
 {
-    Task<Result<CampaignDashboard>> GetCampaignDashboardAsync();
+    public Task<Result<CampaignDashboard>> GetCampaignDashboardAsync();
 
-    Task<Result<PagingData<Campaign>>> GetCampaignListAsync(CampaignListParam param);
+    public Task<Result<PagingData<Campaign>>> GetCampaignListAsync(CampaignListParam param);
 
-    Task<Result> CreateCampaignAsync(CreateCampaignParam param);
+    public Task<Result> CreateCampaignAsync(CreateCampaignParam param);
 
-    Task<Result> UpdateCampaignAsync(UpdateCampaignParam param);
+    public Task<Result> UpdateCampaignAsync(UpdateCampaignParam param);
 
-    Task<Result> UpdateBatchCampaignStatusAsync(UpdateBatchCampaignStatusParam param);
+    public Task<Result> UpdateBatchCampaignStatusAsync(UpdateBatchCampaignStatusParam param);
 
-    Task<Result> DeleteBatchCampaignAsync(DeleteBatchCampaignParam param);
+    public Task<Result> DeleteBatchCampaignAsync(DeleteBatchCampaignParam param);
 }

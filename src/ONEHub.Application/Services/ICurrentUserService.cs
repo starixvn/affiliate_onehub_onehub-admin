@@ -2,11 +2,11 @@ namespace ONEHub.Application.Services;
 
 public interface ICurrentUserService
 {
-    int GetUserId();
+    public int GetUserId();
 
-    string GetUserName();
+    public string GetUserName();
 
-    bool IsAuthenticated();
+    public bool IsAuthenticated();
 
-    int GetUserIdFromExpiredToken();
+    public int GetUserIdFromExpiredToken();
 }
