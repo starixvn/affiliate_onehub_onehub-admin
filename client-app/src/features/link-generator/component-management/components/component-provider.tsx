@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState } from 'react'
 import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
-import { mockComponents, mockCategorySummary } from '../data/mock-data'
+import { useGetComponentSummary, useGetComponents } from '../api/queries'
 import { type Component } from '../data/schema'
+import type { ComponentCategorySummary } from '../types'
 
 type ComponentsDialogType = 'create' | 'update' | 'delete'
 
@@ -17,7 +18,7 @@ type ComponentsContextType = {
   pageSize: number
   isLoading: boolean
   isError: boolean
-  categorySummary: typeof mockCategorySummary
+  categorySummary: ComponentCategorySummary | undefined
   selectedCategory: string
   exportComponents: () => Promise<void>
 }
@@ -32,7 +33,7 @@ type ComponentsProviderProps = {
     search?: string
     category?: string
     status?: string
-    device?: string
+    deviceIds?: string
     pageIndex?: number
     pageSize?: number
   }
@@ -44,50 +45,20 @@ export function ComponentsProvider({
 }: ComponentsProviderProps) {
   const [open, setOpen] = useDialogState<ComponentsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Component | null>(null)
+  const { data: categorySummary } = useGetComponentSummary()
 
-  const filteredComponents = useMemo(() => {
-    let filtered = [...mockComponents]
-
-    if (params?.search) {
-      const searchLower = params.search.toLowerCase()
-      filtered = filtered.filter(
-        (component) =>
-          component.componentCode.toLowerCase().includes(searchLower) ||
-          component.componentName.toLowerCase().includes(searchLower)
-      )
-    }
-
-    if (params?.category) {
-      const categoryIds = params.category.split(',').map(Number)
-      filtered = filtered.filter((component) =>
-        categoryIds.includes(component.categoryId)
-      )
-    }
-
-    if (params?.status) {
-      const statusIds = params.status.split(',').map(Number)
-      filtered = filtered.filter((component) =>
-        statusIds.includes(component.statusId)
-      )
-    }
-
-    if (params?.device) {
-      const deviceValues = params.device.split(',')
-      filtered = filtered.filter((component) =>
-        component.deviceType ? deviceValues.includes(component.deviceType) : false
-      )
-    }
-
-    return filtered
-  }, [params?.search, params?.category, params?.status, params?.device])
-
-  const paginatedComponents = useMemo(() => {
-    const pageIndex = params?.pageIndex ?? 1
-    const pageSize = params?.pageSize ?? 10
-    const start = (pageIndex - 1) * pageSize
-    const end = start + pageSize
-    return filteredComponents.slice(start, end)
-  }, [filteredComponents, params?.pageIndex, params?.pageSize])
+  const {
+    data: componentsData,
+    isLoading,
+    isError,
+  } = useGetComponents({
+    search: params?.search,
+    category: params?.category,
+    status: params?.status,
+    deviceIds: params?.deviceIds,
+    pageIndex: params?.pageIndex ?? 1,
+    pageSize: params?.pageSize ?? 10,
+  })
 
   const exportComponents = async () => {
     try {
@@ -105,13 +76,13 @@ export function ComponentsProvider({
         setOpen,
         currentRow,
         setCurrentRow,
-        components: paginatedComponents,
-        totalCount: filteredComponents.length,
+        components: componentsData?.items ?? [],
+        totalCount: componentsData?.totalItem ?? 0,
         pageIndex: params?.pageIndex ?? 1,
         pageSize: params?.pageSize ?? 10,
-        isLoading: false,
-        isError: false,
-        categorySummary: mockCategorySummary,
+        isLoading,
+        isError,
+        categorySummary,
         selectedCategory: params?.category ?? '1',
         exportComponents,
       }}

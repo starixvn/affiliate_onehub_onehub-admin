@@ -19,11 +19,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
+import { status, deviceTypes } from '../../data/data'
 import { type Component } from '../../data/schema'
-import { ComponentMultiDeleteDialog } from './component-multi-delete-dialog'
 import { ComponentBulkActions } from './component-bulk-actions'
 import { getComponentColumns } from './component-columns'
-import { status, deviceTypes } from '../../data/data'
+import { ComponentMultiDeleteDialog } from './component-multi-delete-dialog'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -55,16 +55,19 @@ export function ComponentTable({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   const selectedCategory = (search.category as string) ?? '1'
-  const isLandingPage = useMemo(() => selectedCategory === '6', [selectedCategory])
+  const isLandingPage = useMemo(
+    () => selectedCategory === '6',
+    [selectedCategory]
+  )
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    deviceType: isLandingPage,
+    deviceIds: isLandingPage,
   })
 
   useEffect(() => {
     setColumnVisibility((prev) => ({
       ...prev,
-      deviceType: isLandingPage,
+      deviceIds: isLandingPage,
     }))
   }, [isLandingPage])
 
@@ -111,14 +114,14 @@ export function ComponentTable({
   })
 
   useEffect(() => {
-    const deviceColumn = table.getColumn('deviceType')
-    if (deviceColumn && search.device) {
-      const deviceValues = (search.device as string).split(',')
+    const deviceColumn = table.getColumn('deviceIds')
+    if (deviceColumn && search.deviceIds) {
+      const deviceValues = (search.deviceIds as string).split(',')
       deviceColumn.setFilterValue(deviceValues)
-    } else if (deviceColumn && !search.device) {
+    } else if (deviceColumn && !search.deviceIds) {
       deviceColumn.setFilterValue(undefined)
     }
-  }, [search.device, table])
+  }, [search.deviceIds, table])
 
   useEffect(() => {
     const statusColumn = table.getColumn('status')
@@ -139,20 +142,24 @@ export function ComponentTable({
           label,
           value,
         })),
-        defaultValue: undefined,
+        defaultValue: search.status
+          ? (search.status as string).split(',')
+          : undefined,
       },
       {
-        columnId: 'deviceType',
+        columnId: 'deviceIds',
         title: 'Device',
         options: deviceTypes.map(({ label, value }) => ({
           label,
           value,
         })),
-        defaultValue: undefined,
+        defaultValue: search.deviceIds
+          ? (search.deviceIds as string).split(',')
+          : undefined,
         hidden: !isLandingPage,
       },
     ],
-    [isLandingPage]
+    [isLandingPage, search.status, search.deviceIds]
   )
 
   return (
@@ -171,14 +178,18 @@ export function ComponentTable({
         initialSearchValue={(search.search as string) ?? ''}
         defaultSearchValue=''
         onSubmit={(searchValue) => {
-          const statusFilter = table.getColumn('status')?.getFilterValue() as string[] | undefined
-          const deviceFilter = table.getColumn('deviceType')?.getFilterValue() as string[] | undefined
+          const statusFilter = table.getColumn('status')?.getFilterValue() as
+            | string[]
+            | undefined
+          const deviceFilter = table
+            .getColumn('deviceIds')
+            ?.getFilterValue() as string[] | undefined
           navigate({
             search: {
               ...search,
               search: searchValue || undefined,
               status: statusFilter?.join(',') || undefined,
-              device: deviceFilter?.join(',') || undefined,
+              deviceIds: deviceFilter?.join(',') || undefined,
               pageIndex: 1,
             },
           })

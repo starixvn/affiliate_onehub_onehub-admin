@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
+import { createFileRoute } from '@tanstack/react-router'
 import { ComponentManagement } from '@/features/link-generator/component-management'
 
 const searchSchema = z.object({
@@ -8,7 +8,7 @@ const searchSchema = z.object({
   search: z.string().optional(),
   category: z.string().optional(),
   status: z.string().optional(),
-  device: z.string().optional(),
+  deviceType: z.string().optional(),
 })
 
 export const Route = createFileRoute(

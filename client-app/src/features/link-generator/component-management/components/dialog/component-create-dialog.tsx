@@ -32,7 +32,7 @@ const formSchema = z.object({
   componentName: z.string().min(1, 'Name is required'),
   componentCode: z.string().min(1, 'Code is required'),
   statusId: z.number(),
-  deviceType: z.string().optional(),
+  deviceIds: z.string().optional(),
 })
 
 type ComponentForm = z.infer<typeof formSchema>
@@ -48,7 +48,7 @@ export function ComponentCreateDialog() {
       componentName: '',
       componentCode: '',
       statusId: 1,
-      deviceType: 'mobile',
+      deviceIds: 'mobile',
     },
   })
 
@@ -69,7 +69,7 @@ export function ComponentCreateDialog() {
         componentName: '',
         componentCode: '',
         statusId: 1,
-        deviceType: 'mobile',
+        deviceIds: 'mobile',
       })
     }
   }, [open, selectedCategory, form])
@@ -187,7 +187,7 @@ export function ComponentCreateDialog() {
               {isLandingPage && (
                 <FormField
                   control={form.control}
-                  name='deviceType'
+                  name='deviceIds'
                   render={({ field }) => (
                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                       <FormLabel className='col-span-2 text-end'>

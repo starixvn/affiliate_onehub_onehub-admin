@@ -1,9 +1,12 @@
 import { getRouteApi } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Main } from '@/components/layout/main'
-import { ComponentPrimaryButtons } from './components/component-primary-buttons'
-import { ComponentsProvider, useComponents } from './components/component-provider'
 import { ComponentCategoryFilters } from './components/component-category-filters'
+import { ComponentPrimaryButtons } from './components/component-primary-buttons'
+import {
+  ComponentsProvider,
+  useComponents,
+} from './components/component-provider'
 import { ComponentDialogs } from './components/dialog/component-dialogs'
 import { ComponentTable } from './components/table/component-table'
 
@@ -13,9 +16,11 @@ function ComponentManagementContent() {
   const { t } = useTranslation('component-management')
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { components, totalCount, pageIndex, pageSize, isLoading } = useComponents()
+  const { components, totalCount, pageIndex, pageSize, isLoading } =
+    useComponents()
 
-  const selectedCategory = search.category !== undefined ? String(search.category) : '1'
+  const selectedCategory =
+    search.category !== undefined ? String(search.category) : '1'
 
   if (isLoading) {
     return (
@@ -66,7 +71,7 @@ export function ComponentManagement() {
     search: search.search as string | undefined,
     category: (search.category as string | undefined) ?? '1',
     status: search.status as string | undefined,
-    device: search.device as string | undefined,
+    deviceIds: search.deviceIds as string | undefined,
     pageIndex: search.pageIndex ? Number(search.pageIndex) : 1,
     pageSize: search.pageSize ? Number(search.pageSize) : 10,
   }

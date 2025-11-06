@@ -1,19 +1,37 @@
 import { z } from 'zod'
 
-export const componentSchema = z.object({
-  componentId: z.number(),
-  componentCode: z.string(),
-  componentName: z.string(),
-  category: z.string(),
-  categoryId: z.number(),
-  statusId: z.number(),
-  status: z.string(),
-  deviceType: z.string().optional(),
-  creator: z.string(),
-  createdDate: z.string(),
-  updatedBy: z.string(),
-  updatedDate: z.string(),
-  rowIdx: z.number(),
-})
+const categoryMap: Record<number, string> = {
+  1: 'Event',
+  2: 'Group',
+  3: 'Channel',
+  4: 'Agency',
+  5: 'Type',
+  6: 'Landing Page',
+}
+
+export const componentSchema = z
+  .object({
+    componentId: z.number(),
+    componentCode: z.string(),
+    componentName: z.string(),
+    componentTypeId: z.number(),
+    createdBy: z.string(),
+    createdDate: z.string(),
+    lastModifiedBy: z.string(),
+    lastModifiedDate: z.string(),
+    statusId: z.number(),
+    status: z.string(),
+    device: z.string().optional().nullable(),
+    deviceId: z.number().optional().nullable(),
+    rowIdx: z.number(),
+  })
+  .transform((data) => ({
+    ...data,
+    categoryId: data.componentTypeId,
+    category: categoryMap[data.componentTypeId] || '',
+    creator: data.createdBy,
+    updatedBy: data.lastModifiedBy,
+    updatedDate: data.lastModifiedDate,
+  }))
 
 export type Component = z.infer<typeof componentSchema>

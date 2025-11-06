@@ -1,7 +1,7 @@
 import { type Row } from '@tanstack/react-table'
 import { Badge } from '@/components/ui/badge'
-import { type Component } from '../../data/schema'
 import { deviceTypes } from '../../data/data'
+import { type Component } from '../../data/schema'
 
 const deviceColors: Record<string, string> = {
   mobile:
@@ -15,8 +15,10 @@ interface ComponentDeviceCellProps {
 }
 
 export function ComponentDeviceCell({ row }: ComponentDeviceCellProps) {
-  const deviceType = row.original.deviceType
-  const deviceLabel = deviceTypes.find((d) => d.value === deviceType)?.label
+  const deviceType = row.original.deviceId
+  const deviceLabel = deviceTypes.find(
+    (d) => d.value === deviceType?.toString()
+  )?.label
 
   if (!deviceType || !deviceLabel) {
     return <div className='text-nowrap'>-</div>

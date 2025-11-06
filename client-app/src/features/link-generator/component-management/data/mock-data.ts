@@ -369,12 +369,3 @@ export const mockComponents: Component[] = [
     rowIdx: 26,
   },
 ]
-
-export const mockCategorySummary = {
-  event: { total: 5, active: 3, inactive: 2 },
-  group: { total: 5, active: 3, inactive: 2 },
-  channel: { total: 5, active: 3, inactive: 2 },
-  agency: { total: 3, active: 2, inactive: 1 },
-  type: { total: 5, active: 3, inactive: 2 },
-  landingPage: { total: 3, active: 2, inactive: 1 },
-}

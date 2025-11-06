@@ -8,7 +8,7 @@ export const status: StatusOption<string>[] = [
   },
   {
     label: 'Inactive',
-    value: '0',
+    value: '2',
     color: 'gray',
   },
 ]
@@ -23,6 +23,6 @@ export const categories = [
 ]
 
 export const deviceTypes = [
-  { label: 'Mobile Only', value: 'mobile' },
-  { label: 'Mobile & Desktop', value: 'desktop' },
+  { label: 'Mobile Only', value: '1' },
+  { label: 'Mobile & Desktop', value: '2' },
 ]

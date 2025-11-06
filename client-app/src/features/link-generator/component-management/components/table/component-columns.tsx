@@ -175,7 +175,7 @@ export const getComponentColumns = (
     enableSorting: false,
   },
   {
-    accessorKey: 'deviceType',
+    accessorKey: 'deviceIds',
     header: ({ column }) => (
       <DataTableColumnHeader
         column={column}
