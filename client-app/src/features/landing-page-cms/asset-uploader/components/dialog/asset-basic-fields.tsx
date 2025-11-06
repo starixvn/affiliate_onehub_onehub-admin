@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next'
-// No hooks needed - fully controlled component
 import { Label } from '@/components/ui/label'
 import {
   Select,
@@ -11,6 +10,7 @@ import {
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
 
 interface AssetBasicFieldsProps {
+  isMediaIdInUse: boolean
   countryOptions: { value: string; label: string }[]
   languageOptions: { value: string; label: string }[]
   country: string
@@ -24,6 +24,7 @@ interface AssetBasicFieldsProps {
 }
 
 export function AssetBasicFields({
+  isMediaIdInUse,
   countryOptions,
   languageOptions,
   country,
@@ -41,6 +42,7 @@ export function AssetBasicFields({
       <div className='space-y-2'>
         <Label htmlFor='country'>{t('form.country')}</Label>
         <Select
+          disabled={isMediaIdInUse}
           value={country}
           onValueChange={onCountryChange}
           onOpenChange={(open) => {
@@ -73,7 +75,7 @@ export function AssetBasicFields({
       <div className='space-y-2'>
         <Label htmlFor='language'>{t('form.language')}</Label>
         <Select
-          disabled={!country || languageOptions.length === 0}
+          disabled={isMediaIdInUse || !country || languageOptions.length === 0}
           value={language}
           onValueChange={onLanguageChange}
           onOpenChange={(open) => {

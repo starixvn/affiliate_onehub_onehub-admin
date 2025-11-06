@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { type Table } from '@tanstack/react-table'
 import { Search, X, Settings2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { MultiSelectFilter } from '@/components/multi-select-filter'
-import { COLUMN_DISPLAY_NAMES, DEFAULT_PARAMS } from '../data/constants'
+import { DEFAULT_PARAMS } from '../data/constants'
 import type { AssetDetail } from '../data/schema'
 import { useAssetUploader } from './asset-uploader-provider'
 
@@ -34,7 +34,11 @@ export function AssetFilters({ table }: AssetFiltersProps) {
     value: country.targetCountryCode,
     label: country.targetCountryName,
   }))
-  const languageOptions = [...new Map(languages.map((language) => [language.languageCode, language])).values()].map((language) => ({
+  const languageOptions = [
+    ...new Map(
+      languages.map((language) => [language.languageCode, language])
+    ).values(),
+  ].map((language) => ({
     value: language.languageCode,
     label: language.languageName,
   }))
@@ -64,9 +68,9 @@ export function AssetFilters({ table }: AssetFiltersProps) {
       : []
   )
   const [selectedStatus, setSelectedStatus] = useState<number[]>(
-    typeof search.status === 'number' && search.status !== DEFAULT_PARAMS.status
-      ? [search.status]
-      : []
+    typeof search.status === 'number' && search.status === -1
+      ? []
+      : [DEFAULT_PARAMS.status]
   )
 
   const [localColumnVisibility, setLocalColumnVisibility] = useState<
@@ -79,12 +83,18 @@ export function AssetFilters({ table }: AssetFiltersProps) {
         ...search,
         mediaName: searchValue || DEFAULT_PARAMS.mediaName,
         moduleIds:
-          selectedModules.length > 0 ? selectedModules.join(',') : DEFAULT_PARAMS.moduleIds,
+          selectedModules.length > 0
+            ? selectedModules.join(',')
+            : DEFAULT_PARAMS.moduleIds,
         targetCountrycodes:
-          selectedCountries.length > 0 ? selectedCountries.join(',') : DEFAULT_PARAMS.targetCountrycodes,
+          selectedCountries.length > 0
+            ? selectedCountries.join(',')
+            : DEFAULT_PARAMS.targetCountrycodes,
         languageCodes:
-          selectedLanguages.length > 0 ? selectedLanguages.join(',') : DEFAULT_PARAMS.languageCodes,
-        status: selectedStatus.length === 1 ? selectedStatus[0] : DEFAULT_PARAMS.status,
+          selectedLanguages.length > 0
+            ? selectedLanguages.join(',')
+            : DEFAULT_PARAMS.languageCodes,
+        status: selectedStatus.length === 1 ? selectedStatus[0] : -1,
         pageIndex: 1,
         pageSize: 10,
       },
@@ -96,7 +106,7 @@ export function AssetFilters({ table }: AssetFiltersProps) {
     setSelectedModules([])
     setSelectedCountries([])
     setSelectedLanguages([])
-    setSelectedStatus([])
+    setSelectedStatus([1])
   }
 
   const isFiltered =
@@ -107,23 +117,23 @@ export function AssetFilters({ table }: AssetFiltersProps) {
     selectedStatus.length > 0
 
   return (
-    <div className='flex flex-col gap-2 sm:flex-row sm:items-center'>
-      <div className='relative w-full sm:max-w-md sm:flex-1'>
-        <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
-        <Input
-          placeholder={t('filters.searchPlaceholder')}
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSearch()
-            }
-          }}
-          className='h-9 pl-9'
-        />
-      </div>
-
+    <div className='flex flex-col gap-2'>
       <div className='flex flex-wrap items-center gap-2'>
+        <div className='relative max-w-sm min-w-[200px] flex-1 sm:min-w-[240px] sm:flex-initial md:min-w-[280px]'>
+          <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
+          <Input
+            placeholder={t('filters.searchPlaceholder')}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch()
+              }
+            }}
+            className='h-9 pl-9'
+          />
+        </div>
+
         <MultiSelectFilter
           title={t('filters.module')}
           options={moduleOptions}
@@ -156,16 +166,6 @@ export function AssetFilters({ table }: AssetFiltersProps) {
           searchPlaceholder={t('filters.statusPlaceholder')}
         />
 
-        <Button
-          variant='default'
-          size='sm'
-          onClick={handleSearch}
-          className='h-9 flex-1 sm:flex-initial'
-        >
-          <Search className='mr-2 h-4 w-4' />
-          {t('filters.search')}
-        </Button>
-
         {isFiltered && (
           <Button
             variant='outline'
@@ -177,58 +177,70 @@ export function AssetFilters({ table }: AssetFiltersProps) {
             <X className='h-4 w-4' />
           </Button>
         )}
+
+        <Button
+          variant='default'
+          size='sm'
+          onClick={handleSearch}
+          className='h-9 flex-1 sm:flex-initial'
+        >
+          <Search className='mr-2 h-4 w-4' />
+          {t('filters.search')}
+        </Button>
+
+        {table && (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant='outline'
+                size='sm'
+                className='ml-auto h-9'
+                title={t('filters.toggleColumns')}
+              >
+                <Settings2 className='h-4 w-4 sm:mr-2' />
+                <span className='hidden sm:inline'>{t('filters.view')}</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end' className='w-[200px]'>
+              <DropdownMenuLabel>
+                {t('filters.toggleColumns')}
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  const columnId = column.id
+                  const displayName = t(`table.${columnId}`)
+                  const isVisible =
+                    columnId in localColumnVisibility
+                      ? localColumnVisibility[columnId]
+                      : column.getIsVisible()
+
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={columnId}
+                      className='capitalize'
+                      checked={isVisible}
+                      onCheckedChange={(checked) => {
+                        setLocalColumnVisibility((prev) => ({
+                          ...prev,
+                          [columnId]: checked,
+                        }))
+                        column.toggleVisibility(checked)
+                      }}
+                      onSelect={(e) => {
+                        e.preventDefault()
+                      }}
+                    >
+                      {displayName}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
-
-      {table && (
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant='outline'
-              size='sm'
-              className='ml-auto h-9'
-              title={t('filters.toggleColumns')}
-            >
-              <Settings2 className='h-4 w-4 sm:mr-2' />
-              <span className='hidden sm:inline'>{t('filters.view')}</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end' className='w-[200px]'>
-            <DropdownMenuLabel>{t('filters.toggleColumns')}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                const columnId = column.id
-                const displayName = COLUMN_DISPLAY_NAMES[columnId] || columnId
-                const isVisible =
-                  columnId in localColumnVisibility
-                    ? localColumnVisibility[columnId]
-                    : column.getIsVisible()
-
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={columnId}
-                    className='capitalize'
-                    checked={isVisible}
-                    onCheckedChange={(checked) => {
-                      setLocalColumnVisibility((prev) => ({
-                        ...prev,
-                        [columnId]: checked,
-                      }))
-                      column.toggleVisibility(checked)
-                    }}
-                    onSelect={(e) => {
-                      e.preventDefault()
-                    }}
-                  >
-                    {displayName}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )}
     </div>
   )
 }

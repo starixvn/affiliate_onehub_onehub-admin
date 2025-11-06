@@ -84,6 +84,7 @@ export function AssetTable({
     manualPagination: true,
     pageCount: Math.ceil(totalCount / (pageSize ?? 10)),
     enableRowSelection: true,
+    rowCount: totalCount,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,

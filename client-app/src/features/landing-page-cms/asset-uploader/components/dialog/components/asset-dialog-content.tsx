@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import React from 'react'
 import type {
   ValidationErrors,
   ModuleWithFiles,
@@ -10,6 +10,7 @@ import { AssetFormContent } from './asset-form-content'
 
 interface AssetDialogContentProps {
   isEdit: boolean
+  isMediaIdInUse: boolean
   fileName: string
   moduleRows: ModuleWithFiles[]
   errors: ValidationErrors
@@ -21,6 +22,7 @@ interface AssetDialogContentProps {
   country: string
   language: string
   totalModules: number
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>
   onCountryChange: (value: string) => void
   onLanguageChange: (value: string) => void
   onCountryBlur: () => void
@@ -43,6 +45,7 @@ interface AssetDialogContentProps {
 
 export function AssetDialogContent({
   isEdit,
+  isMediaIdInUse,
   fileName,
   moduleRows,
   errors,
@@ -54,6 +57,7 @@ export function AssetDialogContent({
   country,
   language,
   totalModules,
+  scrollContainerRef,
   onCountryChange,
   onLanguageChange,
   onCountryBlur,
@@ -70,8 +74,6 @@ export function AssetDialogContent({
   onRemoveFile,
   isModuleSelectedByOther,
 }: AssetDialogContentProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-
   return (
     <div
       ref={scrollContainerRef}
@@ -83,6 +85,7 @@ export function AssetDialogContent({
 
       <AssetFormContent
         isEdit={isEdit}
+        isMediaIdInUse={isMediaIdInUse}
         fileName={fileName}
         moduleRows={moduleRows}
         errors={errors}

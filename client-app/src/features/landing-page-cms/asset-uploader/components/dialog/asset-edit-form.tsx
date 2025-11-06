@@ -13,6 +13,7 @@ import {
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
 
 interface AssetEditFormProps {
+  isMediaIdInUse: boolean
   moduleValue: string
   fileName: string
   errors: ValidationErrors
@@ -24,6 +25,7 @@ interface AssetEditFormProps {
 }
 
 export function AssetEditForm({
+  isMediaIdInUse,
   moduleValue: initialModule,
   fileName: initialFileName,
   errors,
@@ -66,6 +68,7 @@ export function AssetEditForm({
       <div className='space-y-2'>
         <Label>{t('form.module')}</Label>
         <Select
+          disabled={isMediaIdInUse}
           value={moduleValue}
           onValueChange={handleModuleChange}
           onOpenChange={(open) => {

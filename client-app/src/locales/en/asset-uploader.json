@@ -23,7 +23,6 @@
   },
   "buttons": {
     "export": "Export",
-    "addAsset": "Add Asset",
     "editAsset": "Edit Asset",
     "deleteAsset": "Delete Asset",
     "processing": "Processing...",
@@ -43,7 +42,14 @@
     "status": "Status",
     "action": "Action",
     "active": "Active",
-    "inactive": "Inactive"
+    "inactive": "Inactive",
+    "mediaName": "File Name",
+    "moduleName": "Module",
+    "targetCountryName": "Country",
+    "marketName": "Language",
+    "dimension": "Dimensions",
+    "statusId": "Status",
+    "preview": "Preview Asset"
   },
   "bulkActions": {
     "changeToActive": "Change to Active",
@@ -92,6 +98,16 @@
     "fileSizeLimit": "File Size Limit: 3MB",
     "maxFiles": "Maximum files: 50",
     "note": "Note: Module, Country, and Language cannot be changed if the image is already used in an existing landing page."
+  },
+  "validation": {
+    "countryRequired": "Please select a Country",
+    "languageRequired": "Please select a Language",
+    "moduleRequired": "Please select a Module",
+    "mediaInUse": "This image has already been used in an existing landing page(s). You cannot update the Module, Target Country, or Language.",
+    "uploadLimitExceeded": "Upload limit exceeded. You can only upload up to {{maxFiles}} files at a time.",
+    "invalidFileTypes": "Invalid file type(s) detected: {{invalidFiles}}. Please upload only GIF, JPG, JPEG, PNG or WEBP files.",
+    "fileSizeExceeded": "File size exceeds {{maxSize}}MB limit: {{exceededFiles}}. Please upload a smaller file.",
+    "duplicateFileNames": "File name(s) already exists: {{duplicateFiles}}. Please rename or remove the file(s) before uploading."
   },
   "toasts": {
     "exporting": "Exporting assets to Excel...",

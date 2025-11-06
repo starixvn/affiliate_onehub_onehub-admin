@@ -1,6 +1,6 @@
 import type { GetAssetListRequest } from '../types'
 
-export const EXCLUDE_MODULE_TYPES = [3, 4] as const;
+export const EXCLUDE_MODULE_TYPES = [3, 4] as const
 
 export const DEFAULT_PARAMS = {
   mediaId: 0,
@@ -8,20 +8,10 @@ export const DEFAULT_PARAMS = {
   moduleIds: undefined,
   targetCountrycodes: 'all',
   languageCodes: 'all',
-  status: -1,
+  status: 1,
   pageIndex: 1,
   pageSize: 10,
 } as const
-
-export const COLUMN_DISPLAY_NAMES: Record<string, string> = {
-  mediaName: 'File Name',
-  moduleName: 'Module',
-  targetCountryName: 'Country',
-  marketName: 'Language',
-  dimension: 'Dimensions',
-  statusId: 'Status',
-  preview: 'Preview Asset',
-}
 
 export function normalizeSearchParams(
   search: Record<string, unknown>

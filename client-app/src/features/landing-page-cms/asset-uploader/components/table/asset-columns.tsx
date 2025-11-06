@@ -130,8 +130,8 @@ export const useAssetColumns = (
       cell: ({ row }) => {
         const mediaName = row.getValue('mediaName') as string
         const fileName = row.original.fileName
-        const imageUrl = bannerRootUrl ? `${bannerRootUrl}/${fileName}` : ''
-        const thumbnailUrl = bannerRootUrl ? `${bannerRootUrl}/${fileName}` : ''
+        const imageUrl = bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
+        const thumbnailUrl = bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
 
         return (
           <ImagePreviewCell

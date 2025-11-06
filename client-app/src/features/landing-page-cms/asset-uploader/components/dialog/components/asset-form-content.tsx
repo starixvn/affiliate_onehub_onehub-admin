@@ -9,6 +9,7 @@ import { AssetModuleRow } from '../asset-module-row'
 
 interface AssetFormContentProps {
   isEdit: boolean
+  isMediaIdInUse: boolean
   fileName: string
   moduleRows: ModuleWithFiles[]
   errors: ValidationErrors
@@ -42,6 +43,7 @@ interface AssetFormContentProps {
 
 export function AssetFormContent({
   isEdit,
+  isMediaIdInUse,
   fileName,
   moduleRows,
   errors,
@@ -73,6 +75,7 @@ export function AssetFormContent({
     return (
       <div className='space-y-4'>
         <AssetBasicFields
+          isMediaIdInUse={isMediaIdInUse}
           countryOptions={countryOptions}
           languageOptions={languageOptions}
           country={country}
@@ -85,6 +88,7 @@ export function AssetFormContent({
           onLanguageBlur={onLanguageBlur}
         />
         <AssetEditForm
+          isMediaIdInUse={isMediaIdInUse}
           moduleValue={moduleRows[0].module}
           fileName={fileName}
           errors={errors}
@@ -101,6 +105,7 @@ export function AssetFormContent({
   return (
     <>
       <AssetBasicFields
+        isMediaIdInUse={isMediaIdInUse}
         countryOptions={countryOptions}
         languageOptions={languageOptions}
         country={country}

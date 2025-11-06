@@ -5,10 +5,15 @@ interface AssetDialogErrorBannerProps {
   errors: ValidationErrors
 }
 
-export function AssetDialogErrorBanner({ errors }: AssetDialogErrorBannerProps) {
+export function AssetDialogErrorBanner({
+  errors,
+}: AssetDialogErrorBannerProps) {
   const { t } = useTranslation('asset-uploader')
 
-  if (!errors.files || Object.keys(errors.files).length === 0) {
+  const hasErrors =
+    errors.mediaInUse || (errors.files && Object.keys(errors.files).length > 0)
+
+  if (!hasErrors) {
     return null
   }
 
@@ -19,18 +24,22 @@ export function AssetDialogErrorBanner({ errors }: AssetDialogErrorBannerProps) 
           {t('form.fixIssues')}
         </p>
         <div className='space-y-1'>
-          {[
-            errors.files.uploadLimitExceeded,
-            errors.files.invalidFileTypes,
-            errors.files.fileSizeExceeded,
-            errors.files.duplicateFileNames,
-          ]
-            .filter(Boolean)
-            .map((error, index) => (
-              <p key={index} className='text-sm text-red-700'>
-                • {error}
-              </p>
-            ))}
+          {errors.mediaInUse && (
+            <p className='text-sm text-red-700'>• {errors.mediaInUse}</p>
+          )}
+          {errors.files &&
+            [
+              errors.files.uploadLimitExceeded,
+              errors.files.invalidFileTypes,
+              errors.files.fileSizeExceeded,
+              errors.files.duplicateFileNames,
+            ]
+              .filter(Boolean)
+              .map((error, index) => (
+                <p key={index} className='text-sm text-red-700'>
+                  • {error}
+                </p>
+              ))}
         </div>
       </div>
     </div>

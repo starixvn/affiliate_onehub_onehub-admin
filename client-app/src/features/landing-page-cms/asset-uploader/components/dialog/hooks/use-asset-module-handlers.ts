@@ -3,7 +3,10 @@ import type {
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import { validateField as validateFieldHelper } from '../../../data/validation'
+import {
+  validateField as validateFieldHelper,
+  useErrorMessages,
+} from '../../../data/validation'
 
 interface UseAssetModuleHandlersProps {
   moduleRows: ModuleWithFiles[]
@@ -22,6 +25,8 @@ export function useAssetModuleHandlers({
   setTouched,
   resetTouchedForModules,
 }: UseAssetModuleHandlersProps) {
+  const errorMessages = useErrorMessages()
+
   const isModuleSelectedByOther = (
     moduleValue: string,
     currentModuleIndex: number
@@ -36,7 +41,13 @@ export function useAssetModuleHandlers({
       prev.map((row, i) => (i === moduleIndex ? { ...row, module } : row))
     )
     if (touched.modules[moduleIndex]) {
-      validateFieldHelper('module', module, setErrors, moduleIndex)
+      validateFieldHelper(
+        'module',
+        module,
+        (fn) => setErrors(fn),
+        errorMessages,
+        moduleIndex
+      )
     }
   }
 
@@ -48,7 +59,8 @@ export function useAssetModuleHandlers({
     validateFieldHelper(
       'module',
       moduleRows[moduleIndex].module,
-      setErrors,
+      (fn) => setErrors(fn),
+      errorMessages,
       moduleIndex
     )
   }
@@ -58,7 +70,13 @@ export function useAssetModuleHandlers({
       prev.map((row, i) => (i === 0 ? { ...row, module } : row))
     )
     if (touched.modules[0]) {
-      validateFieldHelper('module', module, setErrors, 0)
+      validateFieldHelper(
+        'module',
+        module,
+        (fn) => setErrors(fn),
+        errorMessages,
+        0
+      )
     }
   }
 
@@ -67,7 +85,13 @@ export function useAssetModuleHandlers({
       ...prev,
       modules: { ...prev.modules, [0]: true },
     }))
-    validateFieldHelper('module', moduleRows[0].module, setErrors, 0)
+    validateFieldHelper(
+      'module',
+      moduleRows[0].module,
+      (fn) => setErrors(fn),
+      errorMessages,
+      0
+    )
   }
 
   const handleAddModule = (moduleIndex: number) => {

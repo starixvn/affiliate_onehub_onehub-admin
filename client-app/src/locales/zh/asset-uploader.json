@@ -43,7 +43,14 @@
     "status": "状态",
     "action": "操作",
     "active": "活跃",
-    "inactive": "非活跃"
+    "inactive": "非活跃",
+    "mediaName": "文件名",
+    "moduleName": "模块",
+    "targetCountryName": "国家",
+    "marketName": "语言",
+    "dimension": "尺寸",
+    "statusId": "状态",
+    "preview": "预览资源"
   },
   "bulkActions": {
     "changeToActive": "更改为活跃",
@@ -92,6 +99,16 @@
     "fileSizeLimit": "文件大小限制：3MB",
     "maxFiles": "最大文件数：50",
     "note": "注意：如果图片已在现有着陆页中使用，则无法更改模块、国家和语言。"
+  },
+  "validation": {
+    "countryRequired": "请选择国家",
+    "languageRequired": "请选择语言",
+    "moduleRequired": "请选择模块",
+    "mediaInUse": "此图片已在现有着陆页中使用。您无法更新模块、目标国家或语言。",
+    "uploadLimitExceeded": "超出上传限制。您一次只能上传最多 {{maxFiles}} 个文件。",
+    "invalidFileTypes": "检测到无效文件类型：{{invalidFiles}}。请仅上传 GIF、JPG、JPEG、PNG 或 WEBP 文件。",
+    "fileSizeExceeded": "文件大小超过 {{maxSize}}MB 限制：{{exceededFiles}}。请上传更小的文件。",
+    "duplicateFileNames": "文件名已存在：{{duplicateFiles}}。请重命名或删除文件后再上传。"
   },
   "toasts": {
     "exporting": "正在导出资源到 Excel...",

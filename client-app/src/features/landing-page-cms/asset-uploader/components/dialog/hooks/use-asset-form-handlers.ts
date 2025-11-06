@@ -18,6 +18,7 @@ interface UseAssetFormHandlersProps {
   moduleRows: ModuleWithFiles[]
   touched: TouchedFields
   isEdit: boolean
+  isMediaIdInUse: boolean
   languages: Language[]
   setLanguageOptions: React.Dispatch<
     React.SetStateAction<{ value: string; label: string }[]>
@@ -47,6 +48,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     moduleRows,
     touched,
     isEdit,
+    isMediaIdInUse,
     languages,
     setLanguageOptions,
     setCountry,
@@ -100,6 +102,8 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     language,
     moduleRows,
     isEdit,
+    isMediaIdInUse,
+    setErrors,
     onOpenChange,
     createAssetMutation,
     updateAssetMutation,

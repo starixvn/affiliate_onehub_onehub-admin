@@ -1,4 +1,5 @@
-import { AssetDetail } from '../../../data/schema';
+import { useTranslation } from 'react-i18next'
+import { AssetDetail } from '../../../data/schema'
 
 interface UseAssetSubmitHandlersProps {
   asset: AssetDetail
@@ -6,6 +7,8 @@ interface UseAssetSubmitHandlersProps {
   language: string
   moduleRows: Array<{ module: string; files: File[] }>
   isEdit: boolean
+  isMediaIdInUse: boolean
+  setErrors: React.Dispatch<React.SetStateAction<any>>
   onOpenChange: (open: boolean) => void
   createAssetMutation: any
   updateAssetMutation: any
@@ -17,10 +20,13 @@ export function useAssetSubmitHandlers({
   language,
   moduleRows,
   isEdit,
+  isMediaIdInUse,
+  setErrors,
   onOpenChange,
   createAssetMutation,
   updateAssetMutation,
 }: UseAssetSubmitHandlersProps) {
+  const { t } = useTranslation('asset-uploader')
   const prepareCreateRequest = () => {
     return {
       targetCountryCode: country,
@@ -41,8 +47,17 @@ export function useAssetSubmitHandlers({
       targetCountryCode: country,
       languageCode: language,
       inputFileName,
-      file
+      file,
     }
+  }
+
+  const hasRestrictedFieldsChanged = () => {
+    const hasChangedCountry = country !== asset?.targetCountryCode
+    const hasChangedLanguage = language !== asset?.marketId
+    const hasChangedModule =
+      moduleRows[0]?.module !== asset?.moduleId.toString()
+
+    return hasChangedCountry || hasChangedLanguage || hasChangedModule
   }
 
   const handleSubmit = async (validateForm: () => boolean) => {
@@ -50,22 +65,29 @@ export function useAssetSubmitHandlers({
       return
     }
 
-    if (isEdit) {
-      const request = prepareUpdateRequest()
-      const response = await updateAssetMutation.mutateAsync({
-        data: request,
-      })
+    if (isEdit && isMediaIdInUse && hasRestrictedFieldsChanged()) {
+      setErrors((prev: any) => ({
+        ...prev,
+        mediaInUse: t('validation.mediaInUse'),
+      }))
+      return
+    }
 
-      if (response.errorCode === 0) {
-        handleCancel()
-      }
-    } else {
-      const request = prepareCreateRequest()
-      const response = await createAssetMutation.mutateAsync(request)
+    if (isEdit && isMediaIdInUse) {
+      setErrors((prev: any) => ({
+        ...prev,
+        mediaInUse: undefined,
+      }))
+    }
 
-      if (response.errorCode === 0) {
-        handleCancel()
-      }
+    const request = isEdit ? prepareUpdateRequest() : prepareCreateRequest()
+    const mutation = isEdit ? updateAssetMutation : createAssetMutation
+    const payload = isEdit ? { data: request } : request
+
+    const response = await mutation.mutateAsync(payload)
+
+    if (response.errorCode === 0) {
+      handleCancel()
     }
   }
 

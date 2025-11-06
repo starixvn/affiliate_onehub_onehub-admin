@@ -1,9 +1,35 @@
+import { useTranslation } from 'react-i18next'
 import type { ValidationErrors, TouchedFields, ModuleWithFiles } from './schema'
 import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_MB,
   MAX_FILES_PER_MODULE,
 } from './schema'
+
+export const useErrorMessages = () => {
+  const { t } = useTranslation('asset-uploader')
+
+  return {
+    COUNTRY_REQUIRED: t('validation.countryRequired'),
+    LANGUAGE_REQUIRED: t('validation.languageRequired'),
+    MODULE_REQUIRED: t('validation.moduleRequired'),
+    UPLOAD_LIMIT_EXCEEDED: (maxFiles: number) =>
+      t('validation.uploadLimitExceeded', { maxFiles }),
+    INVALID_FILE_TYPES: (invalidFiles: string[]) =>
+      t('validation.invalidFileTypes', {
+        invalidFiles: invalidFiles.join(', '),
+      }),
+    FILE_SIZE_EXCEEDED: (exceededFiles: string[]) =>
+      t('validation.fileSizeExceeded', {
+        maxSize: MAX_FILE_SIZE_MB,
+        exceededFiles: exceededFiles.join(', '),
+      }),
+    DUPLICATE_FILE_NAMES: (duplicateFiles: string[]) =>
+      t('validation.duplicateFileNames', {
+        duplicateFiles: duplicateFiles.join(', '),
+      }),
+  }
+}
 
 export const ERROR_MESSAGES = {
   COUNTRY_REQUIRED: 'Please select a Country',
@@ -33,12 +59,13 @@ export const validateField = (
   field: string,
   value: any,
   setErrors: (fn: (prev: ValidationErrors) => ValidationErrors) => void,
+  errorMessages: ReturnType<typeof useErrorMessages>,
   index?: number
 ): boolean => {
   const errorMap = {
-    country: !value ? ERROR_MESSAGES.COUNTRY_REQUIRED : '',
-    language: !value ? ERROR_MESSAGES.LANGUAGE_REQUIRED : '',
-    module: !value ? ERROR_MESSAGES.MODULE_REQUIRED : '',
+    country: !value ? errorMessages.COUNTRY_REQUIRED : '',
+    language: !value ? errorMessages.LANGUAGE_REQUIRED : '',
+    module: !value ? errorMessages.MODULE_REQUIRED : '',
   }
 
   const error = errorMap[field as keyof typeof errorMap] || ''
@@ -59,24 +86,25 @@ export const validateForm = (
   country: string,
   language: string,
   moduleRows: ModuleWithFiles[],
-  setErrors: (errors: ValidationErrors) => void
+  setErrors: (errors: ValidationErrors) => void,
+  errorMessages: ReturnType<typeof useErrorMessages>
 ): boolean => {
   const newErrors: ValidationErrors = { modules: {} }
   let isValid = true
 
   if (!country) {
-    newErrors.country = ERROR_MESSAGES.COUNTRY_REQUIRED
+    newErrors.country = errorMessages.COUNTRY_REQUIRED
     isValid = false
   }
 
   if (!language) {
-    newErrors.language = ERROR_MESSAGES.LANGUAGE_REQUIRED
+    newErrors.language = errorMessages.LANGUAGE_REQUIRED
     isValid = false
   }
 
   moduleRows.forEach((row, index) => {
     if (!row.module) {
-      newErrors.modules[index] = ERROR_MESSAGES.MODULE_REQUIRED
+      newErrors.modules[index] = errorMessages.MODULE_REQUIRED
       isValid = false
     }
   })

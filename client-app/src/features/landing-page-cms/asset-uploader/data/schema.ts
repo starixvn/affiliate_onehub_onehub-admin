@@ -31,6 +31,7 @@ export interface ValidationErrors {
   country?: string
   language?: string
   modules: { [key: number]: string }
+  mediaInUse?: string
   files?: {
     uploadLimitExceeded?: string
     invalidFileTypes?: string

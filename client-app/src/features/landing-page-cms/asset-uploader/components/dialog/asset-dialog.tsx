@@ -24,6 +24,7 @@ interface AssetDialogProps {
 export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
   const { t } = useTranslation('asset-uploader')
   const { countries, languages, modules } = useAssetUploader()
+  const isMediaIdInUse = asset?.isMediaIdInUse ?? false
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
     label: country.targetCountryName,
@@ -69,6 +70,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     moduleRows,
     touched,
     isEdit,
+    isMediaIdInUse,
     languages,
     setLanguageOptions,
     setCountry,
@@ -137,6 +139,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
 
         <AssetDialogContent
           isEdit={isEdit}
+          isMediaIdInUse={isMediaIdInUse}
           fileName={fileName}
           moduleRows={moduleRows}
           errors={errors}
@@ -148,6 +151,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           country={country}
           language={language}
           totalModules={moduleRows.length}
+          scrollContainerRef={scrollContainerRef}
           onCountryChange={handlers.handleCountryChange}
           onLanguageChange={handlers.handleLanguageChange}
           onCountryBlur={handlers.handleCountryBlur}

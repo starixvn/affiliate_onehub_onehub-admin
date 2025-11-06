@@ -3,6 +3,7 @@ import {
   validateField as validateFieldHelper,
   validateForm as validateFormHelper,
   isFormValid as isFormValidHelper,
+  useErrorMessages,
 } from '../../../data/validation'
 import type { Language } from '../../../types'
 
@@ -35,6 +36,8 @@ export function useAssetFieldHandlers({
   setErrors,
   setTouched,
 }: UseAssetFieldHandlersProps) {
+  const errorMessages = useErrorMessages()
+
   const markFieldTouched = (field: 'country' | 'language', index?: number) => {
     if (index !== undefined) {
       setTouched((prev) => ({
@@ -47,11 +50,11 @@ export function useAssetFieldHandlers({
   }
 
   const validateField = (field: string, value: any, index?: number) => {
-    return validateFieldHelper(field, value, setErrors, index)
+    return validateFieldHelper(field, value, setErrors, errorMessages, index)
   }
 
   const validateForm = (): boolean => {
-    return validateFormHelper(country, language, moduleRows, setErrors)
+    return validateFormHelper(country, language, moduleRows, setErrors, errorMessages)
   }
 
   const isFormValid = () => {
