@@ -31,6 +31,8 @@ type ComponentsProviderProps = {
   params?: {
     search?: string
     category?: string
+    status?: string
+    device?: string
     pageIndex?: number
     pageSize?: number
   }
@@ -62,8 +64,22 @@ export function ComponentsProvider({
       )
     }
 
+    if (params?.status) {
+      const statusIds = params.status.split(',').map(Number)
+      filtered = filtered.filter((component) =>
+        statusIds.includes(component.statusId)
+      )
+    }
+
+    if (params?.device) {
+      const deviceValues = params.device.split(',')
+      filtered = filtered.filter((component) =>
+        component.deviceType ? deviceValues.includes(component.deviceType) : false
+      )
+    }
+
     return filtered
-  }, [params?.search, params?.category])
+  }, [params?.search, params?.category, params?.status, params?.device])
 
   const paginatedComponents = useMemo(() => {
     const pageIndex = params?.pageIndex ?? 1

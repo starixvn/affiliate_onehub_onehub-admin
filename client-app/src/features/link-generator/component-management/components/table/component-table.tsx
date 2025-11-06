@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
@@ -23,6 +23,7 @@ import { type Component } from '../../data/schema'
 import { ComponentMultiDeleteDialog } from './component-multi-delete-dialog'
 import { ComponentBulkActions } from './component-bulk-actions'
 import { getComponentColumns } from './component-columns'
+import { status, deviceTypes } from '../../data/data'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -50,9 +51,22 @@ export function ComponentTable({
 }: DataTableProps) {
   const { t } = useTranslation('component-management')
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  const selectedCategory = (search.category as string) ?? '1'
+  const isLandingPage = useMemo(() => selectedCategory === '6', [selectedCategory])
+
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    deviceType: isLandingPage,
+  })
+
+  useEffect(() => {
+    setColumnVisibility((prev) => ({
+      ...prev,
+      deviceType: isLandingPage,
+    }))
+  }, [isLandingPage])
 
   const columns = useMemo(() => getComponentColumns(t), [t])
 
@@ -96,6 +110,51 @@ export function ComponentTable({
     getSortedRowModel: getSortedRowModel(),
   })
 
+  useEffect(() => {
+    const deviceColumn = table.getColumn('deviceType')
+    if (deviceColumn && search.device) {
+      const deviceValues = (search.device as string).split(',')
+      deviceColumn.setFilterValue(deviceValues)
+    } else if (deviceColumn && !search.device) {
+      deviceColumn.setFilterValue(undefined)
+    }
+  }, [search.device, table])
+
+  useEffect(() => {
+    const statusColumn = table.getColumn('status')
+    if (statusColumn && search.status) {
+      const statusValues = (search.status as string).split(',')
+      statusColumn.setFilterValue(statusValues)
+    } else if (statusColumn && !search.status) {
+      statusColumn.setFilterValue(undefined)
+    }
+  }, [search.status, table])
+
+  const filters = useMemo(
+    () => [
+      {
+        columnId: 'status',
+        title: 'Status',
+        options: status.map(({ label, value }) => ({
+          label,
+          value,
+        })),
+        defaultValue: undefined,
+      },
+      {
+        columnId: 'deviceType',
+        title: 'Device',
+        options: deviceTypes.map(({ label, value }) => ({
+          label,
+          value,
+        })),
+        defaultValue: undefined,
+        hidden: !isLandingPage,
+      },
+    ],
+    [isLandingPage]
+  )
+
   return (
     <div
       className={cn(
@@ -107,14 +166,19 @@ export function ComponentTable({
         table={table}
         searchPlaceholder={t('table.search')}
         searchClassName='w-[250px] lg:w-[350px]'
-        filters={[]}
+        filters={filters}
         submitLabel={t('searchToolbar.submit')}
         initialSearchValue={(search.search as string) ?? ''}
+        defaultSearchValue=''
         onSubmit={(searchValue) => {
+          const statusFilter = table.getColumn('status')?.getFilterValue() as string[] | undefined
+          const deviceFilter = table.getColumn('deviceType')?.getFilterValue() as string[] | undefined
           navigate({
             search: {
               ...search,
               search: searchValue || undefined,
+              status: statusFilter?.join(',') || undefined,
+              device: deviceFilter?.join(',') || undefined,
               pageIndex: 1,
             },
           })

@@ -76,7 +76,7 @@ export function ComponentCategoryFilters({
       title: t('categoryFilters.landingPage.title'),
       count: `${categorySummary.landingPage.total}/${categorySummary.landingPage.active}/${categorySummary.landingPage.inactive}`,
       icon: FileText,
-      variant: 'rainbow' as const,
+      variant: 'purple' as const,
     },
   ]
 

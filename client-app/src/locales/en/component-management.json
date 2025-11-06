@@ -51,7 +51,8 @@
       "createdBy": "Created By",
       "modifiedDate": "Modified Date",
       "modifiedBy": "Modified By",
-      "status": "Status"
+      "status": "Status",
+      "device": "Device"
     },
     "actions": {
       "openMenu": "Open menu",

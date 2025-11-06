@@ -6,6 +6,7 @@ import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { type Component } from '../../data/schema'
 import { ComponentCategoryCell } from './component-category-cell'
+import { ComponentDeviceCell } from './component-device-cell'
 import { ComponentStatusCell } from './component-status-cell'
 import { DataTableRowActions } from './data-table-row-actions'
 
@@ -170,6 +171,24 @@ export const getComponentColumns = (
     meta: {
       displayName: t('table.columns.modifiedBy'),
       className: '',
+    },
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'deviceType',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('table.columns.device')}
+      />
+    ),
+    cell: ComponentDeviceCell,
+    meta: {
+      displayName: t('table.columns.device'),
+      className: 'w-40',
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(String(row.getValue(id)))
     },
     enableSorting: false,
   },

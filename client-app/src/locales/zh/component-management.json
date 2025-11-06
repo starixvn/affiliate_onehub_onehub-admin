@@ -50,7 +50,8 @@
       "createdBy": "创建人",
       "modifiedDate": "修改日期",
       "modifiedBy": "修改人",
-      "status": "状态"
+      "status": "状态",
+      "device": "设备"
     },
     "actions": {
       "openMenu": "打开菜单",

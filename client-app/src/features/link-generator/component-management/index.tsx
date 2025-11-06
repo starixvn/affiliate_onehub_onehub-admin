@@ -65,6 +65,8 @@ export function ComponentManagement() {
   const params = {
     search: search.search as string | undefined,
     category: (search.category as string | undefined) ?? '1',
+    status: search.status as string | undefined,
+    device: search.device as string | undefined,
     pageIndex: search.pageIndex ? Number(search.pageIndex) : 1,
     pageSize: search.pageSize ? Number(search.pageSize) : 10,
   }

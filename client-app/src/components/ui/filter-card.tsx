@@ -15,6 +15,7 @@ const filterCardVariants = cva('transition-all duration-200', {
       info: 'hover:border-blue-500/50',
       danger: 'hover:border-red-500/50',
       secondary: 'hover:border-gray-500/50',
+      purple: 'hover:border-purple-500/50',
     },
     selected: {
       true: 'ring-1',
@@ -63,6 +64,12 @@ const filterCardVariants = cva('transition-all duration-200', {
       className:
         'bg-gray-50 dark:bg-gray-950/30 border-gray-500 ring-gray-500/20',
     },
+    {
+      variant: 'purple',
+      selected: true,
+      className:
+        'bg-purple-50 dark:bg-purple-950/30 border-purple-500 ring-purple-500/20',
+    },
   ],
   defaultVariants: {
     variant: 'default',
@@ -83,6 +90,7 @@ const iconVariants = cva(
         info: 'bg-blue-500/10 text-blue-600 dark:text-blue-500',
         danger: 'bg-red-500/10 text-red-600 dark:text-red-500',
         secondary: 'bg-gray-500/10 text-gray-600 dark:text-gray-500',
+        purple: 'bg-purple-500/10 text-purple-600 dark:text-purple-500',
       },
     },
     defaultVariants: {
@@ -101,6 +109,7 @@ const titleVariants = cva('text-sm font-medium transition-colors', {
       info: 'text-blue-600 dark:text-blue-500',
       danger: 'text-red-600 dark:text-red-500',
       secondary: 'text-gray-600 dark:text-gray-500',
+      purple: 'text-purple-600 dark:text-purple-500',
     },
   },
   defaultVariants: {
