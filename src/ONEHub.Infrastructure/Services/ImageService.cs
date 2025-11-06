@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
-using SkiaSharp;
+using SixLabors.ImageSharp;
 
 namespace ONEHub.Infrastructure.Services;
 public class ImageService(ILogger<ImageService> logger) : IImageService
@@ -13,21 +13,16 @@ public class ImageService(ILogger<ImageService> logger) : IImageService
     {
         try
         {
-            var originalPosition = inputStream.Position;
+            var originalPosition = inputStream.CanSeek ? inputStream.Position : 0;
             inputStream.Position = 0;
 
-            using (var codec = SKCodec.Create(inputStream))
+            var info = Image.Identify(inputStream);
+            if (inputStream.CanSeek)
             {
-                if (codec != null)
-                {
-                    var dimensions = $"{codec.Info.Width}x{codec.Info.Height}";
-                    inputStream.Position = originalPosition;
-                    return dimensions;
-                }
+                inputStream.Position = originalPosition;
             }
 
-            inputStream.Position = originalPosition;
-            return DEFAULT_DIMENSIONS;
+            return $"{info.Width}x{info.Height}";
         }
         catch (Exception ex)
         {
@@ -36,35 +31,31 @@ public class ImageService(ILogger<ImageService> logger) : IImageService
         }
     }
 
+
     public Result ValidateImageDimensions(Stream inputStream, int maxWidth, int maxHeight)
     {
         try
         {
-            var originalPosition = inputStream.Position;
+            var originalPosition = inputStream.CanSeek ? inputStream.Position : 0;
             inputStream.Position = 0;
 
-            using (var codec = SKCodec.Create(inputStream))
+            var info = Image.Identify(inputStream);
+            if (inputStream.CanSeek)
             {
-                if (codec != null)
-                {
-                    var width = codec.Info.Width;
-                    var height = codec.Info.Height;
-
-                    inputStream.Position = originalPosition;
-
-                    if (width > maxWidth || height > maxHeight)
-                    {
-                        return Result.Failure(Error.SystemError with
-                        {
-                            Message = $"Image dimensions ({width}x{height}) exceed maximum allowed size ({maxWidth}x{maxHeight})"
-                        });
-                    }
-
-                    return Result.Success();
-                }
+                inputStream.Position = originalPosition;
             }
 
-            inputStream.Position = originalPosition;
+            var width = info.Width;
+            var height = info.Height;
+
+            if (width > maxWidth || height > maxHeight)
+            {
+                return Result.Failure(Error.SystemError with
+                {
+                    Message = $"Image dimensions ({width}x{height}) exceed maximum allowed size ({maxWidth}x{maxHeight})"
+                });
+            }
+
             return Result.Success();
         }
         catch (Exception ex)
