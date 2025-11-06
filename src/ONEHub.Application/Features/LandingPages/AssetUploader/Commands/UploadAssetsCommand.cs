@@ -31,8 +31,6 @@ public class UploadAssetsCommandHandler(
     ILogger<UploadAssetsCommandHandler> logger)
     : IRequestHandler<UploadAssetsCommand, Result>
 {
-    private const string DATABASE_INSERTION_FAILS_MESSAGE = "Database insertion fails";
-
     public async Task<Result> Handle(
         UploadAssetsCommand request,
         CancellationToken cancellationToken)
@@ -91,11 +89,8 @@ public class UploadAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error uploading assets");
-            return Result.Failure(Error.SystemError with
-            {
-                Message = DATABASE_INSERTION_FAILS_MESSAGE
-            });
+            logger.LogError(ex, AssetUploaderError.UploadAssetsFailed.Message);
+            return Result.Failure(AssetUploaderError.UploadAssetsFailed);
         }
     }
 
@@ -150,12 +145,9 @@ public class UploadAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error saving assets to database");
+            logger.LogError(ex, AssetUploaderError.UploadAssetsFailed.Message);
             await fileService.CleanupUploadedFilesAsync(filePaths);
-            return Result.Failure(Error.SystemError with
-            {
-                Message = DATABASE_INSERTION_FAILS_MESSAGE
-            });
+            return Result.Failure(AssetUploaderError.UploadAssetsFailed);
         }
     }
 
@@ -181,6 +173,7 @@ public class UploadAssetsCommandHandler(
                 string dimension;
                 await using (var stream = file.OpenReadStream())
                 {
+                    stream.Position = 0;
                     dimension = imageService.ExtractImageDimensions(stream);
                 }
 

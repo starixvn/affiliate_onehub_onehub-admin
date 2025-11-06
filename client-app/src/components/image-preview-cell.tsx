@@ -27,19 +27,25 @@ export function ImagePreviewCell({
           className='hover:ring-primary h-24 w-48 cursor-pointer overflow-hidden rounded-lg border-2 shadow-sm transition-all hover:shadow-md hover:ring-2'
           onClick={() => setIsOpen(true)}
         >
-          <img
-            src={thumb}
-            alt={fileName}
-            className='h-full w-full object-cover'
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.style.display = 'none'
-              const parent = target.parentElement
-              if (parent) {
-                parent.innerHTML = `<div class="bg-muted flex h-full w-full items-center justify-center text-xs">No Image</div>`
-              }
-            }}
-          />
+          {thumb ? (
+            <img
+              src={thumb}
+              alt={fileName}
+              className='h-full w-full object-cover'
+              onError={(e) => {
+                const target = e.target as HTMLImageElement
+                target.style.display = 'none'
+                const parent = target.parentElement
+                if (parent) {
+                  parent.innerHTML = `<div class="bg-muted flex h-full w-full items-center justify-center text-xs">No Image</div>`
+                }
+              }}
+            />
+          ) : (
+            <div className='bg-muted flex h-full w-full items-center justify-center text-xs'>
+              No Image
+            </div>
+          )}
         </div>
       </div>
 

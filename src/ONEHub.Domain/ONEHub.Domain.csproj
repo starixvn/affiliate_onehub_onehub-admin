@@ -1,5 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <ItemGroup>
+      <Compile Remove="DTOs\**" />
+      <EmbeddedResource Remove="DTOs\**" />
+      <None Remove="DTOs\**" />
+    </ItemGroup>
+    <ItemGroup>
         <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
     <PropertyGroup>
@@ -10,10 +15,6 @@
 
     <ItemGroup>
         <PackageReference Include="Fanex.Data.ProxyClient" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="DTOs\" />
     </ItemGroup>
 
 </Project>

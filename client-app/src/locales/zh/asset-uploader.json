@@ -52,7 +52,9 @@
   },
   "dialogs": {
     "addNewAsset": "添加新资源",
+    "addNewAssetDescription": "上传并配置新的着陆页资源",
     "editAsset": "编辑资源",
+    "editAssetDescription": "更新资源配置和文件信息",
     "deleteAsset": "删除资源",
     "deleteAssets": "删除资源",
     "confirmDelete": "您确定要删除选中的资源吗？此操作无法撤销。",

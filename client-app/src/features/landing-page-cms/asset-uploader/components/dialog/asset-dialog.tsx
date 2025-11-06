@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -124,7 +125,14 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-h-[90vh] w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl'>
         <DialogHeader>
-          <DialogTitle>{isEdit ? t('dialogs.editAsset') : t('dialogs.addNewAsset')}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? t('dialogs.editAsset') : t('dialogs.addNewAsset')}
+          </DialogTitle>
+          <DialogDescription>
+            {isEdit
+              ? t('dialogs.editAssetDescription')
+              : t('dialogs.addNewAssetDescription')}
+          </DialogDescription>
         </DialogHeader>
 
         <AssetDialogContent

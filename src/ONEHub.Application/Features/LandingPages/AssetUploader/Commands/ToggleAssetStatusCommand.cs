@@ -40,11 +40,8 @@ public class ToggleAssetStatusCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error toggling asset status: {@MediaIds}", request.MediaIds);
-            return Result.Failure(Error.SystemError with
-            {
-                Message = "Error toggling asset status"
-            });
+            logger.LogError(ex, AssetUploaderError.ChangeAssetStatusFailed.Message);
+            return Result.Failure(AssetUploaderError.ChangeAssetStatusFailed);
         }
     }
 }

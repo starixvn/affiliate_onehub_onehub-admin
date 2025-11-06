@@ -39,8 +39,6 @@ public class UpdateAssetCommandHandler(
     ILogger<UpdateAssetCommandHandler> logger)
     : IRequestHandler<UpdateAssetCommand, Result>
 {
-    private const string FILE_ALREADY_EXISTS_MESSAGE = "A file with this name {0} already exists on the server. Please use a different name.";
-
     public async Task<Result> Handle(
         UpdateAssetCommand request,
         CancellationToken cancellationToken)
@@ -81,11 +79,8 @@ public class UpdateAssetCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error updating asset");
-            return Result.Failure(Error.SystemError with
-            {
-                Message = "Error updating asset"
-            });
+            logger.LogError(ex, AssetUploaderError.UpdateAssetFailed.Message);
+            return Result.Failure(AssetUploaderError.UpdateAssetFailed);
         }
     }
 
@@ -117,6 +112,7 @@ public class UpdateAssetCommandHandler(
         string dimension;
         await using (var stream = request.File!.OpenReadStream())
         {
+            stream.Position = 0;
             dimension = imageService.ExtractImageDimensions(stream);
 
             var validateFile = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
@@ -205,9 +201,9 @@ public class UpdateAssetCommandHandler(
                 return Result.Success();
             }
 
-            return Result.Failure(Error.SystemError with
+            return Result.Failure(AssetUploaderError.FileAlreadyExists with
             {
-                Message = string.Format(FILE_ALREADY_EXISTS_MESSAGE, fileName)
+                Message = string.Format(AssetUploaderError.FileAlreadyExists.Message, fileName)
             });
         }
 

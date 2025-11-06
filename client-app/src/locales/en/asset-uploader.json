@@ -52,7 +52,9 @@
   },
   "dialogs": {
     "addNewAsset": "Add New Asset",
+    "addNewAssetDescription": "Upload and configure new assets for your landing pages",
     "editAsset": "Edit Asset",
+    "editAssetDescription": "Update asset configuration and file information",
     "deleteAsset": "Delete Asset",
     "deleteAssets": "Delete Assets",
     "confirmDelete": "Are you sure you want to delete selected assets? This action cannot be undone.",

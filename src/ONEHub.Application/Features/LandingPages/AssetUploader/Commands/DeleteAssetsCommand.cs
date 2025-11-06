@@ -45,11 +45,8 @@ public class DeleteAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Error deleting assets: {@MediaIds}", request.MediaIds);
-            return Result.Failure(Error.SystemError with
-            {
-                Message = "Error deleting assets"
-            });
+            logger.LogError(ex, AssetUploaderError.DeleteAssetsFailed.Message);
+            return Result.Failure(AssetUploaderError.DeleteAssetsFailed);
         }
     }
 
