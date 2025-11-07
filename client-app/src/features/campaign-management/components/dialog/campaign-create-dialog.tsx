@@ -24,140 +24,75 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateCampaign, useUpdateCampaign } from '../../api/commands'
+import { useCreateCampaign } from '../../api/commands'
 import { status } from '../../data/data'
-import { type Campaign } from '../../data/schema'
+import { useCampaigns } from '../campaign-provider'
 
 const getFormSchema = (t: (key: string) => string) =>
   z.object({
-    campaignId: z.number().optional(),
-    campaignCode: z.string().optional(),
     campaignName: z.string().min(1, t('dialog.form.nameRequired')),
     description: z.string().optional(),
     statusId: z.number().optional(),
   })
 
-type CampaignActionDialogProps = {
-  currentRow?: Campaign
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function CampaignActionDialog({
-  currentRow,
-  open,
-  onOpenChange,
-}: CampaignActionDialogProps) {
+export function CampaignCreateDialog() {
   const { t } = useTranslation('campaign-management')
+  const { open, setOpen } = useCampaigns()
   const formSchema = getFormSchema(t)
   type CampaignForm = z.infer<typeof formSchema>
-  const isEdit = !!currentRow
   const createMutation = useCreateCampaign()
-  const updateMutation = useUpdateCampaign()
   const form = useForm<CampaignForm>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
-    defaultValues: isEdit
-      ? currentRow
-      : {
-          campaignName: '',
-          description: '',
-          statusId: 0,
-        },
+    defaultValues: {
+      campaignName: '',
+      description: '',
+      statusId: 0,
+    },
   })
 
   const onSubmit = (values: CampaignForm) => {
-    if (isEdit && currentRow) {
-      updateMutation.mutate(
-        {
-          id: currentRow.campaignId,
-          data: {
-            campaignId: currentRow.campaignId,
-            campaignName: values.campaignName,
-            description: values.description || '',
-            statusId: values.statusId ?? 0,
-          },
+    createMutation.mutate(
+      {
+        campaignName: values.campaignName,
+        description: values.description || '',
+        statusId: values.statusId ?? 0,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            form.reset()
+            setOpen(null)
+          }
         },
-        {
-          onSuccess: (response) => {
-            if (response.errorCode === 0) {
-              form.reset()
-              onOpenChange(false)
-            }
-          },
-        }
-      )
-    } else {
-      createMutation.mutate(
-        {
-          campaignName: values.campaignName,
-          description: values.description || '',
-          statusId: values.statusId ?? 0,
-        },
-        {
-          onSuccess: (response) => {
-            if (response.errorCode === 0) {
-              form.reset()
-              onOpenChange(false)
-            }
-          },
-        }
-      )
-    }
+      }
+    )
   }
 
-  const isStatusModified = !!form.formState.dirtyFields.statusId
   const isFormValid = form.formState.isValid
 
   return (
     <Dialog
-      open={open}
+      open={open === 'create'}
       onOpenChange={(state) => {
         form.reset()
-        onOpenChange(state)
+        setOpen(state ? 'create' : null)
       }}
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>
-            {isEdit ? t('dialog.edit.title') : t('dialog.create.title')}
-          </DialogTitle>
+          <DialogTitle>{t('dialog.create.title')}</DialogTitle>
           <DialogDescription>
-            {isEdit
-              ? t('dialog.edit.description')
-              : t('dialog.create.description')}
+            {t('dialog.create.description')}
           </DialogDescription>
         </DialogHeader>
         <div className='w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
           <Form {...form}>
             <form
-              id='campaign-form'
+              id='campaign-create-form'
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
-              {isEdit && (
-                <FormField
-                  control={form.control}
-                  name='campaignCode'
-                  render={({ field }) => (
-                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                      <FormLabel className='col-span-2 text-end'>
-                        {t('dialog.form.code')}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t('dialog.form.codePlaceholder')}
-                          className='col-span-4'
-                          autoComplete='off'
-                          disabled
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className='col-span-4 col-start-3' />
-                    </FormItem>
-                  )}
-                />
-              )}
               <FormField
                 control={form.control}
                 name='campaignName'
@@ -222,23 +157,14 @@ export function CampaignActionDialog({
                   </FormItem>
                 )}
               />
-              {isStatusModified && (
-                <p className='px-0.5 text-sm font-medium text-amber-600 dark:text-amber-500'>
-                  {t('dialog.form.statusWarning')}
-                </p>
-              )}
             </form>
           </Form>
         </div>
         <DialogFooter>
           <Button
             type='submit'
-            form='campaign-form'
-            disabled={
-              !isFormValid ||
-              createMutation.isPending ||
-              updateMutation.isPending
-            }
+            form='campaign-create-form'
+            disabled={!isFormValid || createMutation.isPending}
           >
             {t('dialog.saveChanges')}
           </Button>

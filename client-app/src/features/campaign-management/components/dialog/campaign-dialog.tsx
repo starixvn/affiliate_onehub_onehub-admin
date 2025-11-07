@@ -1,30 +1,17 @@
 import { useCampaigns } from '../campaign-provider'
-import { CampaignActionDialog } from './campaign-action-dialog'
+import { CampaignCreateDialog } from './campaign-create-dialog'
+import { CampaignUpdateDialog } from './campaign-update-dialog'
 import { CampaignDeleteDialog } from './campaign-delete-dialog'
 
 export function CampaignDialogs() {
-  const { open, setOpen, currentRow, setCurrentRow } = useCampaigns()
+  const { open, currentRow, setCurrentRow, setOpen } = useCampaigns()
   return (
     <>
-      <CampaignActionDialog
-        key='campaign-create'
-        open={open === 'create'}
-        onOpenChange={() => setOpen('create')}
-      />
+      <CampaignCreateDialog />
 
       {currentRow && (
         <>
-          <CampaignActionDialog
-            key={`campaign-update-${currentRow.campaignCode}`}
-            open={open === 'update'}
-            onOpenChange={() => {
-              setOpen('update')
-              setTimeout(() => {
-                setCurrentRow(null)
-              }, 500)
-            }}
-            currentRow={currentRow}
-          />
+          <CampaignUpdateDialog />
 
           <CampaignDeleteDialog
             key={`campaign-delete-${currentRow.campaignCode}`}

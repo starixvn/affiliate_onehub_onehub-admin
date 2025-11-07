@@ -94,7 +94,7 @@ public static class CampaignEndPoint
         {
             CampaignName = request.CampaignName,
             Description = request.Description,
-            StatusId = request.Status
+            StatusId = request.StatusId
         };
         var result = await mediator.Send(command);
         return TypedResults.Ok(result);
