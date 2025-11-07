@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -25,6 +24,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
+import { useCreateComponent } from '../../api/commands'
 import { categories, deviceTypes, status } from '../../data/data'
 import { useComponents } from '../component-provider'
 
@@ -40,6 +40,7 @@ const getFormSchema = (t: (key: string) => string) =>
 export function ComponentCreateDialog() {
   const { t } = useTranslation('component-management')
   const { open, setOpen, selectedCategory } = useComponents()
+  const createMutation = useCreateComponent()
 
   const formSchema = getFormSchema(t)
   type ComponentForm = z.infer<typeof formSchema>
@@ -52,12 +53,13 @@ export function ComponentCreateDialog() {
       componentName: '',
       componentCode: '',
       statusId: 1,
-      deviceId: 1,
+      deviceId: undefined,
     },
   })
 
   const watchCategory = form.watch('categoryId')
   const watchName = form.watch('componentName')
+  const isLandingPage = watchCategory === 6
 
   useEffect(() => {
     if (watchName) {
@@ -73,18 +75,40 @@ export function ComponentCreateDialog() {
         componentName: '',
         componentCode: '',
         statusId: 1,
-        deviceId: 1,
+        deviceId: undefined,
       })
     }
   }, [open, selectedCategory, form])
 
-  const onSubmit = () => {
-    toast.success(t('createDialog.success'))
-    form.reset()
-    setOpen(null)
-  }
+  useEffect(() => {
+    if (watchCategory === 6) {
+      if (!form.getValues('deviceId')) {
+        form.setValue('deviceId', 1)
+      }
+    } else {
+      form.setValue('deviceId', undefined)
+    }
+  }, [watchCategory, form])
 
-  const isLandingPage = watchCategory === 6
+  const onSubmit = (values: ComponentForm) => {
+    createMutation.mutate(
+      {
+        categoryId: values.categoryId,
+        componentName: values.componentName,
+        componentCode: values.componentCode,
+        statusId: values.statusId,
+        deviceId: isLandingPage ? values.deviceId : undefined,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            form.reset()
+            setOpen(null)
+          }
+        },
+      }
+    )
+  }
 
   return (
     <Dialog
@@ -219,7 +243,7 @@ export function ComponentCreateDialog() {
           <Button
             type='submit'
             form='component-form'
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || createMutation.isPending}
           >
             {t('dialog.saveChanges')}
           </Button>

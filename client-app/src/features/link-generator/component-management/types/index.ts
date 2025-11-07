@@ -40,3 +40,24 @@ export interface GetComponentsRequest {
 export type GetComponentsResponseData = IPaginatedResponse<Component>
 
 export type GetComponentsResponse = IAxiosResponse<GetComponentsResponseData>
+
+export interface CreateComponentRequest {
+  categoryId: number
+  componentName: string
+  componentCode: string
+  statusId: number
+  deviceId?: number
+}
+
+export type CreateComponentResponse = IAxiosResponse<null>
+
+export interface UpdateComponentRequest {
+  componentId: number
+  categoryId: number
+  componentName: string
+  componentCode: string
+  statusId: number
+  deviceId?: number
+}
+
+export type UpdateComponentResponse = IAxiosResponse<null>

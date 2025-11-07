@@ -1,8 +1,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
+using ONEHub.Application.Features.Component.Commands;
 using ONEHub.Application.Features.Component.Queries;
 using ONEHub.Domain.Entities;
+using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
 
 namespace ONEHub.WebApi.Features.Component;
@@ -15,6 +18,8 @@ public static class ComponentEndPoint
 
         groupEndpoint.MapGet("/summary", Summary);
         groupEndpoint.MapGet("/", GetList);
+        groupEndpoint.MapPost("/", Create);
+        groupEndpoint.MapPut("/{id}", Update);
 
         return groupEndpoint;
     }
@@ -47,6 +52,55 @@ public static class ComponentEndPoint
         };
 
         var result = await mediator.Send(query);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result>, ValidationProblem>> Create(
+        [FromBody] CreateComponentRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+        var command = new CreateComponentCommand
+        {
+            CategoryId = request.CategoryId,
+            ComponentCode = request.ComponentCode,
+            ComponentName = request.ComponentName,
+            StatusId = request.StatusId,
+            DeviceId = request.DeviceId
+        };
+
+        var result = await mediator.Send(command);
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result>, ValidationProblem>> Update(
+        int id,
+        [FromBody] UpdateComponentRequest request,
+        IMediator mediator)
+    {
+        if (id != request.ComponentId)
+        {
+            return TypedResults.Ok(Result.Failure(ComponentError.InvalidComponentId));
+        }
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var command = new UpdateComponentCommand
+        {
+            ComponentId = request.ComponentId,
+            CategoryId = request.CategoryId,
+            ComponentName = request.ComponentName,
+            StatusId = request.StatusId,
+            DeviceId = request.DeviceId
+        };
+
+        var result = await mediator.Send(command);
 
         return TypedResults.Ok(result);
     }

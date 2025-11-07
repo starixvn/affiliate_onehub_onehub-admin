@@ -61,7 +61,9 @@ export const getCampaignColumns = (
       />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-64 ps-3'>{row.getValue('campaignCode')}</LongText>
+      <LongText className='max-w-64 ps-3'>
+        {row.getValue('campaignCode')}
+      </LongText>
     ),
     meta: {
       className: cn(
@@ -183,7 +185,7 @@ export const getCampaignColumns = (
     cell: CampaignStatusCell,
     meta: {
       displayName: t('table.columns.status'),
-      className: '',
+      className: 'w-32',
     },
     filterFn: (row, id, value) => {
       return value.includes(String(row.getValue(id)))

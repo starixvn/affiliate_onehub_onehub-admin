@@ -3,6 +3,7 @@ using ONEHub.Domain.Entities;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
+using ONEHub.Infrastructure.Repositories.Commands;
 using ONEHub.Infrastructure.Repositories.Criterias;
 
 namespace ONEHub.Infrastructure.Repositories;
@@ -33,5 +34,42 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
         };
 
         return await FetchPagingDataAsync<Component>(criteria);
+    }
+
+    public async Task<Result> CreateComponentAsync(CreateComponentParam param)
+    {
+        var command = new CreateComponentCommand
+        {
+            CategoryId = param.CategoryId,
+            ComponentCode = param.ComponentCode,
+            ComponentName = param.ComponentName,
+            StatusId = param.StatusId,
+            DeviceId = param.DeviceId,
+            UserId = param.UserId,
+            Ip = param.Ip,
+            Host = param.Host
+        };
+
+        var result = await ExecuteCommandAsync(command);
+
+        return result;
+    }
+
+    public async Task<Result> UpdateComponentAsync(UpdateComponentParam param)
+    {
+        var command = new UpdateComponentCommand
+        {
+            ComponentId = param.ComponentId,
+            ComponentName = param.ComponentName,
+            CategoryId = param.CategoryId,
+            DeviceId = param.DeviceId,
+            StatusId = param.StatusId,
+            UserId = param.UserId,
+            Ip = param.Ip,
+            Host = param.Host
+        };
+        var result = await ExecuteCommandAsync(command);
+
+        return result;
     }
 }

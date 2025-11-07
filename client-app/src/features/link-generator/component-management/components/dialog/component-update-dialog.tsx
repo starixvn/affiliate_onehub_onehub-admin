@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -25,6 +24,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
+import { useUpdateComponent } from '../../api/commands'
 import { categories, deviceTypes, status } from '../../data/data'
 import { useComponents } from '../component-provider'
 
@@ -40,6 +40,7 @@ const getFormSchema = (t: (key: string) => string) =>
 export function ComponentUpdateDialog() {
   const { t } = useTranslation('component-management')
   const { open, setOpen, currentRow } = useComponents()
+  const updateMutation = useUpdateComponent()
 
   const formSchema = getFormSchema(t)
   type ComponentForm = z.infer<typeof formSchema>
@@ -52,11 +53,12 @@ export function ComponentUpdateDialog() {
       componentName: currentRow?.componentName ?? '',
       componentCode: currentRow?.componentCode ?? '',
       statusId: currentRow?.statusId ?? 1,
-      deviceId: currentRow?.deviceId ?? 1,
+      deviceId: currentRow?.deviceId ?? undefined,
     },
   })
 
   const watchCategory = form.watch('categoryId')
+  const isLandingPage = watchCategory === 6
 
   useEffect(() => {
     if (open === 'update' && currentRow) {
@@ -65,18 +67,46 @@ export function ComponentUpdateDialog() {
         componentName: currentRow.componentName,
         componentCode: currentRow.componentCode,
         statusId: currentRow.statusId,
-        deviceId: currentRow.deviceId ?? 1,
+        deviceId: currentRow.deviceId ?? undefined,
       })
     }
   }, [open, currentRow, form])
 
-  const onSubmit = () => {
-    toast.success(t('updateDialog.success'))
-    form.reset()
-    setOpen(null)
-  }
+  useEffect(() => {
+    if (isLandingPage) {
+      if (!form.getValues('deviceId')) {
+        form.setValue('deviceId', 1)
+      }
+    } else {
+      form.setValue('deviceId', undefined)
+    }
+  }, [isLandingPage])
 
-  const isLandingPage = watchCategory === 6
+  const onSubmit = (values: ComponentForm) => {
+    if (!currentRow?.componentId) return
+
+    updateMutation.mutate(
+      {
+        id: currentRow.componentId,
+        data: {
+          componentId: currentRow.componentId,
+          categoryId: values.categoryId,
+          componentName: values.componentName,
+          componentCode: values.componentCode,
+          statusId: values.statusId,
+          deviceId: isLandingPage ? values.deviceId : undefined,
+        },
+      },
+      {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            form.reset()
+            setOpen(null)
+          }
+        },
+      }
+    )
+  }
 
   return (
     <Dialog
@@ -193,8 +223,8 @@ export function ComponentUpdateDialog() {
                         {t('dialog.form.device')}
                       </FormLabel>
                       <SelectDropdown
-                        defaultValue={String(field.value)}
-                        onValueChange={field.onChange}
+                        defaultValue={field.value ? String(field.value) : '1'}
+                        onValueChange={(value) => field.onChange(Number(value))}
                         placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'
                         items={deviceTypes}
@@ -211,7 +241,7 @@ export function ComponentUpdateDialog() {
           <Button
             type='submit'
             form='component-update-form'
-            disabled={!form.formState.isValid}
+            disabled={!form.formState.isValid || updateMutation.isPending}
           >
             {t('dialog.saveChanges')}
           </Button>
