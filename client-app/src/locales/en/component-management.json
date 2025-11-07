@@ -31,6 +31,7 @@
     }
   },
   "statusFilters": {
+    "total": "Total",
     "active": "Active",
     "inactive": "Inactive"
   },

@@ -56,6 +56,7 @@ export function ComponentDeleteDialog() {
         </div>
       }
       confirmText={t('deleteDialog.confirm')}
+      cancelBtnText={t('deleteDialog.cancel')}
       destructive
     />
   )

@@ -20,11 +20,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import { status, deviceTypes } from '../../data/data'
+import { deviceTypes, LANDING_PAGE_CATEGORY_ID, status } from '../../data/data'
 import { type Component } from '../../data/schema'
 import { ComponentBulkActions } from './component-bulk-actions'
 import { getComponentColumns } from './component-columns'
-import { ComponentMultiDeleteDialog } from './component-multi-delete-dialog'
+import { ComponentMultiDeleteDialog } from '../dialog/component-multi-delete-dialog'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -58,7 +58,7 @@ export function ComponentTable({
 
   const selectedCategory = (search.category as string) ?? '1'
   const isLandingPage = useMemo(
-    () => selectedCategory === '6',
+    () => selectedCategory === String(LANDING_PAGE_CATEGORY_ID),
     [selectedCategory]
   )
 

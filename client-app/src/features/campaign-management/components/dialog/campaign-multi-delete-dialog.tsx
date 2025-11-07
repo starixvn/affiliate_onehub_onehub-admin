@@ -98,6 +98,7 @@ export function CampaignMultiDeleteDialog({
         </div>
       }
       confirmText={t('dialog.multiDelete.confirm')}
+      cancelBtnText={t('dialog.multiDelete.cancel')}
       destructive
     />
   )

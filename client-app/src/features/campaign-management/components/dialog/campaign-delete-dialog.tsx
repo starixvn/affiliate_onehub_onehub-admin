@@ -64,6 +64,7 @@ export function CampaignDeleteDialog({
         </div>
       }
       confirmText={t('dialog.delete.confirm')}
+      cancelBtnText={t('dialog.delete.cancel')}
       destructive
     />
   )

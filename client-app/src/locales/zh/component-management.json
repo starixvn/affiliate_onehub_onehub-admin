@@ -30,6 +30,7 @@
     }
   },
   "statusFilters": {
+    "total": "总计",
     "active": "启用",
     "inactive": "停用"
   },

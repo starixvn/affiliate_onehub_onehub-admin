@@ -98,6 +98,7 @@ export function ComponentMultiDeleteDialog({
         </div>
       }
       confirmText={t('dialog.multiDelete.confirm')}
+      cancelBtnText={t('deleteDialog.cancel')}
       destructive
     />
   )

@@ -97,7 +97,8 @@
       "description": "此操作无法撤销。这将永久删除该活动及所有相关数据。",
       "warning": "警告！",
       "warningMessage": "请谨慎操作，此操作无法回滚。",
-      "confirm": "删除"
+      "confirm": "删除",
+      "cancel": "取消"
     },
     "multiDelete": {
       "title_other": "删除 {{count}} 个活动",
@@ -108,7 +109,8 @@
       "confirmWord": "DELETE",
       "warning": "警告！",
       "warningMessage": "请谨慎操作，此操作无法回滚。",
-      "confirm": "删除"
+      "confirm": "删除",
+      "cancel": "取消"
     },
     "multiDeleteToast": {
       "deleting": "正在删除活动...",

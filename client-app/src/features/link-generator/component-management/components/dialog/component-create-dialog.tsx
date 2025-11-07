@@ -25,7 +25,12 @@ import {
 import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateComponent } from '../../api/commands'
-import { categories, deviceTypes, status } from '../../data/data'
+import {
+  categories,
+  deviceTypes,
+  LANDING_PAGE_CATEGORY_ID,
+  status,
+} from '../../data/data'
 import { useComponents } from '../component-provider'
 
 const getFormSchema = (t: (key: string) => string) =>
@@ -59,7 +64,7 @@ export function ComponentCreateDialog() {
 
   const watchCategory = form.watch('categoryId')
   const watchName = form.watch('componentName')
-  const isLandingPage = watchCategory === 6
+  const isLandingPage = watchCategory === LANDING_PAGE_CATEGORY_ID
 
   useEffect(() => {
     if (watchName) {
@@ -81,14 +86,14 @@ export function ComponentCreateDialog() {
   }, [open, selectedCategory, form])
 
   useEffect(() => {
-    if (watchCategory === 6) {
+    if (isLandingPage) {
       if (!form.getValues('deviceId')) {
         form.setValue('deviceId', 1)
       }
     } else {
       form.setValue('deviceId', undefined)
     }
-  }, [watchCategory, form])
+  }, [isLandingPage, form])
 
   const onSubmit = (values: ComponentForm) => {
     createMutation.mutate(
