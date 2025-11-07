@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,18 +28,21 @@ import { SelectDropdown } from '@/components/select-dropdown'
 import { categories, deviceTypes, status } from '../../data/data'
 import { useComponents } from '../component-provider'
 
-const formSchema = z.object({
-  categoryId: z.number().min(1, 'Component Category is required'),
-  componentName: z.string().min(1, 'Name is required'),
-  componentCode: z.string().min(1, 'Code is required'),
-  statusId: z.number(),
-  deviceIds: z.string().optional(),
-})
-
-type ComponentForm = z.infer<typeof formSchema>
+const getFormSchema = (t: (key: string) => string) =>
+  z.object({
+    categoryId: z.number().min(1, t('dialog.form.categoryRequired')),
+    componentName: z.string().min(1, t('dialog.form.nameRequired')),
+    componentCode: z.string().min(1, t('dialog.form.codeRequired')),
+    statusId: z.number(),
+    deviceId: z.number().optional(),
+  })
 
 export function ComponentUpdateDialog() {
+  const { t } = useTranslation('component-management')
   const { open, setOpen, currentRow } = useComponents()
+
+  const formSchema = getFormSchema(t)
+  type ComponentForm = z.infer<typeof formSchema>
 
   const form = useForm<ComponentForm>({
     resolver: zodResolver(formSchema),
@@ -48,7 +52,7 @@ export function ComponentUpdateDialog() {
       componentName: currentRow?.componentName ?? '',
       componentCode: currentRow?.componentCode ?? '',
       statusId: currentRow?.statusId ?? 1,
-      deviceIds: currentRow?.deviceIds ?? 'mobile',
+      deviceId: currentRow?.deviceId ?? 1,
     },
   })
 
@@ -61,13 +65,13 @@ export function ComponentUpdateDialog() {
         componentName: currentRow.componentName,
         componentCode: currentRow.componentCode,
         statusId: currentRow.statusId,
-        deviceIds: currentRow.deviceIds ?? 'mobile',
+        deviceId: currentRow.deviceId ?? 1,
       })
     }
   }, [open, currentRow, form])
 
   const onSubmit = () => {
-    toast.success('Component updated successfully')
+    toast.success(t('updateDialog.success'))
     form.reset()
     setOpen(null)
   }
@@ -84,11 +88,8 @@ export function ComponentUpdateDialog() {
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>Edit Component</DialogTitle>
-          <DialogDescription>
-            Update the component information. The code cannot be changed once
-            created.
-          </DialogDescription>
+          <DialogTitle>{t('updateDialog.title')}</DialogTitle>
+          <DialogDescription>{t('updateDialog.description')}</DialogDescription>
         </DialogHeader>
         <div className='w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
           <Form {...form}>
@@ -103,12 +104,12 @@ export function ComponentUpdateDialog() {
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end whitespace-nowrap'>
-                      Component Category
+                      {t('dialog.form.category')}
                     </FormLabel>
                     <SelectDropdown
                       defaultValue={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
-                      placeholder='Select category'
+                      placeholder={t('dialog.form.categoryPlaceholder')}
                       className='col-span-4'
                       items={categories}
                     />
@@ -122,11 +123,14 @@ export function ComponentUpdateDialog() {
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Name <span className='text-destructive'>*</span>
+                      {t('dialog.form.name')}{' '}
+                      <span className='text-destructive'>
+                        {t('dialog.form.requiredField')}
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='e.g., Lucky Draw'
+                        placeholder={t('dialog.form.namePlaceholder')}
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
@@ -141,10 +145,12 @@ export function ComponentUpdateDialog() {
                 name='componentCode'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Code</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>
+                      {t('dialog.form.code')}
+                    </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='e.g., Lucky_Draw'
+                        placeholder={t('dialog.form.codePlaceholder')}
                         className='col-span-4'
                         autoComplete='off'
                         disabled
@@ -161,12 +167,12 @@ export function ComponentUpdateDialog() {
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Status
+                      {t('dialog.form.status')}
                     </FormLabel>
                     <SelectDropdown
                       defaultValue={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
-                      placeholder='Select status'
+                      placeholder={t('dialog.form.statusPlaceholder')}
                       className='col-span-4'
                       items={status.map(({ label, value }) => ({
                         label,
@@ -180,16 +186,16 @@ export function ComponentUpdateDialog() {
               {isLandingPage && (
                 <FormField
                   control={form.control}
-                  name='deviceIds'
+                  name='deviceId'
                   render={({ field }) => (
                     <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                       <FormLabel className='col-span-2 text-end'>
-                        Device
+                        {t('dialog.form.device')}
                       </FormLabel>
                       <SelectDropdown
-                        defaultValue={field.value}
+                        defaultValue={String(field.value)}
                         onValueChange={field.onChange}
-                        placeholder='Select device'
+                        placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'
                         items={deviceTypes}
                       />
@@ -207,7 +213,7 @@ export function ComponentUpdateDialog() {
             form='component-update-form'
             disabled={!form.formState.isValid}
           >
-            Save Changes
+            {t('dialog.saveChanges')}
           </Button>
         </DialogFooter>
       </DialogContent>

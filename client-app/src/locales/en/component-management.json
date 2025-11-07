@@ -75,20 +75,33 @@
     "statusChanged": "Updated {{count}} component(s) to {{status}}",
     "alreadyStatus": "All selected components are already {{status}}"
   },
+  "dialog": {
+    "form": {
+      "category": "Component Category",
+      "categoryRequired": "Component Category is required",
+      "categoryPlaceholder": "Select category",
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "namePlaceholder": "e.g., Lucky Draw",
+      "code": "Code",
+      "codeRequired": "Code is required",
+      "codePlaceholder": "e.g., Lucky_Draw",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "device": "Device",
+      "devicePlaceholder": "Select device",
+      "requiredField": "*"
+    },
+    "saveChanges": "Save Changes"
+  },
   "createDialog": {
     "title": "Create New Component",
-    "description": "Create new component here. Click save when you're done.",
-    "formPlaceholder": "Form will be implemented when API is ready",
-    "cancel": "Cancel",
-    "confirm": "Create",
+    "description": "Create a new component with a code auto-generated from the name. The code will appear in the generated link and cannot be changed once created.",
     "success": "Component created successfully"
   },
   "updateDialog": {
-    "title": "Update Component",
-    "description": "Update the component here. Click save when you're done.",
-    "formPlaceholder": "Editing: {{name}}",
-    "cancel": "Cancel",
-    "confirm": "Update",
+    "title": "Edit Component",
+    "description": "Update the component information. The code cannot be changed once created.",
     "success": "Component updated successfully"
   },
   "deleteDialog": {
