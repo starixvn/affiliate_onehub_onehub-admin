@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -51,9 +52,23 @@ export function CampaignTable({
 }: DataTableProps) {
   const { t } = useTranslation('campaign-management')
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
+    try {
+      const stored = getLocalStorageItem('table-column-visibility:campaign-management')
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  })
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  useEffect(() => {
+    try {
+      setLocalStorageItem('table-column-visibility:campaign-management', JSON.stringify(columnVisibility))
+    } catch {
+    }
+  }, [columnVisibility])
 
   const columns = useMemo(() => getCampaignColumns(t), [t])
 

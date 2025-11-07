@@ -10,6 +10,7 @@ import {
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -60,18 +61,23 @@ export function ComponentTable({
     [selectedCategory]
   )
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
-    deviceIds: isLandingPage,
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
+    try {
+      const stored = getLocalStorageItem('table-column-visibility:component-management')
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
   })
 
   useEffect(() => {
-    setColumnVisibility((prev) => ({
-      ...prev,
-      deviceIds: isLandingPage,
-    }))
-  }, [isLandingPage])
+    try {
+      setLocalStorageItem('table-column-visibility:component-management', JSON.stringify(columnVisibility))
+    } catch {
+    }
+  }, [columnVisibility])
 
-  const columns = useMemo(() => getComponentColumns(t), [t])
+  const columns = useMemo(() => getComponentColumns(t, isLandingPage), [t, isLandingPage])
 
   const pageCount = Math.ceil(totalCount / pageSize)
 
@@ -121,7 +127,7 @@ export function ComponentTable({
     } else if (deviceColumn && !search.deviceIds) {
       deviceColumn.setFilterValue(undefined)
     }
-  }, [search.deviceIds, table])
+  }, [search.deviceIds, table, isLandingPage])
 
   useEffect(() => {
     const statusColumn = table.getColumn('status')
@@ -142,9 +148,7 @@ export function ComponentTable({
           label,
           value,
         })),
-        defaultValue: search.status
-          ? (search.status as string).split(',')
-          : undefined,
+        defaultValue: undefined,
       },
       {
         columnId: 'deviceIds',
@@ -153,13 +157,11 @@ export function ComponentTable({
           label,
           value,
         })),
-        defaultValue: search.deviceIds
-          ? (search.deviceIds as string).split(',')
-          : undefined,
+        defaultValue: undefined,
         hidden: !isLandingPage,
       },
     ],
-    [isLandingPage, search.status, search.deviceIds]
+    [isLandingPage]
   )
 
   return (

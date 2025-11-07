@@ -11,8 +11,10 @@ import { ComponentStatusCell } from './component-status-cell'
 import { DataTableRowActions } from './data-table-row-actions'
 
 export const getComponentColumns = (
-  t: TFunction<'component-management', undefined>
-): ColumnDef<Component>[] => [
+  t: TFunction<'component-management', undefined>,
+  isLandingPage: boolean = false
+): ColumnDef<Component>[] => {
+  const allColumns: ColumnDef<Component>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -175,24 +177,6 @@ export const getComponentColumns = (
     enableSorting: false,
   },
   {
-    accessorKey: 'deviceIds',
-    header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={t('table.columns.device')}
-      />
-    ),
-    cell: ComponentDeviceCell,
-    meta: {
-      displayName: t('table.columns.device'),
-      className: 'w-40',
-    },
-    filterFn: (row, id, value) => {
-      return value.includes(String(row.getValue(id)))
-    },
-    enableSorting: false,
-  },
-  {
     accessorKey: 'status',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -216,3 +200,33 @@ export const getComponentColumns = (
     cell: DataTableRowActions,
   },
 ]
+
+  if (isLandingPage) {
+    const statusIndex = allColumns.findIndex(
+      (col) => 'accessorKey' in col && col.accessorKey === 'status'
+    )
+
+    const deviceColumn: ColumnDef<Component> = {
+      accessorKey: 'deviceIds',
+      header: ({ column }) => (
+        <DataTableColumnHeader
+          column={column}
+          title={t('table.columns.device')}
+        />
+      ),
+      cell: ComponentDeviceCell,
+      meta: {
+        displayName: t('table.columns.device'),
+        className: 'w-40',
+      },
+      filterFn: (row, id, value) => {
+        return value.includes(String(row.getValue(id)))
+      },
+      enableSorting: false,
+    }
+
+    allColumns.splice(statusIndex, 0, deviceColumn)
+  }
+
+  return allColumns
+}
