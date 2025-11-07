@@ -38,7 +38,7 @@ public static class CampaignEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<IEnumerable<CampaignDropdownOption>>>, ValidationProblem>> GetDropdownList(
+    private static async Task<Results<Ok<Result<IEnumerable<CampaignBase>>>, ValidationProblem>> GetDropdownList(
         IMediator mediator)
     {
         var query = new GetCampaignDropdownQuery();

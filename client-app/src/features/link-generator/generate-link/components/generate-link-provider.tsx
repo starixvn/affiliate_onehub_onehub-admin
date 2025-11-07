@@ -1,16 +1,32 @@
 import React from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useGetLinkGeneratorOptions } from '../api/queries'
+import {
+  useGetCampaigns,
+  useGetCountries,
+  useGetEvents,
+  useGetGroups,
+  useGetChannels,
+  useGetAgencies,
+  useGetTypes,
+  useGetLandingPages,
+} from '../api/queries'
 import { generateLinkFormSchema, type GenerateLinkFormValues } from '../data/schema'
-import type { LinkGeneratorOptions } from '../types'
+import type { CampaignInfo, TargetCountry, ComponentInfo, LandingPageOption } from '../types'
 import useDialogState from '@/hooks/use-dialog-state'
 
 export type DialogType = 'campaign' | 'group' | 'channel' | 'type' | 'agency' | 'event'
 
 type GenerateLinkContextType = {
   form: UseFormReturn<GenerateLinkFormValues>
-  options: LinkGeneratorOptions | undefined
+  campaigns: CampaignInfo[] | undefined
+  countries: TargetCountry[] | undefined
+  events: ComponentInfo[] | undefined
+  groups: ComponentInfo[] | undefined
+  channels: ComponentInfo[] | undefined
+  agencies: ComponentInfo[] | undefined
+  types: ComponentInfo[] | undefined
+  landingPages: LandingPageOption[] | undefined
   isLoading: boolean
   isError: boolean
   dialogOpen: DialogType | null
@@ -24,8 +40,36 @@ type GenerateLinkProviderProps = {
 }
 
 export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
-  const { data: options, isLoading, isError } = useGetLinkGeneratorOptions()
+  const { data: campaigns, isLoading: isLoadingCampaigns, isError: isErrorCampaigns } = useGetCampaigns()
+  const { data: countries, isLoading: isLoadingCountries, isError: isErrorCountries } = useGetCountries()
+  const { data: events, isLoading: isLoadingEvents, isError: isErrorEvents } = useGetEvents()
+  const { data: groups, isLoading: isLoadingGroups, isError: isErrorGroups } = useGetGroups()
+  const { data: channels, isLoading: isLoadingChannels, isError: isErrorChannels } = useGetChannels()
+  const { data: agencies, isLoading: isLoadingAgencies, isError: isErrorAgencies } = useGetAgencies()
+  const { data: types, isLoading: isLoadingTypes, isError: isErrorTypes } = useGetTypes()
+  const { data: landingPages, isLoading: isLoadingLandingPages, isError: isErrorLandingPages } = useGetLandingPages()
+
   const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
+
+  const isLoading =
+    isLoadingCampaigns ||
+    isLoadingCountries ||
+    isLoadingEvents ||
+    isLoadingGroups ||
+    isLoadingChannels ||
+    isLoadingAgencies ||
+    isLoadingTypes ||
+    isLoadingLandingPages
+
+  const isError =
+    isErrorCampaigns ||
+    isErrorCountries ||
+    isErrorEvents ||
+    isErrorGroups ||
+    isErrorChannels ||
+    isErrorAgencies ||
+    isErrorTypes ||
+    isErrorLandingPages
 
   const form = useForm<GenerateLinkFormValues>({
     resolver: zodResolver(generateLinkFormSchema),
@@ -53,7 +97,14 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     <GenerateLinkContext
       value={{
         form,
-        options,
+        campaigns,
+        countries,
+        events,
+        groups,
+        channels,
+        agencies,
+        types,
+        landingPages,
         isLoading,
         isError,
         dialogOpen,

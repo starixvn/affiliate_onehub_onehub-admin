@@ -102,7 +102,7 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
         return result;
     }
 
-    public async Task<Result<IEnumerable<Component>>> GetComponentAsync(GetComponentParam param)
+    public async Task<Result<IEnumerable<Component>>> GetComponentByCategoryAsync(GetComponentParam param)
     {
         var criteria = new GetComponentCriteria
         {

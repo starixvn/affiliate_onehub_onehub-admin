@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
 using ONEHub.Application.Features.Components.Commands;
 using ONEHub.Application.Features.Components.Queries;
-using ONEHub.Domain.DTOs.Components;
+using ONEHub.Domain.Entities;
 using ONEHub.Domain.Results;
 
 namespace ONEHub.WebApi.Features.Component;

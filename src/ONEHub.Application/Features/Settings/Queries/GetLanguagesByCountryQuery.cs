@@ -1,6 +1,4 @@
 using MediatR;
-using ONEHub.Application.Features.Campaign.Queries;
-using ONEHub.Domain.Criterias.Components;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Repositories;

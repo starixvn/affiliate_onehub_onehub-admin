@@ -22,9 +22,11 @@ export function useCreateComponent() {
   
   return useMutation({
     mutationFn: (data: CreateComponentRequest) => linkGeneratorApi.insertComponent(data),
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: linkGeneratorKeys.options() })
+        queryClient.invalidateQueries({ 
+          queryKey: linkGeneratorKeys.components(variables.componentTypeId) 
+        })
         toast.success('Component created successfully')
       } else {
         toast.error(response.errorMessage || 'Failed to create component')

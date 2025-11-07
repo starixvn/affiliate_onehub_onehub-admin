@@ -1,9 +1,11 @@
 import { apiClient } from '@/lib/api/client'
 import type {
-  GetLinkGeneratorOptionsResponse,
   GenerateLinkRequest,
   GenerateLinkResponse,
   TargetCountry,
+  CampaignInfo,
+  ComponentInfo,
+  LandingPageOption,
 } from '../types'
 import type { IAxiosResponse } from '@/lib/api/types'
 
@@ -15,9 +17,16 @@ type InsertComponentRequest = {
 }
 
 export const linkGeneratorApi = {
-  async getOptions(): Promise<GetLinkGeneratorOptionsResponse> {
-    const response = await apiClient.get<GetLinkGeneratorOptionsResponse>(
-      '/generate-link/form-options'
+  async getCampaigns(): Promise<IAxiosResponse<CampaignInfo[]>> {
+    const response = await apiClient.get<IAxiosResponse<CampaignInfo[]>>(
+      '/campaign/dropdown'
+    )
+    return response.data
+  },
+
+  async getCountries(): Promise<IAxiosResponse<TargetCountry[]>> {
+    const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
+      '/settings/countries'
     )
     return response.data
   },
@@ -26,6 +35,41 @@ export const linkGeneratorApi = {
     const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
       `/settings/language`,
       { params: { countryCode } }
+    )
+    return response.data
+  },
+
+  async getComponentsByType(componentTypeId: number): Promise<IAxiosResponse<ComponentInfo[]>> {
+    const response = await apiClient.get<IAxiosResponse<ComponentInfo[]>>(
+      '/component',
+      { params: { componentTypeId } }
+    )
+    return response.data
+  },
+
+  async getEvents(): Promise<IAxiosResponse<ComponentInfo[]>> {
+    return this.getComponentsByType(1)
+  },
+
+  async getGroups(): Promise<IAxiosResponse<ComponentInfo[]>> {
+    return this.getComponentsByType(2)
+  },
+
+  async getChannels(): Promise<IAxiosResponse<ComponentInfo[]>> {
+    return this.getComponentsByType(3)
+  },
+
+  async getAgencies(): Promise<IAxiosResponse<ComponentInfo[]>> {
+    return this.getComponentsByType(4)
+  },
+
+  async getTypes(): Promise<IAxiosResponse<ComponentInfo[]>> {
+    return this.getComponentsByType(5)
+  },
+
+  async getLandingPages(): Promise<IAxiosResponse<LandingPageOption[]>> {
+    const response = await apiClient.get<IAxiosResponse<LandingPageOption[]>>(
+      '/landing-page/options'
     )
     return response.data
   },

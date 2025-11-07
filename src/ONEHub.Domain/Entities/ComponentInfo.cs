@@ -1,6 +1,6 @@
 namespace ONEHub.Domain.Entities;
 
-public class Component
+public class ComponentInfo
 {
     public int ComponentId { get; set; }
 

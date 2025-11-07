@@ -14,9 +14,10 @@ export type ComponentInfo = {
 }
 
 export type TargetCountry = {
-  countryId: number
-  countryName: string
-  countryCode: string
+  marketId: string
+  marketName: string
+  targetCountryName: string
+  targetCountryCode: string
 }
 
 export type CampaignInfo = {
@@ -35,22 +36,6 @@ export type LandingPageGroup = {
   groupLabel: string
   options: LandingPageOption[]
 }
-
-export interface LinkGeneratorOptions {
-  campaigns?: CampaignInfo[]
-  countries?: TargetCountry[]
-  languages?: DropdownOption[]
-  groups?: ComponentInfo[]
-  events?: ComponentInfo[]
-  channels?: ComponentInfo[]
-  types?: ComponentInfo[]
-  agencies?: ComponentInfo[]
-  landingPages?: LandingPageGroup[]
-  domainNames?: DropdownOption[]
-  shortLinkNames?: DropdownOption[]
-}
-
-export type GetLinkGeneratorOptionsResponse = IAxiosResponse<LinkGeneratorOptions>
 
 export interface GenerateLinkFormData {
   linkName: string

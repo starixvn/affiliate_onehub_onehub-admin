@@ -3,15 +3,26 @@ import { linkGeneratorApi } from './client'
 
 export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
-  options: () => [...linkGeneratorKeys.all, 'options'] as const,
-  statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
+  campaigns: () => [...linkGeneratorKeys.all, 'campaigns'] as const,
+  countries: () => [...linkGeneratorKeys.all, 'countries'] as const,
   languages: (countryCode: string) => [...linkGeneratorKeys.all, 'languages', countryCode] as const,
+  components: (componentTypeId: number) => [...linkGeneratorKeys.all, 'components', componentTypeId] as const,
+  landingPages: () => [...linkGeneratorKeys.all, 'landing-pages'] as const,
+  statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
 }
 
-export function useGetLinkGeneratorOptions() {
+export function useGetCampaigns() {
   return useQuery({
-    queryKey: linkGeneratorKeys.options(),
-    queryFn: () => linkGeneratorApi.getOptions(),
+    queryKey: linkGeneratorKeys.campaigns(),
+    queryFn: () => linkGeneratorApi.getCampaigns(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetCountries() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.countries(),
+    queryFn: () => linkGeneratorApi.getCountries(),
     select: (data) => data.data,
   })
 }
@@ -22,6 +33,54 @@ export function useGetLanguagesByCountry(countryCode: string) {
     queryFn: () => linkGeneratorApi.getLanguagesByCountry(countryCode),
     select: (data) => data.data,
     enabled: !!countryCode,
+  })
+}
+
+export function useGetEvents() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.components(1),
+    queryFn: () => linkGeneratorApi.getEvents(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetGroups() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.components(2),
+    queryFn: () => linkGeneratorApi.getGroups(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetChannels() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.components(3),
+    queryFn: () => linkGeneratorApi.getChannels(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetAgencies() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.components(4),
+    queryFn: () => linkGeneratorApi.getAgencies(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetTypes() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.components(5),
+    queryFn: () => linkGeneratorApi.getTypes(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetLandingPages() {
+  return useQuery({
+    queryKey: linkGeneratorKeys.landingPages(),
+    queryFn: () => linkGeneratorApi.getLandingPages(),
+    select: (data) => data.data,
   })
 }
 

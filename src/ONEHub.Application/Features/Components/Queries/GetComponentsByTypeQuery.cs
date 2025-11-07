@@ -1,38 +1,45 @@
 using MediatR;
-using ONEHub.Domain.Criterias.Components;
-using ONEHub.Domain.DTOs.Components;
+using ONEHub.Application.Features.Campaign.Queries;
+using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
-using ONEHub.Domain.Interfaces;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Components.Queries;
 
-public record GetComponentsByTypeQuery(
-    int ComponentTypeId,
-    int? ComponentId = null
-) : IRequest<Result<IEnumerable<ComponentInfo>>>;
+public class GetComponentsByTypeQuery : IRequest<Result<IEnumerable<ComponentInfo>>>
+{
+    public int ComponentTypeId { get; set; }
+    public int? ComponentId { get; set; }
+}
 
-public class GetComponentsByTypeQueryHandler(IDynamicRepository repository)
+public class GetComponentsByTypeQueryHandler(IComponentRepository repository)
     : IRequestHandler<GetComponentsByTypeQuery, Result<IEnumerable<ComponentInfo>>>
 {
     public async Task<Result<IEnumerable<ComponentInfo>>> Handle(
         GetComponentsByTypeQuery request,
         CancellationToken cancellationToken)
     {
-        var criteria = new GetComponentListCriteria
+        var param = new GetComponentParam
         {
             ComponentTypeId = request.ComponentTypeId,
             ComponentId = request.ComponentId
         };
 
-        var results = await repository.FetchAsync<ComponentInfo>(criteria);
+        var componentListResult = await repository.GetComponentAsync(param);
 
-        if (results == null)
+        if (componentListResult.IsFailure)
+        {
+            return Result<IEnumerable<ComponentInfo>>.Failure(componentListResult.Error);
+        }
+
+        if (componentListResult.Data is null)
         {
             return Result<IEnumerable<ComponentInfo>>.Failure(Error.NoData);
         }
 
-        return Result<IEnumerable<ComponentInfo>>.Success(results);
+        return Result<IEnumerable<ComponentInfo>>.Success(componentListResult.Data);
     }
 }
 

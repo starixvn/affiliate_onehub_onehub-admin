@@ -42,6 +42,8 @@ public static class DependencyInjection
         services.AddSingleton<IAuthRepository, AuthRepository>();
         services.AddSingleton<ICampaignRepository, CampaignRepository>();
         services.AddSingleton<IComponentRepository, ComponentRepository>();
+        services.AddSingleton<ILandingPageRepository, LandingPageRepository>();
+        services.AddSingleton<ISettingsRepository, SettingsRepository>();
 
         return services;
     }
