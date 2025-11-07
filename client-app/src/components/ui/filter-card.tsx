@@ -121,7 +121,7 @@ interface FilterCardProps
   extends React.ComponentProps<typeof Card>,
     VariantProps<typeof filterCardVariants> {
   title: string
-  count: number | string
+  count: React.ReactNode
   icon: LucideIcon
   selected?: boolean
   onClick?: () => void

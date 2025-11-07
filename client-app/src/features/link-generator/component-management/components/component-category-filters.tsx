@@ -15,6 +15,30 @@ import { useComponents } from './component-provider'
 
 const route = getRouteApi('/iframe/link-generator/component-management/')
 
+type CategoryCountProps = {
+  total: number
+  active: number
+  inactive: number
+}
+
+function CategoryCount({ total, active, inactive }: CategoryCountProps) {
+  return (
+    <div className='text-sm text-gray-700 dark:text-gray-300'>
+      <span>Total</span>
+      <span>/</span>
+      <span>Active</span>
+      <span>/</span>
+      <span>Inactive</span>
+      <span>: </span>
+      <span>{total}</span>
+      <span>/</span>
+      <span>{active}</span>
+      <span>/</span>
+      <span>{inactive}</span>
+    </div>
+  )
+}
+
 type ComponentCategoryFiltersProps = {
   selectedCategory: string | null
 }
@@ -42,42 +66,78 @@ export function ComponentCategoryFilters({
     {
       id: '1',
       title: t('categoryFilters.event.title'),
-      count: `${categorySummary?.event.total ?? 0}/${categorySummary?.event.active ?? 0}/${categorySummary?.event.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.event.total ?? 0}
+          active={categorySummary?.event.active ?? 0}
+          inactive={categorySummary?.event.inactive ?? 0}
+        />
+      ),
       icon: Calendar,
       variant: 'info' as const,
     },
     {
       id: '2',
       title: t('categoryFilters.group.title'),
-      count: `${categorySummary?.group.total ?? 0}/${categorySummary?.group.active ?? 0}/${categorySummary?.group.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.group.total ?? 0}
+          active={categorySummary?.group.active ?? 0}
+          inactive={categorySummary?.group.inactive ?? 0}
+        />
+      ),
       icon: Users,
       variant: 'success' as const,
     },
     {
       id: '3',
       title: t('categoryFilters.channel.title'),
-      count: `${categorySummary?.channel.total ?? 0}/${categorySummary?.channel.active ?? 0}/${categorySummary?.channel.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.channel.total ?? 0}
+          active={categorySummary?.channel.active ?? 0}
+          inactive={categorySummary?.channel.inactive ?? 0}
+        />
+      ),
       icon: Radio,
       variant: 'warning' as const,
     },
     {
       id: '4',
       title: t('categoryFilters.agency.title'),
-      count: `${categorySummary?.agency.total ?? 0}/${categorySummary?.agency.active ?? 0}/${categorySummary?.agency.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.agency.total ?? 0}
+          active={categorySummary?.agency.active ?? 0}
+          inactive={categorySummary?.agency.inactive ?? 0}
+        />
+      ),
       icon: Building2,
       variant: 'danger' as const,
     },
     {
       id: '5',
       title: t('categoryFilters.type.title'),
-      count: `${categorySummary?.type.total ?? 0}/${categorySummary?.type.active ?? 0}/${categorySummary?.type.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.type.total ?? 0}
+          active={categorySummary?.type.active ?? 0}
+          inactive={categorySummary?.type.inactive ?? 0}
+        />
+      ),
       icon: Tag,
       variant: 'secondary' as const,
     },
     {
       id: '6',
       title: t('categoryFilters.landingPage.title'),
-      count: `${categorySummary?.landingPage.total ?? 0}/${categorySummary?.landingPage.active ?? 0}/${categorySummary?.landingPage.inactive ?? 0}`,
+      count: (
+        <CategoryCount
+          total={categorySummary?.landingPage.total ?? 0}
+          active={categorySummary?.landingPage.active ?? 0}
+          inactive={categorySummary?.landingPage.inactive ?? 0}
+        />
+      ),
       icon: FileText,
       variant: 'purple' as const,
     },
