@@ -1,12 +1,23 @@
 import { type Row } from '@tanstack/react-table'
-import { toast } from 'sonner'
 import { StatusSelect } from '@/components/ui/status-select'
+import { useUpdateBatchComponentStatus } from '../../api/commands'
 import { status } from '../../data/data'
 import { type Component } from '../../data/schema'
 
 export function ComponentStatusCell({ row }: { row: Row<Component> }) {
+  const updateBatchStatusMutation = useUpdateBatchComponentStatus()
+
   const handleStatusChange = (newStatus: string) => {
-    toast.success(`Component status changed to ${newStatus === '1' ? 'Active' : 'Inactive'}`)
+    const newStatusId = Number(newStatus)
+
+    if (row.original.statusId === newStatusId) {
+      return
+    }
+
+    updateBatchStatusMutation.mutate({
+      componentIds: String(row.original.componentId),
+      statusId: newStatusId,
+    })
   }
 
   return (
@@ -14,6 +25,7 @@ export function ComponentStatusCell({ row }: { row: Row<Component> }) {
       value={String(row.original.statusId)}
       onValueChange={handleStatusChange}
       options={status}
+      disabled={updateBatchStatusMutation.isPending}
       size='sm'
     />
   )

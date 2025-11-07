@@ -13,4 +13,8 @@ public interface IComponentRepository
     public Task<Result> CreateComponentAsync(CreateComponentParam param);
 
     public Task<Result> UpdateComponentAsync(UpdateComponentParam param);
+
+    public Task<Result> UpdateBatchComponentStatusAsync(UpdateBatchComponentStatusParam param);
+
+    public Task<Result> DeleteBatchComponentAsync(DeleteBatchComponentParam param);
 }

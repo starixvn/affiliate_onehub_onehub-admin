@@ -16,6 +16,8 @@
         <Setting Key="OH_Component_ManageSel" SpName="OH_Component_ManageSel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Component_Ins" SpName="OH_Component_Ins_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Component_Upd" SpName="OH_Component_Upd_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Component_Del" SpName="OH_Component_Del" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Component_Status_Upd" SpName="OH_Component_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
     </Functions>
 </Functions>
 

@@ -7,6 +7,10 @@ import type {
   CreateComponentResponse,
   UpdateComponentRequest,
   UpdateComponentResponse,
+  DeleteBatchComponentRequest,
+  DeleteComponentResponse,
+  UpdateBatchComponentStatusRequest,
+  UpdateBatchComponentStatusResponse,
 } from '../types'
 
 class ComponentApi {
@@ -36,6 +40,42 @@ class ComponentApi {
   ): Promise<UpdateComponentResponse> {
     const response = await apiClient.put<UpdateComponentResponse>(
       `/component/${id}`,
+      data
+    )
+    return response.data
+  }
+
+  async deleteComponent(id: number): Promise<DeleteComponentResponse> {
+    const response = await apiClient.delete<DeleteComponentResponse>(
+      '/component/batch',
+      { data: { componentIds: String(id) } }
+    )
+    return response.data
+  }
+
+  async deleteComponents(ids: number[]): Promise<DeleteComponentResponse> {
+    const response = await apiClient.delete<DeleteComponentResponse>(
+      '/component/batch',
+      { data: { componentIds: ids.join(',') } }
+    )
+    return response.data
+  }
+
+  async deleteBatchComponents(
+    data: DeleteBatchComponentRequest
+  ): Promise<DeleteComponentResponse> {
+    const response = await apiClient.delete<DeleteComponentResponse>(
+      '/component/batch',
+      { data }
+    )
+    return response.data
+  }
+
+  async updateBatchComponentStatus(
+    data: UpdateBatchComponentStatusRequest
+  ): Promise<UpdateBatchComponentStatusResponse> {
+    const response = await apiClient.put<UpdateBatchComponentStatusResponse>(
+      '/component/status/batch',
       data
     )
     return response.data

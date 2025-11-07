@@ -38,3 +38,15 @@ public class UpdateComponentParam : BaseParam
 
     public int? DeviceId { get; set; }
 }
+
+public class UpdateBatchComponentStatusParam : BaseParam
+{
+    public string ComponentIds { get; set; } = string.Empty;
+
+    public int StatusId { get; set; }
+}
+
+public class DeleteBatchComponentParam : BaseParam
+{
+    public string ComponentIds { get; set; } = string.Empty;
+}

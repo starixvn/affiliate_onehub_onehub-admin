@@ -10,6 +10,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
+import { useUpdateBatchComponentStatus } from '../../api/commands'
 import { type Component } from '../../data/schema'
 
 type ComponentBulkActionsProps = {
@@ -23,12 +24,13 @@ export function ComponentBulkActions({
 }: ComponentBulkActionsProps) {
   const { t } = useTranslation('component-management')
   const selectedRows = table.getFilteredSelectedRowModel().rows
+  const updateBatchStatusMutation = useUpdateBatchComponentStatus()
 
   const { activeCount, inactiveCount } = useMemo(() => {
     return {
       activeCount: selectedRows.filter((row) => row.original.statusId !== 1)
         .length,
-      inactiveCount: selectedRows.filter((row) => row.original.statusId !== 0)
+      inactiveCount: selectedRows.filter((row) => row.original.statusId !== 2)
         .length,
     }
   }, [selectedRows])
@@ -43,13 +45,23 @@ export function ComponentBulkActions({
       return
     }
 
-    toast.success(
-      t('bulkActionsToast.statusChanged', {
-        count: affectedComponents.length,
-        status: statusKey,
-      })
+    const componentIds = affectedComponents
+      .map((row) => row.original.componentId)
+      .join(',')
+
+    updateBatchStatusMutation.mutate(
+      {
+        componentIds,
+        statusId: status,
+      },
+      {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            table.resetRowSelection()
+          }
+        },
+      }
     )
-    table.resetRowSelection()
   }
 
   return (
@@ -85,7 +97,7 @@ export function ComponentBulkActions({
             variant='outline'
             size='icon'
             disabled={inactiveCount === 0}
-            onClick={() => handleStatusChange(0, t('statusFilters.inactive'))}
+            onClick={() => handleStatusChange(2, t('statusFilters.inactive'))}
             className='size-8'
             aria-label={t('bulkActions.changeToInactiveCount', {
               count: inactiveCount,

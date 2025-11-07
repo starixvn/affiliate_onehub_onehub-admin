@@ -72,4 +72,33 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
 
         return result;
     }
+
+    public async Task<Result> UpdateBatchComponentStatusAsync(UpdateBatchComponentStatusParam param)
+    {
+        var command = new UpdateBatchComponentStatusCommand
+        {
+            ComponentIds = param.ComponentIds,
+            StatusId = param.StatusId,
+            UserId = param.UserId,
+            Ip = param.Ip,
+            Host = param.Host
+        };
+        var result = await ExecuteCommandAsync(command);
+
+        return result;
+    }
+
+    public async Task<Result> DeleteBatchComponentAsync(DeleteBatchComponentParam param)
+    {
+        var command = new DeleteBatchComponentCommand
+        {
+            ComponentIds = param.ComponentIds,
+            UserId = param.UserId,
+            Ip = param.Ip,
+            Host = param.Host
+        };
+        var result = await ExecuteCommandAsync(command);
+
+        return result;
+    }
 }

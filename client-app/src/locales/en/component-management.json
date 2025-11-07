@@ -92,7 +92,26 @@
       "devicePlaceholder": "Select device",
       "requiredField": "*"
     },
-    "saveChanges": "Save Changes"
+    "saveChanges": "Save Changes",
+    "multiDelete": {
+      "title_one": "Delete {{count}} component",
+      "title_other": "Delete {{count}} components",
+      "message": "Are you sure you want to delete the selected components?",
+      "description": "This action cannot be undone. This will permanently delete the selected components and all associated data.",
+      "confirmLabel": "Confirm by typing \"{{word}}\":",
+      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
+      "confirmWord": "DELETE",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDeleteToast": {
+      "deleting": "Deleting components...",
+      "deleted_one": "Deleted {{count}} component",
+      "deleted_other": "Deleted {{count}} components",
+      "deleteFailed": "Failed to delete components",
+      "confirmRequired": "Please type \"{{word}}\" to confirm."
+    }
   },
   "createDialog": {
     "title": "Create New Component",

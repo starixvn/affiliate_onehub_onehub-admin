@@ -1,44 +1,62 @@
+import { AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { ConfirmDialog } from '@/components/confirm-dialog'
+import { useDeleteComponent } from '../../api/commands'
 import { useComponents } from '../component-provider'
 
 export function ComponentDeleteDialog() {
   const { t } = useTranslation('component-management')
   const { open, setOpen, currentRow } = useComponents()
+  const deleteMutation = useDeleteComponent()
 
   const handleDelete = () => {
-    toast.success(t('deleteDialog.success'))
-    setOpen(null)
+    if (!currentRow) return
+
+    deleteMutation.mutate(currentRow.componentId, {
+      onSuccess: (response) => {
+        if (response.errorCode === 0) {
+          setOpen(null)
+        }
+      },
+    })
   }
 
+  if (!currentRow) return null
+
   return (
-    <AlertDialog open={open === 'delete'} onOpenChange={() => setOpen(null)}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
-          <AlertDialogDescription>
+    <ConfirmDialog
+      open={open === 'delete'}
+      onOpenChange={(isOpen) => setOpen(isOpen ? 'delete' : null)}
+      handleConfirm={handleDelete}
+      disabled={deleteMutation.isPending}
+      title={
+        <span className='text-destructive'>
+          <AlertTriangle
+            className='stroke-destructive me-1 inline-block'
+            size={18}
+          />{' '}
+          {t('deleteDialog.title')}
+        </span>
+      }
+      desc={
+        <div className='space-y-4'>
+          <p className='mb-2'>
             {t('deleteDialog.description', {
-              name: currentRow?.componentName,
+              name: currentRow.componentName,
             })}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>{t('deleteDialog.cancel')}</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>
-            {t('deleteDialog.confirm')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+          </p>
+
+          <Alert variant='destructive'>
+            <AlertTitle>{t('dialog.multiDelete.warning')}</AlertTitle>
+            <AlertDescription>
+              {t('dialog.multiDelete.warningMessage')}
+            </AlertDescription>
+          </Alert>
+        </div>
+      }
+      confirmText={t('deleteDialog.confirm')}
+      destructive
+    />
   )
 }

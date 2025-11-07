@@ -61,3 +61,16 @@ export interface UpdateComponentRequest {
 }
 
 export type UpdateComponentResponse = IAxiosResponse<null>
+
+export interface DeleteBatchComponentRequest {
+  componentIds: string
+}
+
+export type DeleteComponentResponse = IAxiosResponse<null>
+
+export interface UpdateBatchComponentStatusRequest {
+  componentIds: string
+  statusId: number
+}
+
+export type UpdateBatchComponentStatusResponse = IAxiosResponse<null>

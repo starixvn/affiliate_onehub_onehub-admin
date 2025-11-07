@@ -20,6 +20,8 @@ public static class ComponentEndPoint
         groupEndpoint.MapGet("/", GetList);
         groupEndpoint.MapPost("/", Create);
         groupEndpoint.MapPut("/{id}", Update);
+        groupEndpoint.MapPut("/status/batch", UpdateBatchStatus);
+        groupEndpoint.MapDelete("/batch", DeleteBatch);
 
         return groupEndpoint;
     }
@@ -100,6 +102,43 @@ public static class ComponentEndPoint
             DeviceId = request.DeviceId
         };
 
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result>, ValidationProblem>> UpdateBatchStatus(
+        [FromBody] UpdateBatchComponentStatusRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var command = new UpdateBatchComponentStatusCommand
+        {
+            ComponentIds = request.ComponentIds,
+            StatusId = request.StatusId
+        };
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result>, ValidationProblem>> DeleteBatch(
+        [FromBody] DeleteBatchComponentRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var command = new DeleteBatchComponentCommand
+        {
+            ComponentIds = request.ComponentIds
+        };
         var result = await mediator.Send(command);
 
         return TypedResults.Ok(result);

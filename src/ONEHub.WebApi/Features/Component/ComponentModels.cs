@@ -28,3 +28,12 @@ public record UpdateComponentRequest(
     [Required] int StatusId,
     int? DeviceId
 );
+
+public record UpdateBatchComponentStatusRequest(
+    [Required] string ComponentIds,
+    [Required] int StatusId
+);
+
+public record DeleteBatchComponentRequest(
+    [Required] string ComponentIds
+);
