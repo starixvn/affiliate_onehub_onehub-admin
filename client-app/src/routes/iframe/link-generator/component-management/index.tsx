@@ -8,7 +8,7 @@ const searchSchema = z.object({
   search: z.string().optional(),
   category: z.string().optional(),
   status: z.string().optional(),
-  deviceType: z.string().optional(),
+  deviceIds: z.string().optional(),
 })
 
 export const Route = createFileRoute(
