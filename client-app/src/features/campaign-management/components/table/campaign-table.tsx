@@ -8,9 +8,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
-import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -52,22 +52,26 @@ export function CampaignTable({
 }: DataTableProps) {
   const { t } = useTranslation('campaign-management')
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
-    try {
-      const stored = getLocalStorageItem('table-column-visibility:campaign-management')
-      return stored ? JSON.parse(stored) : {}
-    } catch {
-      return {}
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:campaign-management'
+        )
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
     }
-  })
+  )
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
 
   useEffect(() => {
-    try {
-      setLocalStorageItem('table-column-visibility:campaign-management', JSON.stringify(columnVisibility))
-    } catch {
-    }
+    setLocalStorageItem(
+      'table-column-visibility:campaign-management',
+      JSON.stringify(columnVisibility)
+    )
   }, [columnVisibility])
 
   const columns = useMemo(() => getCampaignColumns(t), [t])

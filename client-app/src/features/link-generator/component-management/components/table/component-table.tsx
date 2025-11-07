@@ -8,9 +8,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
-import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -27,6 +27,7 @@ import { getComponentColumns } from './component-columns'
 import { ComponentMultiDeleteDialog } from './component-multi-delete-dialog'
 
 declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData, TValue> {
     className: string
     displayName?: string
@@ -61,23 +62,30 @@ export function ComponentTable({
     [selectedCategory]
   )
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
-    try {
-      const stored = getLocalStorageItem('table-column-visibility:component-management')
-      return stored ? JSON.parse(stored) : {}
-    } catch {
-      return {}
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:component-management'
+        )
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
     }
-  })
+  )
 
   useEffect(() => {
-    try {
-      setLocalStorageItem('table-column-visibility:component-management', JSON.stringify(columnVisibility))
-    } catch {
-    }
+    setLocalStorageItem(
+      'table-column-visibility:component-management',
+      JSON.stringify(columnVisibility)
+    )
   }, [columnVisibility])
 
-  const columns = useMemo(() => getComponentColumns(t, isLandingPage), [t, isLandingPage])
+  const columns = useMemo(
+    () => getComponentColumns(t, isLandingPage),
+    [t, isLandingPage]
+  )
 
   const pageCount = Math.ceil(totalCount / pageSize)
 
