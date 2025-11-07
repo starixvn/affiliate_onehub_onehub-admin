@@ -6,28 +6,28 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Settings.Queries;
 
-public record GetLanguagesByCountryQuery(string CountryCode) : IRequest<Result<IEnumerable<TargetCountry>>>;
+public record GetLanguagesQuery() : IRequest<Result<IEnumerable<Market>>>;
 
 public class GetLanguagesByCountryQueryHandler(ISettingsRepository settingsRepository)
-    : IRequestHandler<GetLanguagesByCountryQuery, Result<IEnumerable<TargetCountry>>>
+    : IRequestHandler<GetLanguagesQuery, Result<IEnumerable<Market>>>
 {
-    public async Task<Result<IEnumerable<TargetCountry>>> Handle(
-        GetLanguagesByCountryQuery request,
+    public async Task<Result<IEnumerable<Market>>> Handle(
+        GetLanguagesQuery request,
         CancellationToken cancellationToken)
     {
-        var languageListResult = await settingsRepository.GetLanguagesByCountryAsync(request.CountryCode);
+        var languageListResult = await settingsRepository.GetLanguagesAsync();
 
         if (languageListResult.IsFailure)
         {
-            return Result<IEnumerable<TargetCountry>>.Failure(languageListResult.Error);
+            return Result<IEnumerable<Market>>.Failure(languageListResult.Error);
         }
 
         if (languageListResult.Data is null)
         {
-            return Result<IEnumerable<TargetCountry>>.Failure(Error.NoData);
+            return Result<IEnumerable<Market>>.Failure(Error.NoData);
         }
 
-        return Result<IEnumerable<TargetCountry>>.Success(languageListResult.Data);
+        return Result<IEnumerable<Market>>.Success(languageListResult.Data);
     }
 }
 

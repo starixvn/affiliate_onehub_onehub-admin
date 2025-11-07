@@ -5,10 +5,11 @@ export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
   campaigns: () => [...linkGeneratorKeys.all, 'campaigns'] as const,
   countries: () => [...linkGeneratorKeys.all, 'countries'] as const,
-  languages: (countryCode: string) => [...linkGeneratorKeys.all, 'languages', countryCode] as const,
+  languages: () => [...linkGeneratorKeys.all, 'languages'] as const,
   components: (componentTypeId: number) => [...linkGeneratorKeys.all, 'components', componentTypeId] as const,
   landingPages: () => [...linkGeneratorKeys.all, 'landing-pages'] as const,
   statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
+  domains: (countryCode: string, domainType: number) => [...linkGeneratorKeys.all, 'domains', countryCode, domainType] as const,
 }
 
 export function useGetCampaigns() {
@@ -27,12 +28,11 @@ export function useGetCountries() {
   })
 }
 
-export function useGetLanguagesByCountry(countryCode: string) {
+export function useGetLanguages() {
   return useQuery({
-    queryKey: linkGeneratorKeys.languages(countryCode),
-    queryFn: () => linkGeneratorApi.getLanguagesByCountry(countryCode),
+    queryKey: linkGeneratorKeys.languages(),
+    queryFn: () => linkGeneratorApi.getLanguages(),
     select: (data) => data.data,
-    enabled: !!countryCode,
   })
 }
 
@@ -97,6 +97,15 @@ export function useGetStatusOptions() {
         ],
       }
     },
+  })
+}
+
+export function useGetDomains(countryCode: string, domainType: number) {
+  return useQuery({
+    queryKey: linkGeneratorKeys.domains(countryCode, domainType),
+    queryFn: () => linkGeneratorApi.getDomains(countryCode, domainType),
+    select: (data) => data.data,
+    enabled: !!countryCode,
   })
 }
 

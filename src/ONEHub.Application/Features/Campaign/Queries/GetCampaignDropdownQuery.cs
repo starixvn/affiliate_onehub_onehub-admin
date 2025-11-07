@@ -24,8 +24,7 @@ public class GetCampaignDropdownQueryHandler(ICampaignRepository repository)
     {
         var param = new GetCampaignInfoParam
         {
-            CampaignId = request.CampaignId,
-            StatusIds = request.StatusIds
+            StatusIds = "1"
         };
 
         var campaigns = await repository.GetCampaignInfoAsync(param);

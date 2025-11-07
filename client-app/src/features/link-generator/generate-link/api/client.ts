@@ -3,9 +3,11 @@ import type {
   GenerateLinkRequest,
   GenerateLinkResponse,
   TargetCountry,
+  Market,
   CampaignInfo,
   ComponentInfo,
   LandingPageOption,
+  DomainInfo,
 } from '../types'
 import type { IAxiosResponse } from '@/lib/api/types'
 
@@ -31,10 +33,9 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async getLanguagesByCountry(countryCode: string): Promise<IAxiosResponse<TargetCountry[]>> {
-    const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
-      `/settings/language`,
-      { params: { countryCode } }
+  async getLanguages(): Promise<IAxiosResponse<Market[]>> {
+    const response = await apiClient.get<IAxiosResponse<Market[]>>(
+      '/settings/languages'
     )
     return response.data
   },
@@ -67,9 +68,17 @@ export const linkGeneratorApi = {
     return this.getComponentsByType(5)
   },
 
-  async getLandingPages(): Promise<IAxiosResponse<LandingPageOption[]>> {
-    const response = await apiClient.get<IAxiosResponse<LandingPageOption[]>>(
+  async getLandingPages(): Promise<IAxiosResponse<Record<string, LandingPageOption[]>>> {
+    const response = await apiClient.get<IAxiosResponse<Record<string, LandingPageOption[]>>>(
       '/landing-page/options'
+    )
+    return response.data
+  },
+
+  async getDomains(countryCode: string, domainType: number): Promise<IAxiosResponse<DomainInfo[]>> {
+    const response = await apiClient.get<IAxiosResponse<DomainInfo[]>>(
+      '/domain',
+      { params: { countryCode, domainType } }
     )
     return response.data
   },

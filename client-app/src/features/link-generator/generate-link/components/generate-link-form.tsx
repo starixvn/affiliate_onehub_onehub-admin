@@ -1,32 +1,46 @@
-import { useEffect } from 'react'
-import { Controller } from 'react-hook-form'
+import { Controller, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
 import { useGenerateLink, type DialogType } from './generate-link-provider'
-import { useGetLanguagesByCountry } from '../api/queries'
-import type { CampaignInfo } from '../types'
+import { useGetDomains } from '../api/queries'
+import type { CampaignInfo, LandingPageOption } from '../types'
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
-  const { form, campaigns, countries, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
-  const { register, control, watch } = form
+  const { form, campaigns, countries, languages, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
+  const { register, control } = form
 
-  const selectedCountry = watch('country')
+  const selectedCountryCode = useWatch({ control, name: 'country' })
+  const selectedLandingPageCode = useWatch({ control, name: 'landingPage' })
 
-  const { data: languages = [], isLoading: isLoadingLanguages } = useGetLanguagesByCountry(selectedCountry || '')
+  const selectedLandingPage = landingPages && selectedLandingPageCode
+    ? Object.values(landingPages).flat().find((lp) => lp.pageCode === selectedLandingPageCode)
+    : null
 
-  useEffect(() => {
-    if (selectedCountry && languages.length > 0) {
-      form.setValue('language', languages[0].targetCountryCode)
-    } else if (!selectedCountry) {
-      form.setValue('language', '')
-    }
-  }, [selectedCountry, languages, form])
+  const domainTypePrimary = selectedLandingPage?.pageType === 3 ? 0 : 1
+  const domainTypeShortLink = 2
+
+  const { data: domains } = useGetDomains(selectedCountryCode || '', domainTypePrimary)
+  const { data: domainsForShortLink } = useGetDomains(selectedCountryCode || '', domainTypeShortLink)
 
   const handleCreateNew = (type: DialogType) => {
     setDialogOpen(type)
+  }
+
+  const handleLandingPageChange = (option: LandingPageOption | null) => {
+    if (option) {
+      if (option.campaignId) {
+        form.setValue('campaign', String(option.campaignId))
+      }
+      if (option.targetCountryCode) {
+        form.setValue('country', String(option.targetCountryCode))
+      }
+      if (option.marketId) {
+        form.setValue('language', String(option.marketId))
+      }
+    }
   }
 
   return (
@@ -68,14 +82,15 @@ export function GenerateLinkForm() {
               name='landingPage'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<LandingPageOption>
                   value={field.value}
                   onValueChange={field.onChange}
-                  options={landingPages || []}
+                  options={landingPages || {}}
                   labelKey='pageName'
-                  valueKey='pageName'
+                  valueKey='pageCode'
                   placeholder={t('form.landingPagePlaceholder')}
                   searchPlaceholder='Search landing page...'
+                  onSelectedOptionChange={handleLandingPageChange}
                 />
               )}
             />
@@ -134,17 +149,10 @@ export function GenerateLinkForm() {
                   value={field.value}
                   onValueChange={field.onChange}
                   options={languages || []}
-                  labelKey='targetCountryName'
-                  valueKey='targetCountryCode'
-                  placeholder={
-                    isLoadingLanguages
-                      ? 'Loading languages...'
-                      : !selectedCountry
-                        ? 'Select a country first'
-                        : t('form.languagePlaceholder')
-                  }
+                  labelKey='displayName'
+                  valueKey='marketId'
+                  placeholder={t('form.languagePlaceholder')}
                   searchPlaceholder='Search language...'
-                  disabled={!selectedCountry || isLoadingLanguages}
                 />
               )}
             />
@@ -161,9 +169,9 @@ export function GenerateLinkForm() {
                     <SingleSelect
                       value={field.value}
                       onValueChange={field.onChange}
-                      options={[]}
-                      labelKey='label'
-                      valueKey='value'
+                      options={domains || []}
+                      labelKey='domainName'
+                      valueKey='domainName'
                       placeholder={t('form.domainNamePlaceholder')}
                       searchPlaceholder='Search domain...'
                     />
@@ -182,7 +190,7 @@ export function GenerateLinkForm() {
 
           <div className='space-y-2'>
             <Label htmlFor='shortLinkName' className='text-sm'>{t('form.shortLinkName')}</Label>
-            <div className='flex flex-col sm:flex-row gap-2'>
+            <div className='flex flex-col sm:flex-row gap-1'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
                   name='shortLinkName'
@@ -191,16 +199,16 @@ export function GenerateLinkForm() {
                     <SingleSelect
                       value={field.value}
                       onValueChange={field.onChange}
-                      options={[]}
-                      labelKey='label'
-                      valueKey='value'
+                      options={domainsForShortLink || []}
+                      labelKey='domainName'
+                      valueKey='domainName'
                       placeholder={t('form.shortLinkNamePlaceholder')}
                       searchPlaceholder='Search short link...'
                     />
                   )}
                 />
               </div>
-              <div className='flex items-center gap-2 flex-1'>
+              <div className='flex items-center gap-1 flex-1'>
                 <span className='text-muted-foreground hidden sm:inline'>/</span>
                 <Input
                   id='shortLinkValue'

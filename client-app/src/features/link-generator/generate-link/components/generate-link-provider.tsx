@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import {
   useGetCampaigns,
   useGetCountries,
+  useGetLanguages,
   useGetEvents,
   useGetGroups,
   useGetChannels,
@@ -12,7 +13,7 @@ import {
   useGetLandingPages,
 } from '../api/queries'
 import { generateLinkFormSchema, type GenerateLinkFormValues } from '../data/schema'
-import type { CampaignInfo, TargetCountry, ComponentInfo, LandingPageOption } from '../types'
+import type { CampaignInfo, TargetCountry, Market, ComponentInfo, LandingPageOption } from '../types'
 import useDialogState from '@/hooks/use-dialog-state'
 
 export type DialogType = 'campaign' | 'group' | 'channel' | 'type' | 'agency' | 'event'
@@ -21,12 +22,13 @@ type GenerateLinkContextType = {
   form: UseFormReturn<GenerateLinkFormValues>
   campaigns: CampaignInfo[] | undefined
   countries: TargetCountry[] | undefined
+  languages: Market[] | undefined
   events: ComponentInfo[] | undefined
   groups: ComponentInfo[] | undefined
   channels: ComponentInfo[] | undefined
   agencies: ComponentInfo[] | undefined
   types: ComponentInfo[] | undefined
-  landingPages: LandingPageOption[] | undefined
+  landingPages: Record<string, LandingPageOption[]> | undefined
   isLoading: boolean
   isError: boolean
   dialogOpen: DialogType | null
@@ -42,6 +44,7 @@ type GenerateLinkProviderProps = {
 export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const { data: campaigns, isLoading: isLoadingCampaigns, isError: isErrorCampaigns } = useGetCampaigns()
   const { data: countries, isLoading: isLoadingCountries, isError: isErrorCountries } = useGetCountries()
+  const { data: languages, isLoading: isLoadingLanguages, isError: isErrorLanguages } = useGetLanguages()
   const { data: events, isLoading: isLoadingEvents, isError: isErrorEvents } = useGetEvents()
   const { data: groups, isLoading: isLoadingGroups, isError: isErrorGroups } = useGetGroups()
   const { data: channels, isLoading: isLoadingChannels, isError: isErrorChannels } = useGetChannels()
@@ -54,6 +57,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const isLoading =
     isLoadingCampaigns ||
     isLoadingCountries ||
+    isLoadingLanguages ||
     isLoadingEvents ||
     isLoadingGroups ||
     isLoadingChannels ||
@@ -64,6 +68,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const isError =
     isErrorCampaigns ||
     isErrorCountries ||
+    isErrorLanguages ||
     isErrorEvents ||
     isErrorGroups ||
     isErrorChannels ||
@@ -99,6 +104,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
         form,
         campaigns,
         countries,
+        languages,
         events,
         groups,
         channels,

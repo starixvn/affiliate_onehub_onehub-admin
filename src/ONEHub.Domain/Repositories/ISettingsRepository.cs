@@ -7,5 +7,5 @@ public interface ISettingsRepository
 {
     Task<Result<IEnumerable<TargetCountry>>> GetTargetCountryListAsync();
 
-    Task<Result<IEnumerable<TargetCountry>>> GetLanguagesByCountryAsync(string countryCode);
+    Task<Result<IEnumerable<Market>>> GetLanguagesAsync();
 }

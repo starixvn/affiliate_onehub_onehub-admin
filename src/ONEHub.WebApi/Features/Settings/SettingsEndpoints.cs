@@ -1,6 +1,5 @@
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using MiniValidation;
 using ONEHub.Application.Features.Settings.Queries;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Results;
@@ -14,7 +13,7 @@ public static class SettingsEndpoints
         var groupEndpoint = endpoints.MapGroup("/api/settings").RequireAuthorization();
 
         groupEndpoint.MapGet("/countries", GetCountries);
-        groupEndpoint.MapGet("/language", GetLanguages);
+        groupEndpoint.MapGet("/languages", GetLanguages);
 
         return groupEndpoint;
     }
@@ -26,16 +25,10 @@ public static class SettingsEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<IEnumerable<TargetCountry>>>, ValidationProblem>> GetLanguages(
-        [AsParameters] GetLanguagesRequest request,
+    private static async Task<Results<Ok<Result<IEnumerable<Market>>>, ValidationProblem>> GetLanguages(
         IMediator mediator)
     {
-        if (!MiniValidator.TryValidate(request, out var errors))
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        var query = new GetLanguagesByCountryQuery(request.CountryCode);
+        var query = new GetLanguagesQuery();
         var result = await mediator.Send(query);
         return TypedResults.Ok(result);
     }

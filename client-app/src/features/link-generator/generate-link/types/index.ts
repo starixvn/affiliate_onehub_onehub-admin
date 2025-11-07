@@ -14,10 +14,15 @@ export type ComponentInfo = {
 }
 
 export type TargetCountry = {
-  marketId: string
-  marketName: string
   targetCountryName: string
   targetCountryCode: string
+}
+
+export type Market = {
+  marketId: string
+  marketName: string
+  displayName: string
+  shortedCode: string
 }
 
 export type CampaignInfo = {
@@ -27,14 +32,27 @@ export type CampaignInfo = {
 }
 
 export type LandingPageOption = {
+  pageCode: string
   pageName: string
   isComponent: boolean
   category: string
+  pageType: number
+  targetCountryCode: number
+  marketId: number
+  campaignId: number
 }
 
 export type LandingPageGroup = {
   groupLabel: string
   options: LandingPageOption[]
+}
+
+export type DomainInfo = {
+  domainName: string
+  domainType: number
+  createdDate: string
+  siteId: number
+  score: number
 }
 
 export interface GenerateLinkFormData {

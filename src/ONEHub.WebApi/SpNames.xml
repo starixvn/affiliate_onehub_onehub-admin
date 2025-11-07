@@ -11,6 +11,7 @@
 		<Setting Key="OH_Campaign_Upd" SpName="OH_Campaign_Upd" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_Del" SpName="OH_Campaign_Del" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_Status_Upd" SpName="OH_Campaign_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Campaign_Sel" SpName="OH_Campaign_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
 	</Functions>
 	<Functions Name="Component Management">
 		<Setting Key="OH_Component_Dashboard_Sel" SpName="OH_Component_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
@@ -22,10 +23,17 @@
     </Functions>
 	<Function Name="Component">
 		<Setting Key="OH_Component_Sel" SpName="OH_Component_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
-		<Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Component_Ins" SpName="OH_Component_Ins_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-		<Setting Key="OH_Campaign_Sel" SpName="OH_Campaign_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
-		<Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
 	</Function>
+    <Function Name="Settings">
+        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Market_Sel" SpName="OH_Market_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
+    <Function Name="LandingPage">
+        <Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
+    <Function Name="Domain">
+        <Setting Key="OH_Domain_Sel" SpName="OH_Domain_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
 </Functions>
 

@@ -8,6 +8,7 @@ using ONEHub.Domain.Settings;
 using ONEHub.WebApi.Features.Auth;
 using ONEHub.WebApi.Features.Campaign;
 using ONEHub.WebApi.Features.Component;
+using ONEHub.WebApi.Features.Domain;
 using ONEHub.WebApi.Features.GenerateLink;
 using ONEHub.WebApi.Features.LandingPage;
 using ONEHub.WebApi.Features.Settings;
@@ -226,6 +227,7 @@ public static class WebApplicationSetup
         app.RegisterAuthEndpoints();
         app.RegisterCampaignEndpoints();
         app.RegisterComponentEndpoints();
+        app.RegisterDomainEndpoints();
         app.RegisterGenerateLinkEndpoints();
         app.RegisterLandingPageEndpoints();
         app.RegisterSettingsEndpoints();

@@ -16,12 +16,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import type { SelectOption, SelectGroup } from './select-types'
+import type { SelectOption } from './select-types'
 
-interface SingleSelectProps {
+interface SingleSelectProps<T extends SelectOption = SelectOption> {
   value?: string
   onValueChange: (value: string) => void
-  options: SelectOption[] | SelectGroup[]
+  options: T[] | Record<string, T[]>
   labelKey: string
   valueKey: string
   placeholder?: string
@@ -30,14 +30,15 @@ interface SingleSelectProps {
   onCreateNew?: () => void
   createNewLabel?: string
   className?: string
-  formatOptionLabel?: (option: SelectOption) => string
+  formatOptionLabel?: (option: T) => string
+  onSelectedOptionChange?: (option: T | null) => void
 }
 
-function isSelectGroup(item: unknown): item is SelectGroup {
-  return (item as SelectGroup).groupLabel !== undefined && (item as SelectGroup).options !== undefined
+function isGroupedOptions<T extends SelectOption>(options: T[] | Record<string, T[]>): options is Record<string, T[]> {
+  return !Array.isArray(options)
 }
 
-export function SingleSelect({
+export function SingleSelect<T extends SelectOption = SelectOption>({
   value,
   onValueChange,
   options,
@@ -50,30 +51,40 @@ export function SingleSelect({
   createNewLabel = 'Create new...',
   className,
   formatOptionLabel,
-}: SingleSelectProps) {
+  onSelectedOptionChange,
+}: SingleSelectProps<T>) {
   const [open, setOpen] = useState(false)
 
-  const getLabel = (option: SelectOption): string => String(option[labelKey])
-  const getValue = (option: SelectOption): string => String(option[valueKey])
-  const getDisplayLabel = (option: SelectOption): string => 
+  const getLabel = (option: T): string => String(option[labelKey])
+  const getValue = (option: T): string => String(option[valueKey])
+  const getDisplayLabel = (option: T): string =>
     formatOptionLabel ? formatOptionLabel(option) : getLabel(option)
 
   const getSelectedLabel = () => {
     if (!value) return null
 
-    for (const item of options) {
-      if (isSelectGroup(item)) {
-        const found = item.options.find((opt: SelectOption) => getValue(opt) === value)
+    if (isGroupedOptions(options)) {
+      for (const groupOptions of Object.values(options)) {
+        const found = groupOptions.find((opt: T) => getValue(opt) === value)
         if (found) return getDisplayLabel(found)
-      } else {
-        if (getValue(item) === value) return getDisplayLabel(item)
       }
+    } else {
+      const found = options.find((opt: T) => getValue(opt) === value)
+      if (found) return getDisplayLabel(found)
     }
     return null
   }
 
-  const handleSelect = (selectedValue: string) => {
-    onValueChange(selectedValue === value ? '' : selectedValue)
+  const handleSelect = (selectedOption: T) => {
+    const optionValue = getValue(selectedOption)
+    const newValue = optionValue === value ? '' : optionValue
+
+    onValueChange(newValue)
+
+    if (onSelectedOptionChange) {
+      onSelectedOptionChange(newValue ? selectedOption : null)
+    }
+
     setOpen(false)
   }
 
@@ -83,18 +94,17 @@ export function SingleSelect({
   }
 
   const renderOptions = () => {
-    if (options.length === 0) return null
+    if (isGroupedOptions(options)) {
+      const entries = Object.entries(options)
+      if (entries.length === 0) return null
 
-    const firstItem = options[0]
-
-    if (isSelectGroup(firstItem)) {
-      return (options as SelectGroup[]).map((group) => (
-        <CommandGroup key={group.groupLabel} heading={group.groupLabel}>
-          {group.options.map((option) => (
+      return entries.map(([groupLabel, groupOptions]) => (
+        <CommandGroup key={groupLabel} heading={groupLabel}>
+          {groupOptions.map((option) => (
             <CommandItem
               key={getValue(option)}
               value={getLabel(option)}
-              onSelect={() => handleSelect(getValue(option))}
+              onSelect={() => handleSelect(option)}
             >
               <Check
                 className={cn(
@@ -109,11 +119,13 @@ export function SingleSelect({
       ))
     }
 
-    return (options as SelectOption[]).map((option) => (
+    if (options.length === 0) return null
+
+    return options.map((option) => (
       <CommandItem
         key={getValue(option)}
         value={getLabel(option)}
-        onSelect={() => handleSelect(getValue(option))}
+        onSelect={() => handleSelect(option)}
       >
         <Check
           className={cn(

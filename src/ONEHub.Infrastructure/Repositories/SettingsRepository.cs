@@ -19,14 +19,10 @@ public class SettingsRepository(IDynamicRepository dynamicRepository)
         return await FetchDataAsync<TargetCountry>(criteria);
     }
 
-    public async Task<Result<IEnumerable<TargetCountry>>> GetLanguagesByCountryAsync(string countryCode)
+    public async Task<Result<IEnumerable<Market>>> GetLanguagesAsync()
     {
-        var criteria = new GetTargetCountryCriteria
-        {
-            IsDefault = true,
-            TargetCountryCode = countryCode
-        };
+        var criteria = new GetMarketListCriteria();
 
-        return await FetchDataAsync<TargetCountry>(criteria);
+        return await FetchDataAsync<Market>(criteria);
     }
 }

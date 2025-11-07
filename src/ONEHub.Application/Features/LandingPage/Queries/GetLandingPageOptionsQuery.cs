@@ -7,12 +7,12 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPage.Queries;
 
-public class GetLandingPageOptionsQuery : BaseQuery<IEnumerable<LandingPageOption>>;
+public class GetLandingPageOptionsQuery : BaseQuery<Dictionary<string, List<LandingPageOption>>>;
 
 public class GetLandingPageOptionsQueryHandler(ILandingPageRepository repository)
-    : IRequestHandler<GetLandingPageOptionsQuery, Result<IEnumerable<LandingPageOption>>>
+    : IRequestHandler<GetLandingPageOptionsQuery, Result<Dictionary<string, List<LandingPageOption>>>>
 {
-    public async Task<Result<IEnumerable<LandingPageOption>>> Handle(
+    public async Task<Result<Dictionary<string, List<LandingPageOption>>>> Handle(
         GetLandingPageOptionsQuery request,
         CancellationToken cancellationToken)
     {
@@ -20,15 +20,23 @@ public class GetLandingPageOptionsQueryHandler(ILandingPageRepository repository
 
         if (landingPages.IsFailure)
         {
-            return Result<IEnumerable<LandingPageOption>>.Failure(landingPages.Error);
+            return Result<Dictionary<string, List<LandingPageOption>>>.Failure(landingPages.Error);
         }
 
         if (landingPages.Data is null)
         {
-            return Result<IEnumerable<LandingPageOption>>.Failure(Error.NoData);
+            return Result<Dictionary<string, List<LandingPageOption>>>.Failure(Error.NoData);
         }
 
-        return Result<IEnumerable<LandingPageOption>>.Success(landingPages.Data);
+        var grouped = landingPages.Data
+            .GroupBy(lp => lp.Category ?? "Others")
+            .OrderBy(g => g.Key)
+            .ToDictionary(
+                g => g.Key,
+                g => g.OrderBy(lp => lp.PageName).ToList()
+            );
+
+        return Result<Dictionary<string, List<LandingPageOption>>>.Success(grouped);
     }
 }
 
