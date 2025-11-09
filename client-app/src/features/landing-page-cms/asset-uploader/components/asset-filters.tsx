@@ -68,9 +68,10 @@ export function AssetFilters({ table }: AssetFiltersProps) {
       : []
   )
   const [selectedStatus, setSelectedStatus] = useState<number[]>(
-    typeof search.status === 'number' && search.status === -1
-      ? []
-      : [DEFAULT_PARAMS.status]
+    typeof search.currentStatus === 'object' &&
+      Array.isArray(search.currentStatus)
+      ? (search.currentStatus as number[])
+      : [...DEFAULT_PARAMS.currentStatus]
   )
 
   const [localColumnVisibility, setLocalColumnVisibility] = useState<
@@ -95,6 +96,7 @@ export function AssetFilters({ table }: AssetFiltersProps) {
             ? selectedLanguages.join(',')
             : DEFAULT_PARAMS.languageCodes,
         status: selectedStatus.length === 1 ? selectedStatus[0] : -1,
+        currentStatus: selectedStatus,
         pageIndex: 1,
         pageSize: 10,
       },

@@ -100,6 +100,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     asset: asset as AssetDetail,
     country,
     language,
+    fileName,
     moduleRows,
     isEdit,
     isMediaIdInUse,
@@ -124,5 +125,8 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     ...fileHandlers,
     handleSubmit,
     handleCancel,
+    showConfirmOverwrite: submitHandlers.showConfirmOverwrite,
+    handleConfirmOverwrite: submitHandlers.handleConfirmOverwrite,
+    handleCancelOverwrite: submitHandlers.handleCancelOverwrite,
   }
 }

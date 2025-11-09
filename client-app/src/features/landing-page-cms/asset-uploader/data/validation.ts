@@ -4,6 +4,8 @@ import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_MB,
   MAX_FILES_PER_MODULE,
+  regSpecialCharacters,
+  MAX_FILE_NAME_LENGTH,
 } from './schema'
 
 export const useErrorMessages = () => {
@@ -28,21 +30,17 @@ export const useErrorMessages = () => {
       t('validation.duplicateFileNames', {
         duplicateFiles: duplicateFiles.join(', '),
       }),
+    INVALID_FILE_NAMES: (invalidFiles: string[]) =>
+      t('validation.invalidFileNames', {
+        invalidFiles: invalidFiles.join(', '),
+      }),
+    FILE_NAME_TOO_LONG: (longFiles: string[]) =>
+      t('validation.fileNameTooLong', {
+        longFiles: longFiles.join(', '),
+      }),
   }
 }
 
-export const ERROR_MESSAGES = {
-  COUNTRY_REQUIRED: 'Please select a Country',
-  LANGUAGE_REQUIRED: 'Please select a Language',
-  MODULE_REQUIRED: 'Please select a Module',
-  UPLOAD_LIMIT_EXCEEDED: `Upload limit exceeded. You can only upload up to ${MAX_FILES_PER_MODULE} files at a time.`,
-  INVALID_FILE_TYPES: (invalidFiles: string[]) =>
-    `Invalid file type(s) detected: ${invalidFiles.join(', ')}. Please upload only GIF, JPG, JPEG, PNG or WEBP files.`,
-  FILE_SIZE_EXCEEDED: (exceededFiles: string[]) =>
-    `File size exceeds ${MAX_FILE_SIZE_MB}MB limit: ${exceededFiles.join(', ')}. Please upload a smaller file.`,
-  DUPLICATE_FILE_NAMES: (duplicateFiles: string[]) =>
-    `File name(s) already exists: ${duplicateFiles.join(', ')}. Please rename or remove the file(s) before uploading.`,
-} as const
 
 export const INITIAL_VALIDATION_STATE = {
   errors: { modules: {} } as ValidationErrors,
@@ -109,7 +107,7 @@ export const validateForm = (
     }
   })
 
-  const fileErrors = validateFiles(moduleRows)
+  const fileErrors = validateFiles(moduleRows, errorMessages)
   if (fileErrors) {
     newErrors.files = fileErrors
     isValid = false
@@ -141,7 +139,8 @@ const getFileExtension = (fileName: string): string => {
 }
 
 export const validateFiles = (
-  moduleRows: ModuleWithFiles[]
+  moduleRows: ModuleWithFiles[],
+  errorMessages: ReturnType<typeof useErrorMessages>
 ): ValidationErrors['files'] => {
   const errors: ValidationErrors['files'] = {}
 
@@ -149,6 +148,8 @@ export const validateFiles = (
   const exceededFiles: string[] = []
   const allFileNames: string[] = []
   const duplicateFiles: string[] = []
+  const invalidFileNames: string[] = []
+  const longFileNames: string[] = []
 
   let totalFiles = 0
   const maxSizeBytes = MAX_FILE_SIZE_MB * 1024 * 1024
@@ -177,24 +178,44 @@ export const validateFiles = (
       } else {
         allFileNames.push(file.name)
       }
+
+      const specialCharsRegex = new RegExp(regSpecialCharacters)
+      if (specialCharsRegex.test(file.name)) {
+        if (!invalidFileNames.includes(file.name)) {
+          invalidFileNames.push(file.name)
+        }
+      }
+
+      if (file.name.length > MAX_FILE_NAME_LENGTH) {
+        if (!longFileNames.includes(file.name)) {
+          longFileNames.push(file.name)
+        }
+      }
     })
   })
 
   if (totalFiles > MAX_FILES_PER_MODULE) {
-    errors.uploadLimitExceeded = ERROR_MESSAGES.UPLOAD_LIMIT_EXCEEDED
+    errors.uploadLimitExceeded = errorMessages.UPLOAD_LIMIT_EXCEEDED(MAX_FILES_PER_MODULE)
   }
 
   if (invalidFiles.length > 0) {
-    errors.invalidFileTypes = ERROR_MESSAGES.INVALID_FILE_TYPES(invalidFiles)
+    errors.invalidFileTypes = errorMessages.INVALID_FILE_TYPES(invalidFiles)
   }
 
   if (exceededFiles.length > 0) {
-    errors.fileSizeExceeded = ERROR_MESSAGES.FILE_SIZE_EXCEEDED(exceededFiles)
+    errors.fileSizeExceeded = errorMessages.FILE_SIZE_EXCEEDED(exceededFiles)
   }
 
   if (duplicateFiles.length > 0) {
-    errors.duplicateFileNames =
-      ERROR_MESSAGES.DUPLICATE_FILE_NAMES(duplicateFiles)
+    errors.duplicateFileNames = errorMessages.DUPLICATE_FILE_NAMES(duplicateFiles)
+  }
+
+  if (invalidFileNames.length > 0) {
+    errors.invalidFileNames = errorMessages.INVALID_FILE_NAMES(invalidFileNames)
+  }
+
+  if (longFileNames.length > 0) {
+    errors.fileNameTooLong = errorMessages.FILE_NAME_TOO_LONG(longFileNames)
   }
 
   return Object.keys(errors).length > 0 ? errors : undefined

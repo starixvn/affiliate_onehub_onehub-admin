@@ -1,5 +1,5 @@
-import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronRight, Upload } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -124,6 +124,7 @@ export function AssetModuleRow({
               <span className='sm:inline'>{t('form.uploadFileButton')}</span>
             </Button>
             <input
+              key={`${moduleIndex}-${moduleRow.files.length}`}
               id={`file-input-${moduleIndex}`}
               type='file'
               accept='.jpg,.jpeg,.png,.gif,.webp'

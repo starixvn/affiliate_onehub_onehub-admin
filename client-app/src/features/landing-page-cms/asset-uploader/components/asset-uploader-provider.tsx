@@ -12,7 +12,12 @@ import {
   Module,
 } from '../types'
 
-type AssetDialogType = 'upload' | 'edit' | 'delete' | 'delete-bulk'
+type AssetDialogType =
+  | 'upload'
+  | 'edit'
+  | 'delete'
+  | 'delete-bulk'
+  | 'status-change'
 
 const route = getRouteApi('/iframe/landing-page-cms/asset-uploader/')
 
@@ -21,6 +26,8 @@ type AssetUploaderContextType = {
   setOpen: (str: AssetDialogType | null) => void
   currentRow: AssetDetail | null
   setCurrentRow: React.Dispatch<React.SetStateAction<AssetDetail | null>>
+  targetStatusId: number | null
+  setTargetStatusId: React.Dispatch<React.SetStateAction<number | null>>
 
   assets: AssetDetail[]
   totalCount: number
@@ -65,6 +72,7 @@ export function AssetUploaderProvider({
 }: AssetUploaderProviderProps) {
   const [open, setOpen] = useDialogState<AssetDialogType>(null)
   const [currentRow, setCurrentRow] = useState<AssetDetail | null>(null)
+  const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
   const navigate = route.useNavigate()
   const search = route.useSearch()
@@ -92,6 +100,8 @@ export function AssetUploaderProvider({
         setOpen,
         currentRow,
         setCurrentRow,
+        targetStatusId,
+        setTargetStatusId,
 
         assets: data?.items ?? [],
         totalCount: data?.totalItem ?? 0,

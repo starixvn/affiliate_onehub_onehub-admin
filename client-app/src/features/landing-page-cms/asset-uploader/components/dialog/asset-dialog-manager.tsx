@@ -1,16 +1,10 @@
-import { useTranslation } from 'react-i18next'
-import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetDialog } from './asset-dialog'
+import { AssetStatusChangeDialog } from './asset-status-change-dialog'
 import { DeleteAssetDialog } from './delete-asset-dialog'
 
 export function AssetDialogManager() {
-  const { t } = useTranslation('asset-uploader')
-  const { open, setOpen, currentRow } = useAssetUploader()
-
-  const confirmDelete = () => {
-    setOpen(null)
-  }
+  const { open, setOpen, currentRow, targetStatusId } = useAssetUploader()
 
   return (
     <>
@@ -28,14 +22,13 @@ export function AssetDialogManager() {
         onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'delete' : null)}
         asset={currentRow}
       />
-      <ConfirmDialog
-        open={open === 'delete-bulk'}
+      <AssetStatusChangeDialog
+        open={open === 'status-change'}
         onOpenChange={(isOpen: boolean) =>
-          setOpen(isOpen ? 'delete-bulk' : null)
+          setOpen(isOpen ? 'status-change' : null)
         }
-        title={t('dialogs.deleteAssets')}
-        desc={t('dialogs.confirmDelete')}
-        handleConfirm={confirmDelete}
+        asset={currentRow}
+        newStatusId={targetStatusId || 1}
       />
     </>
   )

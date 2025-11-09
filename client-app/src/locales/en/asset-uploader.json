@@ -1,7 +1,7 @@
 {
   "page": {
     "title": "Asset Uploader",
-    "description": "Create and manage promotional pages, quickly and deploy marketing campaigns",
+    "description": "Create, manage promotional pages, quickly deploy marketing campaigns",
     "loading": "Loading assets...",
     "failedToLoad": "Failed to load assets",
     "noResults": "No results."
@@ -67,6 +67,11 @@
     "confirmDeleteSingle": "Are you sure you want to delete \"{{assetName}}\"? This action cannot be undone.",
     "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
     "deleteDescription": "This action cannot be undone. The delete action will only be performed on assets that are not associated with any landing page.",
+    "confirmStatusChange": "Are you sure you want to change the status of \"{{assetName}}\" to {{status}}?",
+    "confirmStatusChangeBulk": "Are you sure you want to change the status of {{count}} {{entity}} to {{status}}?",
+    "changing": "Changing...",
+    "change": "Change",
+    "changeAll": "Change All",
     "deleting": "Deleting...",
     "delete": "Delete",
     "deleteAll": "Delete All"
@@ -97,7 +102,8 @@
     "validTypes": "Valid Types: .jpg, .jpeg, .png, .gif, .webp",
     "fileSizeLimit": "File Size Limit: 3MB",
     "maxFiles": "Maximum files: 50",
-    "note": "Note: Module, Country, and Language cannot be changed if the image is already used in an existing landing page."
+    "noteLabel": "Note:",
+    "noteContent": "Module, Country, and Language cannot be changed if the image is already used in an existing landing page."
   },
   "validation": {
     "countryRequired": "Please select a Country",
@@ -107,7 +113,9 @@
     "uploadLimitExceeded": "Upload limit exceeded. You can only upload up to {{maxFiles}} files at a time.",
     "invalidFileTypes": "Invalid file type(s) detected: {{invalidFiles}}. Please upload only GIF, JPG, JPEG, PNG or WEBP files.",
     "fileSizeExceeded": "File size exceeds {{maxSize}}MB limit: {{exceededFiles}}. Please upload a smaller file.",
-    "duplicateFileNames": "File name(s) already exists: {{duplicateFiles}}. Please rename or remove the file(s) before uploading."
+    "duplicateFileNames": "File name(s) already exists: {{duplicateFiles}}. Please rename or remove the file(s) before uploading.",
+    "invalidFileNames": "File name(s) contain invalid characters: {{invalidFiles}}. File names cannot contain \\ / : * ? \" < > | # % & + characters.",
+    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names (excluding extension) must be 200 characters or less."
   },
   "toasts": {
     "exporting": "Exporting assets to Excel...",

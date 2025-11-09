@@ -9,6 +9,7 @@ export const DEFAULT_PARAMS = {
   targetCountrycodes: 'all',
   languageCodes: 'all',
   status: 1,
+  currentStatus: [1],
   pageIndex: 1,
   pageSize: 10,
 } as const
@@ -29,6 +30,10 @@ export function normalizeSearchParams(
       search.status !== undefined
         ? Number(search.status)
         : DEFAULT_PARAMS.status,
+    currentStatus:
+      search.currentStatus !== undefined
+        ? (search.currentStatus as number[])
+        : [DEFAULT_PARAMS.status],
     pageIndex: search.pageIndex
       ? Number(search.pageIndex)
       : DEFAULT_PARAMS.pageIndex,

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import { Upload } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import {
@@ -95,9 +95,7 @@ export function AssetEditForm({
           </SelectContent>
         </Select>
         {touched.modules[0] && errors.modules[0] && (
-          <p className='text-destructive text-xs'>
-            {errors.modules[0]}
-          </p>
+          <p className='text-destructive text-xs'>{errors.modules[0]}</p>
         )}
       </div>
 
@@ -108,14 +106,13 @@ export function AssetEditForm({
             type='button'
             variant='outline'
             className='hover:border-input'
-            onClick={() =>
-              document.getElementById('file-input-edit')?.click()
-            }
+            onClick={() => document.getElementById('file-input-edit')?.click()}
           >
             <Upload className='mr-2 h-4 w-4' />
             {t('form.uploadFileButton')}
           </Button>
           <input
+            key={fileName}
             id='file-input-edit'
             type='file'
             accept='.jpg,.jpeg,.png,.gif,.webp'
@@ -123,7 +120,7 @@ export function AssetEditForm({
             className='hidden'
             onChange={(e) => handleFileChange(e.target.files)}
           />
-          <span className='text-sm text-muted-foreground flex-1'>
+          <span className='text-muted-foreground flex-1 text-sm'>
             {fileName || t('form.noFileChosen')}
           </span>
         </div>

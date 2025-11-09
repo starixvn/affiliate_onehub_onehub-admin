@@ -9,28 +9,32 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
-import { useUpdateAssetsStatus } from '../../api/commands'
 import type { AssetDetail } from '../../data/schema'
+import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetRowActions } from './asset-row-actions'
 
 interface StatusCellProps {
-  mediaId: number
-  initialStatus: number
+  asset: AssetDetail
 }
 
-function StatusCell({ mediaId, initialStatus }: StatusCellProps) {
+function StatusCell({ asset }: StatusCellProps) {
   const { t } = useTranslation('asset-uploader')
-  const updateStatusMutation = useUpdateAssetsStatus()
+  const { setOpen, setCurrentRow, setTargetStatusId } = useAssetUploader()
 
   const handleStatusChange = (value: string) => {
     const statusId = parseInt(value)
-    updateStatusMutation.mutate({ ids: mediaId.toString(), statusId })
+    setCurrentRow(asset)
+    setTargetStatusId(statusId)
+    setOpen('status-change')
   }
 
-  const isActive = initialStatus === 1
+  const isActive = asset.statusId === 1
 
   return (
-    <Select value={initialStatus.toString()} onValueChange={handleStatusChange}>
+    <Select
+      value={asset.statusId.toString()}
+      onValueChange={handleStatusChange}
+    >
       <SelectTrigger
         className={`h-8 w-[110px] ${
           isActive
@@ -126,12 +130,16 @@ export const useAssetColumns = (
     },
     {
       id: 'preview',
-      header: () => <div className='text-center'>{t('table.previewAsset')}</div>,
+      header: () => (
+        <div className='text-center'>{t('table.previewAsset')}</div>
+      ),
       cell: ({ row }) => {
         const mediaName = row.getValue('mediaName') as string
         const fileName = row.original.fileName
-        const imageUrl = bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
-        const thumbnailUrl = bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
+        const imageUrl =
+          bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
+        const thumbnailUrl =
+          bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
 
         return (
           <ImagePreviewCell
@@ -145,14 +153,11 @@ export const useAssetColumns = (
     {
       accessorKey: 'statusId',
       header: () => <div className='text-center'>{t('table.status')}</div>,
-      cell: ({ row }) => {
-        const status = row.getValue('statusId') as number
-        return (
-          <div className='flex justify-center'>
-            <StatusCell initialStatus={status} mediaId={row.original.mediaId} />
-          </div>
-        )
-      },
+      cell: ({ row }) => (
+        <div className='flex justify-center'>
+          <StatusCell asset={row.original} />
+        </div>
+      ),
     },
     {
       id: 'actions',

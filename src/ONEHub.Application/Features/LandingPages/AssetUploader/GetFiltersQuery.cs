@@ -28,25 +28,38 @@ public class GetFiltersHandler(
 {
     public async Task<Result<FiltersResponse>> Handle(GetFiltersQuery request, CancellationToken cancellationToken)
     {
-        var bannerRootUrl = configuration["AppSettings:BannerRootUrl"] ?? string.Empty;
-        var maxFiles = int.Parse(configuration["AppSettings:MaximumFiles"] ?? "50");
-        var maxFileSize = int.Parse(configuration["AppSettings:MaxFileSize"] ?? "3");
-        var allowedExtensions = configuration["AppSettings:AllowedImageExtensions"]?.Split(',') ?? [".jpg", ".jpeg", ".png", ".gif", ".webp"];
+        var appSettings = configuration.GetSection("AppSettings");
+        var bannerRootUrl = appSettings["BannerRootUrl"] ?? string.Empty;
+        var maxFiles = int.TryParse(appSettings["MaximumFiles"], out var mf) ? mf : 50;
+        var maxFileSize = int.TryParse(appSettings["MaxFileSize"], out var mfs) ? mfs : 3;
+        var allowedExtensions = (appSettings["AllowedImageExtensions"]?.Split(',')
+                                 ?? [".jpg", ".jpeg", ".png", ".gif", ".webp"])
+            .Select(e => e.Trim())
+            .ToArray();
 
-        var targetCountries = await systemRepository.GetTargetCountryAsync();
-        var languages = await systemRepository.GetTargetCountryAsync(false);
-        var modules = await landingPageRepository.GetModuleAsync();
-        var status = await landingPageRepository.GetStatusAsync();
+        var targetCountriesTask = systemRepository.GetTargetCountryAsync();
+        var languagesTask = systemRepository.GetTargetCountryAsync(false);
+        var modulesTask = landingPageRepository.GetModuleAsync();
+        var statusTask = landingPageRepository.GetStatusAsync();
 
-        return Result<FiltersResponse>.Success(
-            new FiltersResponse(
-                bannerRootUrl,
-                maxFiles,
-                maxFileSize,
-                allowedExtensions,
-                targetCountries.Data!,
-                languages.Data!,
-                modules.Data!,
-                status.Data!));
+        await Task.WhenAll(targetCountriesTask, languagesTask, modulesTask, statusTask);
+
+        var targetCountries = targetCountriesTask.Result.Data.OrderBy(x => x.TargetCountryName);
+        var languages = languagesTask.Result.Data.OrderBy(x => x.LanguageName);
+        var modules = modulesTask.Result.Data.OrderBy(x => x.ModuleName);
+        var statuses = statusTask.Result.Data!;
+
+        var response = new FiltersResponse(
+            bannerRootUrl,
+            maxFiles,
+            maxFileSize,
+            allowedExtensions,
+            targetCountries,
+            languages,
+            modules,
+            statuses
+        );
+
+        return Result<FiltersResponse>.Success(response);
     }
 }

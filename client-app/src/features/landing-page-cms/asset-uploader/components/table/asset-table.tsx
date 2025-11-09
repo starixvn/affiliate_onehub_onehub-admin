@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -13,6 +12,7 @@ import {
   OnChangeFn,
   PaginationState,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import {
   Table,
   TableBody,
@@ -25,6 +25,7 @@ import { DataTablePagination } from '@/components/data-table'
 import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetBulkDeleteDialog } from '../dialog/asset-bulk-delete-dialog'
+import { AssetBulkStatusChangeDialog } from '../dialog/asset-bulk-status-change-dialog'
 import { AssetBulkActions } from './asset-bulk-actions'
 import { useAssetColumns } from './asset-columns'
 
@@ -48,6 +49,9 @@ export function AssetTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = useState({})
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
+    useState(false)
+  const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
   const pagination = {
     pageIndex: pageIndex - 1,
@@ -71,7 +75,7 @@ export function AssetTable({
 
   useEffect(() => {
     setRowSelection({})
-  }, [pageIndex, pageSize])
+  }, [pageIndex, pageSize, data])
 
   const columns = useAssetColumns(bannerRootUrl, pagination)
 
@@ -159,12 +163,27 @@ export function AssetTable({
       <AssetBulkActions
         table={table}
         onDeleteClick={() => setIsDeleteDialogOpen(true)}
+        onStatusChangeClick={(statusId) => {
+          setTargetStatusId(statusId)
+          setIsStatusChangeDialogOpen(true)
+        }}
       />
       <AssetBulkDeleteDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         table={table}
       />
+      {targetStatusId && (
+        <AssetBulkStatusChangeDialog
+          open={isStatusChangeDialogOpen}
+          onOpenChange={(open) => {
+            setIsStatusChangeDialogOpen(open)
+            if (!open) setTargetStatusId(null)
+          }}
+          table={table}
+          newStatusId={targetStatusId}
+        />
+      )}
     </div>
   )
 }

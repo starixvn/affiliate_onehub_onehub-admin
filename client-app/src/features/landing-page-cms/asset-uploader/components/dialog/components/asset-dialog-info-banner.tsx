@@ -15,7 +15,8 @@ export function AssetDialogInfoBanner({ isEdit }: AssetDialogInfoBannerProps) {
         {!isEdit && <p>{t('info.maxFiles')}</p>}
       </div>
       <div className='text-muted-foreground mt-3 text-sm italic'>
-        <span className='font-medium not-italic'>Note:</span> {t('info.note')}
+        <span className='font-medium not-italic'>{t('info.noteLabel')}</span>{' '}
+        {t('info.noteContent')}
       </div>
     </div>
   )

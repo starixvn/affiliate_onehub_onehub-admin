@@ -33,6 +33,8 @@ export function AssetDialogErrorBanner({
               errors.files.invalidFileTypes,
               errors.files.fileSizeExceeded,
               errors.files.duplicateFileNames,
+              errors.files.invalidFileNames,
+              errors.files.fileNameTooLong,
             ]
               .filter(Boolean)
               .map((error, index) => (

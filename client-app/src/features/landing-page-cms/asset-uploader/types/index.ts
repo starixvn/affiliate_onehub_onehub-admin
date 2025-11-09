@@ -7,6 +7,7 @@ export interface GetAssetListRequest {
   targetCountrycodes: string
   languageCodes: string
   status: number
+  currentStatus: number[]
   mediaId: number
   mediaName?: string
   pageIndex: number

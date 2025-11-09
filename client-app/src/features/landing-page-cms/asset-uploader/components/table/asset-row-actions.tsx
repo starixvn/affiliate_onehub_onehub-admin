@@ -1,6 +1,6 @@
 import { type Row } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
 import { Pencil, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { type AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'

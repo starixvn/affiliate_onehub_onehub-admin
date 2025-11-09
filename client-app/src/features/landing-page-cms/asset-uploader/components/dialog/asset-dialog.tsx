@@ -12,6 +12,7 @@ import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetActionButtons } from './asset-action-buttons'
 import { AssetDialogContent } from './components/asset-dialog-content'
+import { ConfirmOverwriteDialog } from './confirm-overwrite-dialog'
 import { useAssetFormHandlers } from './hooks/use-asset-form-handlers'
 import { useAssetFormState } from './hooks/use-asset-form-state'
 
@@ -86,6 +87,12 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     createAssetMutation,
     updateAssetMutation,
   })
+
+  const {
+    showConfirmOverwrite,
+    handleConfirmOverwrite,
+    handleCancelOverwrite,
+  } = handlers
 
   useEffect(() => {
     if (open) {
@@ -173,10 +180,19 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           isEdit={isEdit}
           isFormValid={handlers.isFormValid()}
           isLoading={
-            createAssetMutation.isPending || updateAssetMutation.isPending
+            createAssetMutation.isPending ||
+            updateAssetMutation.isPending
           }
           onSubmit={handlers.handleSubmit}
           onCancel={handlers.handleCancel}
+        />
+
+        <ConfirmOverwriteDialog
+          open={showConfirmOverwrite}
+          onOpenChange={(open) => !open && handleCancelOverwrite()}
+          fileName={fileName}
+          onConfirm={handleConfirmOverwrite}
+          onCancel={handleCancelOverwrite}
         />
       </DialogContent>
     </Dialog>

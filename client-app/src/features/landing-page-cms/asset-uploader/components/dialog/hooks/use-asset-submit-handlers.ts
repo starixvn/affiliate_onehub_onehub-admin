@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { AssetDetail } from '../../../data/schema'
 
 interface UseAssetSubmitHandlersProps {
-  asset: AssetDetail
+  asset: AssetDetail | null | undefined
   country: string
   language: string
+  fileName: string
   moduleRows: Array<{ module: string; files: File[] }>
   isEdit: boolean
   isMediaIdInUse: boolean
@@ -18,6 +20,7 @@ export function useAssetSubmitHandlers({
   asset,
   country,
   language,
+  fileName,
   moduleRows,
   isEdit,
   isMediaIdInUse,
@@ -27,6 +30,8 @@ export function useAssetSubmitHandlers({
   updateAssetMutation,
 }: UseAssetSubmitHandlersProps) {
   const { t } = useTranslation('asset-uploader')
+  const [showConfirmOverwrite, setShowConfirmOverwrite] = useState(false)
+
   const prepareCreateRequest = () => {
     return {
       targetCountryCode: country,
@@ -80,6 +85,15 @@ export function useAssetSubmitHandlers({
       }))
     }
 
+    if (isEdit && fileName === asset?.mediaName) {
+      setShowConfirmOverwrite(true)
+      return
+    }
+
+    await performSubmit()
+  }
+
+  const performSubmit = async () => {
     const request = isEdit ? prepareUpdateRequest() : prepareCreateRequest()
     const mutation = isEdit ? updateAssetMutation : createAssetMutation
     const payload = isEdit ? { data: request } : request
@@ -91,6 +105,15 @@ export function useAssetSubmitHandlers({
     }
   }
 
+  const handleConfirmOverwrite = async () => {
+    setShowConfirmOverwrite(false)
+    await performSubmit()
+  }
+
+  const handleCancelOverwrite = () => {
+    setShowConfirmOverwrite(false)
+  }
+
   const handleCancel = () => {
     onOpenChange(false)
   }
@@ -98,5 +121,8 @@ export function useAssetSubmitHandlers({
   return {
     handleSubmit,
     handleCancel,
+    showConfirmOverwrite,
+    handleConfirmOverwrite,
+    handleCancelOverwrite
   }
 }

@@ -18,7 +18,11 @@ export function ImagePreviewCell({
   thumbnailUrl,
 }: ImagePreviewCellProps) {
   const [isOpen, setIsOpen] = useState(false)
+
+  const cacheBustKey = Date.now()
   const thumb = thumbnailUrl || imageUrl
+  const thumbWithCacheBust = thumb ? `${thumb}?t=${cacheBustKey}` : ''
+  const imageUrlWithCacheBust = imageUrl ? `${imageUrl}?t=${cacheBustKey}` : ''
 
   return (
     <>
@@ -29,7 +33,7 @@ export function ImagePreviewCell({
         >
           {thumb ? (
             <img
-              src={thumb}
+              src={thumbWithCacheBust}
               alt={fileName}
               className='h-full w-full object-cover'
               onError={(e) => {
@@ -56,7 +60,7 @@ export function ImagePreviewCell({
           </DialogHeader>
           <div className='flex items-center justify-center'>
             <img
-              src={imageUrl}
+              src={imageUrlWithCacheBust}
               alt={fileName}
               className='max-h-[70vh] w-auto rounded-lg'
             />
