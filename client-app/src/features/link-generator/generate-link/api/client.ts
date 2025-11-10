@@ -8,6 +8,8 @@ import type {
   ComponentInfo,
   LandingPageOption,
   DomainInfo,
+  InsertLinkRequest,
+  InsertLinkResponse,
 } from '../types'
 import type { IAxiosResponse } from '@/lib/api/types'
 
@@ -104,6 +106,14 @@ export const linkGeneratorApi = {
         shortLink: `https://short.link/${Math.random().toString(36).substring(7)}`,
       },
     }
+  },
+
+  async insertLink(data: InsertLinkRequest): Promise<InsertLinkResponse> {
+    const response = await apiClient.post<InsertLinkResponse>(
+      '/generate-link/insert',
+      data
+    )
+    return response.data
   },
 }
 

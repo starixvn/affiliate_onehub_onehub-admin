@@ -15,5 +15,7 @@ public class LandingPageOption
     public string MarketId { get; set; } = string.Empty;
 
     public int CampaignId { get; set; }
+
+    public string CampaignCode { get; set; } = string.Empty;
 }
 

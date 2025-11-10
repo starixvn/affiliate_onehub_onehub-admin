@@ -35,5 +35,8 @@
     <Function Name="Domain">
         <Setting Key="OH_Domain_Sel" SpName="OH_Domain_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
+    <Function Name="GenerateLink">
+        <Setting Key="OH_LinkGenerator_Ins" SpName="OH_LinkGenerator_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
 </Functions>
 

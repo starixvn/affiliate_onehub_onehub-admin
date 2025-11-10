@@ -1,19 +1,37 @@
+import { useEffect } from 'react'
 import { Controller, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
+import { Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
 import { useGenerateLink, type DialogType } from './generate-link-provider'
 import { useGetDomains } from '../api/queries'
-import type { CampaignInfo, LandingPageOption } from '../types'
+import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo } from '../types'
+import { FormFieldError } from './form-field-error'
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
   const { form, campaigns, countries, languages, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
-  const { register, control } = form
+  const { register, control, formState: { errors } } = form
 
   const selectedCountryCode = useWatch({ control, name: 'country' })
   const selectedLandingPageCode = useWatch({ control, name: 'landingPage' })
+  const selectedEventIds = useWatch({ control, name: 'event' })
+
+  useEffect(() => {
+    if (selectedEventIds && events) {
+      const eventIdArray = selectedEventIds.split(',').filter(Boolean)
+      const eventCodesList = eventIdArray.map(id => {
+        const event = events.find((e: ComponentInfo) => e.componentId === parseInt(id))
+        return event?.componentCode || ''
+      }).filter(Boolean)
+      form.setValue('eventCodes', eventCodesList.join(','))
+    } else {
+      form.setValue('eventCodes', '')
+    }
+  }, [selectedEventIds, events, form])
 
   const selectedLandingPage = landingPages && selectedLandingPageCode
     ? Object.values(landingPages).flat().find((lp) => lp.pageCode === selectedLandingPageCode)
@@ -29,10 +47,11 @@ export function GenerateLinkForm() {
     setDialogOpen(type)
   }
 
-  const handleLandingPageChange = (option: LandingPageOption | null) => {
+  const handleLandingPageChange = (_value: string, option?: LandingPageOption | null) => {
     if (option) {
       if (option.campaignId) {
         form.setValue('campaign', String(option.campaignId))
+        form.setValue('campaignCode', option.campaignCode)
       }
       if (option.targetCountryCode) {
         form.setValue('country', String(option.targetCountryCode))
@@ -40,6 +59,42 @@ export function GenerateLinkForm() {
       if (option.marketId) {
         form.setValue('language', String(option.marketId))
       }
+      if (option.pageType) {
+        form.setValue('pageType', option.pageType)
+      }
+      if (option.pageCode) {
+        form.setValue('pageCode', option.pageCode)
+      }
+    }
+  }
+
+  const handleCampaignChange = (_value: string, option?: CampaignInfo | null) => {
+    if (option?.campaignCode) {
+      form.setValue('campaignCode', option.campaignCode)
+    }
+  }
+
+  const handleGroupChange = (_value: string, option?: ComponentInfo | null) => {
+    if (option?.componentCode) {
+      form.setValue('groupCode', option.componentCode)
+    }
+  }
+
+  const handleChannelChange = (_value: string, option?: ComponentInfo | null) => {
+    if (option?.componentCode) {
+      form.setValue('channelCode', option.componentCode)
+    }
+  }
+
+  const handleAgencyChange = (_value: string, option?: ComponentInfo | null) => {
+    if (option?.componentCode) {
+      form.setValue('agencyCode', option.componentCode)
+    }
+  }
+
+  const handleTypeChange = (_value: string, option?: ComponentInfo | null) => {
+    if (option?.componentCode) {
+      form.setValue('typeCode', option.componentCode)
     }
   }
 
@@ -52,7 +107,7 @@ export function GenerateLinkForm() {
 
       <div className='border rounded-lg p-2 sm:p-4'>
         <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='linkName' className='text-sm'>
               {t('form.linkName')} <span className='text-destructive'>{t('form.requiredField')}</span>
             </Label>
@@ -61,22 +116,24 @@ export function GenerateLinkForm() {
               placeholder={t('form.linkNamePlaceholder')}
               {...register('linkName')}
             />
+            <FormFieldError message={errors.linkName?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='identifierCode' className='text-sm'>{t('form.identifierCode')}</Label>
             <Input
               id='identifierCode'
               placeholder={t('form.identifierCodePlaceholder')}
               {...register('identifierCode')}
             />
+            <FormFieldError message={errors.identifierCode?.message} />
           </div>
         </div>
       </div>
 
       <div className='grid gap-2 sm:gap-4 md:grid-cols-2'>
-        <div className='border rounded-lg p-4 space-y-3 sm:space-y-4'>
-          <div className='space-y-2'>
+        <div className='border rounded-lg p-4 space-y-2.5'>
+          <div className='space-y-1.5'>
             <Label htmlFor='landingPage' className='text-sm'>{t('form.landingPage')}</Label>
             <Controller
               name='landingPage'
@@ -84,27 +141,33 @@ export function GenerateLinkForm() {
               render={({ field }) => (
                 <SingleSelect<LandingPageOption>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleLandingPageChange(value, option)
+                  }}
                   options={landingPages || {}}
                   labelKey='pageName'
                   valueKey='pageCode'
                   placeholder={t('form.landingPagePlaceholder')}
                   searchPlaceholder='Search landing page...'
-                  onSelectedOptionChange={handleLandingPageChange}
                 />
               )}
             />
+            <FormFieldError message={errors.landingPage?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='campaign' className='text-sm'>{t('form.campaign')}</Label>
             <Controller
               name='campaign'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<CampaignInfo>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleCampaignChange(value, option)
+                  }}
                   options={campaigns || []}
                   labelKey='campaignName'
                   valueKey='campaignId'
@@ -118,9 +181,10 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.campaign?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='country' className='text-sm'>{t('form.country')}</Label>
             <Controller
               name='country'
@@ -137,9 +201,10 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.country?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='language' className='text-sm'>{t('form.language')}</Label>
             <Controller
               name='language'
@@ -156,9 +221,10 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.language?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='domainName' className='text-sm'>{t('form.domainName')}</Label>
             <div className='flex flex-col sm:flex-row gap-2'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
@@ -174,26 +240,41 @@ export function GenerateLinkForm() {
                       valueKey='domainName'
                       placeholder={t('form.domainNamePlaceholder')}
                       searchPlaceholder='Search domain...'
+                      formatOptionLabel={(option) => {
+                        const domain = option as DomainInfo
+                        return `${domain.domainName} --- (Score: ${domain.score})`
+                      }}
                     />
                   )}
                 />
               </div>
-              <Input
-                id='domainReservedNote'
-                placeholder={t('form.domainReservedNotePlaceholder')}
-                {...register('domainReservedNote')}
-                className='flex-1'
-                required
-              />
+              <div className='relative flex-1'>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Info className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help' />
+                  </TooltipTrigger>
+                  <TooltipContent side='top'>
+                    <p>Customized the last part of your short link. Use 5-20 characters, including letters and numbers.</p>
+                  </TooltipContent>
+                </Tooltip>
+                <Input
+                  id='domainReservedNote'
+                  placeholder={t('form.domainReservedNotePlaceholder')}
+                  {...register('domainReservedNote')}
+                  className='pl-9'
+                  required
+                />
+              </div>
             </div>
+            <FormFieldError message={errors.domainName?.message || errors.domainReservedNote?.message} />
           </div>
 
-          <div className='space-y-2'>
-            <Label htmlFor='shortLinkName' className='text-sm'>{t('form.shortLinkName')}</Label>
+          <div className='space-y-1.5'>
+            <Label htmlFor='shortDomain' className='text-sm'>{t('form.shortLinkName')}</Label>
             <div className='flex flex-col sm:flex-row gap-1'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
-                  name='shortLinkName'
+                  name='shortDomain'
                   control={control}
                   render={({ field }) => (
                     <SingleSelect
@@ -204,6 +285,10 @@ export function GenerateLinkForm() {
                       valueKey='domainName'
                       placeholder={t('form.shortLinkNamePlaceholder')}
                       searchPlaceholder='Search short link...'
+                      formatOptionLabel={(option) => {
+                        const domain = option as DomainInfo
+                        return `${domain.domainName} --- (Score: ${domain.score})`
+                      }}
                     />
                   )}
                 />
@@ -211,26 +296,27 @@ export function GenerateLinkForm() {
               <div className='flex items-center gap-1 flex-1'>
                 <span className='text-muted-foreground hidden sm:inline'>/</span>
                 <Input
-                  id='shortLinkValue'
+                  id='custom-short-link'
                   placeholder={t('form.shortLinkValuePlaceholder')}
-                  {...register('shortLinkValue')}
+                  {...register('shortPath')}
                   className='flex-1 min-w-0'
                 />
               </div>
             </div>
+            <FormFieldError message={errors.shortDomain?.message || errors.shortPath?.message} />
           </div>
         </div>
 
-        <div className='border rounded-lg p-4 space-y-3 sm:space-y-4'>
-          <div className='space-y-2'>
+        <div className='border rounded-lg p-4 space-y-2.5'>
+          <div className='space-y-1.5'>
             <Label htmlFor='event' className='text-sm'>{t('form.event')}</Label>
             <Controller
               name='event'
               control={control}
               render={({ field }) => (
                 <MultipleSelect
-                  value={Array.isArray(field.value) ? field.value : []}
-                  onValueChange={field.onChange}
+                  value={field.value ? field.value.split(',') : []}
+                  onValueChange={(value) => field.onChange(value.join(','))}
                   options={events || []}
                   labelKey='componentName'
                   valueKey='componentId'
@@ -241,17 +327,21 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.event?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='group' className='text-sm'>{t('form.group')}</Label>
             <Controller
               name='group'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<ComponentInfo>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleGroupChange(value, option)
+                  }}
                   options={groups || []}
                   labelKey='componentName'
                   valueKey='componentId'
@@ -261,17 +351,21 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.group?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='channel' className='text-sm'>{t('form.channel')}</Label>
             <Controller
               name='channel'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<ComponentInfo>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleChannelChange(value, option)
+                  }}
                   options={channels || []}
                   labelKey='componentName'
                   valueKey='componentId'
@@ -281,17 +375,21 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.channel?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='agency' className='text-sm'>{t('form.agency')}</Label>
             <Controller
               name='agency'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<ComponentInfo>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleAgencyChange(value, option)
+                  }}
                   options={agencies || []}
                   labelKey='componentName'
                   valueKey='componentId'
@@ -301,17 +399,21 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.agency?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='type' className='text-sm'>{t('form.type')}</Label>
             <Controller
               name='type'
               control={control}
               render={({ field }) => (
-                <SingleSelect
+                <SingleSelect<ComponentInfo>
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value, option) => {
+                    field.onChange(value)
+                    handleTypeChange(value, option)
+                  }}
                   options={types || []}
                   labelKey='componentName'
                   valueKey='componentId'
@@ -321,15 +423,17 @@ export function GenerateLinkForm() {
                 />
               )}
             />
+            <FormFieldError message={errors.type?.message} />
           </div>
 
-          <div className='space-y-2'>
+          <div className='space-y-1.5'>
             <Label htmlFor='note' className='text-sm'>{t('form.note')}</Label>
             <Input
               id='note'
               placeholder={t('form.notePlaceholder')}
               {...register('note')}
             />
+            <FormFieldError message={errors.note?.message} />
           </div>
         </div>
       </div>

@@ -40,6 +40,7 @@ export type LandingPageOption = {
   targetCountryCode: number
   marketId: number
   campaignId: number
+  campaignCode: string
 }
 
 export type LandingPageGroup = {
@@ -65,8 +66,8 @@ export interface GenerateLinkFormData {
   event: string[]
   domainName: string
   domainNote: string
-  shortLinkName: string
-  shortLinkValue: string
+  shortDomain: string
+  shortPath: string
   channel: string
   type: string
   agency: string
@@ -84,4 +85,39 @@ export interface GeneratedLinkResult {
 }
 
 export type GenerateLinkResponse = IAxiosResponse<GeneratedLinkResult>
+
+export interface InsertLinkRequest {
+  linkName: string
+  identifierCode?: string
+  campaignId: number
+  campaignCode: string
+  countryCode: string
+  marketId: string
+  eventIds: string
+  eventCodes: string
+  groupId: number
+  groupCode: string
+  channelId: number
+  channelCode: string
+  agencyId: number
+  agencyCode: string
+  typeId: number
+  typeCode: string
+  landingPage: string
+  pageType: number
+  pageCode: string
+  domainName: string
+  domainNote: string
+  shortDomain: string
+  shortPath: string
+  note?: string
+}
+
+export interface LinkGeneratedResult {
+  idCode: string
+  fullLink: string
+  shortLink: string
+}
+
+export type InsertLinkResponse = IAxiosResponse<LinkGeneratedResult>
 

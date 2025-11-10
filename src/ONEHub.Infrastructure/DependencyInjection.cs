@@ -45,6 +45,7 @@ public static class DependencyInjection
         services.AddSingleton<IDomainRepository, DomainRepository>();
         services.AddSingleton<ILandingPageRepository, LandingPageRepository>();
         services.AddSingleton<ISettingsRepository, SettingsRepository>();
+        services.AddSingleton<ILinkGeneratorRepository, LinkGeneratorRepository>();
 
         return services;
     }

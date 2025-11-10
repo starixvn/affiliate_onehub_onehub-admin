@@ -20,7 +20,7 @@ import type { SelectOption } from './select-types'
 
 interface SingleSelectProps<T extends SelectOption = SelectOption> {
   value?: string
-  onValueChange: (value: string) => void
+  onValueChange: (value: string, option?: T | null) => void
   options: T[] | Record<string, T[]>
   labelKey: string
   valueKey: string
@@ -31,7 +31,6 @@ interface SingleSelectProps<T extends SelectOption = SelectOption> {
   createNewLabel?: string
   className?: string
   formatOptionLabel?: (option: T) => string
-  onSelectedOptionChange?: (option: T | null) => void
 }
 
 function isGroupedOptions<T extends SelectOption>(options: T[] | Record<string, T[]>): options is Record<string, T[]> {
@@ -51,7 +50,6 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
   createNewLabel = 'Create new...',
   className,
   formatOptionLabel,
-  onSelectedOptionChange,
 }: SingleSelectProps<T>) {
   const [open, setOpen] = useState(false)
 
@@ -79,11 +77,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
     const optionValue = getValue(selectedOption)
     const newValue = optionValue === value ? '' : optionValue
 
-    onValueChange(newValue)
-
-    if (onSelectedOptionChange) {
-      onSelectedOptionChange(newValue ? selectedOption : null)
-    }
+    onValueChange(newValue, newValue ? selectedOption : null)
 
     setOpen(false)
   }

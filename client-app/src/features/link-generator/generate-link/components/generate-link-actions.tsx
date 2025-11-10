@@ -3,13 +3,53 @@ import { useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useGenerateLink } from './generate-link-provider'
+import { useInsertLink } from '../api/commands'
+import type { InsertLinkRequest } from '../types'
 
 export function GenerateLinkActions() {
   const { t } = useTranslation('link-generator')
-  const { form } = useGenerateLink()
+  const { form, setGeneratedResult, generatedResult } = useGenerateLink()
   const navigate = useNavigate()
+  const insertLinkMutation = useInsertLink()
 
-  const handleGenerateLink = form.handleSubmit((_data) => {
+  const handleGenerateLink = form.handleSubmit((data) => {
+    const request: InsertLinkRequest = {
+      linkName: data.linkName,
+      identifierCode: data.identifierCode || undefined,
+      campaignId: parseInt(data.campaign) || 0,
+      campaignCode: data.campaignCode,
+      countryCode: data.country || '',
+      marketId: data.language || '',
+      eventIds: data.event || '',
+      eventCodes: data.eventCodes,
+      groupId: parseInt(data.group) || 0,
+      groupCode: data.groupCode,
+      channelId: parseInt(data.channel) || 0,
+      channelCode: data.channelCode,
+      agencyId: parseInt(data.agency) || 0,
+      agencyCode: data.agencyCode,
+      typeId: parseInt(data.type) || 0,
+      typeCode: data.typeCode,
+      landingPage: data.landingPage || '',
+      pageType: data.pageType,
+      pageCode: data.pageCode || '',
+      domainName: data.domainName,
+      domainNote: data.domainReservedNote,
+      shortDomain: data.shortDomain,
+      shortPath: data.shortPath || '',
+      note: data.note || '',
+    }
+
+    insertLinkMutation.mutate(request, {
+      onSuccess: (response) => {
+        if (response.errorCode === 0 && response.data) {
+          if (response.data.idCode && !data.identifierCode) {
+            form.setValue('identifierCode', response.data.idCode)
+          }
+          setGeneratedResult(response.data)
+        }
+      },
+    })
   })
 
   const handleGoToLinkManagement = () => {
@@ -18,13 +58,20 @@ export function GenerateLinkActions() {
 
   const handleReset = () => {
     form.reset()
+    setGeneratedResult(null)
   }
 
   return (
     <div className='flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2'>
-      <Button onClick={handleGenerateLink} className='w-full sm:w-auto'>
+      <Button
+        onClick={handleGenerateLink}
+        className='w-full sm:w-auto'
+        disabled={insertLinkMutation.isPending || !!generatedResult}
+      >
         <Link className='h-4 w-4 sm:mr-2' />
-        <span className='hidden sm:inline'>{t('buttons.generateLink')}</span>
+        <span className='hidden sm:inline'>
+          {insertLinkMutation.isPending ? 'Generating...' : t('buttons.generateLink')}
+        </span>
       </Button>
       <Button onClick={handleGoToLinkManagement} className='w-full sm:w-auto'>
         <SquareArrowOutUpRight className='h-4 w-4 sm:mr-2' />

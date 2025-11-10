@@ -13,7 +13,7 @@ import {
   useGetLandingPages,
 } from '../api/queries'
 import { generateLinkFormSchema, type GenerateLinkFormValues } from '../data/schema'
-import type { CampaignInfo, TargetCountry, Market, ComponentInfo, LandingPageOption } from '../types'
+import type { CampaignInfo, TargetCountry, Market, ComponentInfo, LandingPageOption, LinkGeneratedResult } from '../types'
 import useDialogState from '@/hooks/use-dialog-state'
 
 export type DialogType = 'campaign' | 'group' | 'channel' | 'type' | 'agency' | 'event'
@@ -33,6 +33,8 @@ type GenerateLinkContextType = {
   isError: boolean
   dialogOpen: DialogType | null
   setDialogOpen: (type: DialogType | null) => void
+  generatedResult: LinkGeneratedResult | null
+  setGeneratedResult: (result: LinkGeneratedResult | null) => void
 }
 
 const GenerateLinkContext = React.createContext<GenerateLinkContextType | null>(null)
@@ -53,6 +55,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const { data: landingPages, isLoading: isLoadingLandingPages, isError: isErrorLandingPages } = useGetLandingPages()
 
   const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
+  const [generatedResult, setGeneratedResult] = React.useState<LinkGeneratedResult | null>(null)
 
   const isLoading =
     isLoadingCampaigns ||
@@ -82,18 +85,26 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
       linkName: '',
       identifierCode: '',
       campaign: '',
+      campaignCode: '',
       country: '',
       language: '',
       group: '',
+      groupCode: '',
       event: '',
+      eventCodes: '',
       domainName: '',
       domainReservedNote: '',
-      shortLinkName: '',
-      shortLinkValue: '',
+      shortDomain: '',
+      shortPath: '',
       channel: '',
+      channelCode: '',
       type: '',
+      typeCode: '',
       agency: '',
+      agencyCode: '',
       landingPage: '',
+      pageType: 0,
+      pageCode: '',
       note: '',
     },
   })
@@ -115,6 +126,8 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
         isError,
         dialogOpen,
         setDialogOpen,
+        generatedResult,
+        setGeneratedResult,
       }}
     >
       {children}

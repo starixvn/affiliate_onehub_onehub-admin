@@ -4,10 +4,11 @@ import { GenerateLinkProvider, useGenerateLink } from './components/generate-lin
 import { GenerateLinkForm } from './components/generate-link-form'
 import { GenerateLinkActions } from './components/generate-link-actions'
 import { GenerateLinkDialogs } from './components/dialogs/generate-link-dialogs'
+import { GenerateLinkResult } from './components/generate-link-result'
 
 function GenerateLinkContent() {
   const { t } = useTranslation('link-generator')
-  const { isLoading } = useGenerateLink()
+  const { isLoading, generatedResult } = useGenerateLink()
 
   if (isLoading) {
     return (
@@ -41,6 +42,7 @@ function GenerateLinkContent() {
         <GenerateLinkForm />
       </div>
       <GenerateLinkActions />
+      {generatedResult && <GenerateLinkResult result={generatedResult} />}
     </Main>
   )
 }
