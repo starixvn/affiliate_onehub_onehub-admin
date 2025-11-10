@@ -10,6 +10,18 @@
     "export": "Export",
     "create": "Create"
   },
+  "excel": {
+    "titlePrefix": "Components",
+    "searchPrefix": "Search",
+    "categoryPrefix": "Category",
+    "statusPrefix": "Status",
+    "devicePrefix": "Device",
+    "allComponents": "All Components",
+    "allCategories": "All Categories",
+    "allStatus": "All Status",
+    "allDevices": "All Devices",
+    "rowNumber": "#"
+  },
   "categoryFilters": {
     "event": {
       "title": "Event"

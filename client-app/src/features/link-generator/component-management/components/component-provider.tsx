@@ -1,8 +1,11 @@
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import useDialogState from '@/hooks/use-dialog-state'
 import { useGetComponentSummary, useGetComponents } from '../api/queries'
-import { type Component } from '../data/schema'
+import { componentApi } from '../api/client'
+import { formatComponentsForExcel } from './component-export-excel'
+import { type Component, componentSchema } from '../data/schema'
 import type { ComponentCategorySummary } from '../types'
 
 type ComponentsDialogType = 'create' | 'update' | 'delete'
@@ -43,6 +46,7 @@ export function ComponentsProvider({
   children,
   params,
 }: ComponentsProviderProps) {
+  const { t } = useTranslation('component-management')
   const [open, setOpen] = useDialogState<ComponentsDialogType>(null)
   const [currentRow, setCurrentRow] = useState<Component | null>(null)
   const { data: categorySummary } = useGetComponentSummary()
@@ -62,6 +66,14 @@ export function ComponentsProvider({
 
   const exportComponents = async () => {
     try {
+      const response = await componentApi.exportComponents({
+        ...params,
+        isExportExcel: true,
+      })
+
+      const transformedItems = response.data.items.map((item) => componentSchema.parse(item))
+
+      await formatComponentsForExcel(transformedItems, t, params)
       toast.success('Components exported successfully')
     } catch (error) {
       toast.error('Failed to export components')

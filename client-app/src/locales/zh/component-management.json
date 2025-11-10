@@ -9,6 +9,18 @@
     "export": "导出",
     "create": "创建"
   },
+  "excel": {
+    "titlePrefix": "组件",
+    "searchPrefix": "搜索",
+    "categoryPrefix": "类别",
+    "statusPrefix": "状态",
+    "devicePrefix": "设备",
+    "allComponents": "所有组件",
+    "allCategories": "所有类别",
+    "allStatus": "所有状态",
+    "allDevices": "所有设备",
+    "rowNumber": "#"
+  },
   "categoryFilters": {
     "event": {
       "title": "活动"
