@@ -106,11 +106,9 @@ export function ComponentCreateDialog() {
         deviceId: isLandingPage ? values.deviceId : undefined,
       },
       {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            form.reset()
-            setOpen(null)
-          }
+        onSuccess: () => {
+          form.reset()
+          setOpen(null)
         },
       }
     )

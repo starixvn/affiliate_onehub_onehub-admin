@@ -1,5 +1,6 @@
 using MediatR;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -64,9 +65,9 @@ public class GetCampaignListHandler(ICampaignRepository campaignRepository)
                 campaign.CampaignName,
                 campaign.Description,
                 campaign.Creator,
-                campaign.CreatedDate.ToString("yyyy-MM-dd"),
+                DateTimeUtils.FormatDateString(campaign.CreatedDate),
                 campaign.UpdatedBy,
-                campaign.UpdatedDate.ToString("yyyy-MM-dd"),
+                DateTimeUtils.FormatDateString(campaign.UpdatedDate),
                 campaign.StatusId,
                 campaign.Status,
                 campaign.RowIdx

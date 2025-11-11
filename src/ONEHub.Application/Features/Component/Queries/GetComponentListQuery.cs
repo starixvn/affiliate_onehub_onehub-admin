@@ -1,5 +1,6 @@
 using MediatR;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -10,13 +11,13 @@ namespace ONEHub.Application.Features.Component.Queries;
 
 public class GetComponentListQuery : PagingQuery<ComponentResponse>
 {
-    public string? Search { get; set; } = string.Empty;
+    public string? Search { get; set; }
 
-    public string? CategoryIds { get; set; } = string.Empty;
+    public string? CategoryIds { get; set; }
 
-    public string? StatusIds { get; set; } = string.Empty;
+    public string? StatusIds { get; set; }
 
-    public string? DeviceIds { get; set; } = string.Empty;
+    public string? DeviceIds { get; set; }
 
     public bool IsExportExcel { get; set; }
 }
@@ -72,9 +73,9 @@ public class GetComponentListHandler(IComponentRepository componentRepository)
                 component.ComponentName,
                 component.ComponentTypeId,
                 component.CreatedBy,
-                component.CreatedDate.ToString("yyyy-MM-dd"),
+                DateTimeUtils.FormatDateString(component.CreatedDate),
                 component.LastModifiedBy,
-                component.LastModifiedDate.ToString("yyyy-MM-dd"),
+                DateTimeUtils.FormatDateString(component.LastModifiedDate),
                 component.StatusId,
                 component.Status,
                 component.Device,
