@@ -231,8 +231,12 @@ export function ComponentCreateDialog() {
                         {t('dialog.form.device')}
                       </FormLabel>
                       <SelectDropdown
-                        defaultValue={String(field.value)}
-                        onValueChange={field.onChange}
+                        defaultValue={
+                          field.value !== undefined
+                            ? String(field.value)
+                            : undefined
+                        }
+                        onValueChange={(value) => field.onChange(Number(value))}
                         placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'
                         items={deviceTypes}
@@ -250,7 +254,10 @@ export function ComponentCreateDialog() {
             type='submit'
             form='component-form'
             disabled={
-              !watchCategory || !watchName || !watchCode || createMutation.isPending
+              !watchCategory ||
+              !watchName ||
+              !watchCode ||
+              createMutation.isPending
             }
           >
             {t('dialog.saveChanges')}

@@ -207,7 +207,7 @@ export const getComponentColumns = (
     )
 
     const deviceColumn: ColumnDef<Component> = {
-      accessorKey: 'deviceIds',
+      accessorKey: 'deviceId',
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}

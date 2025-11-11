@@ -1,6 +1,6 @@
 import { type StatusOption } from '@/components/ui/status-select'
 
-export const LANDING_PAGE_CATEGORY_ID = 6
+export const LANDING_PAGE_CATEGORY_ID = '6'
 
 export const status: StatusOption<string>[] = [
   {

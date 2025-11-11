@@ -12,16 +12,20 @@ export function useCreateComponent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: CreateComponentRequest) =>
-      componentApi.createComponent(data),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-        toast.success('Component created successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to create component')
+    mutationFn: async (data: CreateComponentRequest) => {
+      const response = await componentApi.createComponent(data)
+      if (response.errorCode !== 0) {
+        throw new Error(response.errorMessage || 'Failed to create component')
       }
+      return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
+      toast.success('Component created successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 }
@@ -30,16 +34,20 @@ export function useUpdateComponent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateComponentRequest }) =>
-      componentApi.updateComponent(id, data),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-        toast.success('Component updated successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to update component')
+    mutationFn: async ({ id, data }: { id: number; data: UpdateComponentRequest }) => {
+      const response = await componentApi.updateComponent(id, data)
+      if (response.errorCode !== 0) {
+        throw new Error(response.errorMessage || 'Failed to update component')
       }
+      return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
+      toast.success('Component updated successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 }
@@ -48,15 +56,20 @@ export function useDeleteComponent() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (id: number) => componentApi.deleteComponent(id),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-        toast.success('Component deleted successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to delete component')
+    mutationFn: async (id: number) => {
+      const response = await componentApi.deleteComponents(id)
+      if (response.errorCode !== 0) {
+        throw new Error(response.errorMessage || 'Failed to delete component')
       }
+      return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
+      toast.success('Component deleted successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 }
@@ -65,15 +78,20 @@ export function useDeleteComponents() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (ids: number[]) => componentApi.deleteComponents(ids),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-        toast.success('Components deleted successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to delete components')
+    mutationFn: async (ids: number[]) => {
+      const response = await componentApi.deleteComponents(ids)
+      if (response.errorCode !== 0) {
+        throw new Error(response.errorMessage || 'Failed to delete components')
       }
+      return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
+      toast.success('Components deleted successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 }
@@ -82,18 +100,20 @@ export function useUpdateBatchComponentStatus() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (data: UpdateBatchComponentStatusRequest) =>
-      componentApi.updateBatchComponentStatus(data),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
-        queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-        toast.success('Component statuses updated successfully')
-      } else {
-        toast.error(
-          response.errorMessage || 'Failed to update component statuses'
-        )
+    mutationFn: async (data: UpdateBatchComponentStatusRequest) => {
+      const response = await componentApi.updateBatchComponentStatus(data)
+      if (response.errorCode !== 0) {
+        throw new Error(response.errorMessage || 'Failed to update component statuses')
       }
+      return response
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
+      queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
+      toast.success('Component statuses updated successfully')
+    },
+    onError: (error: Error) => {
+      toast.error(error.message)
     },
   })
 }
