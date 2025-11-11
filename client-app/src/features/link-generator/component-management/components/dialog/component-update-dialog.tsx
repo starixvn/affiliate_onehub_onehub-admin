@@ -147,6 +147,7 @@ export function ComponentUpdateDialog() {
                       placeholder={t('dialog.form.categoryPlaceholder')}
                       className='col-span-4'
                       items={categories}
+                      disabled
                     />
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>

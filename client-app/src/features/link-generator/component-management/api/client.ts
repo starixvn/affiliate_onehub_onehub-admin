@@ -25,7 +25,7 @@ class ComponentApi {
   }
 
   async exportComponents(params?: GetComponentsRequest): Promise<GetComponentsResponse> {
-    const response = await apiClient.get<GetComponentsResponse>('/component', { params })
+    const response = await apiClient.get<GetComponentsResponse>('/component/export', { params })
     return response.data
   }
 

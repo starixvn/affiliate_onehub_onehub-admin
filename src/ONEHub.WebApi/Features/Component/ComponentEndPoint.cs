@@ -18,6 +18,7 @@ public static class ComponentEndPoint
 
         groupEndpoint.MapGet("/summary", Summary);
         groupEndpoint.MapGet("/", GetList);
+        groupEndpoint.MapGet("/export", ExportList);
         groupEndpoint.MapPost("/", Create);
         groupEndpoint.MapPut("/{id}", Update);
         groupEndpoint.MapPut("/status/batch", UpdateBatchStatus);
@@ -55,6 +56,25 @@ public static class ComponentEndPoint
 
         var result = await mediator.Send(query);
 
+        return TypedResults.Ok(result);
+    }
+
+    private static async Task<Results<Ok<Result<PagingData<ComponentResponse>>>, ValidationProblem>> ExportList(
+        [AsParameters] GetComponentListRequest request,
+        IMediator mediator)
+    {
+        var query = new GetComponentListQuery
+        {
+            PageSize = int.MaxValue,
+            PageIndex = 1,
+            Search = request.Search,
+            CategoryIds = request.Category,
+            StatusIds = request.Status,
+            DeviceIds = request.DeviceIds,
+            IsExportExcel = true
+        };
+
+        var result = await mediator.Send(query);
         return TypedResults.Ok(result);
     }
 

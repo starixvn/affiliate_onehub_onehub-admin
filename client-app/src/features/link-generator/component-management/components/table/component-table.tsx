@@ -22,9 +22,9 @@ import {
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { deviceTypes, LANDING_PAGE_CATEGORY_ID, status } from '../../data/data'
 import { type Component } from '../../data/schema'
+import { ComponentMultiDeleteDialog } from '../dialog/component-multi-delete-dialog'
 import { ComponentBulkActions } from './component-bulk-actions'
 import { getComponentColumns } from './component-columns'
-import { ComponentMultiDeleteDialog } from '../dialog/component-multi-delete-dialog'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
