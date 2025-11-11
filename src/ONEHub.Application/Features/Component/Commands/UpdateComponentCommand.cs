@@ -19,7 +19,7 @@ public class UpdateComponentCommand : BaseNonResultCommand
     public int? DeviceId { get; set; }
 }
 
-public class UpdateCampaignHandler(
+public class UpdateComponentHandler(
     IComponentRepository componentRepository)
     : IRequestHandler<UpdateComponentCommand, Result>
 {

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import type {
   CreateComponentRequest,
@@ -10,6 +11,7 @@ import { componentKeys } from './queries'
 
 export function useCreateComponent() {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('component-management')
 
   return useMutation({
     mutationFn: async (data: CreateComponentRequest) => {
@@ -22,16 +24,18 @@ export function useCreateComponent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-      toast.success('Component created successfully')
+      toast.success(t('toast.createSuccess'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      toast.error(message)
     },
   })
 }
 
 export function useUpdateComponent() {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('component-management')
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: number; data: UpdateComponentRequest }) => {
@@ -44,16 +48,18 @@ export function useUpdateComponent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-      toast.success('Component updated successfully')
+      toast.success(t('toast.updateSuccess'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      toast.error(message)
     },
   })
 }
 
 export function useDeleteComponent() {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('component-management')
 
   return useMutation({
     mutationFn: async (id: number) => {
@@ -66,16 +72,18 @@ export function useDeleteComponent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-      toast.success('Component deleted successfully')
+      toast.success(t('toast.deleteSuccess'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      toast.error(message)
     },
   })
 }
 
 export function useDeleteComponents() {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('component-management')
 
   return useMutation({
     mutationFn: async (ids: number[]) => {
@@ -88,16 +96,18 @@ export function useDeleteComponents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-      toast.success('Components deleted successfully')
+      toast.success(t('toast.deleteMultipleSuccess'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      toast.error(message)
     },
   })
 }
 
 export function useUpdateBatchComponentStatus() {
   const queryClient = useQueryClient()
+  const { t } = useTranslation('component-management')
 
   return useMutation({
     mutationFn: async (data: UpdateBatchComponentStatusRequest) => {
@@ -110,10 +120,11 @@ export function useUpdateBatchComponentStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: componentKeys.lists() })
       queryClient.invalidateQueries({ queryKey: componentKeys.summary() })
-      toast.success('Component statuses updated successfully')
+      toast.success(t('toast.updateStatusSuccess'))
     },
-    onError: (error: Error) => {
-      toast.error(error.message)
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      toast.error(message)
     },
   })
 }

@@ -38,6 +38,10 @@ export function ComponentMultiDeleteDialog({
 
     const componentIds = selectedRows.map((row) => row.original.componentId)
 
+    if (componentIds.length === 0) {
+      return
+    }
+
     deleteMutation.mutate(componentIds, {
       onSuccess: (response) => {
         if (response.errorCode === 0) {

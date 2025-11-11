@@ -58,7 +58,8 @@ export function CampaignUpdateDialog() {
     if (currentRow && open === 'update') {
       form.reset(currentRow)
     }
-  }, [currentRow, form, open])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRow, open])
 
   const onSubmit = (values: CampaignForm) => {
     if (currentRow) {

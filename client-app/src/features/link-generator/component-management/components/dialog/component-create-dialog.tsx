@@ -231,11 +231,7 @@ export function ComponentCreateDialog() {
                         {t('dialog.form.device')}
                       </FormLabel>
                       <SelectDropdown
-                        defaultValue={
-                          field.value !== undefined
-                            ? String(field.value)
-                            : undefined
-                        }
+                        defaultValue={field.value ? String(field.value) : '1'}
                         onValueChange={(value) => field.onChange(Number(value))}
                         placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'

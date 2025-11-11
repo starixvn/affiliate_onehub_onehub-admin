@@ -201,31 +201,34 @@ export const getComponentColumns = (
   },
 ]
 
+  const deviceColumn: ColumnDef<Component> = {
+    accessorKey: 'deviceId',
+    header: ({ column }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('table.columns.device')}
+      />
+    ),
+    cell: ComponentDeviceCell,
+    meta: {
+      displayName: t('table.columns.device'),
+      className: 'w-40',
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(String(row.getValue(id)))
+    },
+    enableSorting: false,
+  }
+
   if (isLandingPage) {
     const statusIndex = allColumns.findIndex(
       (col) => 'accessorKey' in col && col.accessorKey === 'status'
     )
-
-    const deviceColumn: ColumnDef<Component> = {
-      accessorKey: 'deviceId',
-      header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.device')}
-        />
-      ),
-      cell: ComponentDeviceCell,
-      meta: {
-        displayName: t('table.columns.device'),
-        className: 'w-40',
-      },
-      filterFn: (row, id, value) => {
-        return value.includes(String(row.getValue(id)))
-      },
-      enableSorting: false,
-    }
-
-    allColumns.splice(statusIndex, 0, deviceColumn)
+    return [
+      ...allColumns.slice(0, statusIndex),
+      deviceColumn,
+      ...allColumns.slice(statusIndex),
+    ]
   }
 
   return allColumns

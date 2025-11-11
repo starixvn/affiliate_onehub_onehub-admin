@@ -14,10 +14,8 @@ export function ComponentDeleteDialog() {
     if (!currentRow) return
 
     deleteMutation.mutate(currentRow.componentId, {
-      onSuccess: (response) => {
-        if (response.errorCode === 0) {
-          setOpen(null)
-        }
+      onSuccess: () => {
+        setOpen(null)
       },
     })
   }

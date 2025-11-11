@@ -10,6 +10,14 @@
     "export": "Export",
     "create": "Create"
   },
+  "toast": {
+    "createSuccess": "Component created successfully",
+    "updateSuccess": "Component updated successfully",
+    "deleteSuccess": "Component deleted successfully",
+    "deleteMultipleSuccess": "Components deleted successfully",
+    "updateStatusSuccess": "Component statuses updated successfully",
+    "unknownError": "An unexpected error occurred"
+  },
   "excel": {
     "titlePrefix": "Components",
     "searchPrefix": "Search",

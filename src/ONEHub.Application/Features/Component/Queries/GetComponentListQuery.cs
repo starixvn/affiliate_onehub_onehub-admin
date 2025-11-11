@@ -82,8 +82,8 @@ public class GetComponentListHandler(IComponentRepository componentRepository)
                 component.RowIdx
             )).ToList(),
             TotalItem = componentListResult.Data.TotalItem,
-            PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageIndex = componentListResult.Data.PageIndex,
+            PageSize = componentListResult.Data.PageSize
         };
 
         return Result<PagingData<ComponentResponse>>.Success(result);
