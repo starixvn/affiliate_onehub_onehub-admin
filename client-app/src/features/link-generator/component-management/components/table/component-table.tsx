@@ -143,7 +143,7 @@ export function ComponentTable({
       const statusValues = (search.status as string).split(',')
       statusColumn.setFilterValue(statusValues)
     } else if (statusColumn && !search.status) {
-      statusColumn.setFilterValue(undefined)
+      statusColumn.setFilterValue(['1'])
     }
   }, [search.status, table])
 
@@ -156,7 +156,7 @@ export function ComponentTable({
           label,
           value,
         })),
-        defaultValue: undefined,
+        defaultValue: ['1'],
       },
       {
         columnId: 'deviceIds',
