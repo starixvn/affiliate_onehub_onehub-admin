@@ -64,6 +64,7 @@ export function ComponentCreateDialog() {
 
   const watchCategory = form.watch('categoryId')
   const watchName = form.watch('componentName')
+  const watchCode = form.watch('componentCode')
   const isLandingPage = watchCategory === LANDING_PAGE_CATEGORY_ID
 
   useEffect(() => {
@@ -248,7 +249,9 @@ export function ComponentCreateDialog() {
           <Button
             type='submit'
             form='component-form'
-            disabled={!form.formState.isValid || createMutation.isPending}
+            disabled={
+              !watchCategory || !watchName || !watchCode || createMutation.isPending
+            }
           >
             {t('dialog.saveChanges')}
           </Button>
