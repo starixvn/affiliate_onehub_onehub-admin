@@ -10,7 +10,7 @@ public class InsertLinkCommand : BaseCommand
 
     public string LinkName { get; set; } = string.Empty;
 
-    public string? IDCode { get; set; } = string.Empty;
+    public string? IDCode { get; set; }
 
     public int CampaignId { get; set; }
 

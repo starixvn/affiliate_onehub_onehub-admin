@@ -1,3 +1,4 @@
+using System.Text;
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
@@ -12,7 +13,7 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
 {
     public string LinkName { get; set; } = string.Empty;
 
-    public string? IdentifierCode { get; set; } = string.Empty;
+    public string? IdentifierCode { get; set; }
 
     public int CampaignId { get; set; }
 
@@ -56,7 +57,7 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
 
     public string ShortPath { get; set; } = string.Empty;
 
-    public string? Note { get; set; } = string.Empty;
+    public string? Note { get; set; }
 }
 
 public class InsertLinkCommandHandler(
@@ -159,15 +160,23 @@ public class InsertLinkCommandHandler(
     private static string ConvertToBase36(long value)
     {
         const string Chars = "0123456789abcdefghijklmnopqrstuvwxyz";
-        var result = string.Empty;
+
+        if (value == 0)
+        {
+            return "0";
+        }
+
+        var result = new StringBuilder();
 
         while (value > 0)
         {
-            result = Chars[(int)(value % 36)] + result;
+            result.Append(Chars[(int)(value % 36)]);
             value /= 36;
         }
 
-        return string.IsNullOrEmpty(result) ? "0" : result;
+        var chars = result.ToString().ToCharArray();
+        Array.Reverse(chars);
+        return new string(chars);
     }
 
     private static string BuildFullLink(InsertLinkCommand request, string? idCode = null)
