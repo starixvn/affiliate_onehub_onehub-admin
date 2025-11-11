@@ -48,9 +48,9 @@ export function ComponentDeleteDialog() {
           </p>
 
           <Alert variant='destructive'>
-            <AlertTitle>{t('dialog.multiDelete.warning')}</AlertTitle>
+            <AlertTitle>{t('deleteDialog.warning')}</AlertTitle>
             <AlertDescription>
-              {t('dialog.multiDelete.warningMessage')}
+              {t('deleteDialog.warningMessage')}
             </AlertDescription>
           </Alert>
         </div>

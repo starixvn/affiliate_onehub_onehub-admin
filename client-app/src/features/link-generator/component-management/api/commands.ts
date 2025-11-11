@@ -57,7 +57,7 @@ export function useDeleteComponent() {
 
   return useMutation({
     mutationFn: async (id: number) => {
-      const response = await componentApi.deleteComponents(id)
+      const response = await componentApi.deleteComponents({ componentIds: String(id) })
       if (response.errorCode !== 0) {
         throw new Error(response.errorMessage || 'Failed to delete component')
       }
@@ -79,7 +79,7 @@ export function useDeleteComponents() {
 
   return useMutation({
     mutationFn: async (ids: number[]) => {
-      const response = await componentApi.deleteComponents(ids)
+      const response = await componentApi.deleteComponents({ componentIds: ids.join(',') })
       if (response.errorCode !== 0) {
         throw new Error(response.errorMessage || 'Failed to delete components')
       }

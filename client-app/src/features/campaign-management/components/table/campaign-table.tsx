@@ -126,7 +126,7 @@ export function CampaignTable({
       <DataTableToolbar
         table={table}
         searchPlaceholder={t('table.search')}
-        searchClassName='w-[250px] lg:w-[350px]'
+        searchClassName='w-[250px] lg:w-[400px]'
         filters={[]}
         submitLabel={t('searchToolbar.submit')}
         initialSearchValue={(search.search as string) ?? ''}

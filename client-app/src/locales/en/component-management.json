@@ -139,6 +139,8 @@
   "deleteDialog": {
     "title": "Delete Component",
     "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "warning": "Warning!",
+    "warningMessage": "Please be careful, this operation cannot be rolled back.",
     "multiTitle_one": "Delete {{count}} component",
     "multiTitle_other": "Delete {{count}} components",
     "multiDescription_one": "Are you sure you want to delete {{count}} component? This action cannot be undone.",

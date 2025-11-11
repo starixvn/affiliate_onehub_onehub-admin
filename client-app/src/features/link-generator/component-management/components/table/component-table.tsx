@@ -128,7 +128,7 @@ export function ComponentTable({
   })
 
   useEffect(() => {
-    const deviceColumn = table.getColumn('deviceIds')
+    const deviceColumn = table.getColumn('deviceId')
     if (deviceColumn && search.deviceIds) {
       const deviceValues = (search.deviceIds as string).split(',')
       deviceColumn.setFilterValue(deviceValues)
@@ -142,6 +142,8 @@ export function ComponentTable({
     if (statusColumn && search.status) {
       const statusValues = (search.status as string).split(',')
       statusColumn.setFilterValue(statusValues)
+    } else if (statusColumn && search.status === '') {
+      statusColumn.setFilterValue(undefined)
     } else if (statusColumn && !search.status) {
       statusColumn.setFilterValue(['1'])
     }
@@ -159,7 +161,7 @@ export function ComponentTable({
         defaultValue: ['1'],
       },
       {
-        columnId: 'deviceIds',
+        columnId: 'deviceId',
         title: 'Device',
         options: deviceTypes.map(({ label, value }) => ({
           label,
@@ -192,13 +194,13 @@ export function ComponentTable({
             | string[]
             | undefined
           const deviceFilter = table
-            .getColumn('deviceIds')
+            .getColumn('deviceId')
             ?.getFilterValue() as string[] | undefined
           navigate({
             search: {
               ...search,
               search: searchValue || undefined,
-              status: statusFilter?.join(',') || undefined,
+              status: statusFilter?.length ? statusFilter.join(',') : '',
               deviceIds: deviceFilter?.join(',') || undefined,
               pageIndex: 1,
             },

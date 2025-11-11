@@ -64,9 +64,9 @@ public class GetCampaignListHandler(ICampaignRepository campaignRepository)
                 campaign.CampaignName,
                 campaign.Description,
                 campaign.Creator,
-                campaign.CreatedDate.ToString("MM/dd/yyyy"),
+                campaign.CreatedDate.ToString("yyyy-MM-dd"),
                 campaign.UpdatedBy,
-                campaign.UpdatedDate.ToString("MM/dd/yyyy"),
+                campaign.UpdatedDate.ToString("yyyy-MM-dd"),
                 campaign.StatusId,
                 campaign.Status,
                 campaign.RowIdx

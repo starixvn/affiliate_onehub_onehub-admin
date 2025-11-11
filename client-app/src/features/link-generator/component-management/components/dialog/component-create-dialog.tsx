@@ -36,8 +36,8 @@ import { useComponents } from '../component-provider'
 const getFormSchema = (t: (key: string) => string) =>
   z.object({
     categoryId: z.number().min(1, t('dialog.form.categoryRequired')),
-    componentName: z.string().min(1, t('dialog.form.nameRequired')),
-    componentCode: z.string().min(1, t('dialog.form.codeRequired')),
+    componentName: z.string().trim().min(1, t('dialog.form.nameRequired')),
+    componentCode: z.string().trim().min(1, t('dialog.form.codeRequired')),
     statusId: z.number(),
     deviceId: z.number().optional(),
   })
@@ -65,7 +65,7 @@ export function ComponentCreateDialog() {
   const watchCategory = form.watch('categoryId')
   const watchName = form.watch('componentName')
   const watchCode = form.watch('componentCode')
-  const isLandingPage = watchCategory === LANDING_PAGE_CATEGORY_ID
+  const isLandingPage = watchCategory === Number(LANDING_PAGE_CATEGORY_ID)
 
   useEffect(() => {
     if (watchName) {

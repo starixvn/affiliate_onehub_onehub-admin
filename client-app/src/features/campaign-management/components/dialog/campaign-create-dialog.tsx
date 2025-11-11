@@ -30,8 +30,8 @@ import { useCampaigns } from '../campaign-provider'
 
 const getFormSchema = (t: (key: string) => string) =>
   z.object({
-    campaignName: z.string().min(1, t('dialog.form.nameRequired')),
-    description: z.string().optional(),
+    campaignName: z.string().trim().min(1, t('dialog.form.nameRequired')),
+    description: z.string().max(500).optional(),
     statusId: z.number().optional(),
   })
 
@@ -128,6 +128,7 @@ export function CampaignCreateDialog() {
                       <Textarea
                         placeholder={t('dialog.form.descriptionPlaceholder')}
                         className='col-span-4 min-h-24'
+                        maxLength={500}
                         {...field}
                       />
                     </FormControl>

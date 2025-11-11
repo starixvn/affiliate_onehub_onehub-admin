@@ -50,11 +50,10 @@ class ComponentApi {
     return response.data
   }
 
-  async deleteComponents(ids: number | number[]): Promise<DeleteComponentResponse> {
-    const componentIds = Array.isArray(ids) ? ids.join(',') : String(ids)
+  async deleteComponents(request: DeleteBatchComponentRequest): Promise<DeleteComponentResponse> {
     const response = await apiClient.delete<DeleteComponentResponse>(
       '/component/batch',
-      { data: { componentIds } }
+      { data: request }
     )
     return response.data
   }

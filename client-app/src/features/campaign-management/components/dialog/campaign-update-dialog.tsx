@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -32,8 +33,8 @@ const getFormSchema = (t: (key: string) => string) =>
   z.object({
     campaignId: z.number().optional(),
     campaignCode: z.string().optional(),
-    campaignName: z.string().min(1, t('dialog.form.nameRequired')),
-    description: z.string().optional(),
+    campaignName: z.string().trim().min(1, t('dialog.form.nameRequired')),
+    description: z.string().max(500).optional(),
     statusId: z.number().optional(),
   })
 
@@ -52,6 +53,12 @@ export function CampaignUpdateDialog() {
       statusId: 0,
     },
   })
+
+  useEffect(() => {
+    if (currentRow && open === 'update') {
+      form.reset(currentRow)
+    }
+  }, [currentRow, form, open])
 
   const onSubmit = (values: CampaignForm) => {
     if (currentRow) {
@@ -84,7 +91,13 @@ export function CampaignUpdateDialog() {
     <Dialog
       open={open === 'update'}
       onOpenChange={(state) => {
-        form.reset()
+        form.reset(
+          currentRow || {
+            campaignName: '',
+            description: '',
+            statusId: 0,
+          }
+        )
         setOpen(state ? 'update' : null)
       }}
     >
@@ -156,6 +169,7 @@ export function CampaignUpdateDialog() {
                       <Textarea
                         placeholder={t('dialog.form.descriptionPlaceholder')}
                         className='col-span-4 min-h-24'
+                        maxLength={500}
                         {...field}
                       />
                     </FormControl>

@@ -138,6 +138,8 @@
   "deleteDialog": {
     "title": "删除组件",
     "description": "您确定要删除 {{name}} 吗？此操作无法撤销。",
+    "warning": "警告！",
+    "warningMessage": "请谨慎操作，此操作无法回滚。",
     "multiTitle_one": "删除 {{count}} 个组件",
     "multiTitle_other": "删除 {{count}} 个组件",
     "multiDescription_one": "您确定要删除 {{count}} 个组件吗？此操作无法撤销。",

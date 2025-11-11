@@ -76,18 +76,30 @@ export function DataTableToolbar<TData>({
       const defaultValue = filter.defaultValue
 
       const normalizedCurrent =
-        Array.isArray(currentValue) && currentValue.length === 0 ? undefined : currentValue
+        Array.isArray(currentValue) && currentValue.length === 0
+          ? undefined
+          : currentValue
       const normalizedDefault =
-        Array.isArray(defaultValue) && defaultValue.length === 0 ? undefined : defaultValue
+        Array.isArray(defaultValue) && defaultValue.length === 0
+          ? undefined
+          : defaultValue
 
       if (normalizedCurrent === undefined && normalizedDefault === undefined) {
         return false
       }
 
-      if (Array.isArray(normalizedCurrent) && Array.isArray(normalizedDefault)) {
+      if (
+        Array.isArray(normalizedCurrent) &&
+        Array.isArray(normalizedDefault)
+      ) {
         if (normalizedCurrent.length !== normalizedDefault.length) return true
-        return normalizedCurrent.some((val, idx) => val !== normalizedDefault[idx])
-      } else if (Array.isArray(normalizedCurrent) || Array.isArray(normalizedDefault)) {
+        return normalizedCurrent.some(
+          (val, idx) => val !== normalizedDefault[idx]
+        )
+      } else if (
+        Array.isArray(normalizedCurrent) ||
+        Array.isArray(normalizedDefault)
+      ) {
         return true
       } else {
         return normalizedCurrent !== normalizedDefault
@@ -95,7 +107,7 @@ export function DataTableToolbar<TData>({
     })
 
     return searchDiffers || filterDiffers
-  }, [searchValue, defaultSearchValue, filters, table.getState().columnFilters])
+  }, [searchValue, defaultSearchValue, filters, table])
 
   return (
     <div className='flex items-center justify-between'>
