@@ -14,6 +14,7 @@ interface FormFileItemProps {
   formFile: FormFile
   errors: ValidationErrors
   touched: TouchedFields
+  isEdit: boolean
   onFormNameChange: (index: number, value: string) => void
   onFormNameBlur: (index: number) => void
   onRemoveFile: (fileIndex: number) => void
@@ -24,6 +25,7 @@ export function FormFileItem({
   formFile,
   errors,
   touched,
+  isEdit,
   onFormNameChange,
   onFormNameBlur,
   onRemoveFile,
@@ -35,7 +37,7 @@ export function FormFileItem({
       <div className='space-y-4'>
         <div className='space-y-2'>
           <Label htmlFor={`form-name-${index}`}>
-            {t('form.formName')} {index + 1}
+            {t('form.formName')} {!isEdit ? ` ${index + 1}` : ''}
           </Label>
           <div className='flex gap-2'>
             <Input

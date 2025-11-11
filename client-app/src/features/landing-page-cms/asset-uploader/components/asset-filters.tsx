@@ -132,8 +132,17 @@ export function AssetFilters({ table }: AssetFiltersProps) {
                 handleSearch()
               }
             }}
-            className='h-9 pl-9'
+            className='h-9 pl-9 pr-9'
           />
+          {searchValue && (
+            <button
+              type='button'
+              onClick={() => setSearchValue('')}
+              className='text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2'
+            >
+              <X className='h-4 w-4' />
+            </button>
+          )}
         </div>
 
         <MultiSelectFilter

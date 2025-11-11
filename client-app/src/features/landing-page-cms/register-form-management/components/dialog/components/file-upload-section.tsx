@@ -19,7 +19,7 @@ export function FileUploadSection({
 
   return (
     <div className='space-y-2'>
-      <Label>{t('form.uploadImages')}</Label>
+      <Label>{t('form.uploadFile')}</Label>
       <div className='flex items-center gap-4'>
         <Button
           type='button'
@@ -28,7 +28,7 @@ export function FileUploadSection({
           onClick={() => document.getElementById('file-input')?.click()}
         >
           <Upload className='mr-2 h-4 w-4' />
-          {t('form.uploadImagesButton')}
+          {t('form.uploadFileButton')}
         </Button>
         <span className='text-muted-foreground text-sm'>
           {formWithFiles.files.length > 0

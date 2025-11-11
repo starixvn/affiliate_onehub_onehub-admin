@@ -19,6 +19,7 @@ interface RegisterFormDialogContentProps {
   moduleOptions: { value: string; label: string }[]
   country: string
   language: string
+  backendError?: string | null
   scrollContainerRef: React.RefObject<HTMLDivElement | null>
   onCountryChange: (value: string) => void
   onLanguageChange: (value: string) => void
@@ -41,6 +42,7 @@ export function RegisterFormDialogContent({
   moduleOptions,
   country,
   language,
+  backendError,
   scrollContainerRef,
   onCountryChange,
   onLanguageChange,
@@ -57,6 +59,18 @@ export function RegisterFormDialogContent({
       className='max-h-[calc(90vh-10rem)] space-y-4 overflow-y-auto px-1 pr-3 sm:px-0 sm:pr-2'
     >
       <RegisterFormDialogErrorBanner errors={errors} />
+
+      {backendError && (
+        <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
+          <div className='space-y-2'>
+            <p className='text-sm font-medium text-red-800'>Server Error</p>
+            <div
+              className='text-sm text-red-700'
+              dangerouslySetInnerHTML={{ __html: backendError }}
+            />
+          </div>
+        </div>
+      )}
 
       <RegisterFormDialogInfoBanner isEdit={isEdit} />
 

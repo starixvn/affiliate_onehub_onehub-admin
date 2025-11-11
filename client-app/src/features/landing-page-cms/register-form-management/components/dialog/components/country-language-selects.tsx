@@ -55,7 +55,7 @@ export function CountryLanguageSelects({
 
       <div className='space-y-2'>
         <Label htmlFor='country'>
-          {t('form.country')} <span className='text-destructive'>*</span>
+          {t('form.country')}
         </Label>
         <Select
           value={country}
@@ -90,7 +90,7 @@ export function CountryLanguageSelects({
 
       <div className='space-y-2'>
         <Label htmlFor='language'>
-          {t('form.language')} <span className='text-destructive'>*</span>
+          {t('form.language')}
         </Label>
         <Select
           value={language}

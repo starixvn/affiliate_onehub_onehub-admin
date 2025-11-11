@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Dialog,
@@ -34,6 +34,8 @@ export function RegisterFormDialog({
   const { t } = useTranslation('register-form-management')
   const { countries, languages, modules } = useRegisterFormManagement()
   const isMediaIdInUse = registerForm?.isMediaIdInUse ?? false
+  const [backendError, setBackendError] = useState<string | null>(null)
+
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
     label: country.targetCountryName,
@@ -44,8 +46,12 @@ export function RegisterFormDialog({
     label: module.moduleName,
   }))
 
-  const createRegisterFormMutation = useCreateRegisterForm()
-  const updateRegisterFormMutation = useUpdateRegisterForm()
+  const createRegisterFormMutation = useCreateRegisterForm((error) =>
+    setBackendError(error)
+  )
+  const updateRegisterFormMutation = useUpdateRegisterForm((error) =>
+    setBackendError(error)
+  )
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -99,6 +105,7 @@ export function RegisterFormDialog({
 
   useEffect(() => {
     if (open) {
+      setBackendError(null)
       if (registerForm) {
         setCountry(registerForm.targetCountryCode)
         setLanguageOptions(
@@ -131,19 +138,18 @@ export function RegisterFormDialog({
         resetTouchedForFormNames(1)
       }
     }
-    // ESLint disabled: functions are stable and only depend on dialog state
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerForm, open])
 
   useEffect(() => {
     if (
-      errors.files &&
-      Object.keys(errors.files).length > 0 &&
-      scrollContainerRef.current
+      ((errors.files && Object.keys(errors.files).length > 0) 
+      || backendError)
+      && scrollContainerRef.current
     ) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [errors.files])
+  }, [errors.files, backendError])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -172,6 +178,7 @@ export function RegisterFormDialog({
           moduleOptions={moduleOptions}
           country={country}
           language={language}
+          backendError={backendError}
           scrollContainerRef={scrollContainerRef}
           onCountryChange={handlers.handleCountryChange}
           onLanguageChange={handlers.handleLanguageChange}

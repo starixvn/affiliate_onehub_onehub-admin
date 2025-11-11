@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { REGISTER_FORM_MODULE_ID } from '../../../data/constants'
 import type {
   RegisterFormDetail,
   FormWithFiles,
   ValidationErrors,
 } from '../../../data/schema'
-import { REGISTER_FORM_MODULE_ID } from '../../../data/constants'
 
 interface UseRegisterFormSubmitHandlersProps {
   registerForm?: RegisterFormDetail | null
@@ -52,9 +52,11 @@ export function useRegisterFormSubmitHandlers({
   }
 
   const prepareUpdateRequest = () => {
-    const inputFileName = registerForm?.fileName.split('/').pop() || ''
     const inputMediaName = formWithFiles.files[0].formName || ''
     const file = formWithFiles.files[0].file
+    const inputFileName = file.name
+      ? file.name
+      : registerForm?.fileName.split('/').pop() || ''
 
     return {
       mediaId: registerForm?.mediaId,
@@ -63,7 +65,7 @@ export function useRegisterFormSubmitHandlers({
       languageCode: language,
       inputFileName,
       inputMediaName,
-      file, 
+      file,
     }
   }
 

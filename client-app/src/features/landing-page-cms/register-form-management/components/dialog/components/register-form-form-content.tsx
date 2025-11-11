@@ -79,6 +79,7 @@ export function RegisterFormFormContent({
               formFile={formWithFiles.files[0]}
               errors={errors}
               touched={touched}
+              isEdit={isEdit}
               onFormNameChange={onFormNameChange}
               onFormNameBlur={onFormNameBlur}
               onRemoveFile={onRemoveFile}
@@ -121,6 +122,7 @@ export function RegisterFormFormContent({
               formFile={formFile}
               errors={errors}
               touched={touched}
+              isEdit={isEdit}
               onFormNameChange={onFormNameChange}
               onFormNameBlur={onFormNameBlur}
               onRemoveFile={onRemoveFile}

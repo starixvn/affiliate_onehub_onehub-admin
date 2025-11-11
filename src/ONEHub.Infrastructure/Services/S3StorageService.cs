@@ -35,7 +35,7 @@ public sealed class S3StorageService(IAmazonS3 s3Client, IOptions<AwsS3Settings>
         };
 
         var response = await s3Client.DeleteObjectAsync(request);
-        return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
+        return response.HttpStatusCode == System.Net.HttpStatusCode.NoContent;
     }
 
     public async Task<bool> CopyFileAsync(string sourceKey, string destinationKey)

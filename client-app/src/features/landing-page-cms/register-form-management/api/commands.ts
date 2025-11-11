@@ -4,7 +4,7 @@ import type { CreateRegisterFormRequest, UpdateRegisterFormRequest } from '../ty
 import { registerFormManagementApi } from './client'
 import { registerFormManagementKeys } from './queries'
 
-export const useCreateRegisterForm = () => {
+export const useCreateRegisterForm = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateRegisterFormRequest) =>
@@ -14,13 +14,13 @@ export const useCreateRegisterForm = () => {
         queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
         toast.success('Register form created successfully')
       } else {
-        toast.error(response.errorMessage || 'Failed to create register form')
+        onError?.(response.errorMessage || 'Failed to create register form')
       }
     },
   })
 }
 
-export const useUpdateRegisterForm = () => {
+export const useUpdateRegisterForm = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ data }: { data: UpdateRegisterFormRequest }) =>
@@ -29,9 +29,8 @@ export const useUpdateRegisterForm = () => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
         toast.success('Register form updated successfully')
-      }
-      else {
-        toast.error(response.errorMessage || 'Failed to update register form')
+      } else {
+        onError?.(response.errorMessage || 'Failed to update register form')
       }
     },
   })

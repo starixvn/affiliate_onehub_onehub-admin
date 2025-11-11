@@ -7,6 +7,7 @@ import type {
 import { validateField, useErrorMessages } from '../../../data/validation'
 
 interface UseRegisterFormFileHandlersProps {
+  isEdit: boolean
   formWithFiles: FormWithFiles
   touched: TouchedFields
   setFormWithFiles: React.Dispatch<React.SetStateAction<FormWithFiles>>
@@ -22,6 +23,7 @@ interface UseRegisterFormFileHandlersProps {
 }
 
 export function useRegisterFormFileHandlers({
+  isEdit,
   formWithFiles,
   touched,
   setFormWithFiles,
@@ -31,27 +33,43 @@ export function useRegisterFormFileHandlers({
 }: UseRegisterFormFileHandlersProps) {
   const errorMessages = useErrorMessages()
   const handleFileChange = (files: FileList | null) => {
-    if (files) {
-      const existingFileNames = formWithFiles.files.map(
-        (formFile) => formFile.file.name
-      )
-
-      const newFiles: FormFile[] = Array.from(files)
-        .filter((file) => !existingFileNames.includes(file.name))
-        .map((file) => ({
+    if (files && files.length > 0) {
+      if (isEdit) {
+        const file = files[0]
+        const newFile: FormFile = {
           file,
           formName: file.name.replace(/\.[^/.]+$/, ''),
           fileName: file.name,
+        }
+
+        setFormWithFiles((prev) => ({
+          ...prev,
+          files: [newFile],
         }))
 
-      setFormWithFiles((prev) => ({
-        ...prev,
-        files: [...prev.files, ...newFiles],
-      }))
+        resetTouchedForFormNames(1)
+      } else {
+        const existingFileNames = formWithFiles.files.map(
+          (formFile) => formFile.file.name
+        )
+
+        const newFiles: FormFile[] = Array.from(files)
+          .filter((file) => !existingFileNames.includes(file.name))
+          .map((file) => ({
+            file,
+            formName: file.name.replace(/\.[^/.]+$/, ''),
+            fileName: file.name,
+          }))
+
+        setFormWithFiles((prev) => ({
+          ...prev,
+          files: [...prev.files, ...newFiles],
+        }))
+
+        resetTouchedForFormNames(formWithFiles.files.length + newFiles.length)
+      }
 
       setErrors((prev) => ({ ...prev, files: undefined }))
-
-      resetTouchedForFormNames(formWithFiles.files.length + newFiles.length)
     }
   }
 

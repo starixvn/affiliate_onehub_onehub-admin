@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
   Dialog,
@@ -26,6 +26,8 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
   const { t } = useTranslation('asset-uploader')
   const { countries, languages, modules } = useAssetUploader()
   const isMediaIdInUse = asset?.isMediaIdInUse ?? false
+  const [backendError, setBackendError] = useState<string | null>(null)
+
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
     label: country.targetCountryName,
@@ -36,8 +38,8 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     label: module.moduleName,
   }))
 
-  const createAssetMutation = useCreateAsset()
-  const updateAssetMutation = useUpdateAsset()
+  const createAssetMutation = useCreateAsset((error) => setBackendError(error))
+  const updateAssetMutation = useUpdateAsset((error) => setBackendError(error))
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -96,6 +98,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
 
   useEffect(() => {
     if (open) {
+      setBackendError(null)
       if (asset) {
         setCountry(asset.targetCountryCode)
         setLanguageOptions(
@@ -122,13 +125,13 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
 
   useEffect(() => {
     if (
-      errors.files &&
-      Object.keys(errors.files).length > 0 &&
-      scrollContainerRef.current
+      ((errors.files && Object.keys(errors.files).length > 0) 
+      || backendError)
+      && scrollContainerRef.current
     ) {
-      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [errors.files])
+  }, [errors.files, backendError])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -158,6 +161,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           country={country}
           language={language}
           totalModules={moduleRows.length}
+          backendError={backendError}
           scrollContainerRef={scrollContainerRef}
           onCountryChange={handlers.handleCountryChange}
           onLanguageChange={handlers.handleLanguageChange}
@@ -180,8 +184,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           isEdit={isEdit}
           isFormValid={handlers.isFormValid()}
           isLoading={
-            createAssetMutation.isPending ||
-            updateAssetMutation.isPending
+            createAssetMutation.isPending || updateAssetMutation.isPending
           }
           onSubmit={handlers.handleSubmit}
           onCancel={handlers.handleCancel}

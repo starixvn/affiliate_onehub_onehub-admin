@@ -73,6 +73,7 @@ export function useRegisterFormFormHandlers({
   })
 
   const fileHandlers = useRegisterFormFileHandlers({
+    isEdit,
     formWithFiles,
     touched,
     setFormWithFiles,

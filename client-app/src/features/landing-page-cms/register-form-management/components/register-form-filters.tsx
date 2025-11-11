@@ -48,19 +48,20 @@ export function RegisterFormFilters({ table }: RegisterFormFiltersProps) {
   )
   const [selectedCountries, setSelectedCountries] = useState<string[]>(
     typeof search.targetCountrycodes === 'string' &&
-    search.targetCountrycodes !== DEFAULT_REGISTER_FORM_PARAMS.targetCountrycodes
+      search.targetCountrycodes !==
+        DEFAULT_REGISTER_FORM_PARAMS.targetCountrycodes
       ? search.targetCountrycodes.split(',').filter(Boolean)
       : []
   )
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
     typeof search.languageCodes === 'string' &&
-    search.languageCodes !== DEFAULT_REGISTER_FORM_PARAMS.languageCodes
+      search.languageCodes !== DEFAULT_REGISTER_FORM_PARAMS.languageCodes
       ? search.languageCodes.split(',').filter(Boolean)
       : []
   )
   const [selectedStatus, setSelectedStatus] = useState<number[]>(
     typeof search.currentStatus === 'object' &&
-    Array.isArray(search.currentStatus)
+      Array.isArray(search.currentStatus)
       ? (search.currentStatus as number[])
       : [1]
   )
@@ -117,8 +118,17 @@ export function RegisterFormFilters({ table }: RegisterFormFiltersProps) {
                 handleSearch()
               }
             }}
-            className='h-9 pl-9'
+            className='h-9 pr-9 pl-9'
           />
+          {searchValue && (
+            <button
+              type='button'
+              onClick={() => setSearchValue('')}
+              className='text-muted-foreground hover:text-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2'
+            >
+              <X className='h-4 w-4' />
+            </button>
+          )}
         </div>
 
         <MultiSelectFilter

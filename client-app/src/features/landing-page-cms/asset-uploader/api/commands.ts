@@ -4,7 +4,7 @@ import type { CreateAssetRequest, UpdateAssetRequest } from '../types'
 import { assetUploaderApi } from './client'
 import { assetUploaderKeys } from './queries'
 
-export const useCreateAsset = () => {
+export const useCreateAsset = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (data: CreateAssetRequest) =>
@@ -14,13 +14,13 @@ export const useCreateAsset = () => {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success('Asset created successfully')
       } else {
-        toast.error(response.errorMessage || 'Failed to create asset')
+        onError?.(response.errorMessage || 'Failed to create asset')
       }
     },
   })
 }
 
-export const useUpdateAsset = () => {
+export const useUpdateAsset = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ data }: { data: UpdateAssetRequest }) =>
@@ -29,9 +29,8 @@ export const useUpdateAsset = () => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success('Asset updated successfully')
-      }
-      else {
-        toast.error(response.errorMessage || 'Failed to update asset')
+      } else {
+        onError?.(response.errorMessage || 'Failed to update asset')
       }
     },
   })
@@ -75,7 +74,9 @@ export const useUpdateAssetsStatus = () => {
     onSuccess: (response, { statusId }) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
-        toast.success(`Assets updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`)
+        toast.success(
+          `Assets updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
+        )
       } else {
         toast.error(response.errorMessage || 'Failed to update assets status')
       }
