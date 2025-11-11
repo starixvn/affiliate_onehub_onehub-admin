@@ -7,9 +7,6 @@ export const registerFormManagementKeys = {
   lists: () => [...registerFormManagementKeys.all, 'list'] as const,
   list: (params?: GetRegisterFormListRequest) =>
     [...registerFormManagementKeys.lists(), params] as const,
-  details: () => [...registerFormManagementKeys.all, 'detail'] as const,
-  detail: (mediaId: number) =>
-    [...registerFormManagementKeys.details(), mediaId] as const,
   filters: () => [...registerFormManagementKeys.all, 'filters'] as const,
 }
 
@@ -21,13 +18,6 @@ export const useGetRegisterFormList = (params?: GetRegisterFormListRequest) => {
   })
 }
 
-export const useGetRegisterFormDetail = (mediaId: number) => {
-  return useQuery({
-    queryKey: registerFormManagementKeys.detail(mediaId),
-    queryFn: () => registerFormManagementApi.getRegisterFormDetail(mediaId),
-    select: (data) => data.data,
-  })
-}
 
 export const useRegisterFormFilters = () => {
   const query = useQuery({

@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import { EXCLUDE_MODULE_TYPES } from '../data/constants'
-import { type AssetStatus, type Module, type GetAssetListRequest } from '../types'
+import {
+  type AssetStatus,
+  type Module,
+  type GetAssetListRequest,
+} from '../types'
 import { assetUploaderApi } from './client'
 
 export const assetUploaderKeys = {
@@ -8,9 +12,6 @@ export const assetUploaderKeys = {
   lists: () => [...assetUploaderKeys.all, 'list'] as const,
   list: (params?: GetAssetListRequest) =>
     [...assetUploaderKeys.lists(), params] as const,
-  details: () => [...assetUploaderKeys.all, 'detail'] as const,
-  detail: (mediaId: number) =>
-    [...assetUploaderKeys.details(), mediaId] as const,
   filters: () => [...assetUploaderKeys.all, 'filters'] as const,
 }
 
@@ -22,21 +23,12 @@ export const useGetAssetList = (params?: GetAssetListRequest) => {
   })
 }
 
-export const useGetAssetDetail = (mediaId: number) => {
-  return useQuery({
-    queryKey: assetUploaderKeys.detail(mediaId),
-    queryFn: () => assetUploaderApi.getAssetDetail(mediaId),
-    select: (data) => data.data,
-  })
-}
-
 export const useAssetFilters = () => {
   const query = useQuery({
     queryKey: assetUploaderKeys.filters(),
-    queryFn: () =>
-      assetUploaderApi.getAssetFilters(),
+    queryFn: () => assetUploaderApi.getAssetFilters(),
     select: (data) => {
-      const response = data.data;
+      const response = data.data
       return {
         modules:
           response?.modules.filter(
@@ -48,7 +40,9 @@ export const useAssetFilters = () => {
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
         assetStatus:
-          response?.statusInfos.filter((status: AssetStatus) => status.statusId !== 0) ?? [],
+          response?.statusInfos.filter(
+            (status: AssetStatus) => status.statusId !== 0
+          ) ?? [],
         landingPageUrl: response?.landingPageUrl ?? '',
         bannerRootUrl: response?.bannerRootUrl ?? '',
         maximumFiles: response?.maximumFiles ?? 50,
