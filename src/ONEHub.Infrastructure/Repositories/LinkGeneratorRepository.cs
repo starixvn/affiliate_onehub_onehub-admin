@@ -3,12 +3,19 @@ using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 using ONEHub.Infrastructure.Repositories.Commands;
+using ONEHub.Infrastructure.Repositories.Criterias;
 
 namespace ONEHub.Infrastructure.Repositories;
 
 public class LinkGeneratorRepository(IDynamicRepository dynamicRepository)
     : BaseRepository(dynamicRepository), ILinkGeneratorRepository
 {
+    public async Task<Result<string>> GetIDCodeAsync()
+    {
+        var criteria = new GetIDCodeCriteria();
+        return await GetDataAsync<string>(criteria);
+    }
+
     public async Task<Result<string>> InsertLinkAsync(InsertLinkParam param)
     {
         var command = new InsertLinkCommand

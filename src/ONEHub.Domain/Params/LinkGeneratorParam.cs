@@ -30,7 +30,7 @@ public class InsertLinkParam : BaseParam
 
     public string DomainNote { get; set; } = string.Empty;
 
-    public string Note { get; set; } = string.Empty;
+    public string? Note { get; set; }
 
     public string ShortPath { get; set; } = string.Empty;
 

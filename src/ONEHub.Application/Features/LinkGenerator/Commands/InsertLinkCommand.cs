@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Cryptography;
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
@@ -64,110 +65,156 @@ public class InsertLinkCommandHandler(
     ILinkGeneratorRepository linkGeneratorRepository)
     : IRequestHandler<InsertLinkCommand, Result<LinkGeneratedResult>>
 {
+    private const int MAX_ATTEMPTS = 3;
+    private const int DUPLICATE_ERROR_CODE = 1006;
+
     public async Task<Result<LinkGeneratedResult>> Handle(InsertLinkCommand request, CancellationToken cancellationToken)
     {
-        var shortLinkPath = request.ShortPath;
-        var isAutoGeneratingShortPath = string.IsNullOrEmpty(shortLinkPath);
-
-        if (isAutoGeneratingShortPath)
+        var idCodeResult = await RetrieveIDCodeAsync(request);
+        if (idCodeResult.IsFailure)
         {
-            shortLinkPath = GenerateShortLinkValue();
+            return Result<LinkGeneratedResult>.Failure(idCodeResult.Error);
         }
 
-        const int MaxAttempts = 3;
-        const int DuplicateErrorCode = 1006;
+        var idCode = idCodeResult.Data!;
+        var shortPath = RetrieveShortPath(request.ShortPath, out var isAutoGenerating);
 
-        for (var attempt = 1; attempt <= MaxAttempts; attempt++)
+        for (var attempt = 1; attempt <= MAX_ATTEMPTS; attempt++)
         {
-            var fullLink = BuildFullLink(request);
-            var shortLink = $"https://{request.ShortDomain}/{shortLinkPath}";
+            var result = await TryInsertLinkAsync(request, idCode, shortPath);
 
-            var param = new InsertLinkParam
+            if (result.IsSuccess)
             {
-                LinkName = request.LinkName,
-                IDCode = request.IdentifierCode,
-                CampaignId = request.CampaignId,
-                CountryCode = request.CountryCode,
-                MarketId = request.MarketId,
-                EventIds = request.EventIds,
-                GroupId = request.GroupId,
-                ChannelId = request.ChannelId,
-                AgencyId = request.AgencyId,
-                TypeId = request.TypeId,
-                PageCode = request.PageCode,
-                PageType = request.PageType,
-                DomainName = request.DomainName,
-                DomainNote = request.DomainNote,
-                Note = request.Note,
-                ShortPath = shortLinkPath,
-                ShortDomain = request.ShortDomain,
-                FullLink = fullLink,
-                UserId = request.UserId,
-                Ip = request.Ip,
-                Host = request.Host
-            };
-
-            var insertResult = await linkGeneratorRepository.InsertLinkAsync(param);
-
-            if (insertResult.IsFailure)
-            {
-                var isDuplicateError = insertResult.Error.Code == DuplicateErrorCode;
-                var canRetry = isAutoGeneratingShortPath && attempt < MaxAttempts && isDuplicateError;
-
-                if (canRetry)
-                {
-                    shortLinkPath = GenerateShortLinkValue();
-                    continue;
-                }
-
-                return Result<LinkGeneratedResult>.Failure(insertResult.Error);
+                return result;
             }
 
-            var returnedIdCode = insertResult.Data;
-
-            if (string.IsNullOrEmpty(request.IdentifierCode) && !string.IsNullOrEmpty(returnedIdCode))
+            if (ShouldRetry(result, isAutoGenerating, attempt))
             {
-                fullLink = BuildFullLink(request, returnedIdCode);
+                shortPath = GenerateShortPath();
+                continue;
             }
 
-            var result = new LinkGeneratedResult
-            {
-                IDCode = returnedIdCode ?? request.IdentifierCode ?? string.Empty,
-                FullLink = fullLink,
-                ShortLink = shortLink
-            };
-
-            return Result<LinkGeneratedResult>.Success(result);
+            return result;
         }
 
         return Result<LinkGeneratedResult>.Failure(LinkGeneratorError.UniqueCodeGenerationFailed);
     }
 
-    private static string GenerateShortLinkValue()
+    private async Task<Result<string>> RetrieveIDCodeAsync(InsertLinkCommand request)
+    {
+        if (!string.IsNullOrEmpty(request.IdentifierCode))
+        {
+            return Result<string>.Success(request.IdentifierCode);
+        }
+
+        var idCodeResult = await linkGeneratorRepository.GetIDCodeAsync();
+        if (idCodeResult.IsFailure)
+        {
+            return Result<string>.Failure(idCodeResult.Error);
+        }
+
+        if (string.IsNullOrEmpty(idCodeResult.Data))
+        {
+            return Result<string>.Failure(LinkGeneratorError.InvalidIdentifierCode);
+        }
+
+        return Result<string>.Success(idCodeResult.Data);
+    }
+
+    private static string RetrieveShortPath(string? shortPath, out bool isAutoGenerating)
+    {
+        isAutoGenerating = string.IsNullOrEmpty(shortPath);
+        return isAutoGenerating ? GenerateShortPath() : shortPath!;
+    }
+
+    private async Task<Result<LinkGeneratedResult>> TryInsertLinkAsync(
+        InsertLinkCommand request,
+        string identifierCode,
+        string shortPath)
+    {
+        var fullLink = BuildFullLink(request, identifierCode);
+        var shortLink = $"https://{request.ShortDomain}/{shortPath}";
+        var param = BuildInsertParam(request, identifierCode, shortPath, fullLink);
+
+        var insertResult = await linkGeneratorRepository.InsertLinkAsync(param);
+        if (insertResult.IsFailure)
+        {
+            return Result<LinkGeneratedResult>.Failure(insertResult.Error);
+        }
+
+        var result = new LinkGeneratedResult
+        {
+            IDCode = identifierCode,
+            FullLink = fullLink,
+            ShortLink = shortLink
+        };
+
+        return Result<LinkGeneratedResult>.Success(result);
+    }
+
+    private static bool ShouldRetry(Result<LinkGeneratedResult> result, bool isAutoGenerating, int attempt)
+    {
+        if (result.Error is null)
+        {
+            return false;
+        }
+
+        var isDuplicate = result.Error.Code == DUPLICATE_ERROR_CODE;
+        return isAutoGenerating && attempt < MAX_ATTEMPTS && isDuplicate;
+    }
+
+    private static InsertLinkParam BuildInsertParam(
+        InsertLinkCommand request,
+        string identifierCode,
+        string shortPath,
+        string fullLink)
+    {
+        return new InsertLinkParam
+        {
+            LinkName = request.LinkName,
+            IDCode = identifierCode,
+            CampaignId = request.CampaignId,
+            CountryCode = request.CountryCode,
+            MarketId = request.MarketId,
+            EventIds = request.EventIds,
+            GroupId = request.GroupId,
+            ChannelId = request.ChannelId,
+            AgencyId = request.AgencyId,
+            TypeId = request.TypeId,
+            PageCode = request.PageCode,
+            PageType = request.PageType,
+            DomainName = request.DomainName,
+            DomainNote = request.DomainNote,
+            Note = request.Note,
+            ShortPath = shortPath,
+            ShortDomain = request.ShortDomain,
+            FullLink = fullLink,
+            UserId = request.UserId,
+            Ip = request.Ip,
+            Host = request.Host
+        };
+    }
+
+    private static string GenerateShortPath()
     {
         var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
         var timestampBase36 = ConvertToBase36(timestamp);
-
-        var random = new Random();
         const string Chars = "abcdefghijklmnopqrstuvwxyz0123456789";
         var randomPart = new string(Enumerable.Range(0, 4)
-            .Select(_ => Chars[random.Next(Chars.Length)])
+            .Select(_ => Chars[RandomNumberGenerator.GetInt32(Chars.Length)])
             .ToArray());
-
         return $"{timestampBase36}{randomPart}";
     }
 
     private static string ConvertToBase36(long value)
     {
         const string Chars = "0123456789abcdefghijklmnopqrstuvwxyz";
-
         if (value == 0)
         {
             return "0";
         }
 
         var result = new StringBuilder();
-
         while (value > 0)
         {
             result.Append(Chars[(int)(value % 36)]);
@@ -179,7 +226,7 @@ public class InsertLinkCommandHandler(
         return new string(chars);
     }
 
-    private static string BuildFullLink(InsertLinkCommand request, string? idCode = null)
+    private static string BuildFullLink(InsertLinkCommand request, string identifierCode)
     {
         var subdomain = request.PageType switch
         {
@@ -188,8 +235,6 @@ public class InsertLinkCommandHandler(
             3 => "landing",
             _ => "www"
         };
-
-        var identifierCode = idCode ?? request.IdentifierCode ?? string.Empty;
 
         return $"https://{subdomain}.{request.DomainName}/{request.PageCode}" +
                $"?ln={Uri.EscapeDataString(request.LinkName)}" +

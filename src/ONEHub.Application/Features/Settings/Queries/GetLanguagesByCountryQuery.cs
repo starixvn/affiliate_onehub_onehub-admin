@@ -1,4 +1,5 @@
 using MediatR;
+using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Repositories;
@@ -6,7 +7,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Settings.Queries;
 
-public record GetLanguagesQuery() : IRequest<Result<IEnumerable<Market>>>;
+public class GetLanguagesQuery : BaseQuery<IEnumerable<Market>>;
 
 public class GetLanguagesByCountryQueryHandler(ISettingsRepository settingsRepository)
     : IRequestHandler<GetLanguagesQuery, Result<IEnumerable<Market>>>

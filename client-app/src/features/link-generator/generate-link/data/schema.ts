@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const generateLinkFormSchema = z.object({
-  linkName: z.string().min(1, 'Link name is required'),
-  identifierCode: z.string().optional(),
+  linkName: z.string().trim().min(1, 'Link name is required'),
+  identifierCode: z.string().trim().optional(),
   campaign: z.string().min(1, 'Campaign is required'),
   campaignCode: z.string(),
   country: z.string().min(1, 'Country is required'),
@@ -12,9 +12,9 @@ export const generateLinkFormSchema = z.object({
   event: z.string().min(1, 'Event is required'),
   eventCodes: z.string(),
   domainName: z.string().min(1, 'Domain name is required'),
-  domainReservedNote: z.string().min(1, 'Domain reserved note is required'),
+  domainReservedNote: z.string().trim().min(1, 'Domain reserved note is required'),
   shortDomain: z.string().min(1, 'Short domain is required'),
-  shortPath: z.string().min(5, 'Short path must be at least 5 characters').max(20, 'Short path must be at most 20 characters').optional().or(z.literal('')),
+  shortPath: z.string().trim().min(5, 'Short path must be at least 5 characters').max(20, 'Short path must be at most 20 characters').optional().or(z.literal('')),
   channel: z.string().min(1, 'Channel is required'),
   channelCode: z.string(),
   type: z.string().min(1, 'Type is required'),
@@ -24,7 +24,7 @@ export const generateLinkFormSchema = z.object({
   landingPage: z.string().min(1, 'Landing page is required'),
   pageType: z.number(),
   pageCode: z.string(),
-  note: z.string().optional(),
+  note: z.string().trim().optional(),
 })
 
 export type GenerateLinkFormValues = z.infer<typeof generateLinkFormSchema>

@@ -1,5 +1,5 @@
 using MediatR;
-using ONEHub.Application.Features.Campaign.Queries;
+using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -8,7 +8,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Components.Queries;
 
-public class GetComponentsByTypeQuery : IRequest<Result<IEnumerable<ComponentInfo>>>
+public class GetComponentsByTypeQuery : BaseQuery<IEnumerable<ComponentInfo>>
 {
     public int ComponentTypeId { get; set; }
     public int? ComponentId { get; set; }
