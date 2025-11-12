@@ -11,6 +11,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { type Campaign } from '../../data/schema'
 import { useCampaigns } from '../campaign-provider'
 
@@ -19,19 +24,28 @@ type DataTableRowActionsProps = {
 }
 
 export function DataTableRowActions({ row }: DataTableRowActionsProps) {
-  const { t } = useTranslation('campaign-management')
+  const { t } = useTranslation(['campaign-management', 'common'])
   const { setOpen, setCurrentRow } = useCampaigns()
   return (
     <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant='ghost'
-          className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
-        >
-          <DotsHorizontalIcon className='h-4 w-4' />
-          <span className='sr-only'>{t('table.columns.actions')}</span>
-        </Button>
-      </DropdownMenuTrigger>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant='ghost'
+              className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
+            >
+              <DotsHorizontalIcon className='h-4 w-4' />
+              <span className='sr-only'>
+                {t('dataTable.rowActions.moreAction', { ns: 'common' })}
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('dataTable.rowActions.moreAction', { ns: 'common' })}</p>
+        </TooltipContent>
+      </Tooltip>
       <DropdownMenuContent align='end' className='w-[160px]'>
         <DropdownMenuItem
           onClick={() => {

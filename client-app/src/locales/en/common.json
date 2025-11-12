@@ -80,6 +80,9 @@
       "lastPage": "Go to last page",
       "goToPage": "Go to page {{page}}"
     },
+    "rowActions": {
+      "moreAction": "More actions"
+    },
     "bulkActions": {
       "announcement_one": "{{count}} {{entity}} selected. Bulk actions toolbar is available.",
       "announcement_other": "{{count}} {{entity}}s selected. Bulk actions toolbar is available.",

@@ -79,6 +79,9 @@
       "lastPage": "转到最后一页",
       "goToPage": "转到第 {{page}} 页"
     },
+    "rowActions": {
+      "moreAction": "更多操作"
+    },
     "bulkActions": {
       "announcement_other": "已选择 {{count}} 个{{entity}}。批量操作工具栏可用。",
       "ariaLabel_other": "对 {{count}} 个选定的{{entity}}执行批量操作",
