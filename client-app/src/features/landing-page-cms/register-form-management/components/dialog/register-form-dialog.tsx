@@ -81,6 +81,7 @@ export function RegisterFormDialog({
     touched,
     isEdit,
     isMediaIdInUse,
+    countries,
     languages,
     setLanguageOptions,
     setCountry,

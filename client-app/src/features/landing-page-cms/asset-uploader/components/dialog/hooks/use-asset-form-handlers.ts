@@ -4,7 +4,7 @@ import type {
   TouchedFields,
   AssetDetail,
 } from '../../../data/schema'
-import type { Language } from '../../../types'
+import type { Country, Language } from '../../../types'
 import { useAssetFieldHandlers } from './use-asset-field-handlers'
 import { useAssetFileHandlers } from './use-asset-file-handlers'
 import { useAssetModuleHandlers } from './use-asset-module-handlers'
@@ -19,6 +19,7 @@ interface UseAssetFormHandlersProps {
   touched: TouchedFields
   isEdit: boolean
   isMediaIdInUse: boolean
+  countries: Country[]
   languages: Language[]
   setLanguageOptions: React.Dispatch<
     React.SetStateAction<{ value: string; label: string }[]>
@@ -49,6 +50,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     touched,
     isEdit,
     isMediaIdInUse,
+    countries,
     languages,
     setLanguageOptions,
     setCountry,
@@ -70,6 +72,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     fileName,
     moduleRows,
     isEdit,
+    countries,
     languages,
     setLanguageOptions,
     setCountry,

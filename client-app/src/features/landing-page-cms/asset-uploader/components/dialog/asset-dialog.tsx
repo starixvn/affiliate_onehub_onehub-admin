@@ -74,6 +74,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     touched,
     isEdit,
     isMediaIdInUse,
+    countries,
     languages,
     setLanguageOptions,
     setCountry,
@@ -125,11 +126,11 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
 
   useEffect(() => {
     if (
-      ((errors.files && Object.keys(errors.files).length > 0) 
-      || backendError)
-      && scrollContainerRef.current
+      ((errors.files && Object.keys(errors.files).length > 0) ||
+        backendError) &&
+      scrollContainerRef.current
     ) {
-        scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
+      scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
     }
   }, [errors.files, backendError])
 

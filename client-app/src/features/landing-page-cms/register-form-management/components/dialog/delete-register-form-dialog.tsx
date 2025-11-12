@@ -1,14 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteRegisterForm } from '../../api/commands'
 import type { RegisterFormDetail } from '../../data/schema'
 
@@ -28,38 +19,33 @@ export function DeleteRegisterFormDialog({
 
   const handleConfirm = () => {
     if (registerForm) {
-      deleteMutation.mutate(registerForm.mediaId.toString())
-      onOpenChange(false)
+      deleteMutation.mutate(registerForm.mediaId.toString(), {
+        onSuccess: (response) => {
+          if (response.errorCode === 0) {
+            onOpenChange(false)
+          }
+        },
+      })
     }
   }
 
   if (!registerForm) return null
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {t('dialogs.confirmDeleteSingle', {
-              formName: registerForm.mediaName,
-            })}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {t('dialogs.confirmDelete')}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleConfirm}
-            disabled={deleteMutation.isPending}
-          >
-            {deleteMutation.isPending
-              ? t('dialogs.deleting')
-              : t('dialogs.delete')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      handleConfirm={handleConfirm}
+      disabled={deleteMutation.isPending}
+      title={t('dialogs.confirmDeleteSingle', {
+        formName: registerForm.mediaName,
+      })}
+      desc={t('dialogs.deleteDescription')}
+      confirmText={
+        deleteMutation.isPending ? t('dialogs.deleting') : t('dialogs.delete')
+      }
+      destructive
+      isLoading={deleteMutation.isPending}
+    />
   )
 }

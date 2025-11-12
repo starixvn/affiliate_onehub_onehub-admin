@@ -43,7 +43,10 @@ public class UploadAssetsCommandHandler(
                 .Where(row => row.Files.Any())
                 .SelectMany(row => row.Files));
 
-            var inputMediaNames = request.ModuleRows!.Select(r => r.InputMediaNames).ToArray();
+            var inputMediaNames = request.ModuleRows!
+                .Where(r => !string.IsNullOrWhiteSpace(r.InputMediaNames))
+                .SelectMany(r => r.InputMediaNames.Split('|', StringSplitOptions.RemoveEmptyEntries))
+                .ToArray();
             var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
 
             var uploadValidation = fileService.ValidateUploadRequest(

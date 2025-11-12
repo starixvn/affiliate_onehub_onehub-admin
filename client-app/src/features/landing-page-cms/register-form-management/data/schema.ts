@@ -67,5 +67,6 @@ export const ALLOWED_FILE_TYPES = [
 
 export const MAX_FILE_SIZE_MB = 3
 export const MAX_FILES_PER_MODULE = 50
+export const MAX_FILE_NAME_LENGTH = 50
 export const MAX_FORM_NAME_LENGTH = 200
 export const regSpecialCharacters = '[\\/:*?"<>|#%&+]'

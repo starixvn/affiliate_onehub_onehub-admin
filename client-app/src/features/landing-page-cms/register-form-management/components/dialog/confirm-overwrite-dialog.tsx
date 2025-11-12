@@ -1,14 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog'
+import { ConfirmDialog } from '@/components/confirm-dialog'
 
 interface ConfirmOverwriteDialogProps {
   open: boolean
@@ -32,35 +23,26 @@ export function ConfirmOverwriteDialog({
     onOpenChange(false)
   }
 
-  const handleCancel = () => {
-    onCancel?.()
-    onOpenChange(false)
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen && open) {
+      onCancel?.()
+    }
+    onOpenChange(newOpen)
   }
 
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {t('dialogs.confirmOverwriteTitle', 'Confirm Overwrite')}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {t('dialogs.confirmOverwriteMessage', {
-              fileName,
-              defaultValue:
-                'This file name "{{fileName}}" already exists. Do you want to overwrite the current file?',
-            })}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleCancel}>
-            {t('common.cancel', 'Cancel')}
-          </AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>
-            {t('common.confirm', 'Confirm')}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <ConfirmDialog
+      open={open}
+      onOpenChange={handleOpenChange}
+      handleConfirm={handleConfirm}
+      title={t('dialogs.confirmOverwriteTitle', 'Confirm Overwrite')}
+      desc={t('dialogs.confirmOverwriteMessage', {
+        fileName,
+        defaultValue:
+          'This file name "{{fileName}}" already exists. Do you want to overwrite the current file?',
+      })}
+      confirmText={t('common.confirm', 'Confirm')}
+      cancelBtnText={t('common.cancel', 'Cancel')}
+    />
   )
 }

@@ -5,7 +5,7 @@ import {
   isFormValid as isFormValidHelper,
   useErrorMessages,
 } from '../../../data/validation'
-import type { Language } from '../../../types'
+import type { Country, Language } from '../../../types'
 
 interface UseAssetFieldHandlersProps {
   country: string
@@ -13,6 +13,7 @@ interface UseAssetFieldHandlersProps {
   fileName: string
   moduleRows: Array<{ module: string; files: File[] }>
   isEdit: boolean
+  countries: Country[]
   languages: Language[]
   setLanguageOptions: React.Dispatch<
     React.SetStateAction<{ value: string; label: string }[]>
@@ -29,6 +30,7 @@ export function useAssetFieldHandlers({
   fileName,
   moduleRows,
   isEdit,
+  countries,
   languages,
   setLanguageOptions,
   setCountry,
@@ -54,7 +56,13 @@ export function useAssetFieldHandlers({
   }
 
   const validateForm = (): boolean => {
-    return validateFormHelper(country, language, moduleRows, setErrors, errorMessages)
+    return validateFormHelper(
+      country,
+      language,
+      moduleRows,
+      setErrors,
+      errorMessages
+    )
   }
 
   const isFormValid = () => {
@@ -64,9 +72,25 @@ export function useAssetFieldHandlers({
   const handleCountryChange = (value: string) => {
     setCountry(value)
     validateField('country', value)
-    const languageByCountry = languages.filter(
-      (language) => language.targetCountryCode === value
+
+    const selectedCountry = countries.find(
+      (country) => country.targetCountryCode === value
     )
+    if (selectedCountry) {
+      setLanguage(selectedCountry.languageCode)
+    }
+
+    const languageByCountry = languages
+      .filter((lang) => lang.targetCountryCode === value)
+      .sort((a, b) => {
+        const aMatch = a.languageCode === selectedCountry?.languageCode
+        const bMatch = b.languageCode === selectedCountry?.languageCode
+
+        if (aMatch && !bMatch) return -1
+        if (!aMatch && bMatch) return 1
+        return 0
+      })
+
     if (languageByCountry.length > 0) {
       setLanguageOptions(
         languageByCountry.map((language) => ({
@@ -74,7 +98,6 @@ export function useAssetFieldHandlers({
           label: language.languageName,
         }))
       )
-      setLanguage(languageByCountry[0].languageCode)
     }
   }
 

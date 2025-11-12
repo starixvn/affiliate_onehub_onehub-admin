@@ -1,9 +1,9 @@
 {
   "page": {
-    "title": "Register Form Management",
+    "title": "Registration Form Management",
     "description": "Create and manage promotional pages, quickly deploy marketing campaigns",
-    "loading": "Loading register forms...",
-    "failedToLoad": "Failed to load register forms",
+    "loading": "Loading registration forms...",
+    "failedToLoad": "Failed to load registration forms",
     "noResults": "No results."
   },
   "filters": {
@@ -57,18 +57,17 @@
     "deleteSelected": "Delete selected forms"
   },
   "dialogs": {
-    "addNewRegisterForm": "Add New Register Form",
+    "addNewRegisterForm": "Add New Registration Form",
     "addNewRegisterFormDescription": "Upload and configure new registration forms for your landing pages",
-    "editRegisterForm": "Edit Register Form",
+    "editRegisterForm": "Edit Registration Form",
     "editRegisterFormDescription": "Update registration form configuration and information",
-    "deleteForm": "Delete Register Form",
-    "deleteForms": "Delete Register Forms",
-    "confirmDelete": "Are you sure you want to delete selected forms? This action cannot be undone.",
-    "confirmDeleteSingle": "Are you sure you want to delete \"{{formName}}\"? This action cannot be undone.",
+    "deleteForm": "Delete Registration Form",
+    "deleteForms": "Delete Registration Forms",
+    "confirmDeleteSingle": "Are you sure you want to delete \"{{formName}}\"?",
     "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
     "deleteDescription": "This action cannot be undone. The delete action will only be performed on forms that are not associated with any landing page.",
-    "confirmStatusChange": "Are you sure you want to change the status of \"{{formName}}\" to {{status}}?",
-    "confirmStatusChangeBulk": "Are you sure you want to change the status of {{count}} {{entity}} to {{status}}?",
+    "confirmStatusChange": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of this form?",
+    "confirmStatusChangeBulk": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of these forms?",
     "changing": "Changing...",
     "change": "Change",
     "changeAll": "Change All",
@@ -112,7 +111,7 @@
     "formNameRequired": "Form name is required",
     "formNameTooLong": "Form name(s) too long: {{longFormNames}}. Form names must be {{maxLength}} characters or less.",
     "formNameInvalidChars": "Form name(s) contain invalid characters: {{invalidFormNames}}. Form names cannot contain \\ / : * ? \" < > | # % & + characters.",
-    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names must be 200 characters or less.",
+    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names must be {{maxLength}} characters or less.",
     "fileNameInvalidChars": "File name(s) contain invalid characters: {{invalidFiles}}. File names cannot contain \\ / : * ? \" < > | # % & + characters.",
     "mediaInUse": "This form has already been used in an existing landing page(s). You cannot update the Module, Target Country, or Language.",
     "uploadLimitExceeded": "Upload limit exceeded. You can only upload up to {{maxFiles}} files at a time.",

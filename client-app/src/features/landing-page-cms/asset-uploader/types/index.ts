@@ -1,5 +1,5 @@
-import type { IPaginatedResponse } from '@/lib/types/common'
 import type { IAxiosResponse } from '@/lib/api/types'
+import type { IPaginatedResponse } from '@/lib/types/common'
 import type { AssetDetail, ModuleWithFiles } from '../data/schema'
 
 export interface GetAssetListRequest {
@@ -76,6 +76,7 @@ export interface Module {
 export interface Country {
   targetCountryCode: string
   targetCountryName: string
+  languageCode: string
 }
 
 export interface Language {

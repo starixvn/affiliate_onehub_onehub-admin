@@ -4,7 +4,7 @@ import type {
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import type { Language } from '../../../types'
+import type { Country, Language } from '../../../types'
 import { useRegisterFormFieldHandlers } from './use-register-form-field-handlers'
 import { useRegisterFormFileHandlers } from './use-register-form-file-handlers'
 import { useRegisterFormSubmitHandlers } from './use-register-form-submit-handlers'
@@ -17,6 +17,7 @@ interface UseRegisterFormFormHandlersProps {
   touched: TouchedFields
   isEdit: boolean
   isMediaIdInUse: boolean
+  countries: Country[]
   languages: Language[]
   setLanguageOptions: React.Dispatch<
     React.SetStateAction<Array<{ value: string; label: string }>>
@@ -46,6 +47,7 @@ export function useRegisterFormFormHandlers({
   touched,
   isEdit,
   isMediaIdInUse,
+  countries,
   languages,
   setLanguageOptions,
   setCountry,
@@ -64,6 +66,7 @@ export function useRegisterFormFormHandlers({
     formWithFiles,
     touched,
     isEdit,
+    countries,
     languages,
     setLanguageOptions,
     setCountry,

@@ -10,7 +10,7 @@ import {
   resetFileErrors,
   useErrorMessages,
 } from '../../../data/validation'
-import type { Language } from '../../../types'
+import type { Country, Language } from '../../../types'
 
 interface UseRegisterFormFieldHandlersProps {
   country: string
@@ -18,6 +18,7 @@ interface UseRegisterFormFieldHandlersProps {
   formWithFiles: FormWithFiles
   touched: TouchedFields
   isEdit: boolean
+  countries: Country[]
   languages: Language[]
   setLanguageOptions: React.Dispatch<
     React.SetStateAction<Array<{ value: string; label: string }>>
@@ -34,6 +35,7 @@ export function useRegisterFormFieldHandlers({
   formWithFiles,
   touched,
   isEdit,
+  countries,
   languages,
   setLanguageOptions,
   setCountry,
@@ -49,17 +51,29 @@ export function useRegisterFormFieldHandlers({
 
     validateField('country', value, setErrors, errorMessages)
 
-    const filteredLanguages = languages.filter(
-      (language) => language.targetCountryCode === value
+    const selectedCountry = countries.find(
+      (country) => country.targetCountryCode === value
     )
+
+    const languageByCountry = languages
+      .filter((lang) => lang.targetCountryCode === value)
+      .sort((a, b) => {
+        const aMatch = a.languageCode === selectedCountry?.languageCode
+        const bMatch = b.languageCode === selectedCountry?.languageCode
+
+        if (aMatch && !bMatch) return -1
+        if (!aMatch && bMatch) return 1
+        return 0
+      })
+
     setLanguageOptions(
-      filteredLanguages.map((language) => ({
+      languageByCountry.map((language) => ({
         value: language.languageCode,
         label: language.languageName,
       }))
     )
     setLanguage(
-      filteredLanguages.length > 0 ? filteredLanguages[0].languageCode : ''
+      languageByCountry.length > 0 ? languageByCountry[0].languageCode : ''
     )
   }
 

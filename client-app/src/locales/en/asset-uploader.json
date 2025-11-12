@@ -67,8 +67,8 @@
     "confirmDeleteSingle": "Are you sure you want to delete \"{{assetName}}\"? This action cannot be undone.",
     "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
     "deleteDescription": "This action cannot be undone. The delete action will only be performed on assets that are not associated with any landing page.",
-    "confirmStatusChange": "Are you sure you want to change the status of \"{{assetName}}\" to {{status}}?",
-    "confirmStatusChangeBulk": "Are you sure you want to change the status of {{count}} {{entity}} to {{status}}?",
+    "confirmStatusChange": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of this form?",
+    "confirmStatusChangeBulk": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of these forms?",
     "changing": "Changing...",
     "change": "Change",
     "changeAll": "Change All",
@@ -115,7 +115,7 @@
     "fileSizeExceeded": "File size exceeds {{maxSize}}MB limit: {{exceededFiles}}. Please upload a smaller file.",
     "duplicateFileNames": "File name(s) already exists: {{duplicateFiles}}. Please rename or remove the file(s) before uploading.",
     "invalidFileNames": "File name(s) contain invalid characters: {{invalidFiles}}. File names cannot contain \\ / : * ? \" < > | # % & + characters.",
-    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names (excluding extension) must be 200 characters or less."
+    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names must be {{maxLength}} characters or less."
   },
   "toasts": {
     "exporting": "Exporting assets to Excel...",

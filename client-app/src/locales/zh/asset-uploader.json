@@ -67,8 +67,8 @@
     "confirmDeleteSingle": "您确定要删除\"{{assetName}}\"吗？此操作无法撤销。",
     "confirmDeleteBulk": "您确定要删除 {{count}} 个{{entity}}吗？",
     "deleteDescription": "此操作无法撤销。删除操作仅对未与任何着陆页关联的资源执行。",
-    "confirmStatusChange": "您确定要将\"{{assetName}}\"的状态更改为{{status}}吗？",
-    "confirmStatusChangeBulk": "您确定要将{{count}}个{{entity}}的状态更改为{{status}}吗？",
+    "confirmStatusChange": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改此表单的状态吗？",
+    "confirmStatusChangeBulk": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改这些表单的状态吗？",
     "changing": "正在更改...",
     "change": "更改",
     "changeAll": "全部更改",
@@ -115,7 +115,7 @@
     "fileSizeExceeded": "文件大小超过 {{maxSize}}MB 限制：{{exceededFiles}}。请上传更小的文件。",
     "duplicateFileNames": "文件名已存在：{{duplicateFiles}}。请重命名或删除文件后再上传。",
     "invalidFileNames": "文件名包含无效字符：{{invalidFiles}}。文件名不能包含 \\ / : * ? \" < > | # % & + 字符。",
-    "fileNameTooLong": "文件名过长：{{longFiles}}。文件名（不包括扩展名）必须为 200 个字符或更少。"
+    "fileNameTooLong": "文件名过长：{{longFiles}}。文件名必须为 {{maxLength}} 个字符或更少。"
   },
   "toasts": {
     "exporting": "正在导出资源到 Excel...",

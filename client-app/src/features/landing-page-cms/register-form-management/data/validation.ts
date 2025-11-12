@@ -9,6 +9,7 @@ import {
   ALLOWED_FILE_TYPES,
   MAX_FILE_SIZE_MB,
   MAX_FILES_PER_MODULE,
+  MAX_FILE_NAME_LENGTH,
   MAX_FORM_NAME_LENGTH,
   regSpecialCharacters,
 } from './schema'
@@ -32,6 +33,7 @@ export const useErrorMessages = () => {
     FILE_NAME_TOO_LONG: (longFiles: string[]) =>
       t('validation.fileNameTooLong', {
         longFiles: longFiles.join(', '),
+        maxLength: MAX_FILE_NAME_LENGTH,
       }),
     FILE_NAME_INVALID_CHARS: (invalidFiles: string[]) =>
       t('validation.fileNameInvalidChars', {
@@ -218,7 +220,7 @@ export const validateFiles = (
       }
     }
 
-    if (formFile.fileName.length > MAX_FORM_NAME_LENGTH) {
+    if (formFile.fileName.length > MAX_FILE_NAME_LENGTH) {
       if (!longFileNames.includes(formFile.fileName)) {
         longFileNames.push(formFile.fileName)
       }

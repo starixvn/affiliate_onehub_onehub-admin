@@ -37,6 +37,7 @@ export const useErrorMessages = () => {
     FILE_NAME_TOO_LONG: (longFiles: string[]) =>
       t('validation.fileNameTooLong', {
         longFiles: longFiles.join(', '),
+        maxLength: MAX_FILE_NAME_LENGTH,
       }),
   }
 }

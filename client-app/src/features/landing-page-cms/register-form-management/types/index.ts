@@ -1,5 +1,5 @@
-import type { IPaginatedResponse } from '@/lib/types/common'
 import type { IAxiosResponse } from '@/lib/api/types'
+import type { IPaginatedResponse } from '@/lib/types/common'
 import type { RegisterFormDetail, FormWithFiles } from '../data/schema'
 
 export interface GetRegisterFormListRequest {
@@ -14,15 +14,18 @@ export interface GetRegisterFormListRequest {
   pageSize: number
 }
 
-export type GetRegisterFormListResponseData = IPaginatedResponse<RegisterFormDetail>
+export type GetRegisterFormListResponseData =
+  IPaginatedResponse<RegisterFormDetail>
 
-export type GetRegisterFormListResponse = IAxiosResponse<GetRegisterFormListResponseData>
+export type GetRegisterFormListResponse =
+  IAxiosResponse<GetRegisterFormListResponseData>
 
 export interface GetRegisterFormDetailResponseData {
   assetDetail: RegisterFormDetail
 }
 
-export type GetRegisterFormDetailResponse = IAxiosResponse<GetRegisterFormDetailResponseData>
+export type GetRegisterFormDetailResponse =
+  IAxiosResponse<GetRegisterFormDetailResponseData>
 
 export interface CreateRegisterFormRequest {
   targetCountryCode: string
@@ -34,7 +37,8 @@ export interface CreateRegisterFormResponseData {
   asset: RegisterFormDetail
 }
 
-export type CreateRegisterFormResponse = IAxiosResponse<CreateRegisterFormResponseData>
+export type CreateRegisterFormResponse =
+  IAxiosResponse<CreateRegisterFormResponseData>
 
 export interface UpdateRegisterFormRequest {
   mediaId: number
@@ -50,13 +54,15 @@ export interface UpdateRegisterFormResponseData {
   asset: RegisterFormDetail
 }
 
-export type UpdateRegisterFormResponse = IAxiosResponse<UpdateRegisterFormResponseData>
+export type UpdateRegisterFormResponse =
+  IAxiosResponse<UpdateRegisterFormResponseData>
 
 export interface DeleteRegisterFormResponseData {
   success: boolean
 }
 
-export type DeleteRegisterFormResponse = IAxiosResponse<DeleteRegisterFormResponseData>
+export type DeleteRegisterFormResponse =
+  IAxiosResponse<DeleteRegisterFormResponseData>
 
 export interface UpdateRegisterFormsStatusResponseData {
   success: boolean
@@ -77,6 +83,7 @@ export interface Module {
 export interface Country {
   targetCountryCode: string
   targetCountryName: string
+  languageCode: string
 }
 
 export interface Language {
@@ -102,4 +109,5 @@ export interface GetRegisterFormFiltersData {
   allowedExtensions: Array<string>
 }
 
-export type GetRegisterFormFiltersResponse = IAxiosResponse<GetRegisterFormFiltersData>
+export type GetRegisterFormFiltersResponse =
+  IAxiosResponse<GetRegisterFormFiltersData>
