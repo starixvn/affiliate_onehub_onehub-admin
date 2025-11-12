@@ -1,0 +1,164 @@
+{
+  "entity_one": "组件",
+  "entity_other": "组件",
+  "page": {
+    "title": "组件管理",
+    "description": "管理链接生成的可重用参数",
+    "loading": "加载组件中..."
+  },
+  "buttons": {
+    "export": "导出",
+    "create": "创建"
+  },
+  "toast": {
+    "createSuccess": "组件创建成功",
+    "updateSuccess": "组件更新成功",
+    "deleteSuccess": "组件删除成功",
+    "deleteMultipleSuccess": "组件已成功删除",
+    "updateStatusSuccess": "组件状态更新成功",
+    "unknownError": "发生未知错误",
+    "exportSuccess": "组件导出成功",
+    "exportError": "导出组件失败"
+  },
+  "excel": {
+    "titlePrefix": "组件",
+    "searchPrefix": "搜索",
+    "categoryPrefix": "类别",
+    "statusPrefix": "状态",
+    "devicePrefix": "设备",
+    "allComponents": "所有组件",
+    "allCategories": "所有类别",
+    "allStatus": "所有状态",
+    "allDevices": "所有设备",
+    "rowNumber": "#"
+  },
+  "categoryFilters": {
+    "event": {
+      "title": "活动"
+    },
+    "group": {
+      "title": "群组"
+    },
+    "channel": {
+      "title": "渠道"
+    },
+    "agency": {
+      "title": "代理商"
+    },
+    "type": {
+      "title": "类型"
+    },
+    "landingPage": {
+      "title": "落地页"
+    }
+  },
+  "statusFilters": {
+    "total": "总计",
+    "active": "启用",
+    "inactive": "停用"
+  },
+  "searchToolbar": {
+    "submit": "搜索"
+  },
+  "table": {
+    "search": "搜索组件...",
+    "noResults": "未找到结果。",
+    "columns": {
+      "select": "全选",
+      "selectRow": "选择行",
+      "no": "#",
+      "code": "代码",
+      "name": "名称",
+      "category": "类别",
+      "createdDate": "创建日期",
+      "createdBy": "创建人",
+      "modifiedDate": "修改日期",
+      "modifiedBy": "修改人",
+      "status": "状态",
+      "device": "设备"
+    },
+    "actions": {
+      "openMenu": "打开菜单",
+      "edit": "编辑",
+      "delete": "删除"
+    }
+  },
+  "rowActions": {
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "bulkActions": {
+    "changeToActive": "更改为启用",
+    "changeToActiveCount": "更改为启用（影响 {{count}} 个）",
+    "changeToInactive": "更改为停用",
+    "changeToInactiveCount": "更改为停用（影响 {{count}} 个）",
+    "deleteSelected": "删除所有选中的组件"
+  },
+  "bulkActionsToast": {
+    "statusChanged": "已更新 {{count}} 个组件为{{status}}",
+    "alreadyStatus": "所有选中的组件已经是{{status}}"
+  },
+  "dialog": {
+    "form": {
+      "category": "组件类别",
+      "categoryRequired": "组件类别为必填项",
+      "categoryPlaceholder": "选择类别",
+      "name": "名称",
+      "nameRequired": "名称为必填项",
+      "namePlaceholder": "例如：幸运抽奖",
+      "code": "代码",
+      "codeRequired": "代码为必填项",
+      "codePlaceholder": "例如：Lucky_Draw",
+      "status": "状态",
+      "statusPlaceholder": "选择状态",
+      "device": "设备",
+      "devicePlaceholder": "选择设备",
+      "requiredField": "*"
+    },
+    "saveChanges": "保存更改",
+    "multiDelete": {
+      "title_one": "删除 {{count}} 个组件",
+      "title_other": "删除 {{count}} 个组件",
+      "message": "您确定要删除选中的组件吗？",
+      "description": "此操作无法撤销。这将永久删除选中的组件及所有相关数据。",
+      "confirmLabel": "输入 \"{{word}}\" 以确认：",
+      "confirmPlaceholder": "输入 \"{{word}}\" 以确认。",
+      "confirmWord": "DELETE",
+      "warning": "警告！",
+      "warningMessage": "请谨慎操作，此操作无法回滚。",
+      "confirm": "删除"
+    },
+    "multiDeleteToast": {
+      "deleting": "正在删除组件...",
+      "deleted_one": "已删除 {{count}} 个组件",
+      "deleted_other": "已删除 {{count}} 个组件",
+      "deleteFailed": "删除组件失败",
+      "confirmRequired": "请输入 \"{{word}}\" 以确认。"
+    }
+  },
+  "createDialog": {
+    "title": "创建新组件",
+    "description": "创建一个新组件，代码将根据名称自动生成。代码将出现在生成的链接中，一旦创建后将无法更改。",
+    "success": "组件创建成功"
+  },
+  "updateDialog": {
+    "title": "编辑组件",
+    "description": "更新组件信息。代码一旦创建后将无法更改。",
+    "success": "组件更新成功"
+  },
+  "deleteDialog": {
+    "title": "删除组件",
+    "description": "您确定要删除 {{name}} 吗？此操作无法撤销。",
+    "warning": "警告！",
+    "warningMessage": "请谨慎操作，此操作无法回滚。",
+    "multiTitle_one": "删除 {{count}} 个组件",
+    "multiTitle_other": "删除 {{count}} 个组件",
+    "multiDescription_one": "您确定要删除 {{count}} 个组件吗？此操作无法撤销。",
+    "multiDescription_other": "您确定要删除 {{count}} 个组件吗？此操作无法撤销。",
+    "cancel": "取消",
+    "confirm": "删除",
+    "success": "组件删除成功",
+    "multiSuccess_one": "已删除 {{count}} 个组件",
+    "multiSuccess_other": "已删除 {{count}} 个组件"
+  }
+}

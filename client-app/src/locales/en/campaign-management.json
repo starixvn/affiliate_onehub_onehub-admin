@@ -26,6 +26,7 @@
     "columns": {
       "select": "Select all",
       "selectRow": "Select row",
+      "no": "#",
       "code": "Campaign Code",
       "name": "Campaign Name",
       "description": "Campaign Description",
@@ -98,7 +99,8 @@
       "description": "This action cannot be undone. This will permanently delete the campaign and all associated data.",
       "warning": "Warning!",
       "warningMessage": "Please be careful, this operation cannot be rolled back.",
-      "confirm": "Delete"
+      "confirm": "Delete",
+      "cancel": "Cancel"
     },
     "multiDelete": {
       "title_one": "Delete {{count}} campaign",
@@ -110,7 +112,8 @@
       "confirmWord": "DELETE",
       "warning": "Warning!",
       "warningMessage": "Please be careful, this operation cannot be rolled back.",
-      "confirm": "Delete"
+      "confirm": "Delete",
+      "cancel": "Cancel"
     },
     "multiDeleteToast": {
       "deleting": "Deleting campaigns...",

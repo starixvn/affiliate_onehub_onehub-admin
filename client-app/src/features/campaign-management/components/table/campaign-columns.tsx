@@ -39,6 +39,19 @@ export const getCampaignColumns = (
     enableHiding: false,
   },
   {
+    accessorKey: 'rowIdx',
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title={t('table.columns.no')} />
+    ),
+    cell: ({ row }) => <div className='w-2'>{row.getValue('rowIdx')}</div>,
+    meta: {
+      className: cn('sticky start-6 z-10'),
+      displayName: t('table.columns.no'),
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'campaignCode',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -48,12 +61,14 @@ export const getCampaignColumns = (
       />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-64 ps-3'>{row.getValue('campaignCode')}</LongText>
+      <LongText className='max-w-64 ps-3'>
+        {row.getValue('campaignCode')}
+      </LongText>
     ),
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none'
       ),
       displayName: t('table.columns.code'),
     },
@@ -170,7 +185,7 @@ export const getCampaignColumns = (
     cell: CampaignStatusCell,
     meta: {
       displayName: t('table.columns.status'),
-      className: '',
+      className: 'w-32',
     },
     filterFn: (row, id, value) => {
       return value.includes(String(row.getValue(id)))

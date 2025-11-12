@@ -27,12 +27,8 @@ export function LongText({
   const [isOverflown, setIsOverflown] = useState(false)
 
   useEffect(() => {
-    if (checkOverflow(ref.current)) {
-      setIsOverflown(true)
-      return
-    }
-
-    setIsOverflown(false)
+    if (!ref.current) return
+    setIsOverflown(checkOverflow(ref.current))
   }, [])
 
   if (!isOverflown)
@@ -52,8 +48,10 @@ export function LongText({
                 {children}
               </div>
             </TooltipTrigger>
-            <TooltipContent>
-              <p className={contentClassName}>{children}</p>
+            <TooltipContent className="max-w-sm">
+              <p className={cn(contentClassName, 'whitespace-normal wrap-break-word')}>
+                {children}
+              </p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -65,8 +63,10 @@ export function LongText({
               {children}
             </div>
           </PopoverTrigger>
-          <PopoverContent className={cn('w-fit', contentClassName)}>
-            <p>{children}</p>
+          <PopoverContent className={cn('max-w-sm', contentClassName)}>
+            <p className="whitespace-normal wrap-break-word">
+              {children}
+            </p>
           </PopoverContent>
         </Popover>
       </div>

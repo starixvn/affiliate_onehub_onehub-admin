@@ -14,9 +14,9 @@ public class LoggingServiceInstaller : IServiceInstaller
 
         ArgumentNullException.ThrowIfNull(sentrySetting);
 
-        if (!string.IsNullOrEmpty(sentrySetting.Dsn) && !string.IsNullOrEmpty(sentrySetting.LogCategory))
+        if (!string.IsNullOrEmpty(sentrySetting.Dsn) && !string.IsNullOrEmpty(sentrySetting.Environment))
         {
-            LogManager.SetDefaultLogCategory(sentrySetting.LogCategory).Use(new List<ILogEngine>
+            LogManager.SetDefaultLogCategory(sentrySetting.Environment).Use(new List<ILogEngine>
             {
                 new SentryLogging(new SentryEngineOptions
                 {
@@ -27,7 +27,7 @@ public class LoggingServiceInstaller : IServiceInstaller
         }
         else
         {
-            LogManager.SetDefaultLogCategory("ONEHub.Admin.Default").Use(new List<ILogEngine>());
+            LogManager.SetDefaultLogCategory("Default").Use(new List<ILogEngine>());
         }
 
         services.AddSerilog((s, l) => l

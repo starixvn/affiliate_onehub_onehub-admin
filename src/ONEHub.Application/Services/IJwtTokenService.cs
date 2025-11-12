@@ -4,7 +4,7 @@ namespace ONEHub.Application.Services;
 
 public interface IJwtTokenService
 {
-    string GenerateAccessToken(User user);
+    public string GenerateAccessToken(User user);
 
-    string GenerateRefreshToken();
+    public string GenerateRefreshToken();
 }

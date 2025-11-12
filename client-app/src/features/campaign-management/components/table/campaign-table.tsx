@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
 import {
@@ -51,9 +52,27 @@ export function CampaignTable({
 }: DataTableProps) {
   const { t } = useTranslation('campaign-management')
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:campaign-management'
+        )
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
+    }
+  )
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+  useEffect(() => {
+    setLocalStorageItem(
+      'table-column-visibility:campaign-management',
+      JSON.stringify(columnVisibility)
+    )
+  }, [columnVisibility])
 
   const columns = useMemo(() => getCampaignColumns(t), [t])
 
@@ -107,7 +126,7 @@ export function CampaignTable({
       <DataTableToolbar
         table={table}
         searchPlaceholder={t('table.search')}
-        searchClassName='w-[250px] lg:w-[350px]'
+        searchClassName='w-[250px] lg:w-[400px]'
         filters={[]}
         submitLabel={t('searchToolbar.submit')}
         initialSearchValue={(search.search as string) ?? ''}

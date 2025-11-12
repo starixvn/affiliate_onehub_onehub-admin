@@ -12,7 +12,7 @@ public record GetCampaignListRequest(
 public record CreateCampaignRequest(
     [Required] string CampaignName,
     string? Description,
-    [Required] int Status
+    [Required] int StatusId
 );
 
 public record UpdateCampaignRequest(

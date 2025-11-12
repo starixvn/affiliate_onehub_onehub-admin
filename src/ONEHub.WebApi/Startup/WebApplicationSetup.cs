@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using ONEHub.Domain.Settings;
 using ONEHub.WebApi.Features.Auth;
 using ONEHub.WebApi.Features.Campaign;
+using ONEHub.WebApi.Features.Component;
 using Serilog;
 using Serilog.Events;
 
@@ -190,6 +191,7 @@ public static class WebApplicationSetup
     {
         app.RegisterAuthEndpoints();
         app.RegisterCampaignEndpoints();
+        app.RegisterComponentEndpoints();
         return app;
     }
 }

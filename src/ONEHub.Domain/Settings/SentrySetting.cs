@@ -7,6 +7,4 @@ public class SentrySetting
     public required string Dsn { get; set; }
 
     public required string Environment { get; set; }
-
-    public required string LogCategory { get; set; }
 }

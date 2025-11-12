@@ -1,0 +1,164 @@
+{
+  "entity_one": "component",
+  "entity_other": "components",
+  "page": {
+    "title": "Component Management",
+    "description": "Manage reusable parameters for link generation",
+    "loading": "Loading components..."
+  },
+  "buttons": {
+    "export": "Export",
+    "create": "Create"
+  },
+  "toast": {
+    "createSuccess": "Component created successfully",
+    "updateSuccess": "Component updated successfully",
+    "deleteSuccess": "Component deleted successfully",
+    "deleteMultipleSuccess": "Components deleted successfully",
+    "updateStatusSuccess": "Component statuses updated successfully",
+    "unknownError": "An unexpected error occurred",
+    "exportSuccess": "Components exported successfully",
+    "exportError": "Failed to export components"
+  },
+  "excel": {
+    "titlePrefix": "Components",
+    "searchPrefix": "Search",
+    "categoryPrefix": "Category",
+    "statusPrefix": "Status",
+    "devicePrefix": "Device",
+    "allComponents": "All Components",
+    "allCategories": "All Categories",
+    "allStatus": "All Statuses",
+    "allDevices": "All Devices",
+    "rowNumber": "#"
+  },
+  "categoryFilters": {
+    "event": {
+      "title": "Event"
+    },
+    "group": {
+      "title": "Group"
+    },
+    "channel": {
+      "title": "Channel"
+    },
+    "agency": {
+      "title": "Agency"
+    },
+    "type": {
+      "title": "Type"
+    },
+    "landingPage": {
+      "title": "Landing Page"
+    }
+  },
+  "statusFilters": {
+    "total": "Total",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "searchToolbar": {
+    "submit": "Search"
+  },
+  "table": {
+    "search": "Search components...",
+    "noResults": "No results.",
+    "columns": {
+      "select": "Select all",
+      "selectRow": "Select row",
+      "no": "#",
+      "code": "Code",
+      "name": "Name",
+      "category": "Category",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "modifiedDate": "Modified Date",
+      "modifiedBy": "Modified By",
+      "status": "Status",
+      "device": "Device"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "edit": "Edit",
+      "delete": "Delete"
+    }
+  },
+  "rowActions": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "bulkActions": {
+    "changeToActive": "Change to Active",
+    "changeToActiveCount": "Change to Active ({{count}} affected)",
+    "changeToInactive": "Change to Inactive",
+    "changeToInactiveCount": "Change to Inactive ({{count}} affected)",
+    "deleteSelected": "Delete all selected components"
+  },
+  "bulkActionsToast": {
+    "statusChanged": "Updated {{count}} component(s) to {{status}}",
+    "alreadyStatus": "All selected components are already {{status}}"
+  },
+  "dialog": {
+    "form": {
+      "category": "Component Category",
+      "categoryRequired": "Component Category is required",
+      "categoryPlaceholder": "Select category",
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "namePlaceholder": "e.g., Lucky Draw",
+      "code": "Code",
+      "codeRequired": "Code is required",
+      "codePlaceholder": "e.g., Lucky_Draw",
+      "status": "Status",
+      "statusPlaceholder": "Select status",
+      "device": "Device",
+      "devicePlaceholder": "Select device",
+      "requiredField": "*"
+    },
+    "saveChanges": "Save Changes",
+    "multiDelete": {
+      "title_one": "Delete {{count}} component",
+      "title_other": "Delete {{count}} components",
+      "message": "Are you sure you want to delete the selected components?",
+      "description": "This action cannot be undone. This will permanently delete the selected components and all associated data.",
+      "confirmLabel": "Confirm by typing \"{{word}}\":",
+      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
+      "confirmWord": "DELETE",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDeleteToast": {
+      "deleting": "Deleting components...",
+      "deleted_one": "Deleted {{count}} component",
+      "deleted_other": "Deleted {{count}} components",
+      "deleteFailed": "Failed to delete components",
+      "confirmRequired": "Please type \"{{word}}\" to confirm."
+    }
+  },
+  "createDialog": {
+    "title": "Create New Component",
+    "description": "Create a new component with a code auto-generated from the name. The code will appear in the generated link and cannot be changed once created.",
+    "success": "Component created successfully"
+  },
+  "updateDialog": {
+    "title": "Edit Component",
+    "description": "Update the component information. The code cannot be changed once created.",
+    "success": "Component updated successfully"
+  },
+  "deleteDialog": {
+    "title": "Delete Component",
+    "description": "Are you sure you want to delete {{name}}? This action cannot be undone.",
+    "warning": "Warning!",
+    "warningMessage": "Please be careful, this operation cannot be rolled back.",
+    "multiTitle_one": "Delete {{count}} component",
+    "multiTitle_other": "Delete {{count}} components",
+    "multiDescription_one": "Are you sure you want to delete {{count}} component? This action cannot be undone.",
+    "multiDescription_other": "Are you sure you want to delete {{count}} components? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "success": "Component deleted successfully",
+    "multiSuccess_one": "Deleted {{count}} component",
+    "multiSuccess_other": "Deleted {{count}} components"
+  }
+}

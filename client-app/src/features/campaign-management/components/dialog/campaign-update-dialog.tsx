@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -24,50 +25,44 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateCampaign, useUpdateCampaign } from '../../api/commands'
+import { useUpdateCampaign } from '../../api/commands'
 import { status } from '../../data/data'
-import { type Campaign } from '../../data/schema'
+import { useCampaigns } from '../campaign-provider'
 
 const getFormSchema = (t: (key: string) => string) =>
   z.object({
     campaignId: z.number().optional(),
     campaignCode: z.string().optional(),
-    campaignName: z.string().min(1, t('dialog.form.nameRequired')),
-    description: z.string().optional(),
+    campaignName: z.string().trim().min(1, t('dialog.form.nameRequired')),
+    description: z.string().max(500).optional(),
     statusId: z.number().optional(),
   })
 
-type CampaignActionDialogProps = {
-  currentRow?: Campaign
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
-export function CampaignActionDialog({
-  currentRow,
-  open,
-  onOpenChange,
-}: CampaignActionDialogProps) {
+export function CampaignUpdateDialog() {
   const { t } = useTranslation('campaign-management')
+  const { open, setOpen, currentRow } = useCampaigns()
   const formSchema = getFormSchema(t)
   type CampaignForm = z.infer<typeof formSchema>
-  const isEdit = !!currentRow
-  const createMutation = useCreateCampaign()
   const updateMutation = useUpdateCampaign()
   const form = useForm<CampaignForm>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
-    defaultValues: isEdit
-      ? currentRow
-      : {
-          campaignName: '',
-          description: '',
-          statusId: 0,
-        },
+    defaultValues: currentRow || {
+      campaignName: '',
+      description: '',
+      statusId: 0,
+    },
   })
 
+  useEffect(() => {
+    if (currentRow && open === 'update') {
+      form.reset(currentRow)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentRow, open])
+
   const onSubmit = (values: CampaignForm) => {
-    if (isEdit && currentRow) {
+    if (currentRow) {
       updateMutation.mutate(
         {
           id: currentRow.campaignId,
@@ -82,23 +77,7 @@ export function CampaignActionDialog({
           onSuccess: (response) => {
             if (response.errorCode === 0) {
               form.reset()
-              onOpenChange(false)
-            }
-          },
-        }
-      )
-    } else {
-      createMutation.mutate(
-        {
-          campaignName: values.campaignName,
-          description: values.description || '',
-          statusId: values.statusId ?? 0,
-        },
-        {
-          onSuccess: (response) => {
-            if (response.errorCode === 0) {
-              form.reset()
-              onOpenChange(false)
+              setOpen(null)
             }
           },
         }
@@ -111,53 +90,51 @@ export function CampaignActionDialog({
 
   return (
     <Dialog
-      open={open}
+      open={open === 'update'}
       onOpenChange={(state) => {
-        form.reset()
-        onOpenChange(state)
+        form.reset(
+          currentRow || {
+            campaignName: '',
+            description: '',
+            statusId: 0,
+          }
+        )
+        setOpen(state ? 'update' : null)
       }}
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>
-            {isEdit ? t('dialog.edit.title') : t('dialog.create.title')}
-          </DialogTitle>
-          <DialogDescription>
-            {isEdit
-              ? t('dialog.edit.description')
-              : t('dialog.create.description')}
-          </DialogDescription>
+          <DialogTitle>{t('dialog.edit.title')}</DialogTitle>
+          <DialogDescription>{t('dialog.edit.description')}</DialogDescription>
         </DialogHeader>
         <div className='w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
           <Form {...form}>
             <form
-              id='campaign-form'
+              id='campaign-update-form'
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
-              {isEdit && (
-                <FormField
-                  control={form.control}
-                  name='campaignCode'
-                  render={({ field }) => (
-                    <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                      <FormLabel className='col-span-2 text-end'>
-                        {t('dialog.form.code')}
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder={t('dialog.form.codePlaceholder')}
-                          className='col-span-4'
-                          autoComplete='off'
-                          disabled
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage className='col-span-4 col-start-3' />
-                    </FormItem>
-                  )}
-                />
-              )}
+              <FormField
+                control={form.control}
+                name='campaignCode'
+                render={({ field }) => (
+                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 text-end'>
+                      {t('dialog.form.code')}
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder={t('dialog.form.codePlaceholder')}
+                        className='col-span-4'
+                        autoComplete='off'
+                        disabled
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className='col-span-4 col-start-3' />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name='campaignName'
@@ -193,6 +170,7 @@ export function CampaignActionDialog({
                       <Textarea
                         placeholder={t('dialog.form.descriptionPlaceholder')}
                         className='col-span-4 min-h-24'
+                        maxLength={500}
                         {...field}
                       />
                     </FormControl>
@@ -233,12 +211,8 @@ export function CampaignActionDialog({
         <DialogFooter>
           <Button
             type='submit'
-            form='campaign-form'
-            disabled={
-              !isFormValid ||
-              createMutation.isPending ||
-              updateMutation.isPending
-            }
+            form='campaign-update-form'
+            disabled={!isFormValid || updateMutation.isPending}
           >
             {t('dialog.saveChanges')}
           </Button>

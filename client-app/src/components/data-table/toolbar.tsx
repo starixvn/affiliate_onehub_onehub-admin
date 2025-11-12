@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
 import { type Table } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
@@ -21,10 +21,14 @@ type DataTableToolbarProps<TData> = {
       value: string
       icon?: React.ComponentType<{ className?: string }>
     }[]
+    defaultValue?: string | string[]
+    hidden?: boolean
   }[]
   submitLabel?: string
   onSubmit: (searchValue: string) => void
+  onReset?: () => void
   initialSearchValue?: string
+  defaultSearchValue?: string
 }
 
 export function DataTableToolbar<TData>({
@@ -34,7 +38,9 @@ export function DataTableToolbar<TData>({
   filters = [],
   submitLabel,
   onSubmit,
+  onReset,
   initialSearchValue = '',
+  defaultSearchValue,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
   const [searchValue, setSearchValue] = useState(initialSearchValue)
@@ -47,6 +53,61 @@ export function DataTableToolbar<TData>({
   const handleClear = () => {
     setSearchValue('')
   }
+
+  const handleReset = () => {
+    setSearchValue(defaultSearchValue ?? '')
+    filters.forEach((filter) => {
+      const column = table.getColumn(filter.columnId)
+      column?.setFilterValue(filter.defaultValue)
+    })
+    if (onReset) {
+      onReset()
+    }
+  }
+
+  const hasChangedFilters = useMemo(() => {
+    const searchDiffers = searchValue !== (defaultSearchValue ?? '')
+
+    const filterDiffers = filters.some((filter) => {
+      if (filter.hidden) return false
+
+      const column = table.getColumn(filter.columnId)
+      const currentValue = column?.getFilterValue()
+      const defaultValue = filter.defaultValue
+
+      const normalizedCurrent =
+        Array.isArray(currentValue) && currentValue.length === 0
+          ? undefined
+          : currentValue
+      const normalizedDefault =
+        Array.isArray(defaultValue) && defaultValue.length === 0
+          ? undefined
+          : defaultValue
+
+      if (normalizedCurrent === undefined && normalizedDefault === undefined) {
+        return false
+      }
+
+      if (
+        Array.isArray(normalizedCurrent) &&
+        Array.isArray(normalizedDefault)
+      ) {
+        if (normalizedCurrent.length !== normalizedDefault.length) return true
+        return normalizedCurrent.some(
+          (val, idx) => val !== normalizedDefault[idx]
+        )
+      } else if (
+        Array.isArray(normalizedCurrent) ||
+        Array.isArray(normalizedDefault)
+      ) {
+        return true
+      } else {
+        return normalizedCurrent !== normalizedDefault
+      }
+    })
+
+    return searchDiffers || filterDiffers
+  }, [searchValue, defaultSearchValue, filters, table])
 
   return (
     <div className='flex items-center justify-between'>
@@ -72,13 +133,8 @@ export function DataTableToolbar<TData>({
               </Button>
             )}
           </div>
-          <Button type='submit' size='sm' className='h-8'>
-            <Search className='me-2 h-4 w-4' />
-            {submitLabel ?? t('dataTable.submit')}
-          </Button>
-        </form>
-        <div className='flex gap-x-2'>
           {filters.map((filter) => {
+            if (filter.hidden) return null
             const column = table.getColumn(filter.columnId)
             if (!column) return null
             return (
@@ -90,7 +146,22 @@ export function DataTableToolbar<TData>({
               />
             )
           })}
-        </div>
+          <Button type='submit' size='sm' className='h-8'>
+            <Search className='me-2 h-4 w-4' />
+            {submitLabel ?? t('dataTable.submit')}
+          </Button>
+          {hasChangedFilters && (
+            <Button
+              type='button'
+              variant='outline'
+              size='sm'
+              className='h-8'
+              onClick={handleReset}
+            >
+              {t('dataTable.reset') || 'Reset'}
+            </Button>
+          )}
+        </form>
       </div>
       <DataTableViewOptions table={table} />
     </div>

@@ -1,5 +1,6 @@
 using MediatR;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -10,9 +11,9 @@ namespace ONEHub.Application.Features.Campaign.Queries;
 
 public class GetCampaignListQuery : PagingQuery<CampaignResponse>
 {
-    public string? Search { get; set; } = string.Empty;
+    public string? Search { get; set; } 
 
-    public string? StatusIds { get; set; } = string.Empty;
+    public string? StatusIds { get; set; } 
 
     public bool IsExportExcel { get; set; }
 }
@@ -64,9 +65,9 @@ public class GetCampaignListHandler(ICampaignRepository campaignRepository)
                 campaign.CampaignName,
                 campaign.Description,
                 campaign.Creator,
-                campaign.CreatedDate.ToString("MM/dd/yyyy"),
+                DateTimeUtils.FormatDateString(campaign.CreatedDate),
                 campaign.UpdatedBy,
-                campaign.UpdatedDate.ToString("MM/dd/yyyy"),
+                DateTimeUtils.FormatDateString(campaign.UpdatedDate),
                 campaign.StatusId,
                 campaign.Status,
                 campaign.RowIdx
