@@ -75,7 +75,8 @@ export function ComponentUpdateDialog() {
         deviceId: currentRow.deviceId ?? undefined,
       })
     }
-  }, [open, currentRow, form])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, currentRow])
 
   useEffect(() => {
     if (isLandingPage) {
@@ -85,7 +86,8 @@ export function ComponentUpdateDialog() {
     } else {
       form.setValue('deviceId', undefined)
     }
-  }, [isLandingPage, form])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLandingPage])
 
   const onSubmit = (values: ComponentForm) => {
     if (!currentRow?.componentId) return
@@ -147,6 +149,7 @@ export function ComponentUpdateDialog() {
                       placeholder={t('dialog.form.categoryPlaceholder')}
                       className='col-span-4'
                       items={categories}
+                      isControlled
                       disabled
                     />
                     <FormMessage className='col-span-4 col-start-3' />
@@ -214,6 +217,7 @@ export function ComponentUpdateDialog() {
                         label,
                         value,
                       }))}
+                      isControlled
                     />
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -234,6 +238,7 @@ export function ComponentUpdateDialog() {
                         placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'
                         items={deviceTypes}
+                        isControlled
                       />
                       <FormMessage className='col-span-4 col-start-3' />
                     </FormItem>

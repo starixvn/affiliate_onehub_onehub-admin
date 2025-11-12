@@ -16,7 +16,9 @@
     "deleteSuccess": "组件删除成功",
     "deleteMultipleSuccess": "组件已成功删除",
     "updateStatusSuccess": "组件状态更新成功",
-    "unknownError": "发生未知错误"
+    "unknownError": "发生未知错误",
+    "exportSuccess": "组件导出成功",
+    "exportError": "导出组件失败"
   },
   "excel": {
     "titlePrefix": "组件",

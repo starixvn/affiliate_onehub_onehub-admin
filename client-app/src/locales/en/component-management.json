@@ -16,7 +16,9 @@
     "deleteSuccess": "Component deleted successfully",
     "deleteMultipleSuccess": "Components deleted successfully",
     "updateStatusSuccess": "Component statuses updated successfully",
-    "unknownError": "An unexpected error occurred"
+    "unknownError": "An unexpected error occurred",
+    "exportSuccess": "Components exported successfully",
+    "exportError": "Failed to export components"
   },
   "excel": {
     "titlePrefix": "Components",
@@ -26,7 +28,7 @@
     "devicePrefix": "Device",
     "allComponents": "All Components",
     "allCategories": "All Categories",
-    "allStatus": "All Status",
+    "allStatus": "All Statuses",
     "allDevices": "All Devices",
     "rowNumber": "#"
   },

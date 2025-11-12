@@ -2,13 +2,13 @@ namespace ONEHub.Domain.Params;
 
 public class ComponentListParam : PagingParam
 {
-    public string? Search { get; set; } = string.Empty;
+    public string? Search { get; set; }
 
-    public string? CategoryIds { get; set; } = string.Empty;
+    public string? CategoryIds { get; set; }
 
-    public string? StatusIds { get; set; } = string.Empty;
+    public string? StatusIds { get; set; }
 
-    public string? DeviceIds { get; set; } = string.Empty;
+    public string? DeviceIds { get; set; }
 
     public bool IsExportExcel { get; set; }
 }

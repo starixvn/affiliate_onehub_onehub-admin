@@ -68,11 +68,10 @@ export function ComponentCreateDialog() {
   const isLandingPage = watchCategory === Number(LANDING_PAGE_CATEGORY_ID)
 
   useEffect(() => {
-    if (watchName) {
-      const generatedCode = watchName.trim().replace(/\s+/g, '_')
-      form.setValue('componentCode', generatedCode)
-    }
-  }, [watchName, form])
+    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '_') : ''
+    form.setValue('componentCode', generatedCode)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchName])
 
   useEffect(() => {
     if (open === 'create') {
@@ -84,7 +83,8 @@ export function ComponentCreateDialog() {
         deviceId: undefined,
       })
     }
-  }, [open, selectedCategory, form])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, selectedCategory])
 
   useEffect(() => {
     if (isLandingPage) {
@@ -94,7 +94,8 @@ export function ComponentCreateDialog() {
     } else {
       form.setValue('deviceId', undefined)
     }
-  }, [isLandingPage, form])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLandingPage])
 
   const onSubmit = (values: ComponentForm) => {
     createMutation.mutate(
@@ -148,6 +149,7 @@ export function ComponentCreateDialog() {
                       placeholder={t('dialog.form.categoryPlaceholder')}
                       className='col-span-4'
                       items={categories}
+                      isControlled
                     />
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -214,6 +216,7 @@ export function ComponentCreateDialog() {
                         label,
                         value,
                       }))}
+                      isControlled
                     />
                     <FormMessage className='col-span-4 col-start-3' />
                   </FormItem>
@@ -234,6 +237,7 @@ export function ComponentCreateDialog() {
                         placeholder={t('dialog.form.devicePlaceholder')}
                         className='col-span-4'
                         items={deviceTypes}
+                        isControlled
                       />
                       <FormMessage className='col-span-4 col-start-3' />
                     </FormItem>

@@ -46,11 +46,14 @@ export function DataTableBulkActions<TData>({
         count: selectedCount,
         entity: entityName,
       })
-      setAnnouncement(message)
 
-      // Clear announcement after a delay
-      const timer = setTimeout(() => setAnnouncement(''), 3000)
-      return () => clearTimeout(timer)
+      const timeoutId = setTimeout(() => setAnnouncement(message), 0)
+      const clearId = setTimeout(() => setAnnouncement(''), 3000)
+
+      return () => {
+        clearTimeout(timeoutId)
+        clearTimeout(clearId)
+      }
     }
   }, [selectedCount, entityName, t])
 

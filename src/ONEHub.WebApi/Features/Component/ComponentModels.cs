@@ -11,27 +11,26 @@ public record GetComponentListRequest(
     int PageSize,
     bool IsExportExcel = false);
 
-
 public record CreateComponentRequest(
-    [Required] int CategoryId,
-    [Required] string ComponentName,
-    [Required] string ComponentCode,
-    [Required] int StatusId,
+    [Required][Range(1, int.MaxValue)] int CategoryId,
+    [Required][MaxLength(200)] string ComponentName,
+    [Required][MaxLength(200)] string ComponentCode,
+    [Required][Range(1, int.MaxValue)] int StatusId,
     int? DeviceId
 );
 
 public record UpdateComponentRequest(
-    [Required] int ComponentId,
-    [Required] int CategoryId,
-    [Required] string ComponentName,
-    [Required] string ComponentCode,
+    [Required][Range(1, int.MaxValue)] int ComponentId,
+    [Required][Range(1, int.MaxValue)] int CategoryId,
+    [Required][MaxLength(200)] string ComponentName,
+    [Required][MaxLength(200)] string ComponentCode,
     [Required] int StatusId,
     int? DeviceId
 );
 
 public record UpdateBatchComponentStatusRequest(
     [Required] string ComponentIds,
-    [Required] int StatusId
+    [Required][Range(1, int.MaxValue)] int StatusId
 );
 
 public record DeleteBatchComponentRequest(
