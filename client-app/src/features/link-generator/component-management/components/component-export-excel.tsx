@@ -1,21 +1,31 @@
 import { type TFunction } from 'i18next'
-import { exportToExcel, EXCEL_STATUS_COLORS, type ColumnConfig } from '@/lib/excel'
-import { status, categories, deviceTypes, LANDING_PAGE_CATEGORY_ID } from '../data/data'
+import {
+  exportToExcel,
+  EXCEL_STATUS_COLORS,
+  type ColumnConfig,
+} from '@/lib/excel'
+import {
+  status,
+  categories,
+  deviceTypes,
+  LANDING_PAGE_CATEGORY_ID,
+} from '../data/data'
 import type { Component } from '../data/schema'
 import type { GetComponentsRequest } from '../types'
+
+const STATUS_COLOR_MAP: Record<string, string> = {
+  green: EXCEL_STATUS_COLORS.green,
+  gray: EXCEL_STATUS_COLORS.gray,
+}
 
 export const formatComponentsForExcel = (
   components: Component[],
   t: TFunction<'component-management', undefined>,
   params?: GetComponentsRequest
-) => {
+): Promise<void> => {
   const getStatusColor = (statusId: number) => {
     const statusOption = status.find((s) => s.value === String(statusId))
-    const colorMap: Record<string, string> = {
-      green: EXCEL_STATUS_COLORS.green,
-      gray: EXCEL_STATUS_COLORS.gray,
-    }
-    return colorMap[statusOption?.color || 'gray']
+    return STATUS_COLOR_MAP[statusOption?.color || 'gray']
   }
 
   const buildTitle = () => {
@@ -47,12 +57,17 @@ export const formatComponentsForExcel = (
     }
 
     if (params?.deviceIds) {
-      const deviceOption = deviceTypes.find((d) => d.value === params.deviceIds)
-      const devicePart = deviceOption
-        ? `${t('excel.devicePrefix')}: ${deviceOption.label}`
-        : t('excel.allDevices')
+      const deviceIds = params.deviceIds.split(',').map((id) => id.trim())
+      const deviceLabels = deviceIds
+        .map((id) => deviceTypes.find((d) => d.value === id)?.label)
+        .filter((label): label is string => !!label)
+
+      const devicePart =
+        deviceLabels.length > 0
+          ? `${t('excel.devicePrefix')}: ${deviceLabels.join(', ')}`
+          : t('excel.allDevices')
       titleParts.push(devicePart)
-    } else if (params?.category === String(LANDING_PAGE_CATEGORY_ID)) {
+    } else if (params?.category === LANDING_PAGE_CATEGORY_ID) {
       titleParts.push(t('excel.allDevices'))
     }
 
@@ -110,7 +125,12 @@ export const formatComponentsForExcel = (
   ]
 
   const deviceColumn: ColumnConfig<Component> = {
-    field: 'device',
+    field: (row: Component) => {
+      const deviceLabel = deviceTypes.find(
+        (d) => d.value === row.deviceId?.toString()
+      )?.label
+      return deviceLabel || '-'
+    },
     header: t('table.columns.device'),
     width: 20,
     style: { alignment: 'center' },
@@ -127,9 +147,10 @@ export const formatComponentsForExcel = (
     }),
   }
 
-  const columns: ColumnConfig<Component>[] = params?.category === String(LANDING_PAGE_CATEGORY_ID)
-    ? [...baseColumns, deviceColumn, statusColumn]
-    : [...baseColumns, statusColumn]
+  const columns: ColumnConfig<Component>[] =
+    params?.category === LANDING_PAGE_CATEGORY_ID
+      ? [...baseColumns, deviceColumn, statusColumn]
+      : [...baseColumns, statusColumn]
 
   return exportToExcel({
     title: buildTitle(),
