@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { type Table } from '@tanstack/react-table'
+import { type Table, type ColumnFiltersState } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -29,6 +29,7 @@ type DataTableToolbarProps<TData> = {
   onReset?: () => void
   initialSearchValue?: string
   defaultSearchValue?: string
+  columnFilters?: ColumnFiltersState
 }
 
 export function DataTableToolbar<TData>({
@@ -41,6 +42,7 @@ export function DataTableToolbar<TData>({
   onReset,
   initialSearchValue = '',
   defaultSearchValue,
+  columnFilters,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
   const [searchValue, setSearchValue] = useState(initialSearchValue)
@@ -107,7 +109,7 @@ export function DataTableToolbar<TData>({
     })
 
     return searchDiffers || filterDiffers
-  }, [searchValue, defaultSearchValue, filters, table])
+  }, [searchValue, defaultSearchValue, filters, table, columnFilters])
 
   return (
     <div className='flex items-center justify-between'>

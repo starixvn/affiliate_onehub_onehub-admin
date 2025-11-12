@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -62,6 +63,17 @@ export function ComponentTable({
     [selectedCategory]
   )
 
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
+    const filters: ColumnFiltersState = []
+    if (search.status && typeof search.status === 'string') {
+      filters.push({ id: 'status', value: search.status.split(',') })
+    }
+    if (search.deviceIds && typeof search.deviceIds === 'string') {
+      filters.push({ id: 'deviceId', value: search.deviceIds.split(',') })
+    }
+    return filters
+  })
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
       try {
@@ -102,6 +114,7 @@ export function ComponentTable({
       },
       rowSelection,
       columnVisibility,
+      columnFilters,
     },
     getRowId: (row) => row.componentCode,
     manualPagination: true,
@@ -123,31 +136,31 @@ export function ComponentTable({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
   useEffect(() => {
-    const deviceColumn = table.getColumn('deviceId')
-    if (deviceColumn && search.deviceIds) {
-      const deviceValues = (search.deviceIds as string).split(',')
-      deviceColumn.setFilterValue(deviceValues)
-    } else if (deviceColumn && !search.deviceIds) {
-      deviceColumn.setFilterValue(undefined)
-    }
-  }, [search.deviceIds, table, isLandingPage])
+    setColumnFilters((prev) => {
+      const newFilters: ColumnFiltersState = []
 
-  useEffect(() => {
-    const statusColumn = table.getColumn('status')
-    if (statusColumn && search.status) {
-      const statusValues = (search.status as string).split(',')
-      statusColumn.setFilterValue(statusValues)
-    } else if (statusColumn && search.status === '') {
-      statusColumn.setFilterValue(undefined)
-    } else if (statusColumn && !search.status) {
-      statusColumn.setFilterValue(['1'])
-    }
-  }, [search.status, table])
+      if (search.status && typeof search.status === 'string') {
+        newFilters.push({ id: 'status', value: search.status.split(',') })
+      } else if (search.status === '') {
+        newFilters.push({ id: 'status', value: undefined })
+      }
+
+      if (search.deviceIds && typeof search.deviceIds === 'string') {
+        newFilters.push({ id: 'deviceId', value: search.deviceIds.split(',') })
+      }
+
+      const hasChanged =
+        JSON.stringify(prev) !== JSON.stringify(newFilters)
+
+      return hasChanged ? newFilters : prev
+    })
+  }, [search.status, search.deviceIds])
 
   const filters = useMemo(
     () => [
@@ -189,13 +202,14 @@ export function ComponentTable({
         submitLabel={t('searchToolbar.submit')}
         initialSearchValue={(search.search as string) ?? ''}
         defaultSearchValue=''
+        columnFilters={columnFilters}
         onSubmit={(searchValue) => {
           const statusFilter = table.getColumn('status')?.getFilterValue() as
             | string[]
             | undefined
-          const deviceFilter = table
-            .getColumn('deviceId')
-            ?.getFilterValue() as string[] | undefined
+          const deviceFilter = table.getColumn('deviceId')?.getFilterValue() as
+            | string[]
+            | undefined
           navigate({
             search: {
               ...search,
