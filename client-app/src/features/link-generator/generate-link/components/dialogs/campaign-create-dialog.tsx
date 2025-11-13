@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -20,84 +20,47 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateComponent } from '../../api/commands'
-import { useGetStatusOptions } from '../../api/queries'
+import { useCreateCampaign } from '../../api/commands'
+import { status } from '@/features/campaign-management/data/data'
 
-type ComponentType = 'event' | 'group' | 'channel' | 'agency' | 'type'
+const getFormSchema = (t: (key: string) => string) =>
+  z.object({
+    campaignName: z.string().trim().min(1, t('dialog.form.nameRequired')),
+    description: z.string().max(500).optional(),
+    statusId: z.number().optional(),
+  })
 
-const COMPONENT_CONFIG: Record<
-  ComponentType,
-  {
-    label: string
-    componentTypeId: number
-  }
-> = {
-  event: { label: 'Event', componentTypeId: 1 },
-  group: { label: 'Group', componentTypeId: 2 },
-  channel: { label: 'Channel', componentTypeId: 3 },
-  agency: { label: 'Agency', componentTypeId: 4 },
-  type: { label: 'Type', componentTypeId: 5 },
-}
-
-const formSchema = z.object({
-  componentName: z.string().min(1, 'Name is required'),
-  componentCode: z.string(),
-  statusId: z.number(),
-})
-
-type ComponentForm = z.infer<typeof formSchema>
-
-type AddComponentDialogProps = {
-  componentType: ComponentType
+type CampaignCreateDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function AddComponentDialog({
-  componentType,
+export function CampaignCreateDialog({
   open,
   onOpenChange,
-}: AddComponentDialogProps) {
-  const config = COMPONENT_CONFIG[componentType]
-  const title = `Create New ${config.label}`
-  const createButtonLabel = `Create ${config.label}`
-  const createMutation = useCreateComponent()
-
-  const { data: statusData, isLoading: isLoadingStatus } = useGetStatusOptions()
-  const statusOptions = statusData?.data || []
-
-  const form = useForm<ComponentForm>({
+}: CampaignCreateDialogProps) {
+  const { t } = useTranslation('campaign-management')
+  const formSchema = getFormSchema(t)
+  type CampaignForm = z.infer<typeof formSchema>
+  const createMutation = useCreateCampaign()
+  const form = useForm<CampaignForm>({
     resolver: zodResolver(formSchema),
     mode: 'onChange',
     defaultValues: {
-      componentName: '',
-      componentCode: '',
-      statusId: 1,
+      campaignName: '',
+      description: '',
+      statusId: 0,
     },
   })
 
-  const componentName = form.watch('componentName')
-
-  useEffect(() => {
-    if (componentName) {
-      const generatedCode = componentName
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-      form.setValue('componentCode', generatedCode)
-    } else {
-      form.setValue('componentCode', '')
-    }
-  }, [componentName, form])
-
-  const onSubmit = (values: ComponentForm) => {
+  const onSubmit = (values: CampaignForm) => {
     createMutation.mutate(
       {
-        componentTypeId: config.componentTypeId,
-        componentName: values.componentName,
-        componentCode: values.componentCode,
-        statusId: values.statusId,
+        campaignName: values.campaignName,
+        description: values.description || '',
+        statusId: values.statusId ?? 0,
       },
       {
         onSuccess: (response) => {
@@ -122,31 +85,32 @@ export function AddComponentDialog({
     >
       <DialogContent className='sm:max-w-lg'>
         <DialogHeader className='text-start'>
-          <DialogTitle>{title}</DialogTitle>
+          <DialogTitle>{t('dialog.create.title')}</DialogTitle>
           <DialogDescription>
-            Add a new {config.label.toLowerCase()} to your link generator
-            options.
+            {t('dialog.create.description')}
           </DialogDescription>
         </DialogHeader>
         <div className='w-[calc(100%+0.75rem)] overflow-y-auto py-1 pe-3'>
           <Form {...form}>
             <form
-              id='add-component-form'
+              id='campaign-create-form'
               onSubmit={form.handleSubmit(onSubmit)}
               className='space-y-4 px-0.5'
             >
               <FormField
                 control={form.control}
-                name='componentName'
+                name='campaignName'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Name{' '}
-                      <span className='text-destructive'>*</span>
+                      {t('dialog.form.name')}{' '}
+                      <span className='text-destructive'>
+                        {t('dialog.form.requiredField')}
+                      </span>
                     </FormLabel>
                     <FormControl>
                       <Input
-                        placeholder={`Enter ${config.label.toLowerCase()} name`}
+                        placeholder={t('dialog.form.namePlaceholder')}
                         className='col-span-4'
                         autoComplete='off'
                         {...field}
@@ -158,16 +122,17 @@ export function AddComponentDialog({
               />
               <FormField
                 control={form.control}
-                name='componentCode'
+                name='description'
                 render={({ field }) => (
-                  <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Code</FormLabel>
+                  <FormItem className='grid grid-cols-6 items-start space-y-0 gap-x-4 gap-y-1'>
+                    <FormLabel className='col-span-2 pt-2 text-end'>
+                      {t('dialog.form.description')}
+                    </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='Auto-generated code'
-                        className='col-span-4'
-                        autoComplete='off'
-                        disabled
+                      <Textarea
+                        placeholder={t('dialog.form.descriptionPlaceholder')}
+                        className='col-span-4 min-h-24'
+                        maxLength={500}
                         {...field}
                       />
                     </FormControl>
@@ -180,18 +145,17 @@ export function AddComponentDialog({
                 name='statusId'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Status</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>
+                      {t('dialog.form.status')}
+                    </FormLabel>
                     <SelectDropdown
                       defaultValue={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
-                      placeholder={
-                        isLoadingStatus ? 'Loading...' : 'Select status'
-                      }
+                      placeholder={t('dialog.form.statusPlaceholder')}
                       className='col-span-4'
-                      disabled={isLoadingStatus}
-                      items={statusOptions.map(({ label, value }) => ({
+                      items={status.map(({ label, value }) => ({
                         label,
-                        value: String(value),
+                        value,
                       }))}
                     />
                     <FormMessage className='col-span-4 col-start-3' />
@@ -203,24 +167,14 @@ export function AddComponentDialog({
         </div>
         <DialogFooter>
           <Button
-            variant='outline'
-            onClick={() => {
-              form.reset()
-              onOpenChange(false)
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
             type='submit'
-            form='add-component-form'
+            form='campaign-create-form'
             disabled={!isFormValid || createMutation.isPending}
           >
-            {createButtonLabel}
+            {t('dialog.saveChanges')}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
-

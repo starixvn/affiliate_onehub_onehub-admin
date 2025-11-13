@@ -41,7 +41,7 @@ export function useInsertLink() {
 }
 
 type CreateComponentRequest = {
-  componentTypeId: number
+  categoryId: number
   componentName: string
   componentCode: string
   statusId: number
@@ -55,7 +55,7 @@ export function useCreateComponent() {
     onSuccess: (response, variables) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ 
-          queryKey: linkGeneratorKeys.components(variables.componentTypeId) 
+          queryKey: linkGeneratorKeys.components(variables.categoryId) 
         })
         toast.success('Component created successfully')
       } else {
@@ -64,6 +64,31 @@ export function useCreateComponent() {
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to create component')
+    },
+  })
+}
+
+type CreateCampaignRequest = {
+  campaignName: string
+  description?: string
+  statusId?: number
+}
+
+export function useCreateCampaign() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: CreateCampaignRequest) =>
+      linkGeneratorApi.createCampaign(data),
+    onSuccess: (response) => {
+      if (response.errorCode === 0) {
+        queryClient.invalidateQueries({
+          queryKey: linkGeneratorKeys.campaigns(),
+        })
+        toast.success('Campaign created successfully')
+      } else {
+        toast.error(response.errorMessage || 'Failed to create campaign')
+      }
     },
   })
 }

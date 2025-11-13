@@ -16,7 +16,7 @@ import type { IAxiosResponse } from '@/lib/api/types'
 type InsertComponentRequest = {
   componentName: string
   componentCode: string
-  componentTypeId: number
+  categoryId: number
   statusId: number
 }
 
@@ -42,32 +42,32 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async getComponentsByType(componentTypeId: number): Promise<IAxiosResponse<ComponentInfo[]>> {
+  async getComponentsByCategory(categoryId: number): Promise<IAxiosResponse<ComponentInfo[]>> {
     const response = await apiClient.get<IAxiosResponse<ComponentInfo[]>>(
-      '/component',
-      { params: { componentTypeId } }
+      '/component/category',
+      { params: { categoryId } }
     )
     return response.data
   },
 
   async getEvents(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByType(1)
+    return this.getComponentsByCategory(1)
   },
 
   async getGroups(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByType(2)
+    return this.getComponentsByCategory(2)
   },
 
   async getChannels(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByType(3)
+    return this.getComponentsByCategory(3)
   },
 
   async getAgencies(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByType(4)
+    return this.getComponentsByCategory(4)
   },
 
   async getTypes(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByType(5)
+    return this.getComponentsByCategory(5)
   },
 
   async getLandingPages(): Promise<IAxiosResponse<Record<string, LandingPageOption[]>>> {
@@ -111,6 +111,18 @@ export const linkGeneratorApi = {
   async insertLink(data: InsertLinkRequest): Promise<InsertLinkResponse> {
     const response = await apiClient.post<InsertLinkResponse>(
       '/generate-link/insert',
+      data
+    )
+    return response.data
+  },
+
+  async createCampaign(data: {
+    campaignName: string
+    description?: string
+    statusId?: number
+  }): Promise<IAxiosResponse> {
+    const response = await apiClient.post<IAxiosResponse>(
+      '/campaign',
       data
     )
     return response.data
