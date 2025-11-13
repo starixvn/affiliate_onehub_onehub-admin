@@ -42,7 +42,6 @@ export function DataTableToolbar<TData>({
   onReset,
   initialSearchValue = '',
   defaultSearchValue,
-  columnFilters,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
   const [searchValue, setSearchValue] = useState(initialSearchValue)
@@ -109,7 +108,7 @@ export function DataTableToolbar<TData>({
     })
 
     return searchDiffers || filterDiffers
-  }, [searchValue, defaultSearchValue, filters, table, columnFilters])
+  }, [searchValue, defaultSearchValue, filters, table])
 
   return (
     <div className='flex items-center justify-between'>

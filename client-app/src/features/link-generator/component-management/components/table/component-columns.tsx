@@ -25,18 +25,16 @@ export const getComponentColumns = (
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label={t('table.columns.select')}
-        className='translate-y-[2px]'
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'),
     },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label={t('table.columns.selectRow')}
-        className='translate-y-[2px]'
       />
     ),
     enableSorting: false,
@@ -47,9 +45,9 @@ export const getComponentColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => <div className='w-2'>{row.getValue('rowIdx')}</div>,
+    cell: ({ row }) => <div>{row.getValue('rowIdx')}</div>,
     meta: {
-      className: cn('sticky start-6 z-10'),
+      className: cn('sticky start-6 z-10 w-12'),
       displayName: t('table.columns.no'),
     },
     enableSorting: false,
@@ -198,6 +196,9 @@ export const getComponentColumns = (
   {
     id: 'actions',
     cell: DataTableRowActions,
+    meta: {
+      className: 'text-center flex items-center justify-center',
+    },
   },
 ]
 
