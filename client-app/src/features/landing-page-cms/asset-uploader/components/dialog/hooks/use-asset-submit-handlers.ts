@@ -1,6 +1,9 @@
 import { useState } from 'react'
+import type { UseMutationResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { type AssetDetail } from '../../../data/schema'
+import type { ValidationErrors } from '../../../data/schema'
+import type { AssetDetail } from '../../../data/schema'
+import type { CreateAssetResponse, UpdateAssetResponse } from '../../../types'
 
 interface UseAssetSubmitHandlersProps {
   asset: AssetDetail | null | undefined
@@ -10,10 +13,10 @@ interface UseAssetSubmitHandlersProps {
   moduleRows: Array<{ module: string; files: File[] }>
   isEdit: boolean
   isMediaIdInUse: boolean
-  setErrors: React.Dispatch<React.SetStateAction<any>>
+  setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
   onOpenChange: (open: boolean) => void
-  createAssetMutation: any
-  updateAssetMutation: any
+  createAssetMutation: UseMutationResult<CreateAssetResponse, Error, unknown>
+  updateAssetMutation: UseMutationResult<UpdateAssetResponse, Error, unknown>
 }
 
 export function useAssetSubmitHandlers({
@@ -65,24 +68,25 @@ export function useAssetSubmitHandlers({
     return hasChangedCountry || hasChangedLanguage || hasChangedModule
   }
 
+  const setMediaInUseError = (error: string | undefined) => {
+    setErrors((prev) => ({
+      ...prev,
+      mediaInUse: error,
+    }))
+  }
+
   const handleSubmit = async (validateForm: () => boolean) => {
     if (!validateForm()) {
       return
     }
 
     if (isEdit && isMediaIdInUse && hasRestrictedFieldsChanged()) {
-      setErrors((prev: any) => ({
-        ...prev,
-        mediaInUse: t('validation.mediaInUse'),
-      }))
+      setMediaInUseError(t('validation.mediaInUse'))
       return
     }
 
     if (isEdit && isMediaIdInUse) {
-      setErrors((prev: any) => ({
-        ...prev,
-        mediaInUse: undefined,
-      }))
+      setMediaInUseError(undefined)
     }
 
     if (isEdit && fileName === asset?.mediaName) {
@@ -123,6 +127,6 @@ export function useAssetSubmitHandlers({
     handleCancel,
     showConfirmOverwrite,
     handleConfirmOverwrite,
-    handleCancelOverwrite
+    handleCancelOverwrite,
   }
 }

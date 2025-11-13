@@ -48,47 +48,9 @@ export function RegisterFormFormContent({
   onFormNameBlur,
   onRemoveFile,
 }: RegisterFormFormContentProps) {
-  if (isEdit) {
-    return (
-      <div className='space-y-6'>
-        <CountryLanguageSelects
-          isMediaIdInUse={isMediaIdInUse}
-          formWithFiles={formWithFiles}
-          errors={errors}
-          touched={touched}
-          countryOptions={countryOptions}
-          languageOptions={languageOptions}
-          country={country}
-          language={language}
-          onCountryChange={onCountryChange}
-          onLanguageChange={onLanguageChange}
-          onCountryBlur={onCountryBlur}
-          onLanguageBlur={onLanguageBlur}
-        />
-
-        <FileUploadSection
-          isEdit={isEdit}
-          formWithFiles={formWithFiles}
-          onFileChange={onFileChange}
-        />
-
-        {formWithFiles.files.length > 0 && (
-          <div className='space-y-4'>
-            <FormFileItem
-              index={0}
-              formFile={formWithFiles.files[0]}
-              errors={errors}
-              touched={touched}
-              isEdit={isEdit}
-              onFormNameChange={onFormNameChange}
-              onFormNameBlur={onFormNameBlur}
-              onRemoveFile={onRemoveFile}
-            />
-          </div>
-        )}
-      </div>
-    )
-  }
+  const filesToRender = isEdit
+    ? formWithFiles.files.slice(0, 1)
+    : formWithFiles.files
 
   return (
     <div className='space-y-6'>
@@ -113,9 +75,9 @@ export function RegisterFormFormContent({
         onFileChange={onFileChange}
       />
 
-      {formWithFiles.files.length > 0 && (
+      {filesToRender.length > 0 && (
         <div className='space-y-4'>
-          {formWithFiles.files.map((formFile, index) => (
+          {filesToRender.map((formFile, index) => (
             <FormFileItem
               key={index}
               index={index}

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import type { UseMutationResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { REGISTER_FORM_MODULE_ID } from '../../../data/constants'
 import type {
@@ -6,6 +7,10 @@ import type {
   FormWithFiles,
   ValidationErrors,
 } from '../../../data/schema'
+import type {
+  CreateRegisterFormResponse,
+  UpdateRegisterFormResponse,
+} from '../../../types'
 
 interface UseRegisterFormSubmitHandlersProps {
   registerForm?: RegisterFormDetail | null
@@ -16,8 +21,16 @@ interface UseRegisterFormSubmitHandlersProps {
   isMediaIdInUse: boolean
   setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
   onOpenChange: (open: boolean) => void
-  createRegisterFormMutation: any
-  updateRegisterFormMutation: any
+  createRegisterFormMutation: UseMutationResult<
+    CreateRegisterFormResponse,
+    Error,
+    unknown
+  >
+  updateRegisterFormMutation: UseMutationResult<
+    UpdateRegisterFormResponse,
+    Error,
+    unknown
+  >
 }
 
 export function useRegisterFormSubmitHandlers({
@@ -41,6 +54,13 @@ export function useRegisterFormSubmitHandlers({
     const hasChangedLanguage = language !== registerForm?.marketId
 
     return hasChangedCountry || hasChangedLanguage
+  }
+
+  const setMediaInUseError = (error: string | undefined) => {
+    setErrors((prev) => ({
+      ...prev,
+      mediaInUse: error,
+    }))
   }
 
   const prepareCreateRequest = () => {
@@ -75,18 +95,12 @@ export function useRegisterFormSubmitHandlers({
     }
 
     if (isEdit && isMediaIdInUse && hasRestrictedFieldsChanged()) {
-      setErrors((prev) => ({
-        ...prev,
-        mediaInUse: t('validation.mediaInUse'),
-      }))
+      setMediaInUseError(t('validation.mediaInUse'))
       return
     }
 
     if (isEdit && isMediaIdInUse) {
-      setErrors((prev) => ({
-        ...prev,
-        mediaInUse: undefined,
-      }))
+      setMediaInUseError(undefined)
     }
 
     if (

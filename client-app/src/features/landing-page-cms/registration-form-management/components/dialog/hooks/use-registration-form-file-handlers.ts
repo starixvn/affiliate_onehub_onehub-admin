@@ -4,7 +4,11 @@ import type {
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import { validateField, useErrorMessages } from '../../../data/validation'
+import {
+  validateField,
+  useErrorMessages,
+  resetFileErrors,
+} from '../../../data/validation'
 
 interface UseRegisterFormFileHandlersProps {
   isEdit: boolean
@@ -69,7 +73,7 @@ export function useRegisterFormFileHandlers({
         resetTouchedForFormNames(formWithFiles.files.length + newFiles.length)
       }
 
-      setErrors((prev) => ({ ...prev, files: undefined }))
+      resetFileErrors(setErrors)
     }
   }
 
@@ -126,7 +130,7 @@ export function useRegisterFormFileHandlers({
       }
     })
 
-    setErrors((prev) => ({ ...prev, files: undefined }))
+    resetFileErrors(setErrors)
   }
 
   return {

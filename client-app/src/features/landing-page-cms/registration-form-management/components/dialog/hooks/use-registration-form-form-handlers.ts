@@ -1,3 +1,4 @@
+import type { UseMutationResult } from '@tanstack/react-query'
 import type {
   RegisterFormDetail,
   FormWithFiles,
@@ -5,6 +6,10 @@ import type {
   TouchedFields,
 } from '../../../data/schema'
 import type { Country, Language } from '../../../types'
+import type {
+  CreateRegisterFormResponse,
+  UpdateRegisterFormResponse,
+} from '../../../types'
 import { useRegisterFormFieldHandlers } from './use-registration-form-field-handlers'
 import { useRegisterFormFileHandlers } from './use-registration-form-file-handlers'
 import { useRegisterFormSubmitHandlers } from './use-registration-form-submit-handlers'
@@ -35,8 +40,16 @@ interface UseRegisterFormFormHandlersProps {
   >
   resetTouchedForFormNames: (fileCount: number) => void
   onOpenChange: (open: boolean) => void
-  createRegisterFormMutation: any
-  updateRegisterFormMutation: any
+  createRegisterFormMutation: UseMutationResult<
+    CreateRegisterFormResponse,
+    Error,
+    unknown
+  >
+  updateRegisterFormMutation: UseMutationResult<
+    UpdateRegisterFormResponse,
+    Error,
+    unknown
+  >
 }
 
 export function useRegisterFormFormHandlers({

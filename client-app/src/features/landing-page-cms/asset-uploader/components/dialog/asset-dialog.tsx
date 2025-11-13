@@ -170,9 +170,6 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           onLanguageBlur={handlers.handleLanguageBlur}
           onModuleChange={handlers.handleModuleChange}
           onModuleBlur={handlers.handleModuleBlur}
-          onEditModuleChange={handlers.handleEditModuleChange}
-          onEditModuleBlur={handlers.handleEditModuleBlur}
-          onEditFileChange={handlers.handleEditFileChange}
           onFileChange={handlers.handleFileChange}
           onToggleExpanded={handlers.handleToggleExpanded}
           onAddModule={handlers.handleAddModule}

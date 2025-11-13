@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import type {
   AssetDetail,
   ModuleWithFiles,
@@ -47,19 +47,6 @@ export function useAssetFormState(asset: AssetDetail | null | undefined) {
       ),
     }))
   }
-
-  useEffect(() => {
-    if (asset) {
-      setCountry(asset.targetCountryCode)
-      setLanguage(asset.marketId)
-      setFileName(asset.mediaName)
-      setModuleRows([{ module: asset.moduleId.toString(), files: [] }])
-      resetTouchedForModules(1)
-    } else {
-      resetForm()
-      resetTouchedForModules(1)
-    }
-  }, [asset])
 
   return {
     isEdit,

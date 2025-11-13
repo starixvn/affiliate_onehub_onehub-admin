@@ -27,9 +27,6 @@ interface AssetFormContentProps {
   onLanguageBlur: () => void
   onModuleChange: (moduleIndex: number, module: string) => void
   onModuleBlur: (moduleIndex: number) => void
-  onEditModuleChange: (module: string) => void
-  onEditModuleBlur: () => void
-  onEditFileChange: (files: FileList | null) => void
   onFileChange: (moduleIndex: number, files: FileList | null) => void
   onToggleExpanded: (moduleIndex: number) => void
   onAddModule: (moduleIndex: number) => void
@@ -61,9 +58,6 @@ export function AssetFormContent({
   onLanguageBlur,
   onModuleChange,
   onModuleBlur,
-  onEditModuleChange,
-  onEditModuleBlur,
-  onEditFileChange,
   onFileChange,
   onToggleExpanded,
   onAddModule,
@@ -94,9 +88,9 @@ export function AssetFormContent({
           errors={errors}
           touched={touched}
           modules={moduleOptions}
-          onModuleChange={onEditModuleChange}
-          onModuleBlur={onEditModuleBlur}
-          onFileChange={onEditFileChange}
+          onModuleChange={onModuleChange}
+          onModuleBlur={onModuleBlur}
+          onFileChange={onFileChange}
         />
       </div>
     )

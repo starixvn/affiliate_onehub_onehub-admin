@@ -19,9 +19,9 @@ interface AssetEditFormProps {
   errors: ValidationErrors
   touched: TouchedFields
   modules: Array<{ value: string; label: string }>
-  onModuleChange: (module: string) => void
-  onModuleBlur: () => void
-  onFileChange: (files: FileList | null) => void
+  onModuleChange: (moduleIndex: number, module: string) => void
+  onModuleBlur: (moduleIndex: number) => void
+  onFileChange: (moduleIndex: number, files: FileList | null) => void
 }
 
 export function AssetEditForm({
@@ -49,11 +49,11 @@ export function AssetEditForm({
 
   const handleModuleChange = (value: string) => {
     setModuleValue(value)
-    onModuleChange(value)
+    onModuleChange(0, value)
   }
 
   const handleModuleBlur = () => {
-    onModuleBlur()
+    onModuleBlur(0)
   }
 
   const handleFileChange = (files: FileList | null) => {
@@ -61,7 +61,7 @@ export function AssetEditForm({
       const newFileName = files[0].name
       setFileName(newFileName)
     }
-    onFileChange(files)
+    onFileChange(0, files)
   }
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>

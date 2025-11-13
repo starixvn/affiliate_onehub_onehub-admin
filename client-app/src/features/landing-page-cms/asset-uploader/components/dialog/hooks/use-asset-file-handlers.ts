@@ -20,17 +20,6 @@ export function useAssetFileHandlers({
   setErrors,
   setExpandedModules,
 }: UseAssetFileHandlersProps) {
-  const handleEditFileChange = (files: FileList | null) => {
-    if (files && files.length > 0) {
-      resetFileErrors(setErrors)
-      const newFile = files[0]
-      setModuleRows((prev) =>
-        prev.map((row, i) => (i === 0 ? { ...row, files: [newFile] } : row))
-      )
-      setFileName(newFile.name)
-    }
-  }
-
   const handleFileChange = (moduleIndex: number, files: FileList | null) => {
     if (files && files.length > 0) {
       resetFileErrors(setErrors)
@@ -88,7 +77,6 @@ export function useAssetFileHandlers({
   }
 
   return {
-    handleEditFileChange,
     handleFileChange,
     handleToggleExpanded,
     handleRemoveFile,

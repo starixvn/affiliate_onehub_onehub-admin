@@ -65,35 +65,6 @@ export function useAssetModuleHandlers({
     )
   }
 
-  const handleEditModuleChange = (module: string) => {
-    setModuleRows((prev) =>
-      prev.map((row, i) => (i === 0 ? { ...row, module } : row))
-    )
-    if (touched.modules[0]) {
-      validateFieldHelper(
-        'module',
-        module,
-        (fn) => setErrors(fn),
-        errorMessages,
-        0
-      )
-    }
-  }
-
-  const handleEditModuleBlur = () => {
-    setTouched((prev) => ({
-      ...prev,
-      modules: { ...prev.modules, [0]: true },
-    }))
-    validateFieldHelper(
-      'module',
-      moduleRows[0].module,
-      (fn) => setErrors(fn),
-      errorMessages,
-      0
-    )
-  }
-
   const handleAddModule = (moduleIndex: number) => {
     setModuleRows((prev) => {
       const newRows = [...prev]
@@ -114,8 +85,6 @@ export function useAssetModuleHandlers({
     isModuleSelectedByOther,
     handleModuleChange,
     handleModuleBlur,
-    handleEditModuleChange,
-    handleEditModuleBlur,
     handleAddModule,
     handleRemoveModule,
   }

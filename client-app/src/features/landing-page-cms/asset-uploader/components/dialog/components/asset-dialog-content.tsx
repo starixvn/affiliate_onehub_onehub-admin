@@ -31,9 +31,6 @@ interface AssetDialogContentProps {
   onLanguageBlur: () => void
   onModuleChange: (moduleIndex: number, module: string) => void
   onModuleBlur: (moduleIndex: number) => void
-  onEditModuleChange: (module: string) => void
-  onEditModuleBlur: () => void
-  onEditFileChange: (files: FileList | null) => void
   onFileChange: (moduleIndex: number, files: FileList | null) => void
   onToggleExpanded: (moduleIndex: number) => void
   onAddModule: (moduleIndex: number) => void
@@ -67,9 +64,6 @@ export function AssetDialogContent({
   onLanguageBlur,
   onModuleChange,
   onModuleBlur,
-  onEditModuleChange,
-  onEditModuleBlur,
-  onEditFileChange,
   onFileChange,
   onToggleExpanded,
   onAddModule,
@@ -122,9 +116,6 @@ export function AssetDialogContent({
         onLanguageBlur={onLanguageBlur}
         onModuleChange={onModuleChange}
         onModuleBlur={onModuleBlur}
-        onEditModuleChange={onEditModuleChange}
-        onEditModuleBlur={onEditModuleBlur}
-        onEditFileChange={onEditFileChange}
         onFileChange={onFileChange}
         onToggleExpanded={onToggleExpanded}
         onAddModule={onAddModule}
