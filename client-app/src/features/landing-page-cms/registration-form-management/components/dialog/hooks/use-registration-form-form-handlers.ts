@@ -1,18 +1,25 @@
-import type { UseMutationResult } from '@tanstack/react-query'
+import {
+  useFieldHandlers,
+  useSubmitHandlers,
+  type Country,
+  type Language,
+} from '@/features/landing-page-cms/shared'
+import { useCreateMedia, useUpdateMedia } from '../../../api/commands'
 import type {
   RegisterFormDetail,
   FormWithFiles,
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import type { Country, Language } from '../../../types'
-import type {
-  CreateRegisterFormResponse,
-  UpdateRegisterFormResponse,
-} from '../../../types'
-import { useRegisterFormFieldHandlers } from './use-registration-form-field-handlers'
+import { REGISTER_FORM_MODULE_ID, TRANSLATION_KEY } from '../../../data/schema'
+import {
+  validateRegistrationFormField,
+  validateRegistrationForm,
+  isRegistrationFormValid,
+  resetFileErrors,
+  useErrorMessages,
+} from '../../../data/validation'
 import { useRegisterFormFileHandlers } from './use-registration-form-file-handlers'
-import { useRegisterFormSubmitHandlers } from './use-registration-form-submit-handlers'
 
 interface UseRegisterFormFormHandlersProps {
   registerForm?: RegisterFormDetail | null
@@ -31,25 +38,10 @@ interface UseRegisterFormFormHandlersProps {
   setLanguage: React.Dispatch<React.SetStateAction<string>>
   setFormWithFiles: React.Dispatch<React.SetStateAction<FormWithFiles>>
   setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
-  setTouched: React.Dispatch<
-    React.SetStateAction<{
-      country: boolean
-      language: boolean
-      formNames: { [key: number]: boolean }
-    }>
-  >
+  setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
   resetTouchedForFormNames: (fileCount: number) => void
   onOpenChange: (open: boolean) => void
-  createRegisterFormMutation: UseMutationResult<
-    CreateRegisterFormResponse,
-    Error,
-    unknown
-  >
-  updateRegisterFormMutation: UseMutationResult<
-    UpdateRegisterFormResponse,
-    Error,
-    unknown
-  >
+  onBackendError: (error: string) => void
 }
 
 export function useRegisterFormFormHandlers({
@@ -70,14 +62,39 @@ export function useRegisterFormFormHandlers({
   setTouched,
   resetTouchedForFormNames,
   onOpenChange,
-  createRegisterFormMutation,
-  updateRegisterFormMutation,
+  onBackendError,
 }: UseRegisterFormFormHandlersProps) {
-  const fieldHandlers = useRegisterFormFieldHandlers({
+  const errorMessages = useErrorMessages()
+
+  const validateFieldWrapper = (
+    field: string,
+    value: any,
+    setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
+    index?: number
+  ) => {
+    validateRegistrationFormField(field, value, setErrors, errorMessages, index)
+  }
+
+  const validateFormWrapper = (
+    country: string,
+    language: string,
+    formData: FormWithFiles,
+    setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
+    setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
+  ): boolean => {
+    return validateRegistrationForm(
+      country,
+      language,
+      formData,
+      setErrors,
+      setTouched,
+      errorMessages
+    )
+  }
+  const fieldHandlers = useFieldHandlers({
     country,
     language,
-    formWithFiles,
-    touched,
+    formData: formWithFiles,
     isEdit,
     countries,
     languages,
@@ -86,6 +103,12 @@ export function useRegisterFormFormHandlers({
     setLanguage,
     setErrors,
     setTouched,
+    validateField: validateFieldWrapper,
+    validateForm: validateFormWrapper,
+    isFormValid: isRegistrationFormValid,
+    resetFileErrors,
+    getInitialLanguage: (languageByCountry: Language[]) =>
+      languageByCountry[0].languageCode,
   })
 
   const fileHandlers = useRegisterFormFileHandlers({
@@ -98,17 +121,77 @@ export function useRegisterFormFormHandlers({
     resetTouchedForFormNames,
   })
 
-  const submitHandlers = useRegisterFormSubmitHandlers({
-    registerForm,
+  const prepareCreateRequest = (
+    country: string,
+    language: string,
+    formWithFiles: FormWithFiles
+  ) => ({
+    targetCountryCode: country,
+    languageCode: language,
+    moduleRows: [formWithFiles],
+  })
+
+  const prepareUpdateRequest = (
+    registerForm: RegisterFormDetail,
+    country: string,
+    language: string,
+    formWithFiles: FormWithFiles
+  ) => {
+    const inputMediaName = formWithFiles.files[0].formName || ''
+    const file = formWithFiles.files[0].file
+    const inputFileName = file.name
+      ? file.name
+      : registerForm.fileName.split('/').pop() || ''
+
+    return {
+      mediaId: registerForm.mediaId,
+      moduleId: REGISTER_FORM_MODULE_ID,
+      targetCountryCode: country,
+      languageCode: language,
+      inputFileName,
+      inputMediaName,
+      file,
+    }
+  }
+
+  const hasRestrictedFieldsChanged = (
+    mediaDetail: RegisterFormDetail,
+    country: string,
+    language: string,
+    _formData: FormWithFiles
+  ) => {
+    const hasChangedCountry = country !== mediaDetail.targetCountryCode
+    const hasChangedLanguage = language !== mediaDetail.marketId
+
+    return hasChangedCountry || hasChangedLanguage
+  }
+
+  const shouldShowOverwriteConfirm = (
+    mediaDetail: RegisterFormDetail,
+    formData: FormWithFiles
+  ): boolean =>
+    formData.files.length > 0 &&
+    !!formData.files[0].file.name &&
+    formData.files[0].file.name ===
+      (mediaDetail.fileName.split('/').pop() || '')
+
+  const submitHandlers = useSubmitHandlers<FormWithFiles, RegisterFormDetail>({
+    mediaDetail: registerForm,
     country,
     language,
-    formWithFiles,
+    formData: formWithFiles,
     isEdit,
     isMediaIdInUse,
+    useCreateMutation: useCreateMedia,
+    useUpdateMutation: useUpdateMedia,
+    prepareCreateRequest,
+    prepareUpdateRequest,
+    hasRestrictedFieldsChanged,
+    shouldShowOverwriteConfirm,
     setErrors,
     onOpenChange,
-    createRegisterFormMutation,
-    updateRegisterFormMutation,
+    onBackendError,
+    translationKey: TRANSLATION_KEY,
   })
 
   const handleSubmit = async () => {
@@ -127,5 +210,6 @@ export function useRegisterFormFormHandlers({
     showConfirmOverwrite: submitHandlers.showConfirmOverwrite,
     handleConfirmOverwrite: submitHandlers.handleConfirmOverwrite,
     handleCancelOverwrite: submitHandlers.handleCancelOverwrite,
+    isPending: submitHandlers.isPending,
   }
 }

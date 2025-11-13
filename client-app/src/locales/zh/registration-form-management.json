@@ -23,12 +23,14 @@
   },
   "buttons": {
     "export": "导出",
-    "editForm": "编辑表单",
-    "deleteForm": "删除表单",
+    "edit": "编辑",
+    "delete": "删除",
     "processing": "处理中...",
-    "saveChanges": "保存更改",
-    "addForm": "添加表单",
-    "cancel": "取消"
+    "save": "保存",
+    "add": "添加",
+    "cancel": "取消",
+    "confirm": "确认",
+    "create": "创建"
   },
   "table": {
     "selectAll": "全选",
@@ -66,14 +68,21 @@
     "confirmDeleteSingle": "您确定要删除 \"{{formName}}\" 吗？",
     "confirmDeleteBulk": "您确定要删除 {{count}} 个 {{entity}} 吗？",
     "deleteDescription": "此操作无法撤销。删除操作只会对未与任何着陆页关联的表单执行。",
-    "confirmStatusChange": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改此表单的状态吗？",
-    "confirmStatusChangeBulk": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改这些表单的状态吗？",
+    "confirmStatusChange": "更改状态",
+    "confirmStatusChangeBulk": "更改状态",
+    "confirmStatusChangeDesc": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改所选表单的状态吗？",
+    "confirmStatusChangeBulkDesc": "创建新着陆页时，只有活跃的表单可供选择。您确定要更改所选表单的状态吗？",
     "changing": "正在更改...",
     "change": "更改",
     "changeAll": "全部更改",
     "deleting": "正在删除...",
     "delete": "删除",
     "deleteAll": "全部删除",
+    "confirmStatusChangeBulkDynamic": "更改 {{count}} 个{{entity}}",
+    "statuses": "状态",
+    "status": "状态",
+    "forms": "表单",
+    "form": "表单",
     "confirmOverwriteTitle": "确认覆盖",
     "confirmOverwriteMessage": "文件名 \"{{fileName}}\" 已存在。您要覆盖当前文件吗？"
   },
@@ -114,23 +123,13 @@
     "formNameTooLong": "表单名称过长：{{longFormNames}}。表单名称必须为 {{maxLength}} 个字符或更少。",
     "formNameInvalidChars": "表单名称包含无效字符：{{invalidFormNames}}。表单名称不能包含 \\ / : * ? \" < > | # % & + 字符。",
     "fileNameTooLong": "文件名过长：{{longFiles}}。文件名必须为 {{maxLength}} 个字符或更少。",
-    "fileNameInvalidChars": "文件名包含无效字符：{{invalidFiles}}。文件名不能包含 \\ / : * ? \" < > | # % & + 字符。",
+    "invalidFileNames": "文件名包含无效字符：{{invalidFiles}}。文件名不能包含 \\ / : * ? \" < > | # % & + 字符。",
     "mediaInUse": "此表单已在现有着陆页中使用。您无法更新模块、目标国家或语言。",
     "uploadLimitExceeded": "超出上传限制。您一次只能上传最多 {{maxFiles}} 个文件。",
     "invalidFileTypes": "检测到无效文件类型：{{invalidFiles}}。请仅上传 GIF、JPG、JPEG、PNG 或 WEBP 文件。",
     "fileSizeExceeded": "文件大小超过 {{maxSize}}MB 限制：{{exceededFiles}}。请上传较小的文件。",
     "duplicateFileNames": "文件名已存在：{{duplicateFiles}}。请重命名或删除文件后再上传。",
     "pleaseCorrectErrors": "请在提交前更正上述错误"
-  },
-  "actions": {
-    "cancel": "取消",
-    "create": "添加表单",
-    "update": "更新表单",
-    "saving": "正在保存..."
-  },
-  "common": {
-    "confirm": "确认",
-    "cancel": "取消"
   },
   "toasts": {
     "exporting": "正在导出表单到 Excel...",

@@ -8,17 +8,23 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
-  useCreateRegisterForm,
-  useUpdateRegisterForm,
-} from '../../api/commands'
-import type { RegisterFormDetail } from '../../data/schema'
+  MediaDialogActionButton,
+  ConfirmOverwriteDialog,
+  MediaDialogInfoBanner,
+  MediaDialogErrorBanner,
+  CountryLanguageSelects,
+} from '@/features/landing-page-cms/shared'
+import {
+  TRANSLATION_KEY,
+  type FormFile,
+  type RegisterFormDetail,
+} from '../../data/schema'
 import { INITIAL_VALIDATION_STATE } from '../../data/validation'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
-import { RegisterFormDialogContent } from './components/registration-form-dialog-content'
-import { ConfirmOverwriteDialog } from './confirm-overwrite-dialog'
+import { FileUploadSection } from './components/file-upload-section'
+import { FormFileItem } from './components/form-file-item'
 import { useRegisterFormFormHandlers } from './hooks/use-registration-form-form-handlers'
 import { useRegisterFormFormState } from './hooks/use-registration-form-form-state'
-import { RegisterFormActionButtons } from './registration-form-action-buttons'
 
 interface RegisterFormDialogProps {
   open: boolean
@@ -31,8 +37,8 @@ export function RegisterFormDialog({
   onOpenChange,
   registerForm,
 }: RegisterFormDialogProps) {
-  const { t } = useTranslation('registration-form-management')
-  const { countries, languages, modules } = useRegisterFormManagement()
+  const { t } = useTranslation(TRANSLATION_KEY)
+  const { countries, languages } = useRegisterFormManagement()
   const isMediaIdInUse = registerForm?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
 
@@ -40,18 +46,6 @@ export function RegisterFormDialog({
     value: country.targetCountryCode,
     label: country.targetCountryName,
   }))
-
-  const moduleOptions = modules.map((module) => ({
-    value: module.moduleId.toString(),
-    label: module.moduleName,
-  }))
-
-  const createRegisterFormMutation = useCreateRegisterForm((error) =>
-    setBackendError(error)
-  )
-  const updateRegisterFormMutation = useUpdateRegisterForm((error) =>
-    setBackendError(error)
-  )
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -91,8 +85,7 @@ export function RegisterFormDialog({
     setTouched,
     resetTouchedForFormNames,
     onOpenChange,
-    createRegisterFormMutation,
-    updateRegisterFormMutation,
+    onBackendError: setBackendError,
   })
 
   const {
@@ -102,12 +95,14 @@ export function RegisterFormDialog({
     showConfirmOverwrite,
     handleConfirmOverwrite,
     handleCancelOverwrite,
+    isPending,
   } = handlers
 
   useEffect(() => {
     if (open) {
       setBackendError(null)
       if (registerForm) {
+        console.log('registerForm', registerForm)
         setCountry(registerForm.targetCountryCode)
         setLanguageOptions(
           languages
@@ -152,6 +147,10 @@ export function RegisterFormDialog({
     }
   }, [errors.files, backendError])
 
+  const filesToRender = isEdit
+    ? formWithFiles.files.slice(0, 1)
+    : formWithFiles.files
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-h-[90vh] w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl'>
@@ -168,41 +167,76 @@ export function RegisterFormDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <RegisterFormDialogContent
-          isEdit={isEdit}
-          isMediaIdInUse={isMediaIdInUse}
-          formWithFiles={formWithFiles}
-          errors={errors}
-          touched={touched}
-          countryOptions={countryOptions}
-          languageOptions={languageOptions}
-          moduleOptions={moduleOptions}
-          country={country}
-          language={language}
-          backendError={backendError}
-          scrollContainerRef={scrollContainerRef}
-          onCountryChange={handlers.handleCountryChange}
-          onLanguageChange={handlers.handleLanguageChange}
-          onCountryBlur={handlers.handleCountryBlur}
-          onLanguageBlur={handlers.handleLanguageBlur}
-          onFileChange={handlers.handleFileChange}
-          onFormNameChange={handlers.handleFormNameChange}
-          onFormNameBlur={handlers.handleFormNameBlur}
-          onRemoveFile={handlers.handleRemoveFile}
-        />
+        <div
+          ref={scrollContainerRef}
+          className='max-h-[calc(90vh-10rem)] space-y-4 overflow-y-auto px-1 pr-3 sm:px-0 sm:pr-2'
+        >
+          <MediaDialogErrorBanner
+            errors={errors}
+            backendError={backendError}
+            translationKey={TRANSLATION_KEY}
+          />
 
-        <RegisterFormActionButtons
+          <MediaDialogInfoBanner
+            isEdit={isEdit}
+            translationKey={TRANSLATION_KEY}
+          />
+
+          <div className='space-y-6'>
+            <CountryLanguageSelects
+              translationKey={TRANSLATION_KEY}
+              isMediaIdInUse={isMediaIdInUse}
+              module={formWithFiles.module}
+              errors={errors}
+              touched={touched}
+              countryOptions={countryOptions}
+              languageOptions={languageOptions}
+              country={country}
+              language={language}
+              onCountryChange={handlers.handleCountryChange}
+              onLanguageChange={handlers.handleLanguageChange}
+              onCountryBlur={handlers.handleCountryBlur}
+              onLanguageBlur={handlers.handleLanguageBlur}
+              showModuleField={true}
+            />
+
+            <FileUploadSection
+              isEdit={isEdit}
+              formWithFiles={formWithFiles}
+              onFileChange={handlers.handleFileChange}
+            />
+
+            {filesToRender.length > 0 && (
+              <div className='space-y-4'>
+                {filesToRender.map((formFile: FormFile, index: number) => (
+                  <FormFileItem
+                    key={index}
+                    index={index}
+                    formFile={formFile}
+                    errors={errors}
+                    touched={touched}
+                    isEdit={isEdit}
+                    onFormNameChange={handlers.handleFormNameChange}
+                    onFormNameBlur={handlers.handleFormNameBlur}
+                    onRemoveFile={handlers.handleRemoveFile}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <MediaDialogActionButton
+          translationKey={TRANSLATION_KEY}
           isEdit={isEdit}
           isFormValid={isFormValid()}
-          isLoading={
-            createRegisterFormMutation.isPending ||
-            updateRegisterFormMutation.isPending
-          }
+          isLoading={isPending}
           onSubmit={handleSubmit}
           onCancel={handleCancel}
         />
 
         <ConfirmOverwriteDialog
+          translationKey={TRANSLATION_KEY}
           open={showConfirmOverwrite}
           onOpenChange={(open) => !open && handleCancelOverwrite()}
           fileName={

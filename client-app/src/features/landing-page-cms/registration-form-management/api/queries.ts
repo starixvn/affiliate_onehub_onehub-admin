@@ -1,39 +1,38 @@
 import { useQuery } from '@tanstack/react-query'
-import type { GetRegisterFormListRequest } from '../types'
-import { registerFormManagementApi } from './client'
+import type { GetMediaListRequest } from '@/features/landing-page-cms/shared'
+import { registrationFormManagementApi } from './client'
 
-export const registerFormManagementKeys = {
+export const registrationFormManagementKeys = {
   all: ['register-form-management'] as const,
-  lists: () => [...registerFormManagementKeys.all, 'list'] as const,
-  list: (params?: GetRegisterFormListRequest) =>
-    [...registerFormManagementKeys.lists(), params] as const,
-  filters: () => [...registerFormManagementKeys.all, 'filters'] as const,
+  lists: () => [...registrationFormManagementKeys.all, 'list'] as const,
+  list: (params?: GetMediaListRequest) =>
+    [...registrationFormManagementKeys.lists(), params] as const,
+  filters: () => [...registrationFormManagementKeys.all, 'filters'] as const,
 }
 
-export const useGetRegisterFormList = (params?: GetRegisterFormListRequest) => {
+export const useGetMediaList = (params?: GetMediaListRequest) => {
   return useQuery({
-    queryKey: registerFormManagementKeys.list(params),
-    queryFn: () => registerFormManagementApi.getRegisterFormList(params as GetRegisterFormListRequest),
+    queryKey: registrationFormManagementKeys.list(params),
+    queryFn: () =>
+      registrationFormManagementApi.getMediaList(params as GetMediaListRequest),
     select: (data) => data.data,
   })
 }
 
-
-export const useRegisterFormFilters = () => {
+export const useMediaFilters = () => {
   const query = useQuery({
-    queryKey: registerFormManagementKeys.filters(),
-    queryFn: () =>
-      registerFormManagementApi.getRegisterFormFilters(),
+    queryKey: registrationFormManagementKeys.filters(),
+    queryFn: () => registrationFormManagementApi.getMediaFilters(),
     select: (data) => {
-      const response = data.data;
+      const response = data.data
       return {
         modules:
-          response?.modules.filter(
-            (module) => module.moduleName.toLowerCase().includes('registration form')
+          response?.modules.filter((module) =>
+            module.moduleName.toLowerCase().includes('registration form')
           ) ?? [],
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
-        registerFormStatus:
+        mediaStatus:
           response?.statusInfos.filter((status) => status.statusId !== 0) ?? [],
         landingPageUrl: response?.landingPageUrl ?? '',
         bannerRootUrl: response?.bannerRootUrl ?? '',

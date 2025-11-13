@@ -2,29 +2,28 @@ import React, { useState } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
-import { useRegisterFormFilters, useGetRegisterFormList } from '../api/queries'
-import { normalizeSearchParams } from '../data/constants'
-import type { RegisterFormDetail } from '../data/schema'
+import type {
+  MediaStatus,
+  Country,
+  Language,
+  Module,
+  GetMediaListRequest,
+  DialogType,
+} from '@/features/landing-page-cms/shared'
+import { createNormalizeSearchParams } from '@/features/landing-page-cms/shared'
+import { useMediaFilters, useGetMediaList } from '../api/queries'
 import {
-  type RegisterFormStatus,
-  type Country,
-  type GetRegisterFormListRequest,
-  type Language,
-  type Module,
-} from '../types'
+  type RegisterFormDetail,
+  REGISTER_FORM_MODULE_ID,
+} from '../data/schema'
 
-type RegisterFormDialogType =
-  | 'upload'
-  | 'edit'
-  | 'delete'
-  | 'delete-bulk'
-  | 'status-change'
-
-const route = getRouteApi('/iframe/landing-page-cms/registration-form-management/')
+const route = getRouteApi(
+  '/iframe/landing-page-cms/registration-form-management/'
+)
 
 type RegisterFormManagementContextType = {
-  open: RegisterFormDialogType | null
-  setOpen: (str: RegisterFormDialogType | null) => void
+  open: DialogType | null
+  setOpen: (str: DialogType | null) => void
   currentRow: RegisterFormDetail | null
   setCurrentRow: React.Dispatch<React.SetStateAction<RegisterFormDetail | null>>
   targetStatusId: number | null
@@ -40,7 +39,7 @@ type RegisterFormManagementContextType = {
   modules: Array<Module>
   countries: Array<Country>
   languages: Array<Language>
-  registerFormStatus: Array<RegisterFormStatus>
+  mediaStatus: Array<MediaStatus>
   landingPageUrl: string
   bannerRootUrl: string
   maximumFiles: number
@@ -62,7 +61,7 @@ type RegisterFormManagementProviderProps = {
 export function RegisterFormManagementProvider({
   children,
 }: RegisterFormManagementProviderProps) {
-  const [open, setOpen] = useDialogState<RegisterFormDialogType>(null)
+  const [open, setOpen] = useDialogState<DialogType>(null)
   const [currentRow, setCurrentRow] = useState<RegisterFormDetail | null>(null)
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
@@ -81,17 +80,22 @@ export function RegisterFormManagementProvider({
     modules = [],
     countries = [],
     languages = [],
-    registerFormStatus = [],
+    mediaStatus = [],
     landingPageUrl = '',
     bannerRootUrl = '',
     maximumFiles = 50,
     maxFileSize = 3,
     allowedExtensions = [],
-  } = useRegisterFormFilters() ?? {}
+  } = useMediaFilters() ?? {}
 
-  const normalizedParams = normalizeSearchParams(search)
-  const { data, isLoading, isError } = useGetRegisterFormList(
-    normalizedParams as GetRegisterFormListRequest
+  const normalizedParams = createNormalizeSearchParams({})(search)
+  const params = {
+    ...normalizedParams,
+    moduleIds: REGISTER_FORM_MODULE_ID.toString(),
+  }
+
+  const { data, isLoading, isError } = useGetMediaList(
+    params as GetMediaListRequest
   )
 
   return (
@@ -114,7 +118,7 @@ export function RegisterFormManagementProvider({
         modules,
         countries,
         languages,
-        registerFormStatus,
+        mediaStatus,
         landingPageUrl,
         bannerRootUrl,
         maximumFiles,

@@ -1,61 +1,23 @@
-import z from 'zod'
+import {
+  mediaDetailSchema,
+  type MediaDetail,
+  type ModuleWithFiles,
+  type ValidationErrors,
+  type TouchedFields,
+  DEFAULT_FILE_UPLOAD_CONFIG,
+} from '@/features/landing-page-cms/shared'
 
-export const assetDetailSchema = z.object({
-  mediaId: z.number(),
-  mediaName: z.string(),
-  fileName: z.string(),
-  moduleId: z.number(),
-  moduleName: z.string(),
-  dimension: z.string(),
-  statusId: z.number(),
-  targetCountryCode: z.string(),
-  targetCountryName: z.string(),
-  languageCode: z.string(),
-  marketId: z.string(),
-  marketName: z.string(),
-  createdDate: z.string(),
-  createdBy: z.string(),
-  updatedDate: z.string(),
-  updatedBy: z.string(),
-  isMediaIdInUse: z.boolean(),
-})
+export const TRANSLATION_KEY = 'asset-uploader'
 
-export type AssetDetail = z.infer<typeof assetDetailSchema>
+export const assetDetailSchema = mediaDetailSchema
+export type AssetDetail = MediaDetail
 
-export interface ModuleWithFiles {
-  module: string
-  files: File[]
-}
+export type AssetModuleWithFiles = ModuleWithFiles<File>
+export type { ValidationErrors, TouchedFields, ModuleWithFiles }
 
-export interface ValidationErrors {
-  country?: string
-  language?: string
-  modules: { [key: number]: string }
-  mediaInUse?: string
-  files?: {
-    uploadLimitExceeded?: string
-    invalidFileTypes?: string
-    fileSizeExceeded?: string
-    duplicateFileNames?: string
-    invalidFileNames?: string
-    fileNameTooLong?: string
-  }
-}
-
-export interface TouchedFields {
-  country: boolean
-  language: boolean
-  modules: { [key: number]: boolean }
-}
-
-export const ALLOWED_FILE_TYPES = [
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.gif',
-  '.webp',
-] as const
-export const MAX_FILE_SIZE_MB = 3
-export const MAX_FILES_PER_MODULE = 50
-export const regSpecialCharacters = '[\\/:*?"<>|#%&+]'
-export const MAX_FILE_NAME_LENGTH = 50
+export const ALLOWED_FILE_TYPES = DEFAULT_FILE_UPLOAD_CONFIG.allowedFileTypes
+export const MAX_FILE_SIZE_MB = DEFAULT_FILE_UPLOAD_CONFIG.maxFileSizeMB
+export const MAX_FILES_PER_MODULE = DEFAULT_FILE_UPLOAD_CONFIG.maxFilesPerModule
+export const regSpecialCharacters =
+  DEFAULT_FILE_UPLOAD_CONFIG.regSpecialCharacters
+export const MAX_FILE_NAME_LENGTH = DEFAULT_FILE_UPLOAD_CONFIG.maxFileNameLength

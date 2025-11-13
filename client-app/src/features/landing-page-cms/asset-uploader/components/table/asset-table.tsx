@@ -21,11 +21,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import type { AssetDetail } from '../../data/schema'
+import {
+  MediaBulkStatusChangeDialog,
+  MediaBulkDeleteDialog,
+  MediaBulkActions,
+} from '@/features/landing-page-cms/shared'
+import { useDeleteMedias, useUpdateMediaStatus } from '../../api/commands'
+import { TRANSLATION_KEY, type AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
-import { AssetBulkDeleteDialog } from '../dialog/asset-bulk-delete-dialog'
-import { AssetBulkStatusChangeDialog } from '../dialog/asset-bulk-status-change-dialog'
-import { AssetBulkActions } from './asset-bulk-actions'
 import { useAssetColumns } from './asset-columns'
 
 interface AssetTableProps {
@@ -39,16 +42,18 @@ export function AssetTable({
   bannerRootUrl,
   totalCount = 0,
 }: AssetTableProps) {
-  const { t } = useTranslation('asset-uploader')
+  const { t } = useTranslation(TRANSLATION_KEY)
   const {
     pageIndex,
     pageSize,
     search,
-    assetStatus,
+    mediaStatus,
     modules,
     countries,
     languages,
     updateSearchParams,
+    setOpen,
+    setCurrentRow,
   } = useAssetUploader()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -83,7 +88,29 @@ export function AssetTable({
     setRowSelection({})
   }, [pageIndex, pageSize, data])
 
-  const columns = useAssetColumns(bannerRootUrl, pagination)
+  const handleEdit = (asset: AssetDetail) => {
+    setCurrentRow(asset)
+    setOpen('edit')
+  }
+
+  const handleDelete = (asset: AssetDetail) => {
+    setCurrentRow(asset)
+    setOpen('delete')
+  }
+
+  const handleStatusChange = (statusId: number, asset: AssetDetail) => {
+    setCurrentRow(asset)
+    setTargetStatusId(statusId)
+    setOpen('status-change')
+  }
+
+  const columns = useAssetColumns(
+    bannerRootUrl,
+    pagination,
+    handleEdit,
+    handleDelete,
+    handleStatusChange
+  )
 
   const table = useReactTable({
     data,
@@ -248,14 +275,14 @@ export function AssetTable({
       {
         columnId: 'statusId',
         title: t('filters.status'),
-        options: assetStatus.map(({ statusId, status }) => ({
+        options: mediaStatus.map(({ statusId, status }) => ({
           label: status,
           value: statusId.toString(),
         })),
         defaultValue: ['1'],
       },
     ],
-    [moduleOptions, countryOptions, languageOptions, assetStatus, t]
+    [moduleOptions, countryOptions, languageOptions, mediaStatus, t]
   )
 
   const handleSubmitFilters = (searchValueToUse: string) => {
@@ -363,21 +390,27 @@ export function AssetTable({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      <AssetBulkActions
+      <MediaBulkActions
         table={table}
         onDeleteClick={() => setIsDeleteDialogOpen(true)}
         onStatusChangeClick={(statusId) => {
           setTargetStatusId(statusId)
           setIsStatusChangeDialogOpen(true)
         }}
+        entityName='asset'
+        translationKey={TRANSLATION_KEY}
       />
-      <AssetBulkDeleteDialog
+      <MediaBulkDeleteDialog
+        translationKey={TRANSLATION_KEY}
+        useDeleteMutation={useDeleteMedias}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         table={table}
       />
       {targetStatusId && (
-        <AssetBulkStatusChangeDialog
+        <MediaBulkStatusChangeDialog
+          translationKey={TRANSLATION_KEY}
+          useUpdateStatusMutation={useUpdateMediaStatus}
           open={isStatusChangeDialogOpen}
           onOpenChange={(open) => {
             setIsStatusChangeDialogOpen(open)

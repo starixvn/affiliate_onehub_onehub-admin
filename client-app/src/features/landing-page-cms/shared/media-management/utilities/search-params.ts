@@ -1,0 +1,47 @@
+export interface SearchParamsConfig {
+  defaultModuleIds?: string
+  excludeModuleTypes?: number[]
+}
+
+export function createNormalizeSearchParams(config: SearchParamsConfig) {
+  const DEFAULT_PARAMS = {
+    mediaId: 0,
+    mediaName: undefined,
+    moduleIds: config.defaultModuleIds,
+    targetCountrycodes: 'all',
+    languageCodes: 'all',
+    status: 1,
+    currentStatus: [1],
+    pageIndex: 1,
+    pageSize: 10,
+  } as const
+
+  return function normalizeSearchParams(
+    search: Record<string, unknown>
+  ): Record<string, unknown> {
+    return {
+      mediaId: search.mediaId ? Number(search.mediaId) : DEFAULT_PARAMS.mediaId,
+      mediaName: (search.mediaName as string) ?? DEFAULT_PARAMS.mediaName,
+      moduleIds: (search.moduleIds as string) ?? DEFAULT_PARAMS.moduleIds,
+      targetCountrycodes:
+        (search.targetCountrycodes as string) ??
+        DEFAULT_PARAMS.targetCountrycodes,
+      languageCodes:
+        (search.languageCodes as string) ?? DEFAULT_PARAMS.languageCodes,
+      status:
+        search.status !== undefined
+          ? Number(search.status)
+          : DEFAULT_PARAMS.status,
+      currentStatus:
+        search.currentStatus !== undefined
+          ? (search.currentStatus as number[])
+          : DEFAULT_PARAMS.currentStatus,
+      pageIndex: search.pageIndex
+        ? Number(search.pageIndex)
+        : DEFAULT_PARAMS.pageIndex,
+      pageSize: search.pageSize
+        ? Number(search.pageSize)
+        : DEFAULT_PARAMS.pageSize,
+    }
+  }
+}

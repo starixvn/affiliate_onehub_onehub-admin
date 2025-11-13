@@ -1,72 +1,30 @@
-import z from 'zod'
+import {
+  mediaDetailSchema,
+  type MediaDetail,
+  type ValidationErrors,
+  type TouchedFields,
+  type FormWithFiles,
+  type FormFile,
+  DEFAULT_FILE_UPLOAD_CONFIG,
+} from '@/features/landing-page-cms/shared'
+import type {} from '@/features/landing-page-cms/shared'
 
-export const registerFormDetailSchema = z.object({
-  mediaId: z.number(),
-  mediaName: z.string(),
-  fileName: z.string(),
-  moduleId: z.number(),
-  moduleName: z.string(),
-  dimension: z.string(),
-  statusId: z.number(),
-  targetCountryCode: z.string(),
-  targetCountryName: z.string(),
-  languageCode: z.string(),
-  marketId: z.string(),
-  marketName: z.string(),
-  createdDate: z.string(),
-  createdBy: z.string(),
-  updatedDate: z.string(),
-  updatedBy: z.string(),
-  isMediaIdInUse: z.boolean(),
-})
+export const REGISTER_FORM_MODULE_ID = 9
 
-export type RegisterFormDetail = z.infer<typeof registerFormDetailSchema>
+export const TRANSLATION_KEY = 'registration-form-management'
 
-export interface FormWithFiles {
-  module: string
-  files: FormFile[]
-}
+export const registerFormDetailSchema = mediaDetailSchema
+export type RegisterFormDetail = MediaDetail
 
-export interface FormFile {
-  file: File
-  formName: string,
-  fileName: string
-}
+export type RegistrationFormWithFiles = FormWithFiles
 
-export interface ValidationErrors {
-  country?: string
-  language?: string
-  mediaInUse?: string
-  formNames?: { [key: number]: string }
-  files?: {
-    uploadLimitExceeded?: string
-    invalidFileTypes?: string
-    fileSizeExceeded?: string
-    duplicateFileNames?: string
-    fileNameInvalidChars?: string
-    fileNameTooLong?: string
-    formNameRequired?: string
-    formNameTooLong?: string
-    formNameInvalidChars?: string
-  }
-}
+export type { ValidationErrors, TouchedFields, FormWithFiles, FormFile }
 
-export interface TouchedFields {
-  country: boolean
-  language: boolean
-  formNames: { [key: number]: boolean }
-}
-
-export const ALLOWED_FILE_TYPES = [
-  '.jpg',
-  '.jpeg',
-  '.png',
-  '.gif',
-  '.webp',
-] as const
-
-export const MAX_FILE_SIZE_MB = 3
-export const MAX_FILES_PER_MODULE = 50
-export const MAX_FILE_NAME_LENGTH = 50
-export const MAX_FORM_NAME_LENGTH = 200
-export const regSpecialCharacters = '[\\/:*?"<>|#%&+]'
+export const ALLOWED_FILE_TYPES = DEFAULT_FILE_UPLOAD_CONFIG.allowedFileTypes
+export const MAX_FILE_SIZE_MB = DEFAULT_FILE_UPLOAD_CONFIG.maxFileSizeMB
+export const MAX_FILES_PER_MODULE = DEFAULT_FILE_UPLOAD_CONFIG.maxFilesPerModule
+export const MAX_FILE_NAME_LENGTH = DEFAULT_FILE_UPLOAD_CONFIG.maxFileNameLength
+export const MAX_FORM_NAME_LENGTH =
+  DEFAULT_FILE_UPLOAD_CONFIG.maxFormNameLength || 200
+export const regSpecialCharacters =
+  DEFAULT_FILE_UPLOAD_CONFIG.regSpecialCharacters

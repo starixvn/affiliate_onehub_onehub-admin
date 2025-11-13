@@ -1,17 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import type { CreateRegisterFormRequest, UpdateRegisterFormRequest } from '../types'
-import { registerFormManagementApi } from './client'
-import { registerFormManagementKeys } from './queries'
+import type {
+  CreateMediaRequest,
+  UpdateMediaRequest,
+} from '@/features/landing-page-cms/shared'
+import { registrationFormManagementApi } from './client'
+import { registrationFormManagementKeys } from './queries'
 
-export const useCreateRegisterForm = (onError?: (error: string) => void) => {
+export const useCreateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: CreateRegisterFormRequest) =>
-      registerFormManagementApi.createRegisterForm(data),
+    mutationFn: (data: CreateMediaRequest) =>
+      registrationFormManagementApi.createMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
+        queryClient.invalidateQueries({
+          queryKey: registrationFormManagementKeys.lists(),
+        })
         toast.success('Register form created successfully')
       } else {
         onError?.(response.errorMessage || 'Failed to create register form')
@@ -20,14 +25,16 @@ export const useCreateRegisterForm = (onError?: (error: string) => void) => {
   })
 }
 
-export const useUpdateRegisterForm = (onError?: (error: string) => void) => {
+export const useUpdateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ data }: { data: UpdateRegisterFormRequest }) =>
-      registerFormManagementApi.updateRegisterForm(data),
+    mutationFn: ({ data }: { data: UpdateMediaRequest }) =>
+      registrationFormManagementApi.updateMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
+        queryClient.invalidateQueries({
+          queryKey: registrationFormManagementKeys.lists(),
+        })
         toast.success('Register form updated successfully')
       } else {
         onError?.(response.errorMessage || 'Failed to update register form')
@@ -36,13 +43,16 @@ export const useUpdateRegisterForm = (onError?: (error: string) => void) => {
   })
 }
 
-export const useDeleteRegisterForm = () => {
+export const useDeleteMedia = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) => registerFormManagementApi.deleteRegisterForm(mediaIds),
+    mutationFn: (mediaIds: string) =>
+      registrationFormManagementApi.deleteMedia(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
+        queryClient.invalidateQueries({
+          queryKey: registrationFormManagementKeys.lists(),
+        })
         toast.success('Register form deleted successfully')
       } else {
         toast.error(response.errorMessage || 'Failed to delete register form')
@@ -51,13 +61,16 @@ export const useDeleteRegisterForm = () => {
   })
 }
 
-export const useDeleteRegisterForms = () => {
+export const useDeleteMedias = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) => registerFormManagementApi.deleteRegisterForms(mediaIds),
+    mutationFn: (mediaIds: string) =>
+      registrationFormManagementApi.deleteMedias(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
+        queryClient.invalidateQueries({
+          queryKey: registrationFormManagementKeys.lists(),
+        })
         toast.success('Register forms deleted successfully')
       } else {
         toast.error(response.errorMessage || 'Failed to delete register forms')
@@ -66,17 +79,23 @@ export const useDeleteRegisterForms = () => {
   })
 }
 
-export const useUpdateRegisterFormsStatus = () => {
+export const useUpdateMediaStatus = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ ids, statusId }: { ids: string; statusId: number }) =>
-      registerFormManagementApi.updateRegisterFormsStatus(ids, statusId),
+      registrationFormManagementApi.updateMediaStatus(ids, statusId),
     onSuccess: (response, { statusId }) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: registerFormManagementKeys.lists() })
-        toast.success(`Register forms updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`)
+        queryClient.invalidateQueries({
+          queryKey: registrationFormManagementKeys.lists(),
+        })
+        toast.success(
+          `Register forms updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
+        )
       } else {
-        toast.error(response.errorMessage || 'Failed to update register forms status')
+        toast.error(
+          response.errorMessage || 'Failed to update register forms status'
+        )
       }
     },
   })

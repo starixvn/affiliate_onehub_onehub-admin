@@ -1,13 +1,13 @@
+import { useFileHandlers } from '@/features/landing-page-cms/shared'
 import type {
   FormWithFiles,
   FormFile,
-  ValidationErrors,
   TouchedFields,
-} from '../../../data/schema'
+} from '@/features/landing-page-cms/shared'
+import type { ValidationErrors } from '../../../data/schema'
 import {
-  validateField,
+  validateRegistrationFormField,
   useErrorMessages,
-  resetFileErrors,
 } from '../../../data/validation'
 
 interface UseRegisterFormFileHandlersProps {
@@ -16,13 +16,7 @@ interface UseRegisterFormFileHandlersProps {
   touched: TouchedFields
   setFormWithFiles: React.Dispatch<React.SetStateAction<FormWithFiles>>
   setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
-  setTouched: React.Dispatch<
-    React.SetStateAction<{
-      country: boolean
-      language: boolean
-      formNames: { [key: number]: boolean }
-    }>
-  >
+  setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
   resetTouchedForFormNames: (fileCount: number) => void
 }
 
@@ -36,107 +30,62 @@ export function useRegisterFormFileHandlers({
   resetTouchedForFormNames,
 }: UseRegisterFormFileHandlersProps) {
   const errorMessages = useErrorMessages()
-  const handleFileChange = (files: FileList | null) => {
-    if (files && files.length > 0) {
-      if (isEdit) {
-        const file = files[0]
-        const newFile: FormFile = {
-          file,
-          formName: file.name.replace(/\.[^/.]+$/, ''),
-          fileName: file.name,
-        }
 
-        setFormWithFiles((prev) => ({
-          ...prev,
-          files: [newFile],
-        }))
+  const createFormFile = (file: File): FormFile => ({
+    file,
+    formName: file.name.replace(/\.[^/.]+$/, ''),
+    fileName: file.name,
+  })
 
-        resetTouchedForFormNames(1)
-      } else {
-        const existingFileNames = formWithFiles.files.map(
-          (formFile) => formFile.file.name
-        )
-
-        const newFiles: FormFile[] = Array.from(files)
-          .filter((file) => !existingFileNames.includes(file.name))
-          .map((file) => ({
-            file,
-            formName: file.name.replace(/\.[^/.]+$/, ''),
-            fileName: file.name,
-          }))
-
-        setFormWithFiles((prev) => ({
-          ...prev,
-          files: [...prev.files, ...newFiles],
-        }))
-
-        resetTouchedForFormNames(formWithFiles.files.length + newFiles.length)
-      }
-
-      resetFileErrors(setErrors)
-    }
-  }
+  const fileHandlers = useFileHandlers({
+    mode: 'formNames',
+    isEdit,
+    fileGroups: formWithFiles,
+    setFileGroups: setFormWithFiles,
+    setErrors,
+    touched,
+    setTouched,
+    resetTouchedForFormNames,
+    createFormFile,
+  })
 
   const handleFormNameChange = (index: number, value: string) => {
-    setFormWithFiles((prev) => ({
-      ...prev,
-      files: prev.files.map((file, i) =>
-        i === index ? { ...file, formName: value } : file
-      ),
-    }))
-
-    validateField('formName', value, setErrors, errorMessages, index)
+    fileHandlers.handleFormNameChange?.(index, value)
+    validateRegistrationFormField(
+      'formName',
+      value,
+      setErrors,
+      errorMessages,
+      index
+    )
   }
 
   const handleFormNameBlur = (index: number) => {
-    if (!touched.formNames[index]) {
-      setTouched((prev) => ({
-        ...prev,
-        formNames: { ...prev.formNames, [index]: true },
-      }))
-      validateField(
-        'formName',
-        formWithFiles.files[index]?.formName || '',
-        setErrors,
-        errorMessages,
-        index
-      )
-    }
-  }
-
-  const handleRemoveFile = (fileIndex: number) => {
-    setFormWithFiles((prev) => ({
-      ...prev,
-      files: prev.files.filter((_, index) => index !== fileIndex),
-    }))
-
-    setTouched((prev) => {
-      const newFormNames = { ...prev.formNames }
-      delete newFormNames[fileIndex]
-
-      const shiftedFormNames: { [key: number]: boolean } = {}
-      Object.keys(newFormNames).forEach((key) => {
-        const keyNum = parseInt(key)
-        if (keyNum > fileIndex) {
-          shiftedFormNames[keyNum - 1] = newFormNames[keyNum]
-        } else {
-          shiftedFormNames[keyNum] = newFormNames[keyNum]
-        }
-      })
-
-      return {
-        ...prev,
-        formNames: shiftedFormNames,
-      }
-    })
-
-    resetFileErrors(setErrors)
+    fileHandlers.handleFormNameBlur?.(
+      index,
+      (
+        field: string,
+        value: string,
+        setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
+        errorMessages: any,
+        index?: number
+      ) =>
+        validateRegistrationFormField(
+          field,
+          value,
+          setErrors,
+          errorMessages,
+          index
+        )
+    )
   }
 
   return {
-    handleFileChange,
+    handleFileChange: (files: FileList | null) =>
+      fileHandlers.handleFileChange(0, files),
     handleFormNameChange,
     handleFormNameBlur,
-    handleRemoveFile,
+    handleRemoveFile: (fileIndex: number) =>
+      fileHandlers.handleRemoveFile(0, fileIndex),
   }
 }

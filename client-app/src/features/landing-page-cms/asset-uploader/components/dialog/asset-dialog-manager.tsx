@@ -1,35 +1,51 @@
+import {
+  DeleteMediaDialog,
+  StatusChangeDialog,
+  SharedDialogManager,
+} from '@/features/landing-page-cms/shared'
+import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetDialog } from './asset-dialog'
-import { AssetStatusChangeDialog } from './asset-status-change-dialog'
-import { DeleteAssetDialog } from './delete-asset-dialog'
+import { TRANSLATION_KEY } from '../../data/schema'
 
 export function AssetDialogManager() {
   const { open, setOpen, currentRow, targetStatusId } = useAssetUploader()
 
-  return (
-    <>
-      <AssetDialog
-        open={open === 'upload'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'upload' : null)}
+  const DeleteAssetDialog = () => {
+    return (
+      <DeleteMediaDialog
+        translationKey={TRANSLATION_KEY}
+        useDeleteMutation={useDeleteMedia}
+        media={currentRow}
+        open={open === 'delete' ? true : false}
+        onOpenChange={(open: boolean) => setOpen(open ? 'delete' : null)}
       />
-      <AssetDialog
-        open={open === 'edit'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'edit' : null)}
-        asset={currentRow}
-      />
-      <DeleteAssetDialog
-        open={open === 'delete'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'delete' : null)}
-        asset={currentRow}
-      />
-      <AssetStatusChangeDialog
-        open={open === 'status-change'}
-        onOpenChange={(isOpen: boolean) =>
-          setOpen(isOpen ? 'status-change' : null)
-        }
-        asset={currentRow}
+    )
+  }
+
+  const AssetStatusChangeDialog = () => {
+    return (
+      <StatusChangeDialog
+        translationKey={TRANSLATION_KEY}
+        open={open === 'status-change' ? true : false}
+        onOpenChange={(open: boolean) => setOpen(open ? 'status-change' : null)}
+        media={currentRow}
+        useUpdateStatusMutation={useUpdateMediaStatus}
         newStatusId={targetStatusId || 1}
       />
-    </>
+    )
+  }
+
+  return (
+    <SharedDialogManager
+      open={open}
+      setOpen={setOpen}
+      currentRow={currentRow}
+      targetStatusId={targetStatusId}
+      UploadDialog={AssetDialog}
+      EditDialog={AssetDialog}
+      DeleteDialog={DeleteAssetDialog}
+      StatusChangeDialog={AssetStatusChangeDialog}
+    />
   )
 }

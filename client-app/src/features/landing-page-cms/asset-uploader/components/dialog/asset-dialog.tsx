@@ -7,12 +7,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { useCreateAsset, useUpdateAsset } from '../../api/commands'
-import type { AssetDetail } from '../../data/schema'
+import {
+  MediaDialogActionButton,
+  ConfirmOverwriteDialog,
+  MediaDialogErrorBanner,
+  MediaDialogInfoBanner,
+  CountryLanguageSelects,
+} from '@/features/landing-page-cms/shared'
+import { TRANSLATION_KEY, type AssetDetail } from '../../data/schema'
+import { INITIAL_VALIDATION_STATE } from '../../data/validation'
 import { useAssetUploader } from '../asset-uploader-provider'
-import { AssetActionButtons } from './asset-action-buttons'
-import { AssetDialogContent } from './components/asset-dialog-content'
-import { ConfirmOverwriteDialog } from './confirm-overwrite-dialog'
+import { AssetEditForm } from './asset-edit-form'
+import { AssetModuleRow } from './asset-module-row'
 import { useAssetFormHandlers } from './hooks/use-asset-form-handlers'
 import { useAssetFormState } from './hooks/use-asset-form-state'
 
@@ -23,7 +29,7 @@ interface AssetDialogProps {
 }
 
 export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
-  const { t } = useTranslation('asset-uploader')
+  const { t } = useTranslation(TRANSLATION_KEY)
   const { countries, languages, modules } = useAssetUploader()
   const isMediaIdInUse = asset?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
@@ -37,9 +43,6 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     value: module.moduleId.toString(),
     label: module.moduleName,
   }))
-
-  const createAssetMutation = useCreateAsset((error) => setBackendError(error))
-  const updateAssetMutation = useUpdateAsset((error) => setBackendError(error))
 
   const scrollContainerRef = useRef<HTMLDivElement>(null)
 
@@ -87,14 +90,14 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     resetForm,
     resetTouchedForModules,
     onOpenChange,
-    createAssetMutation,
-    updateAssetMutation,
+    onBackendError: setBackendError,
   })
 
   const {
     showConfirmOverwrite,
     handleConfirmOverwrite,
     handleCancelOverwrite,
+    isPending,
   } = handlers
 
   useEffect(() => {
@@ -116,6 +119,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
         setLanguage(asset.marketId)
         setFileName(asset.mediaName)
         setModuleRows([{ module: asset.moduleId.toString(), files: [] }])
+        setErrors(INITIAL_VALIDATION_STATE.errors)
         resetTouchedForModules(1)
       } else {
         resetForm()
@@ -148,47 +152,88 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <AssetDialogContent
-          isEdit={isEdit}
-          isMediaIdInUse={isMediaIdInUse}
-          fileName={fileName}
-          moduleRows={moduleRows}
-          errors={errors}
-          touched={touched}
-          expandedModules={expandedModules}
-          countryOptions={countryOptions}
-          languageOptions={languageOptions}
-          moduleOptions={moduleOptions}
-          country={country}
-          language={language}
-          totalModules={moduleRows.length}
-          backendError={backendError}
-          scrollContainerRef={scrollContainerRef}
-          onCountryChange={handlers.handleCountryChange}
-          onLanguageChange={handlers.handleLanguageChange}
-          onCountryBlur={handlers.handleCountryBlur}
-          onLanguageBlur={handlers.handleLanguageBlur}
-          onModuleChange={handlers.handleModuleChange}
-          onModuleBlur={handlers.handleModuleBlur}
-          onFileChange={handlers.handleFileChange}
-          onToggleExpanded={handlers.handleToggleExpanded}
-          onAddModule={handlers.handleAddModule}
-          onRemoveModule={handlers.handleRemoveModule}
-          onRemoveFile={handlers.handleRemoveFile}
-          isModuleSelectedByOther={handlers.isModuleSelectedByOther}
-        />
+        <div
+          ref={scrollContainerRef}
+          className='max-h-[calc(90vh-10rem)] space-y-4 overflow-y-auto px-1 pr-3 sm:px-0 sm:pr-2'
+        >
+          <MediaDialogErrorBanner
+            errors={errors}
+            backendError={backendError}
+            translationKey={TRANSLATION_KEY}
+          />
 
-        <AssetActionButtons
+          <MediaDialogInfoBanner
+            isEdit={isEdit}
+            translationKey={TRANSLATION_KEY}
+          />
+
+          <CountryLanguageSelects
+            translationKey={TRANSLATION_KEY}
+            isMediaIdInUse={isMediaIdInUse}
+            errors={errors}
+            touched={touched}
+            countryOptions={countryOptions}
+            languageOptions={languageOptions}
+            country={country}
+            language={language}
+            onCountryChange={handlers.handleCountryChange}
+            onLanguageChange={handlers.handleLanguageChange}
+            onCountryBlur={handlers.handleCountryBlur}
+            onLanguageBlur={handlers.handleLanguageBlur}
+            showModuleField={false}
+          />
+
+          <div className='space-y-4'>
+            {isEdit ? (
+              <AssetEditForm
+                isMediaIdInUse={isMediaIdInUse}
+                moduleValue={moduleRows[0].module}
+                fileName={fileName}
+                errors={errors}
+                touched={touched}
+                modules={moduleOptions}
+                onModuleChange={handlers.handleModuleChange}
+                onModuleBlur={handlers.handleModuleBlur}
+                onFileChange={handlers.handleFileChange}
+              />
+            ) : (
+              moduleRows.map((moduleRow, moduleIndex) => (
+                <AssetModuleRow
+                  key={moduleIndex}
+                  moduleIndex={moduleIndex}
+                  moduleRow={moduleRow}
+                  isEdit={isEdit}
+                  fileName={fileName}
+                  errors={errors}
+                  touched={touched}
+                  expandedModules={expandedModules}
+                  modules={moduleOptions}
+                  totalModules={moduleRows.length}
+                  onModuleChange={handlers.handleModuleChange}
+                  onModuleBlur={handlers.handleModuleBlur}
+                  onFileChange={handlers.handleFileChange}
+                  onToggleExpanded={handlers.handleToggleExpanded}
+                  onAddModule={handlers.handleAddModule}
+                  onRemoveModule={handlers.handleRemoveModule}
+                  onRemoveFile={handlers.handleRemoveFile}
+                  isModuleSelectedByOther={handlers.isModuleSelectedByOther}
+                />
+              ))
+            )}
+          </div>
+        </div>
+
+        <MediaDialogActionButton
+          translationKey={TRANSLATION_KEY}
           isEdit={isEdit}
           isFormValid={handlers.isFormValid()}
-          isLoading={
-            createAssetMutation.isPending || updateAssetMutation.isPending
-          }
+          isLoading={isPending}
           onSubmit={handlers.handleSubmit}
           onCancel={handlers.handleCancel}
         />
 
         <ConfirmOverwriteDialog
+          translationKey={TRANSLATION_KEY}
           open={showConfirmOverwrite}
           onOpenChange={(open) => !open && handleCancelOverwrite()}
           fileName={fileName}

@@ -23,12 +23,14 @@
   },
   "buttons": {
     "export": "Export",
-    "editAsset": "Edit Asset",
-    "deleteAsset": "Delete Asset",
+    "edit": "Edit",
+    "delete": "Delete",
     "processing": "Processing...",
-    "saveChanges": "Save Changes",
-    "addAsset": "Add Asset",
-    "cancel": "Cancel"
+    "save": "Save",
+    "add": "Add",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "create": "Create"
   },
   "table": {
     "selectAll": "Select all",
@@ -63,17 +65,26 @@
     "editAssetDescription": "Update asset configuration and file information",
     "deleteAsset": "Delete Asset",
     "deleteAssets": "Delete Assets",
-    "confirmDeleteSingle": "Are you sure you want to delete \"{{assetName}}\"?",
+    "confirmOverwriteTitle": "Confirm Overwrite",
+    "confirmOverwriteMessage": "This file name \"{{fileName}}\" already exists. Do you want to overwrite the current file?",
+    "confirmDeleteSingle": "Are you sure you want to delete \"{{mediaName}}\"?",
     "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
     "deleteDescription": "This action cannot be undone. The delete action will only be performed on assets that are not associated with any landing page.",
-    "confirmStatusChange": "Only active image is available for selection when creating a new landing page. Are you sure you want to change status of the selected image?",
-    "confirmStatusChangeBulk": "Only active images are available for selection when creating a new landing page. Are you sure you want to change status of the selected images?",
+    "confirmStatusChange": "Change Status",
+    "confirmStatusChangeBulk": "Change Status",
+    "confirmStatusChangeDesc": "Only active images are available for selection when creating a new landing page. Are you sure you want to change the status of the selected image?",
+    "confirmStatusChangeBulkDesc": "Only active images are available for selection when creating a new landing page. Are you sure you want to change the status of the selected images?",
     "changing": "Changing...",
     "change": "Change",
     "changeAll": "Change All",
     "deleting": "Deleting...",
     "delete": "Delete",
-    "deleteAll": "Delete All"
+    "deleteAll": "Delete All",
+    "confirmStatusChangeBulkDynamic": "Change {{count}} {{entity}}",
+    "statuses": "statuses",
+    "status": "status",
+    "images": "images",
+    "image": "image"
   },
   "form": {
     "country": "Country",
@@ -114,7 +125,8 @@
     "fileSizeExceeded": "File size exceeds {{maxSize}}MB limit: {{exceededFiles}}. Please upload a smaller file.",
     "duplicateFileNames": "File name(s) already exists: {{duplicateFiles}}. Please rename or remove the file(s) before uploading.",
     "invalidFileNames": "File name(s) contain invalid characters: {{invalidFiles}}. File names cannot contain \\ / : * ? \" < > | # % & + characters.",
-    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names must be {{maxLength}} characters or less."
+    "fileNameTooLong": "File name(s) too long: {{longFiles}}. File names must be {{maxLength}} characters or less.",
+    "modulesWithoutFiles": "The following modules have no files uploaded: {{moduleIndexes}}. Please upload at least one file for each module."
   },
   "toasts": {
     "exporting": "Exporting assets to Excel...",

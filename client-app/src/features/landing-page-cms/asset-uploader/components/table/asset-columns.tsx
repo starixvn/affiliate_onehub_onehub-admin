@@ -2,9 +2,12 @@ import { type PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
+import {
+  MediaRowActions,
+  MediaStatusCell,
+} from '@/features/landing-page-cms/shared'
 import type { AssetDetail } from '../../data/schema'
-import { AssetRowActions } from './asset-row-actions'
-import { AssetStatusCell } from './asset-status-cell'
+import { TRANSLATION_KEY } from '../../data/schema'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -16,9 +19,12 @@ declare module '@tanstack/react-table' {
 
 export const useAssetColumns = (
   bannerRootUrl?: string,
-  pagination?: PaginationState
+  pagination?: PaginationState,
+  onEdit?: (asset: AssetDetail) => void,
+  onDelete?: (asset: AssetDetail) => void,
+  onStatusChange?: (statusId: number, asset: AssetDetail) => void
 ): ColumnDef<AssetDetail>[] => {
-  const { t } = useTranslation('asset-uploader')
+  const { t } = useTranslation(TRANSLATION_KEY)
 
   return [
     {
@@ -63,7 +69,7 @@ export const useAssetColumns = (
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] break-words font-medium'>
+        <div className='max-w-[200px] font-medium break-words'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -76,7 +82,9 @@ export const useAssetColumns = (
         displayName: t('table.module'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] break-words'>{row.original.moduleName}</div>
+        <div className='max-w-[200px] break-words'>
+          {row.original.moduleName}
+        </div>
       ),
     },
     {
@@ -140,14 +148,17 @@ export const useAssetColumns = (
     },
     {
       accessorKey: 'statusId',
-      header: () => (
-        <div className='text-center'>{t('table.status')}</div>
-      ),
+      header: () => <div className='text-center'>{t('table.status')}</div>,
       meta: {
         className: '',
         displayName: t('table.status'),
       },
-      cell: AssetStatusCell,
+      cell: ({ row }) => (
+        <MediaStatusCell
+          row={row}
+          onStatusChange={onStatusChange || (() => {})}
+        />
+      ),
       filterFn: (row, id, value) => {
         return value.includes(String(row.getValue(id)))
       },
@@ -156,7 +167,14 @@ export const useAssetColumns = (
     },
     {
       id: 'actions',
-      cell: AssetRowActions,
+      cell: ({ row }) => (
+        <MediaRowActions
+          row={row}
+          translationKey={TRANSLATION_KEY}
+          onEdit={onEdit || (() => {})}
+          onDelete={onDelete || (() => {})}
+        />
+      ),
     },
   ]
 }

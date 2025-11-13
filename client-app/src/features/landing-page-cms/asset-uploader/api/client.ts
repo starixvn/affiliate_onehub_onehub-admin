@@ -1,37 +1,38 @@
 import { apiClient } from '@/lib/api/client'
 import type {
-  DeleteAssetResponse,
-  GetAssetListRequest,
-  GetAssetListResponse,
-  CreateAssetResponse,
-  UpdateAssetRequest,
-  UpdateAssetResponse,
-  CreateAssetRequest,
-  GetAssetDetailResponse,
-  GetAssetFiltersResponse,
-  UpdateAssetsStatusResponse,
-} from '../types'
+  DeleteMediaResponse,
+  GetMediaListRequest,
+  GetMediaListResponse,
+  CreateMediaResponse,
+  UpdateMediaRequest,
+  UpdateMediaResponse,
+  CreateMediaRequest,
+  GetMediaDetailResponse,
+  GetMediaFiltersResponse,
+  UpdateMediaStatusResponse,
+  BaseFile,
+} from '@/features/landing-page-cms/shared'
 
 export const assetUploaderApi = {
-  async getAssetList(
-    params: GetAssetListRequest
-  ): Promise<GetAssetListResponse> {
-    const response = await apiClient.post<GetAssetListResponse>(
+  async getMediaList(
+    params: GetMediaListRequest
+  ): Promise<GetMediaListResponse> {
+    const response = await apiClient.post<GetMediaListResponse>(
       '/asset-uploader/list',
       params
     )
     return response.data
   },
 
-  async getAssetDetail(mediaId: number): Promise<GetAssetDetailResponse> {
-    const response = await apiClient.get<GetAssetDetailResponse>(
+  async getMediaDetail(mediaId: number): Promise<GetMediaDetailResponse> {
+    const response = await apiClient.get<GetMediaDetailResponse>(
       '/asset-uploader/detail',
       { params: { mediaId } }
     )
     return response.data
   },
 
-  async createAsset(data: CreateAssetRequest): Promise<CreateAssetResponse> {
+  async createMedia(data: CreateMediaRequest): Promise<CreateMediaResponse> {
     try {
       const formData = new FormData()
       formData.append('targetCountryCode', data.targetCountryCode)
@@ -40,12 +41,12 @@ export const assetUploaderApi = {
       data.moduleRows.forEach((moduleRow, index) => {
         formData.append(`moduleRows[${index}]`, moduleRow.module)
         formData.append(`inputMediaNames[${index}]`, '')
-        moduleRow.files.forEach((file) => {
-          formData.append(`${moduleRow.module}`, file)
+        moduleRow.files.forEach((baseFile: BaseFile) => {
+          formData.append(`${moduleRow.module}`, baseFile.file)
         })
       })
 
-      const response = await apiClient.post<CreateAssetResponse>(
+      const response = await apiClient.post<CreateMediaResponse>(
         '/asset-uploader/upload',
         formData,
         {
@@ -61,13 +62,13 @@ export const assetUploaderApi = {
         errorMessage:
           error?.message || error?.errorMessage || 'Create asset failed',
         result: null,
-      } as unknown as CreateAssetResponse
+      } as unknown as CreateMediaResponse
     }
   },
 
-  async deleteAsset(mediaIds: string): Promise<DeleteAssetResponse> {
+  async deleteMedia(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
-      const response = await apiClient.delete<DeleteAssetResponse>(
+      const response = await apiClient.delete<DeleteMediaResponse>(
         `/asset-uploader/delete/${mediaIds}`
       )
       return response.data
@@ -77,13 +78,13 @@ export const assetUploaderApi = {
         errorMessage:
           error?.message || error?.errorMessage || 'Delete asset failed',
         result: null,
-      } as unknown as DeleteAssetResponse
+      } as unknown as DeleteMediaResponse
     }
   },
 
-  async deleteAssets(mediaIds: string): Promise<DeleteAssetResponse> {
+  async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
-      const response = await apiClient.delete<DeleteAssetResponse>(
+      const response = await apiClient.delete<DeleteMediaResponse>(
         `/asset-uploader/delete/${mediaIds}`
       )
       return response.data
@@ -93,11 +94,11 @@ export const assetUploaderApi = {
         errorMessage:
           error?.message || error?.errorMessage || 'Delete assets failed',
         result: null,
-      } as unknown as DeleteAssetResponse
+      } as unknown as DeleteMediaResponse
     }
   },
 
-  async updateAsset(data: UpdateAssetRequest): Promise<UpdateAssetResponse> {
+  async updateMedia(data: UpdateMediaRequest): Promise<UpdateMediaResponse> {
     try {
       const formData = new FormData()
       formData.append('mediaId', data.mediaId.toString())
@@ -108,7 +109,7 @@ export const assetUploaderApi = {
       formData.append('inputMediaName', data.inputMediaName ?? '')
       formData.append('file', data.file ?? new File([], ''))
 
-      const response = await apiClient.post<UpdateAssetResponse>(
+      const response = await apiClient.post<UpdateMediaResponse>(
         '/asset-uploader/update',
         formData,
         {
@@ -124,16 +125,16 @@ export const assetUploaderApi = {
         errorMessage:
           error?.message || error?.errorMessage || 'Update asset failed',
         result: null,
-      } as unknown as UpdateAssetResponse
+      } as unknown as UpdateMediaResponse
     }
   },
 
-  async updateAssetsStatus(
+  async updateMediaStatus(
     ids: string,
     statusId: number
-  ): Promise<UpdateAssetsStatusResponse> {
+  ): Promise<UpdateMediaStatusResponse> {
     try {
-      const response = await apiClient.post<UpdateAssetsStatusResponse>(
+      const response = await apiClient.post<UpdateMediaStatusResponse>(
         '/asset-uploader/status',
         { mediaIds: ids, statusId }
       )
@@ -146,12 +147,12 @@ export const assetUploaderApi = {
           error?.errorMessage ||
           'Update assets status failed',
         result: null,
-      } as unknown as UpdateAssetsStatusResponse
+      } as unknown as UpdateMediaStatusResponse
     }
   },
 
-  async getAssetFilters(): Promise<GetAssetFiltersResponse> {
-    const response = await apiClient.get<GetAssetFiltersResponse>(
+  async getMediaFilters(): Promise<GetMediaFiltersResponse> {
+    const response = await apiClient.get<GetMediaFiltersResponse>(
       '/asset-uploader/filters'
     )
     return response.data

@@ -23,12 +23,14 @@
   },
   "buttons": {
     "export": "导出",
-    "addAsset": "添加资源",
-    "editAsset": "编辑资源",
-    "deleteAsset": "删除资源",
+    "edit": "编辑",
+    "delete": "删除",
     "processing": "处理中...",
-    "saveChanges": "保存更改",
-    "cancel": "取消"
+    "save": "保存",
+    "add": "添加",
+    "cancel": "取消",
+    "confirm": "确认",
+    "create": "创建"
   },
   "table": {
     "selectAll": "全选",
@@ -66,14 +68,21 @@
     "confirmDeleteSingle": "您确定要删除\"{{assetName}}\"吗？",
     "confirmDeleteBulk": "您确定要删除 {{count}} 个{{entity}}吗？",
     "deleteDescription": "此操作无法撤销。删除操作仅对未与任何着陆页关联的资源执行。",
-    "confirmStatusChange": "创建新着陆页时，只有活跃的图片可供选择。您确定要更改所选图片的状态吗？",
-    "confirmStatusChangeBulk": "创建新着陆页时，只有活跃的图片可供选择。您确定要更改所选图片的状态吗？",
+    "confirmStatusChange": "更改状态",
+    "confirmStatusChangeBulk": "更改状态",
+    "confirmStatusChangeDesc": "创建新着陆页时，只有活跃的图片可供选择。您确定要更改所选图片的状态吗？",
+    "confirmStatusChangeBulkDesc": "创建新着陆页时，只有活跃的图片可供选择。您确定要更改所选图片的状态吗？",
     "changing": "正在更改...",
     "change": "更改",
     "changeAll": "全部更改",
     "deleting": "正在删除...",
     "delete": "删除",
-    "deleteAll": "删除全部"
+    "deleteAll": "删除全部",
+    "confirmStatusChangeBulkDynamic": "更改 {{count}} 个{{entity}}",
+    "statuses": "状态",
+    "status": "状态",
+    "images": "图片",
+    "image": "图片"
   },
   "form": {
     "country": "国家",
@@ -114,7 +123,8 @@
     "fileSizeExceeded": "文件大小超过 {{maxSize}}MB 限制：{{exceededFiles}}。请上传更小的文件。",
     "duplicateFileNames": "文件名已存在：{{duplicateFiles}}。请重命名或删除文件后再上传。",
     "invalidFileNames": "文件名包含无效字符：{{invalidFiles}}。文件名不能包含 \\ / : * ? \" < > | # % & + 字符。",
-    "fileNameTooLong": "文件名过长：{{longFiles}}。文件名必须为 {{maxLength}} 个字符或更少。"
+    "fileNameTooLong": "文件名过长：{{longFiles}}。文件名必须为 {{maxLength}} 个字符或更少。",
+    "modulesWithoutFiles": "以下模块没有上传文件：{{moduleIndexes}}。请为每个模块至少上传一个文件。"
   },
   "toasts": {
     "exporting": "正在导出资源到 Excel...",

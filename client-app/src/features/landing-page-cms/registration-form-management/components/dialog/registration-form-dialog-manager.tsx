@@ -1,35 +1,52 @@
+import {
+  DeleteMediaDialog,
+  StatusChangeDialog,
+  SharedDialogManager,
+} from '@/features/landing-page-cms/shared'
+import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
+import { TRANSLATION_KEY } from '../../data/schema'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
 import { RegisterFormDialog } from './registration-form-dialog'
-import { RegisterFormStatusChangeDialog } from './registration-form-status-change-dialog'
-import { DeleteRegisterFormDialog } from './delete-registration-form-dialog'
 
 export function RegisterFormDialogManager() {
-  const { open, setOpen, currentRow, targetStatusId } = useRegisterFormManagement()
+  const { open, setOpen, currentRow, targetStatusId } =
+    useRegisterFormManagement()
 
-  return (
-    <>
-      <RegisterFormDialog
-        open={open === 'upload'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'upload' : null)}
+  const DeleteRegisterFormDialog = () => {
+    return (
+      <DeleteMediaDialog
+        translationKey={TRANSLATION_KEY}
+        useDeleteMutation={useDeleteMedia}
+        media={currentRow}
+        open={open === 'delete' ? true : false}
+        onOpenChange={(open: boolean) => setOpen(open ? 'delete' : null)}
       />
-      <RegisterFormDialog
-        open={open === 'edit'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'edit' : null)}
-        registerForm={currentRow}
-      />
-      <DeleteRegisterFormDialog
-        open={open === 'delete'}
-        onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'delete' : null)}
-        registerForm={currentRow}
-      />
-      <RegisterFormStatusChangeDialog
-        open={open === 'status-change'}
-        onOpenChange={(isOpen: boolean) =>
-          setOpen(isOpen ? 'status-change' : null)
-        }
-        registerForm={currentRow}
+    )
+  }
+
+  const RegisterFormStatusChangeDialog = () => {
+    return (
+      <StatusChangeDialog
+        translationKey={TRANSLATION_KEY}
+        open={open === 'status-change' ? true : false}
+        onOpenChange={(open: boolean) => setOpen(open ? 'status-change' : null)}
+        media={currentRow}
+        useUpdateStatusMutation={useUpdateMediaStatus}
         newStatusId={targetStatusId || 1}
       />
-    </>
+    )
+  }
+
+  return (
+    <SharedDialogManager
+      open={open}
+      setOpen={setOpen}
+      currentRow={currentRow}
+      targetStatusId={targetStatusId}
+      UploadDialog={RegisterFormDialog}
+      EditDialog={RegisterFormDialog}
+      DeleteDialog={DeleteRegisterFormDialog}
+      StatusChangeDialog={RegisterFormStatusChangeDialog}
+    />
   )
 }

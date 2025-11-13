@@ -1,14 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import type { CreateAssetRequest, UpdateAssetRequest } from '../types'
+import type {
+  CreateMediaRequest,
+  UpdateMediaRequest,
+  UpdateMediaStatusResponse,
+} from '@/features/landing-page-cms/shared'
 import { assetUploaderApi } from './client'
 import { assetUploaderKeys } from './queries'
 
-export const useCreateAsset = (onError?: (error: string) => void) => {
+export const useCreateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (data: CreateAssetRequest) =>
-      assetUploaderApi.createAsset(data),
+    mutationFn: (data: CreateMediaRequest) =>
+      assetUploaderApi.createMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
@@ -20,11 +24,11 @@ export const useCreateAsset = (onError?: (error: string) => void) => {
   })
 }
 
-export const useUpdateAsset = (onError?: (error: string) => void) => {
+export const useUpdateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ data }: { data: UpdateAssetRequest }) =>
-      assetUploaderApi.updateAsset(data),
+    mutationFn: ({ data }: { data: UpdateMediaRequest }) =>
+      assetUploaderApi.updateMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
@@ -36,10 +40,10 @@ export const useUpdateAsset = (onError?: (error: string) => void) => {
   })
 }
 
-export const useDeleteAsset = () => {
+export const useDeleteMedia = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) => assetUploaderApi.deleteAsset(mediaIds),
+    mutationFn: (mediaIds: string) => assetUploaderApi.deleteMedia(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
@@ -51,10 +55,10 @@ export const useDeleteAsset = () => {
   })
 }
 
-export const useDeleteAssets = () => {
+export const useDeleteMedias = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) => assetUploaderApi.deleteAssets(mediaIds),
+    mutationFn: (mediaIds: string) => assetUploaderApi.deleteMedias(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
@@ -66,12 +70,12 @@ export const useDeleteAssets = () => {
   })
 }
 
-export const useUpdateAssetsStatus = () => {
+export const useUpdateMediaStatus = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ ids, statusId }: { ids: string; statusId: number }) =>
-      assetUploaderApi.updateAssetsStatus(ids, statusId),
-    onSuccess: (response, { statusId }) => {
+      assetUploaderApi.updateMediaStatus(ids, statusId),
+    onSuccess: (response: UpdateMediaStatusResponse, { statusId }) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success(

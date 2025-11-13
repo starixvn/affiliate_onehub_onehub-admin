@@ -1,65 +1,63 @@
 import { apiClient } from '@/lib/api/client'
-import { REGISTER_FORM_MODULE_ID } from '../data/constants'
 import type {
-  DeleteRegisterFormResponse,
-  GetRegisterFormListRequest,
-  GetRegisterFormListResponse,
-  CreateRegisterFormResponse,
-  UpdateRegisterFormRequest,
-  UpdateRegisterFormResponse,
-  CreateRegisterFormRequest,
-  GetRegisterFormDetailResponse,
-  GetRegisterFormFiltersResponse,
-  UpdateRegisterFormsStatusResponse,
-} from '../types'
+  DeleteMediaResponse,
+  GetMediaListRequest,
+  GetMediaListResponse,
+  CreateMediaResponse,
+  UpdateMediaRequest,
+  UpdateMediaResponse,
+  CreateMediaRequest,
+  FormFile,
+  GetMediaDetailResponse,
+  GetMediaFiltersResponse,
+  UpdateMediaStatusResponse,
+} from '@/features/landing-page-cms/shared'
+import { REGISTER_FORM_MODULE_ID } from '../data/schema'
 
-export const registerFormManagementApi = {
-  async getRegisterFormList(
-    params: GetRegisterFormListRequest
-  ): Promise<GetRegisterFormListResponse> {
-    const response = await apiClient.post<GetRegisterFormListResponse>(
+export const registrationFormManagementApi = {
+  async getMediaList(
+    params: GetMediaListRequest
+  ): Promise<GetMediaListResponse> {
+    const response = await apiClient.post<GetMediaListResponse>(
       '/asset-uploader/list',
       params
     )
     return response.data
   },
 
-  async getRegisterFormDetail(
-    mediaId: number
-  ): Promise<GetRegisterFormDetailResponse> {
-    const response = await apiClient.get<GetRegisterFormDetailResponse>(
+  async getMediaDetail(mediaId: number): Promise<GetMediaDetailResponse> {
+    const response = await apiClient.get<GetMediaDetailResponse>(
       '/asset-uploader/detail',
       { params: { mediaId } }
     )
     return response.data
   },
 
-  async createRegisterForm(
-    data: CreateRegisterFormRequest
-  ): Promise<CreateRegisterFormResponse> {
+  async createMedia(data: CreateMediaRequest): Promise<CreateMediaResponse> {
     try {
       const formData = new FormData()
       formData.append('targetCountryCode', data.targetCountryCode)
       formData.append('languageCode', data.languageCode)
 
       data.moduleRows.forEach((moduleRow, index) => {
-        let inputMediaNames = new Array<string>()
+        const inputMediaNames = new Array<string>()
         formData.append(
           `moduleRows[${index}]`,
           REGISTER_FORM_MODULE_ID.toString()
         )
 
         moduleRow.files.forEach((formFile) => {
-          inputMediaNames.push(formFile.formName)
+          const typedFormFile = formFile as FormFile
+          inputMediaNames.push(typedFormFile.formName)
           formData.append(
             `${REGISTER_FORM_MODULE_ID.toString()}`,
-            formFile.file
+            typedFormFile.file
           )
         })
         formData.append(`inputMediaNames[${index}]`, inputMediaNames.join('|'))
       })
 
-      const response = await apiClient.post<CreateRegisterFormResponse>(
+      const response = await apiClient.post<CreateMediaResponse>(
         '/asset-uploader/upload',
         formData,
         {
@@ -80,15 +78,13 @@ export const registerFormManagementApi = {
         errorMessage:
           err.message || err.errorMessage || 'Create register form failed',
         result: null,
-      } as unknown as CreateRegisterFormResponse
+      } as unknown as CreateMediaResponse
     }
   },
 
-  async deleteRegisterForm(
-    mediaIds: string
-  ): Promise<DeleteRegisterFormResponse> {
+  async deleteMedia(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
-      const response = await apiClient.delete<DeleteRegisterFormResponse>(
+      const response = await apiClient.delete<DeleteMediaResponse>(
         `/asset-uploader/delete/${mediaIds}`
       )
       return response.data
@@ -103,15 +99,13 @@ export const registerFormManagementApi = {
         errorMessage:
           err.message || err.errorMessage || 'Delete register form failed',
         result: null,
-      } as unknown as DeleteRegisterFormResponse
+      } as unknown as DeleteMediaResponse
     }
   },
 
-  async deleteRegisterForms(
-    mediaIds: string
-  ): Promise<DeleteRegisterFormResponse> {
+  async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
-      const response = await apiClient.delete<DeleteRegisterFormResponse>(
+      const response = await apiClient.delete<DeleteMediaResponse>(
         `/asset-uploader/delete/${mediaIds}`
       )
       return response.data
@@ -126,13 +120,11 @@ export const registerFormManagementApi = {
         errorMessage:
           err.message || err.errorMessage || 'Delete register forms failed',
         result: null,
-      } as unknown as DeleteRegisterFormResponse
+      } as unknown as DeleteMediaResponse
     }
   },
 
-  async updateRegisterForm(
-    data: UpdateRegisterFormRequest
-  ): Promise<UpdateRegisterFormResponse> {
+  async updateMedia(data: UpdateMediaRequest): Promise<UpdateMediaResponse> {
     try {
       const formData = new FormData()
       formData.append('mediaId', data.mediaId.toString())
@@ -143,7 +135,7 @@ export const registerFormManagementApi = {
       formData.append('inputMediaName', data.inputMediaName ?? '')
       formData.append('file', data.file ?? new File([], ''))
 
-      const response = await apiClient.post<UpdateRegisterFormResponse>(
+      const response = await apiClient.post<UpdateMediaResponse>(
         '/asset-uploader/update',
         formData,
         {
@@ -164,16 +156,16 @@ export const registerFormManagementApi = {
         errorMessage:
           err.message || err.errorMessage || 'Update register form failed',
         result: null,
-      } as unknown as UpdateRegisterFormResponse
+      } as unknown as UpdateMediaResponse
     }
   },
 
-  async updateRegisterFormsStatus(
+  async updateMediaStatus(
     ids: string,
     statusId: number
-  ): Promise<UpdateRegisterFormsStatusResponse> {
+  ): Promise<UpdateMediaStatusResponse> {
     try {
-      const response = await apiClient.post<UpdateRegisterFormsStatusResponse>(
+      const response = await apiClient.post<UpdateMediaStatusResponse>(
         '/asset-uploader/status',
         { mediaIds: ids, statusId }
       )
@@ -191,12 +183,12 @@ export const registerFormManagementApi = {
           err.errorMessage ||
           'Update register forms status failed',
         result: null,
-      } as unknown as UpdateRegisterFormsStatusResponse
+      } as unknown as UpdateMediaStatusResponse
     }
   },
 
-  async getRegisterFormFilters(): Promise<GetRegisterFormFiltersResponse> {
-    const response = await apiClient.get<GetRegisterFormFiltersResponse>(
+  async getMediaFilters(): Promise<GetMediaFiltersResponse> {
+    const response = await apiClient.get<GetMediaFiltersResponse>(
       '/asset-uploader/filters'
     )
     return response.data

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import type {
   AssetDetail,
-  ModuleWithFiles,
+  AssetModuleWithFiles,
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
@@ -16,7 +16,7 @@ export function useAssetFormState(asset: AssetDetail | null | undefined) {
   const [country, setCountry] = useState('')
   const [language, setLanguage] = useState('')
   const [fileName, setFileName] = useState('')
-  const [moduleRows, setModuleRows] = useState<ModuleWithFiles[]>([
+  const [moduleRows, setModuleRows] = useState<AssetModuleWithFiles[]>([
     { module: '', files: [] },
   ])
   const [errors, setErrors] = useState<ValidationErrors>(

@@ -6,8 +6,9 @@ import { Label } from '@/components/ui/label'
 import type {
   ValidationErrors,
   TouchedFields,
-  FormFile,
+  FormFile
 } from '../../../data/schema'
+import { TRANSLATION_KEY } from '../../../data/schema'
 
 interface FormFileItemProps {
   index: number
@@ -30,7 +31,7 @@ export function FormFileItem({
   onFormNameBlur,
   onRemoveFile,
 }: FormFileItemProps) {
-  const { t } = useTranslation('registration-form-management')
+  const { t } = useTranslation(TRANSLATION_KEY)
 
   return (
     <div className='bg-card rounded-lg border p-4'>
@@ -48,7 +49,7 @@ export function FormFileItem({
               onBlur={() => onFormNameBlur(index)}
               placeholder={t('form.formNamePlaceholder')}
               className={
-                touched.formNames[index] && errors.formNames?.[index]
+                touched.formNames?.[index] && errors.formNames?.[index]
                   ? 'border-destructive'
                   : ''
               }
@@ -66,7 +67,7 @@ export function FormFileItem({
               </Button>
             )}
           </div>
-          {touched.formNames[index] && errors.formNames?.[index] && (
+          {touched.formNames?.[index] && errors.formNames?.[index] && (
             <p className='text-destructive text-xs'>
               {errors.formNames[index]}
             </p>

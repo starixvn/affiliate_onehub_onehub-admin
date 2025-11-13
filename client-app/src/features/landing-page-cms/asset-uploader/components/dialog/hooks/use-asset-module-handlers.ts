@@ -1,17 +1,14 @@
 import type {
-  ModuleWithFiles,
+  AssetModuleWithFiles,
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import {
-  validateField as validateFieldHelper,
-  useErrorMessages,
-} from '../../../data/validation'
+import { validateAssetField, useErrorMessages } from '../../../data/validation'
 
 interface UseAssetModuleHandlersProps {
-  moduleRows: ModuleWithFiles[]
+  moduleRows: AssetModuleWithFiles[]
   touched: TouchedFields
-  setModuleRows: React.Dispatch<React.SetStateAction<ModuleWithFiles[]>>
+  setModuleRows: React.Dispatch<React.SetStateAction<AssetModuleWithFiles[]>>
   setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
   setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
   resetTouchedForModules: (moduleCount: number) => void
@@ -40,11 +37,11 @@ export function useAssetModuleHandlers({
     setModuleRows((prev) =>
       prev.map((row, i) => (i === moduleIndex ? { ...row, module } : row))
     )
-    if (touched.modules[moduleIndex]) {
-      validateFieldHelper(
+    if (touched.modules?.[moduleIndex]) {
+      validateAssetField(
         'module',
         module,
-        (fn) => setErrors(fn),
+        setErrors,
         errorMessages,
         moduleIndex
       )
@@ -56,10 +53,10 @@ export function useAssetModuleHandlers({
       ...prev,
       modules: { ...prev.modules, [moduleIndex]: true },
     }))
-    validateFieldHelper(
+    validateAssetField(
       'module',
       moduleRows[moduleIndex].module,
-      (fn) => setErrors(fn),
+      setErrors,
       errorMessages,
       moduleIndex
     )

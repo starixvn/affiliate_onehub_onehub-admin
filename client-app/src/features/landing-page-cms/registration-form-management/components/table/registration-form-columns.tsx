@@ -2,9 +2,11 @@ import { type PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
-import type { RegisterFormDetail } from '../../data/schema'
-import { RegisterFormRowActions } from './registration-form-row-actions'
-import { RegisterFormStatusCell } from './registration-form-status-cell'
+import {
+  MediaRowActions,
+  MediaStatusCell,
+} from '@/features/landing-page-cms/shared'
+import { TRANSLATION_KEY, type RegisterFormDetail } from '../../data/schema'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
@@ -15,9 +17,12 @@ declare module '@tanstack/react-table' {
 
 export const useRegisterFormColumns = (
   bannerRootUrl?: string,
-  pagination?: PaginationState
+  pagination?: PaginationState,
+  onEdit?: (form: RegisterFormDetail) => void,
+  onDelete?: (form: RegisterFormDetail) => void,
+  onStatusChange?: (statusId: number, form: RegisterFormDetail) => void
 ): ColumnDef<RegisterFormDetail>[] => {
-  const { t } = useTranslation('registration-form-management')
+  const { t } = useTranslation(TRANSLATION_KEY)
 
   return [
     {
@@ -62,7 +67,7 @@ export const useRegisterFormColumns = (
         displayName: t('table.formName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] break-words font-medium'>
+        <div className='max-w-[200px] font-medium break-words'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -139,14 +144,17 @@ export const useRegisterFormColumns = (
     },
     {
       accessorKey: 'statusId',
-      header: () => (
-        <div className='text-center'>{t('table.status')}</div>
-      ),
+      header: () => <div className='text-center'>{t('table.status')}</div>,
       meta: {
         className: '',
         displayName: t('table.status'),
       },
-      cell: RegisterFormStatusCell,
+      cell: ({ row }) => (
+        <MediaStatusCell
+          row={row}
+          onStatusChange={onStatusChange || (() => {})}
+        />
+      ),
       filterFn: (row, id, value) => {
         return value.includes(String(row.getValue(id)))
       },
@@ -155,7 +163,14 @@ export const useRegisterFormColumns = (
     },
     {
       id: 'actions',
-      cell: RegisterFormRowActions,
+      cell: ({ row }) => (
+        <MediaRowActions
+          row={row}
+          translationKey={TRANSLATION_KEY}
+          onEdit={onEdit || (() => {})}
+          onDelete={onDelete || (() => {})}
+        />
+      ),
     },
   ]
 }

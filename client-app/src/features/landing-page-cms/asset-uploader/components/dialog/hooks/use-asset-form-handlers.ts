@@ -1,21 +1,33 @@
+import {
+  useFieldHandlers,
+  useFileHandlers,
+  useSubmitHandlers,
+  type Country,
+  type Language,
+  type BaseFile,
+} from '@/features/landing-page-cms/shared'
+import { useCreateMedia, useUpdateMedia } from '../../../api/commands'
 import type {
-  ModuleWithFiles,
+  AssetModuleWithFiles,
+  AssetDetail,
   ValidationErrors,
   TouchedFields,
-  AssetDetail,
 } from '../../../data/schema'
-import type { Country, Language } from '../../../types'
-import { useAssetFieldHandlers } from './use-asset-field-handlers'
-import { useAssetFileHandlers } from './use-asset-file-handlers'
+import { TRANSLATION_KEY } from '../../../data/schema'
+import {
+  validateAssetField,
+  validateAssetForm,
+  isAssetFormValid,
+  useErrorMessages,
+} from '../../../data/validation'
 import { useAssetModuleHandlers } from './use-asset-module-handlers'
-import { useAssetSubmitHandlers } from './use-asset-submit-handlers'
 
 interface UseAssetFormHandlersProps {
   asset: AssetDetail | null | undefined
   country: string
   language: string
   fileName: string
-  moduleRows: ModuleWithFiles[]
+  moduleRows: AssetModuleWithFiles[]
   touched: TouchedFields
   isEdit: boolean
   isMediaIdInUse: boolean
@@ -27,7 +39,7 @@ interface UseAssetFormHandlersProps {
   setCountry: React.Dispatch<React.SetStateAction<string>>
   setLanguage: React.Dispatch<React.SetStateAction<string>>
   setFileName: React.Dispatch<React.SetStateAction<string>>
-  setModuleRows: React.Dispatch<React.SetStateAction<ModuleWithFiles[]>>
+  setModuleRows: React.Dispatch<React.SetStateAction<AssetModuleWithFiles[]>>
   setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>
   setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
   setExpandedModules: React.Dispatch<
@@ -36,8 +48,7 @@ interface UseAssetFormHandlersProps {
   resetForm: () => void
   resetTouchedForModules: (moduleCount: number) => void
   onOpenChange: (open: boolean) => void
-  createAssetMutation: any
-  updateAssetMutation: any
+  onBackendError: (error: string) => void
 }
 
 export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
@@ -45,7 +56,6 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     asset,
     country,
     language,
-    fileName,
     moduleRows,
     touched,
     isEdit,
@@ -62,15 +72,41 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     setExpandedModules,
     resetTouchedForModules,
     onOpenChange,
-    createAssetMutation,
-    updateAssetMutation,
+    onBackendError,
   } = props
 
-  const formHandlers = useAssetFieldHandlers({
+  const errorMessages = useErrorMessages()
+
+  const validateFieldWrapper = (
+    field: string,
+    value: any,
+    setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
+    index?: number
+  ) => {
+    validateAssetField(field, value, setErrors, errorMessages, index)
+  }
+
+  const validateFormWrapper = (
+    country: string,
+    language: string,
+    formData: AssetModuleWithFiles[],
+    setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
+    setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
+  ): boolean => {
+    return validateAssetForm(
+      country,
+      language,
+      formData,
+      setErrors,
+      setTouched,
+      errorMessages
+    )
+  }
+
+  const formHandlers = useFieldHandlers({
     country,
     language,
-    fileName,
-    moduleRows,
+    formData: moduleRows,
     isEdit,
     countries,
     languages,
@@ -79,6 +115,25 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     setLanguage,
     setErrors,
     setTouched,
+    validateField: validateFieldWrapper,
+    validateForm: validateFormWrapper,
+    isFormValid: isAssetFormValid,
+    markFieldTouched: (field: 'country' | 'language', index?: number) => {
+      if (index !== undefined) {
+        setTouched((prev) => ({
+          ...prev,
+          modules: { ...prev.modules, [index]: true },
+        }))
+      } else {
+        setTouched((prev) => ({ ...prev, [field]: true }))
+      }
+    },
+    getInitialLanguage: (
+      languageByCountry: Language[],
+      selectedCountry?: Country
+    ) => {
+      return selectedCountry?.languageCode || languageByCountry[0].languageCode
+    },
   })
 
   const moduleHandlers = useAssetModuleHandlers({
@@ -90,28 +145,94 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     resetTouchedForModules,
   })
 
-  const fileHandlers = useAssetFileHandlers({
-    moduleRows,
+  const fileHandlers = useFileHandlers({
+    mode: 'modules',
     isEdit,
-    setModuleRows,
-    setFileName,
+    fileGroups: moduleRows,
+    setFileGroups: setModuleRows,
     setErrors,
+    setFileName,
     setExpandedModules,
   })
 
-  const submitHandlers = useAssetSubmitHandlers({
-    asset: asset as AssetDetail,
-    country,
-    language,
-    fileName,
-    moduleRows,
-    isEdit,
-    isMediaIdInUse,
-    setErrors,
-    onOpenChange,
-    createAssetMutation,
-    updateAssetMutation,
+  const prepareCreateRequest = (
+    country: string,
+    language: string,
+    moduleRows: AssetModuleWithFiles[]
+  ) => ({
+    targetCountryCode: country,
+    languageCode: language,
+    moduleRows: moduleRows.map((module) => ({
+      module: module.module,
+      files: module.files.map(
+        (file): BaseFile => ({
+          file,
+          fileName: file.name,
+        })
+      ),
+    })),
   })
+
+  const prepareUpdateRequest = (
+    asset: AssetDetail,
+    country: string,
+    language: string,
+    moduleRows: AssetModuleWithFiles[]
+  ) => {
+    const mediaId = asset.mediaId
+    const inputFileName = moduleRows[0].files?.[0]?.name || asset.mediaName
+    const moduleId = Number(moduleRows[0].module)
+    const file = moduleRows[0].files[0]
+
+    return {
+      mediaId,
+      moduleId,
+      targetCountryCode: country,
+      languageCode: language,
+      inputFileName,
+      file,
+    }
+  }
+
+  const hasRestrictedFieldsChanged = (
+    mediaDetail: AssetDetail,
+    country: string,
+    language: string,
+    formData: AssetModuleWithFiles[]
+  ) => {
+    const hasChangedCountry = country !== mediaDetail.targetCountryCode
+    const hasChangedLanguage = language !== mediaDetail.marketId
+    const hasChangedModule =
+      formData[0]?.module !== mediaDetail.moduleId.toString()
+
+    return hasChangedCountry || hasChangedLanguage || hasChangedModule
+  }
+
+  const shouldShowOverwriteConfirm = (
+    mediaDetail: AssetDetail,
+    formData: AssetModuleWithFiles[]
+  ) => formData[0].files[0].name === mediaDetail.mediaName
+
+  const submitHandlers = useSubmitHandlers<AssetModuleWithFiles[], AssetDetail>(
+    {
+      mediaDetail: asset,
+      country,
+      language,
+      formData: moduleRows,
+      isEdit,
+      isMediaIdInUse,
+      useCreateMutation: useCreateMedia,
+      useUpdateMutation: useUpdateMedia,
+      prepareCreateRequest,
+      prepareUpdateRequest,
+      hasRestrictedFieldsChanged,
+      shouldShowOverwriteConfirm,
+      setErrors,
+      onOpenChange,
+      onBackendError,
+      translationKey: TRANSLATION_KEY,
+    }
+  )
 
   const handleSubmit = async () => {
     await submitHandlers.handleSubmit(formHandlers.validateForm)
@@ -131,5 +252,6 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     showConfirmOverwrite: submitHandlers.showConfirmOverwrite,
     handleConfirmOverwrite: submitHandlers.handleConfirmOverwrite,
     handleCancelOverwrite: submitHandlers.handleCancelOverwrite,
+    isPending: submitHandlers.isPending,
   }
 }

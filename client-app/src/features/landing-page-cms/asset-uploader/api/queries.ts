@@ -1,47 +1,46 @@
 import { useQuery } from '@tanstack/react-query'
-import { EXCLUDE_MODULE_TYPES } from '../data/constants'
 import {
-  type AssetStatus,
+  type MediaStatus,
   type Module,
-  type GetAssetListRequest,
-} from '../types'
+  type GetMediaListRequest,
+} from '@/features/landing-page-cms/shared'
 import { assetUploaderApi } from './client'
+
+const EXCLUDE_MODULE_TYPES = [3, 4]
 
 export const assetUploaderKeys = {
   all: ['asset-uploader'] as const,
   lists: () => [...assetUploaderKeys.all, 'list'] as const,
-  list: (params?: GetAssetListRequest) =>
+  list: (params?: GetMediaListRequest) =>
     [...assetUploaderKeys.lists(), params] as const,
   filters: () => [...assetUploaderKeys.all, 'filters'] as const,
 }
 
-export const useGetAssetList = (params?: GetAssetListRequest) => {
+export const useGetMediaList = (params?: GetMediaListRequest) => {
   return useQuery({
     queryKey: assetUploaderKeys.list(params),
-    queryFn: () => assetUploaderApi.getAssetList(params as GetAssetListRequest),
+    queryFn: () => assetUploaderApi.getMediaList(params as GetMediaListRequest),
     select: (data) => data.data,
   })
 }
 
-export const useAssetFilters = () => {
+export const useMediaFilters = () => {
   const query = useQuery({
     queryKey: assetUploaderKeys.filters(),
-    queryFn: () => assetUploaderApi.getAssetFilters(),
+    queryFn: () => assetUploaderApi.getMediaFilters(),
     select: (data) => {
       const response = data.data
       return {
         modules:
           response?.modules.filter(
             (module: Module) =>
-              !EXCLUDE_MODULE_TYPES.includes(
-                module.moduleType as (typeof EXCLUDE_MODULE_TYPES)[number]
-              )
+              !EXCLUDE_MODULE_TYPES.includes(module.moduleType)
           ) ?? [],
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
-        assetStatus:
+        mediaStatus:
           response?.statusInfos.filter(
-            (status: AssetStatus) => status.statusId !== 0
+            (status: MediaStatus) => status.statusId !== 0
           ) ?? [],
         landingPageUrl: response?.landingPageUrl ?? '',
         bannerRootUrl: response?.bannerRootUrl ?? '',

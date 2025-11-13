@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
+import { TRANSLATION_KEY } from '../../data/schema'
 
 interface AssetEditFormProps {
   isMediaIdInUse: boolean
@@ -35,7 +36,7 @@ export function AssetEditForm({
   onModuleBlur,
   onFileChange,
 }: AssetEditFormProps) {
-  const { t } = useTranslation('asset-uploader')
+  const { t } = useTranslation(TRANSLATION_KEY)
   const [moduleValue, setModuleValue] = useState(initialModule)
   const [fileName, setFileName] = useState(initialFileName)
 
@@ -72,14 +73,14 @@ export function AssetEditForm({
           value={moduleValue}
           onValueChange={handleModuleChange}
           onOpenChange={(open) => {
-            if (!open && !touched.modules[0]) {
+            if (!open && !touched.modules?.[0]) {
               handleModuleBlur()
             }
           }}
         >
           <SelectTrigger
             className={
-              touched.modules[0] && errors.modules[0]
+              touched.modules?.[0] && errors.modules?.[0]
                 ? 'border-destructive'
                 : ''
             }
@@ -94,7 +95,7 @@ export function AssetEditForm({
             ))}
           </SelectContent>
         </Select>
-        {touched.modules[0] && errors.modules[0] && (
+        {touched.modules?.[0] && errors.modules?.[0] && (
           <p className='text-destructive text-xs'>{errors.modules[0]}</p>
         )}
       </div>

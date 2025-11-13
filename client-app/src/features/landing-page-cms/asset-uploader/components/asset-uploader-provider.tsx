@@ -2,28 +2,23 @@ import React, { useState } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
-import { useAssetFilters, useGetAssetList } from '../api/queries'
-import { normalizeSearchParams } from '../data/constants'
-import type { AssetDetail } from '../data/schema'
 import {
-  type AssetStatus,
+  type MediaStatus,
   type Country,
   type Language,
   type Module,
-} from '../types'
-
-type AssetDialogType =
-  | 'upload'
-  | 'edit'
-  | 'delete'
-  | 'delete-bulk'
-  | 'status-change'
+  type DialogType,
+  type GetMediaListRequest,
+  createNormalizeSearchParams,
+} from '@/features/landing-page-cms/shared'
+import { useGetMediaList, useMediaFilters } from '../api/queries'
+import type { AssetDetail } from '../data/schema'
 
 const route = getRouteApi('/iframe/landing-page-cms/asset-uploader/')
 
 type AssetUploaderContextType = {
-  open: AssetDialogType | null
-  setOpen: (str: AssetDialogType | null) => void
+  open: DialogType | null
+  setOpen: (str: DialogType | null) => void
   currentRow: AssetDetail | null
   setCurrentRow: React.Dispatch<React.SetStateAction<AssetDetail | null>>
   targetStatusId: number | null
@@ -39,7 +34,7 @@ type AssetUploaderContextType = {
   modules: Array<Module>
   countries: Array<Country>
   languages: Array<Language>
-  assetStatus: Array<AssetStatus>
+  mediaStatus: Array<MediaStatus>
   landingPageUrl: string
   bannerRootUrl: string
   maximumFiles: number
@@ -61,7 +56,7 @@ type AssetUploaderProviderProps = {
 export function AssetUploaderProvider({
   children,
 }: AssetUploaderProviderProps) {
-  const [open, setOpen] = useDialogState<AssetDialogType>(null)
+  const [open, setOpen] = useDialogState<DialogType>(null)
   const [currentRow, setCurrentRow] = useState<AssetDetail | null>(null)
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
@@ -80,15 +75,15 @@ export function AssetUploaderProvider({
     modules = [],
     countries = [],
     languages = [],
-    assetStatus = [],
+    mediaStatus = [],
     landingPageUrl = '',
     bannerRootUrl = '',
     maximumFiles = 50,
     maxFileSize = 3,
     allowedExtensions = [],
-  } = useAssetFilters() ?? {}
+  } = useMediaFilters() ?? {}
 
-  const normalizedParams = normalizeSearchParams(search)
+  const normalizedParams = createNormalizeSearchParams({})(search)
   const shouldUseAllModules =
     localSearch.moduleIdsAuto === true || !normalizedParams.moduleIds
   const params = {
@@ -97,7 +92,9 @@ export function AssetUploaderProvider({
       ? modules.map((_) => _.moduleId.toString()).join(',')
       : normalizedParams.moduleIds,
   }
-  const { data, isLoading, isError } = useGetAssetList(params)
+  const { data, isLoading, isError } = useGetMediaList(
+    params as GetMediaListRequest
+  )
 
   return (
     <AssetUploaderContext
@@ -119,7 +116,7 @@ export function AssetUploaderProvider({
         modules,
         countries,
         languages,
-        assetStatus,
+        mediaStatus,
         landingPageUrl,
         bannerRootUrl,
         maximumFiles,

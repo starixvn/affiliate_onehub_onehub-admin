@@ -22,11 +22,14 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
-import type { RegisterFormDetail } from '../../data/schema'
-import { RegisterFormBulkDeleteDialog } from '../dialog/registration-form-bulk-delete-dialog'
-import { RegisterFormBulkStatusChangeDialog } from '../dialog/registration-form-bulk-status-change-dialog'
+import {
+  MediaBulkDeleteDialog,
+  MediaBulkStatusChangeDialog,
+  MediaBulkActions,
+} from '@/features/landing-page-cms/shared'
+import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
+import { TRANSLATION_KEY, type RegisterFormDetail } from '../../data/schema'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
-import { RegisterFormBulkActions } from './registration-form-bulk-actions'
 import { useRegisterFormColumns } from './registration-form-columns'
 
 interface RegisterFormTableProps {
@@ -36,7 +39,7 @@ interface RegisterFormTableProps {
 export function RegisterFormTable({
   onTableReady,
 }: RegisterFormTableProps = {}) {
-  const { t } = useTranslation('registration-form-management')
+  const { t } = useTranslation(TRANSLATION_KEY)
   const {
     registerForms,
     totalCount,
@@ -45,9 +48,11 @@ export function RegisterFormTable({
     search,
     countries,
     languages,
-    registerFormStatus,
+    mediaStatus,
     bannerRootUrl,
     updateSearchParams,
+    setOpen,
+    setCurrentRow,
   } = useRegisterFormManagement()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -78,7 +83,29 @@ export function RegisterFormTable({
     })
   }
 
-  const columns = useRegisterFormColumns(bannerRootUrl, pagination)
+  const handleEdit = (form: RegisterFormDetail) => {
+    setCurrentRow(form)
+    setOpen('edit')
+  }
+
+  const handleDelete = (form: RegisterFormDetail) => {
+    setCurrentRow(form)
+    setOpen('delete')
+  }
+
+  const handleStatusChange = (statusId: number, form: RegisterFormDetail) => {
+    setCurrentRow(form)
+    setTargetStatusId(statusId)
+    setOpen('status-change')
+  }
+
+  const columns = useRegisterFormColumns(
+    bannerRootUrl,
+    pagination,
+    handleEdit,
+    handleDelete,
+    handleStatusChange
+  )
 
   const table = useReactTable({
     data: registerForms,
@@ -211,14 +238,14 @@ export function RegisterFormTable({
       {
         columnId: 'statusId',
         title: t('filters.status'),
-        options: registerFormStatus.map(({ statusId, status }) => ({
+        options: mediaStatus.map(({ statusId, status }) => ({
           label: status,
           value: statusId.toString(),
         })),
         defaultValue: ['1'],
       },
     ],
-    [countryOptions, languageOptions, registerFormStatus, t]
+    [countryOptions, languageOptions, mediaStatus, t]
   )
 
   const handleSubmitFilters = (searchValueToUse: string) => {
@@ -318,21 +345,27 @@ export function RegisterFormTable({
         </Table>
       </div>
       <DataTablePagination table={table} />
-      <RegisterFormBulkActions
+      <MediaBulkActions
         table={table}
         onDeleteClick={() => setIsDeleteDialogOpen(true)}
         onStatusChangeClick={(statusId) => {
           setTargetStatusId(statusId)
           setIsStatusChangeDialogOpen(true)
         }}
+        entityName='form'
+        translationKey={TRANSLATION_KEY}
       />
-      <RegisterFormBulkDeleteDialog
+      <MediaBulkDeleteDialog
+        translationKey={TRANSLATION_KEY}
+        useDeleteMutation={useDeleteMedia}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         table={table}
       />
       {targetStatusId && (
-        <RegisterFormBulkStatusChangeDialog
+        <MediaBulkStatusChangeDialog
+          translationKey={TRANSLATION_KEY}
+          useUpdateStatusMutation={useUpdateMediaStatus}
           open={isStatusChangeDialogOpen}
           onOpenChange={(open) => {
             setIsStatusChangeDialogOpen(open)

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import type { FormWithFiles } from '../../../data/schema'
+import { TRANSLATION_KEY } from '../../../data/schema'
 
 interface FileUploadSectionProps {
   isEdit: boolean
@@ -15,7 +16,7 @@ export function FileUploadSection({
   formWithFiles,
   onFileChange,
 }: FileUploadSectionProps) {
-  const { t } = useTranslation('registration-form-management')
+  const { t } = useTranslation(TRANSLATION_KEY)
 
   return (
     <div className='space-y-2'>

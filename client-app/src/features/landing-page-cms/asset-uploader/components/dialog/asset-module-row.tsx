@@ -10,14 +10,15 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import type {
-  ModuleWithFiles,
+  AssetModuleWithFiles,
   ValidationErrors,
   TouchedFields,
 } from '../../data/schema'
+import { TRANSLATION_KEY } from '../../data/schema'
 
 interface AssetModuleRowProps {
   moduleIndex: number
-  moduleRow: ModuleWithFiles
+  moduleRow: AssetModuleWithFiles
   isEdit: boolean
   fileName: string
   errors: ValidationErrors
@@ -57,7 +58,7 @@ export function AssetModuleRow({
   onRemoveFile,
   isModuleSelectedByOther,
 }: AssetModuleRowProps) {
-  const { t } = useTranslation('asset-uploader')
+  const { t } = useTranslation(TRANSLATION_KEY)
   return (
     <div className='bg-card rounded-lg border p-4'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-4'>
@@ -69,7 +70,7 @@ export function AssetModuleRow({
             value={moduleRow.module}
             onValueChange={(value) => onModuleChange(moduleIndex, value)}
             onOpenChange={(open) => {
-              if (!open && !touched.modules[moduleIndex]) {
+              if (!open && !touched.modules?.[moduleIndex]) {
                 onModuleBlur(moduleIndex)
               }
             }}
@@ -78,7 +79,7 @@ export function AssetModuleRow({
               id={`module-${moduleIndex}`}
               title={t('form.modulePlaceholder')}
               className={
-                touched.modules[moduleIndex] && errors.modules[moduleIndex]
+                touched.modules?.[moduleIndex] && errors.modules?.[moduleIndex]
                   ? 'border-destructive'
                   : ''
               }
@@ -101,7 +102,7 @@ export function AssetModuleRow({
               })}
             </SelectContent>
           </Select>
-          {touched.modules[moduleIndex] && errors.modules[moduleIndex] && (
+          {touched.modules?.[moduleIndex] && errors.modules?.[moduleIndex] && (
             <p className='text-destructive text-xs'>
               {errors.modules[moduleIndex]}
             </p>
@@ -198,7 +199,7 @@ export function AssetModuleRow({
       {expandedModules[moduleIndex] && moduleRow.files.length > 0 && (
         <div className='mt-4 space-y-2'>
           <div className='space-y-1'>
-            {moduleRow.files.map((file, fileIndex) => (
+            {moduleRow.files.map((file: File, fileIndex: number) => (
               <div
                 key={fileIndex}
                 className='bg-muted flex items-center gap-2 rounded p-2'

@@ -1,52 +1,36 @@
-import { useTranslation } from 'react-i18next'
-import { Main } from '@/components/layout/main'
+import {
+  SharedContent,
+  SharedPrimaryButtons,
+} from '@/features/landing-page-cms/shared'
+import { TRANSLATION_KEY } from '../data/schema'
 import { useRegisterFormManagement } from './registration-form-management-provider'
-import { RegisterFormPrimaryButtons } from './registration-form-primary-buttons'
 import { RegisterFormTable } from './table/registration-form-table'
 
 export function RegisterFormManagementContent() {
-  const { t } = useTranslation('registration-form-management')
-  const { isLoading, isError } = useRegisterFormManagement()
-
-  if (isLoading) {
-    return (
-      <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-        <div className='flex flex-wrap items-end justify-between gap-2'>
-          <div>
-            <h2 className='text-2xl font-bold tracking-tight'>
-              {t('page.title')}
-            </h2>
-            <p className='text-muted-foreground'>{t('page.description')}</p>
-          </div>
-        </div>
-        <div className='flex items-center justify-center py-8'>
-          <p className='text-muted-foreground'>{t('page.loading')}</p>
-        </div>
-      </Main>
-    )
-  }
+  const {
+    registerForms,
+    setOpen,
+    bannerRootUrl,
+    totalCount,
+    isLoading,
+    isError,
+  } = useRegisterFormManagement()
 
   return (
-    <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
-      <div className='flex flex-wrap items-end justify-between gap-2'>
-        <div>
-          <h2 className='text-2xl font-bold tracking-tight'>
-            {t('page.title')}
-          </h2>
-          <p className='text-muted-foreground'>{t('page.description')}</p>
-        </div>
-        <RegisterFormPrimaryButtons />
-      </div>
-
-      <div className='flex flex-1 flex-col gap-4'>
-        {isError ? (
-          <div className='flex h-24 items-center justify-center'>
-            <div className='text-destructive'>{t('page.failedToLoad')}</div>
-          </div>
-        ) : (
-          <RegisterFormTable />
-        )}
-      </div>
-    </Main>
+    <SharedContent
+      translationKey={TRANSLATION_KEY}
+      Table={RegisterFormTable}
+      PrimaryButtons={
+        <SharedPrimaryButtons
+          translationKey={TRANSLATION_KEY}
+          onOpenUpload={() => setOpen('upload')}
+        />
+      }
+      items={registerForms}
+      bannerRootUrl={bannerRootUrl}
+      totalCount={totalCount}
+      isLoading={isLoading}
+      isError={isError}
+    />
   )
 }
