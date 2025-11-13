@@ -75,10 +75,13 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
 
   const handleSelect = (selectedOption: T) => {
     const optionValue = getValue(selectedOption)
-    const newValue = optionValue === value ? '' : optionValue
 
-    onValueChange(newValue, newValue ? selectedOption : null)
+    if (optionValue === value) {
+      setOpen(false)
+      return
+    }
 
+    onValueChange(optionValue, selectedOption)
     setOpen(false)
   }
 

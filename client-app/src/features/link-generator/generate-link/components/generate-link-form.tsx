@@ -11,6 +11,10 @@ import { useGetDomains } from '../api/queries'
 import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo } from '../types'
 import { FormFieldError } from './form-field-error'
 
+function getAvailableDomainsText(count: number): string {
+  return `${count} available ${count > 1 ? 'domains' : 'domain'}`
+}
+
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
   const { form, campaigns, countries, languages, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
@@ -225,7 +229,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='domainName' className='text-sm'>{t('form.domainName')}</Label>
+            <Label htmlFor='domainName' className='text-sm'>
+              {t('form.domainName')} <span className='text-green-600 text-xs'>({getAvailableDomainsText(domains?.length || 0)})</span>
+            </Label>
             <div className='flex flex-col sm:flex-row gap-2'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
@@ -248,20 +254,11 @@ export function GenerateLinkForm() {
                   )}
                 />
               </div>
-              <div className='relative flex-1'>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Info className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help' />
-                  </TooltipTrigger>
-                  <TooltipContent side='top'>
-                    <p>Customized the last part of your short link. Use 5-20 characters, including letters and numbers.</p>
-                  </TooltipContent>
-                </Tooltip>
+              <div className='flex-1'>
                 <Input
                   id='domainReservedNote'
                   placeholder={t('form.domainReservedNotePlaceholder')}
                   {...register('domainReservedNote')}
-                  className='pl-9'
                   required
                 />
               </div>
@@ -270,7 +267,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='shortDomain' className='text-sm'>{t('form.shortLinkName')}</Label>
+            <Label htmlFor='shortDomain' className='text-sm'>
+              {t('form.shortLinkName')} <span className='text-green-600 text-xs'>({getAvailableDomainsText(domainsForShortLink?.length || 0)})</span>
+            </Label>
             <div className='flex flex-col sm:flex-row gap-1'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
@@ -295,12 +294,22 @@ export function GenerateLinkForm() {
               </div>
               <div className='flex items-center gap-1 flex-1'>
                 <span className='text-muted-foreground hidden sm:inline'>/</span>
-                <Input
-                  id='custom-short-link'
-                  placeholder={t('form.shortLinkValuePlaceholder')}
-                  {...register('shortPath')}
-                  className='flex-1 min-w-0'
-                />
+                <div className='relative flex-1'>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Info className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help' />
+                    </TooltipTrigger>
+                    <TooltipContent side='top'>
+                      <p>Customized the last part of your short link. Use 5-20 characters, including letters and numbers.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                  <Input
+                    id='custom-short-link'
+                    placeholder={t('form.shortLinkValuePlaceholder')}
+                    {...register('shortPath')}
+                    className='flex-1 min-w-0 pl-9'
+                  />
+                </div>
               </div>
             </div>
             <FormFieldError message={errors.shortDomain?.message || errors.shortPath?.message} />

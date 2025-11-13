@@ -27,15 +27,15 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
 
             <div className='space-y-4'>
                 <div className='flex items-center gap-2'>
-                    <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-3 rounded-md whitespace-nowrap w-24'>Full Link</Label>
-                    <div className='flex-1 rounded-md border bg-muted/50 p-3'>
-                        <p className='text-sm break-all select-all font-mono'>{result.fullLink}</p>
+                    <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md whitespace-nowrap w-24 flex items-center justify-center'>Full Link</Label>
+                    <div className='flex-1 rounded-md border bg-muted/50 p-2'>
+                        <p className='text-sm break-all select-none font-mono'>{result.fullLink}</p>
                     </div>
                 </div>
 
                 <div className='flex items-center gap-2'>
-                    <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-3 rounded-md whitespace-nowrap w-24'>Short Link</Label>
-                    <div className='flex-1 flex items-center gap-2 rounded-md border bg-muted/50 p-3'>
+                    <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md whitespace-nowrap w-24 flex items-center justify-center'>Short Link</Label>
+                    <div className='flex-1 flex items-center gap-2 rounded-md border bg-muted/50 p-2'>
                         <p className='text-sm break-all select-all font-mono flex-1'>{result.shortLink}</p>
                         <Button
                             variant='ghost'
