@@ -2,7 +2,7 @@ import { z } from 'zod'
 
 export const generateLinkFormSchema = z.object({
   linkName: z.string().trim().min(1, 'Link name is required'),
-  identifierCode: z.string().trim().optional(),
+  identifierCode: z.string().trim().regex(/^[a-zA-Z0-9]*$/, 'Identifier code must contain only letters and numbers').optional().or(z.literal('')),
   campaign: z.string().min(1, 'Campaign is required'),
   campaignCode: z.string(),
   country: z.string().min(1, 'Country is required'),
@@ -15,7 +15,7 @@ export const generateLinkFormSchema = z.object({
   domainName: z.string().min(1, 'Domain name is required'),
   domainReservedNote: z.string().trim().min(1, 'Domain reserved note is required'),
   shortDomain: z.string().min(1, 'Short domain is required'),
-  shortPath: z.string().trim().min(5, 'Short path must be at least 5 characters').max(20, 'Short path must be at most 20 characters').optional().or(z.literal('')),
+  shortPath: z.string().trim().min(5, 'Short path must be at least 5 characters').max(20, 'Short path must be at most 20 characters').regex(/^[a-z0-9]*$/, 'Short path must contain only letters and numbers').optional().or(z.literal('')),
   channel: z.string().min(1, 'Channel is required'),
   channelCode: z.string(),
   type: z.string().min(1, 'Type is required'),

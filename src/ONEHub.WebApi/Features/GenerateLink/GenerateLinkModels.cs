@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations;
 namespace ONEHub.WebApi.Features.GenerateLink;
 
 public record InsertLinkRequest(
-    [Required] string LinkName,
-    string? IdentifierCode,
+    [Required][MaxLength(200)] string LinkName,
+    [MaxLength(20)][RegularExpression(@"^[a-zA-Z0-9]*$")] string? IdentifierCode,
     [Required] int CampaignId,
     [Required] string CampaignCode,
     [Required] string CountryCode,
@@ -24,9 +24,9 @@ public record InsertLinkRequest(
     [Required] int PageType,
     [Required] string PageCode,
     [Required] string DomainName,
-    [Required] string DomainNote,
+    [Required][MaxLength(200)] string DomainNote,
     [Required] string ShortDomain,
-    string ShortPath,
+    [MinLength(5)][MaxLength(20)][RegularExpression(@"^[a-z0-9]*$")] string ShortPath,
     string? Note
 );
 

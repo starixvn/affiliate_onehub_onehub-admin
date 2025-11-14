@@ -149,6 +149,7 @@ export function GenerateLinkForm() {
               id='linkName'
               placeholder={t('form.linkNamePlaceholder')}
               {...register('linkName')}
+              maxLength={200}
             />
             <FormFieldError message={errors.linkName?.message} />
           </div>
@@ -159,6 +160,7 @@ export function GenerateLinkForm() {
               id='identifierCode'
               placeholder={t('form.identifierCodePlaceholder')}
               {...register('identifierCode')}
+              maxLength={20}
             />
             <FormFieldError message={errors.identifierCode?.message} />
           </div>
@@ -303,6 +305,7 @@ export function GenerateLinkForm() {
                   placeholder={t('form.domainReservedNotePlaceholder')}
                   {...register('domainReservedNote')}
                   required
+                  maxLength={200}
                 />
               </div>
             </div>
