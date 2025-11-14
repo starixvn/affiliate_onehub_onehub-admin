@@ -52,10 +52,9 @@
       "title": "Landing Page"
     }
   },
-  "statusFilters": {
-    "total": "Total",
-    "active": "Active",
-    "inactive": "Inactive"
+  "filters": {
+    "status": "Status",
+    "device": "Device"
   },
   "searchToolbar": {
     "submit": "Search"
@@ -83,10 +82,6 @@
       "delete": "Delete"
     }
   },
-  "rowActions": {
-    "edit": "Edit",
-    "delete": "Delete"
-  },
   "bulkActions": {
     "changeToActive": "Change to Active",
     "changeToActiveCount": "Change to Active ({{count}} affected)",
@@ -108,7 +103,7 @@
       "namePlaceholder": "e.g., Lucky Draw",
       "code": "Code",
       "codeRequired": "Code is required",
-      "codePlaceholder": "e.g., Lucky_Draw",
+      "codePlaceholder": "e.g., Lucky-Draw",
       "status": "Status",
       "statusPlaceholder": "Select status",
       "device": "Device",
@@ -116,14 +111,25 @@
       "requiredField": "*"
     },
     "saveChanges": "Save Changes",
+    "statusChange": {
+      "title": "Change Component Status",
+      "message": "Are you sure you want to change the status of",
+      "from": "Status change:",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "bulkStatusChange": {
+      "title": "Change Component Status",
+      "message_one": "{{count}} component will be updated to",
+      "message_other": "{{count}} components will be updated to",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
     "multiDelete": {
       "title_one": "Delete {{count}} component",
       "title_other": "Delete {{count}} components",
       "message": "Are you sure you want to delete the selected components?",
       "description": "This action cannot be undone. This will permanently delete the selected components and all associated data.",
-      "confirmLabel": "Confirm by typing \"{{word}}\":",
-      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
-      "confirmWord": "DELETE",
       "warning": "Warning!",
       "warningMessage": "Please be careful, this operation cannot be rolled back.",
       "confirm": "Delete"
@@ -132,8 +138,7 @@
       "deleting": "Deleting components...",
       "deleted_one": "Deleted {{count}} component",
       "deleted_other": "Deleted {{count}} components",
-      "deleteFailed": "Failed to delete components",
-      "confirmRequired": "Please type \"{{word}}\" to confirm."
+      "deleteFailed": "Failed to delete components"
     }
   },
   "createDialog": {

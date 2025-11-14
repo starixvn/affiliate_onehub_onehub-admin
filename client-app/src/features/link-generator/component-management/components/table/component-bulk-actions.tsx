@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Play, Ban, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -10,8 +10,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { useUpdateBatchComponentStatus } from '../../api/commands'
 import { type Component } from '../../data/schema'
+import { ComponentBulkStatusChangeDialog } from '../dialog/component-bulk-status-change-dialog'
 
 type ComponentBulkActionsProps = {
   table: Table<Component>
@@ -24,7 +24,12 @@ export function ComponentBulkActions({
 }: ComponentBulkActionsProps) {
   const { t } = useTranslation('component-management')
   const selectedRows = table.getFilteredSelectedRowModel().rows
-  const updateBatchStatusMutation = useUpdateBatchComponentStatus()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    componentIds: string
+    statusId: number
+    affectedCount: number
+  } | null>(null)
 
   const { activeCount, inactiveCount } = useMemo(() => {
     return {
@@ -49,26 +54,20 @@ export function ComponentBulkActions({
       .map((row) => row.original.componentId)
       .join(',')
 
-    updateBatchStatusMutation.mutate(
-      {
-        componentIds,
-        statusId: status,
-      },
-      {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            table.resetRowSelection()
-          }
-        },
-      }
-    )
+    setPendingStatusChange({
+      componentIds,
+      statusId: status,
+      affectedCount: affectedComponents.length,
+    })
+    setDialogOpen(true)
   }
 
   return (
-    <BulkActionsToolbar
-      table={table}
-      entityName={t('entity', { count: selectedRows.length })}
-    >
+    <>
+      <BulkActionsToolbar
+        table={table}
+        entityName={t('entity', { count: selectedRows.length })}
+      >
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -136,5 +135,22 @@ export function ComponentBulkActions({
         </TooltipContent>
       </Tooltip>
     </BulkActionsToolbar>
+
+      {pendingStatusChange && (
+        <ComponentBulkStatusChangeDialog
+          open={dialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open)
+            if (!open) {
+              setPendingStatusChange(null)
+            }
+          }}
+          componentIds={pendingStatusChange.componentIds}
+          newStatusId={pendingStatusChange.statusId}
+          affectedCount={pendingStatusChange.affectedCount}
+          onSuccess={() => table.resetRowSelection()}
+        />
+      )}
+    </>
   )
 }

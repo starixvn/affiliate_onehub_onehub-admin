@@ -21,18 +21,18 @@ export const getCampaignColumns = (
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label={t('table.columns.select')}
-        className='translate-y-[2px]'
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+      className: cn(
+        'sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'
+      ),
     },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label={t('table.columns.selectRow')}
-        className='translate-y-[2px]'
       />
     ),
     enableSorting: false,
@@ -43,9 +43,9 @@ export const getCampaignColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => <div className='w-2'>{row.getValue('rowIdx')}</div>,
+    cell: ({ row }) => <div>{row.getValue('rowIdx')}</div>,
     meta: {
-      className: cn('sticky start-6 z-10'),
+      className: cn('sticky start-6 z-10 w-12'),
       displayName: t('table.columns.no'),
     },
     enableSorting: false,
@@ -80,12 +80,10 @@ export const getCampaignColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.name')} />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('campaignName')}</LongText>
-    ),
+    cell: ({ row }) => <LongText>{row.getValue('campaignName')}</LongText>,
     meta: {
       displayName: t('table.columns.name'),
-      className: '',
+      className: 'w-48 md:w-64 lg:w-80',
     },
     enableSorting: false,
   },
@@ -97,12 +95,10 @@ export const getCampaignColumns = (
         title={t('table.columns.description')}
       />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('description')}</LongText>
-    ),
+    cell: ({ row }) => <LongText>{row.getValue('description')}</LongText>,
     meta: {
       displayName: t('table.columns.description'),
-      className: '',
+      className: 'max-w-64 md:max-w-80 lg:max-w-96',
     },
     enableSorting: false,
   },
@@ -196,5 +192,8 @@ export const getCampaignColumns = (
   {
     id: 'actions',
     cell: DataTableRowActions,
+    meta: {
+      className: 'w-10',
+    },
   },
 ]

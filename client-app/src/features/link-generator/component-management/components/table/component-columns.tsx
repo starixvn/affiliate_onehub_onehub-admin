@@ -25,18 +25,16 @@ export const getComponentColumns = (
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label={t('table.columns.select')}
-        className='translate-y-[2px]'
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'),
     },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label={t('table.columns.selectRow')}
-        className='translate-y-[2px]'
       />
     ),
     enableSorting: false,
@@ -47,9 +45,9 @@ export const getComponentColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => <div className='w-2'>{row.getValue('rowIdx')}</div>,
+    cell: ({ row }) => <div>{row.getValue('rowIdx')}</div>,
     meta: {
-      className: cn('sticky start-6 z-10'),
+      className: cn('sticky start-6 z-10 w-12'),
       displayName: t('table.columns.no'),
     },
     enableSorting: false,
@@ -72,7 +70,8 @@ export const getComponentColumns = (
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none',
+        'w-48 md:w-64 lg:w-80'
       ),
       displayName: t('table.columns.code'),
     },
@@ -85,11 +84,11 @@ export const getComponentColumns = (
       <DataTableColumnHeader column={column} title={t('table.columns.name')} />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('componentName')}</LongText>
+      <LongText>{row.getValue('componentName')}</LongText>
     ),
     meta: {
       displayName: t('table.columns.name'),
-      className: '',
+      className: 'w-48 md:w-64 lg:w-80',
     },
     enableSorting: false,
   },
@@ -198,6 +197,9 @@ export const getComponentColumns = (
   {
     id: 'actions',
     cell: DataTableRowActions,
+    meta: {
+      className: 'w-10',
+    },
   },
 ]
 

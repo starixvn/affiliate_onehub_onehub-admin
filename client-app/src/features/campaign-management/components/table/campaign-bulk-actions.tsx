@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { Pause, Play, Ban, FileText, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
@@ -10,8 +10,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { useUpdateBatchCampaignStatus } from '../../api/commands'
 import { type Campaign } from '../../data/schema'
+import { CampaignBulkStatusChangeDialog } from '../dialog/campaign-bulk-status-change-dialog'
 
 type CampaignBulkActionsProps = {
   table: Table<Campaign>
@@ -24,7 +24,12 @@ export function CampaignBulkActions({
 }: CampaignBulkActionsProps) {
   const { t } = useTranslation('campaign-management')
   const selectedRows = table.getFilteredSelectedRowModel().rows
-  const updateBatchStatusMutation = useUpdateBatchCampaignStatus()
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [pendingStatusChange, setPendingStatusChange] = useState<{
+    campaignIds: string
+    statusId: number
+    affectedCount: number
+  } | null>(null)
 
   const { pausedCount, activeCount, inactiveCount, draftCount } =
     useMemo(() => {
@@ -54,26 +59,20 @@ export function CampaignBulkActions({
       .map((row) => row.original.campaignId)
       .join(',')
 
-    updateBatchStatusMutation.mutate(
-      {
-        campaignIds,
-        statusId: status,
-      },
-      {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            table.resetRowSelection()
-          }
-        },
-      }
-    )
+    setPendingStatusChange({
+      campaignIds,
+      statusId: status,
+      affectedCount: affectedCampaigns.length,
+    })
+    setDialogOpen(true)
   }
 
   return (
-    <BulkActionsToolbar
-      table={table}
-      entityName={t('entity', { count: selectedRows.length })}
-    >
+    <>
+      <BulkActionsToolbar
+        table={table}
+        entityName={t('entity', { count: selectedRows.length })}
+      >
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
@@ -185,5 +184,22 @@ export function CampaignBulkActions({
         </TooltipContent>
       </Tooltip>
     </BulkActionsToolbar>
+
+      {pendingStatusChange && (
+        <CampaignBulkStatusChangeDialog
+          open={dialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open)
+            if (!open) {
+              setPendingStatusChange(null)
+            }
+          }}
+          campaignIds={pendingStatusChange.campaignIds}
+          newStatusId={pendingStatusChange.statusId}
+          affectedCount={pendingStatusChange.affectedCount}
+          onSuccess={() => table.resetRowSelection()}
+        />
+      )}
+    </>
   )
 }

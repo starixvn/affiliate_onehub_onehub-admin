@@ -60,9 +60,9 @@ export const usersColumns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       const { firstName, lastName } = row.original
       const fullName = `${firstName} ${lastName}`
-      return <LongText className='max-w-36'>{fullName}</LongText>
+      return <LongText>{fullName}</LongText>
     },
-    meta: { className: 'w-36' },
+    meta: { className: 'w-36 md:w-48 lg:w-64' },
   },
   {
     accessorKey: 'email',
@@ -134,5 +134,8 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     id: 'actions',
     cell: DataTableRowActions,
+    meta: {
+      className: 'w-10',
+    },
   },
 ]

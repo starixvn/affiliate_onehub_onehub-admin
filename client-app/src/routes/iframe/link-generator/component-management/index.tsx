@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { ComponentManagement } from '@/features/link-generator/component-management'
 
 const searchSchema = z.object({
@@ -16,4 +16,16 @@ export const Route = createFileRoute(
 )({
   component: ComponentManagement,
   validateSearch: searchSchema,
+  beforeLoad: ({ search }) => {
+    if (!search.status) {
+      throw redirect({
+        to: '/iframe/link-generator/component-management',
+        search: {
+          ...search,
+          status: '1',
+        },
+        replace: true,
+      })
+    }
+  },
 })

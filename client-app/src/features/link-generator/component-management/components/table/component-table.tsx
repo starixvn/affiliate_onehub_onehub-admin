@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
+  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -62,6 +63,31 @@ export function ComponentTable({
     [selectedCategory]
   )
 
+  const buildFiltersFromSearch = (
+    searchParams: Record<string, unknown>
+  ): ColumnFiltersState => {
+    const filters: ColumnFiltersState = []
+
+    if (searchParams.status && typeof searchParams.status === 'string') {
+      filters.push({ id: 'status', value: searchParams.status.split(',') })
+    } else if (searchParams.status === '') {
+      filters.push({ id: 'status', value: undefined })
+    }
+
+    if (searchParams.deviceIds && typeof searchParams.deviceIds === 'string') {
+      filters.push({
+        id: 'deviceId',
+        value: searchParams.deviceIds.split(','),
+      })
+    }
+
+    return filters
+  }
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() =>
+    buildFiltersFromSearch(search)
+  )
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
       try {
@@ -102,6 +128,7 @@ export function ComponentTable({
       },
       rowSelection,
       columnVisibility,
+      columnFilters,
     },
     getRowId: (row) => row.componentCode,
     manualPagination: true,
@@ -123,37 +150,24 @@ export function ComponentTable({
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
   })
 
   useEffect(() => {
-    const deviceColumn = table.getColumn('deviceId')
-    if (deviceColumn && search.deviceIds) {
-      const deviceValues = (search.deviceIds as string).split(',')
-      deviceColumn.setFilterValue(deviceValues)
-    } else if (deviceColumn && !search.deviceIds) {
-      deviceColumn.setFilterValue(undefined)
-    }
-  }, [search.deviceIds, table, isLandingPage])
-
-  useEffect(() => {
-    const statusColumn = table.getColumn('status')
-    if (statusColumn && search.status) {
-      const statusValues = (search.status as string).split(',')
-      statusColumn.setFilterValue(statusValues)
-    } else if (statusColumn && search.status === '') {
-      statusColumn.setFilterValue(undefined)
-    } else if (statusColumn && !search.status) {
-      statusColumn.setFilterValue(['1'])
-    }
-  }, [search.status, table])
+    setColumnFilters((prev) => {
+      const newFilters = buildFiltersFromSearch(search)
+      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newFilters)
+      return hasChanged ? newFilters : prev
+    })
+  }, [search.status, search.deviceIds])
 
   const filters = useMemo(
     () => [
       {
         columnId: 'status',
-        title: 'Status',
+        title: t('filters.status'),
         options: status.map(({ label, value }) => ({
           label,
           value,
@@ -162,7 +176,7 @@ export function ComponentTable({
       },
       {
         columnId: 'deviceId',
-        title: 'Device',
+        title: t('filters.device'),
         options: deviceTypes.map(({ label, value }) => ({
           label,
           value,
@@ -171,7 +185,7 @@ export function ComponentTable({
         hidden: !isLandingPage,
       },
     ],
-    [isLandingPage]
+    [t, isLandingPage]
   )
 
   return (
@@ -193,9 +207,9 @@ export function ComponentTable({
           const statusFilter = table.getColumn('status')?.getFilterValue() as
             | string[]
             | undefined
-          const deviceFilter = table
-            .getColumn('deviceId')
-            ?.getFilterValue() as string[] | undefined
+          const deviceFilter = table.getColumn('deviceId')?.getFilterValue() as
+            | string[]
+            | undefined
           navigate({
             search: {
               ...search,
@@ -218,7 +232,7 @@ export function ComponentTable({
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
+                        'group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         header.column.columnDef.meta?.className ?? ''
                       )}
                     >

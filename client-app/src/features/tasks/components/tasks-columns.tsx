@@ -115,5 +115,8 @@ export const tasksColumns: ColumnDef<Task>[] = [
   {
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
+    meta: {
+      className: 'w-10',
+    },
   },
 ]

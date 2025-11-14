@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { getRouteApi, useNavigate } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
@@ -42,10 +43,14 @@ const getFormSchema = (t: (key: string) => string) =>
     deviceId: z.number().optional(),
   })
 
+const routeApi = getRouteApi('/iframe/link-generator/component-management/')
+
 export function ComponentCreateDialog() {
   const { t } = useTranslation('component-management')
   const { open, setOpen, selectedCategory } = useComponents()
   const createMutation = useCreateComponent()
+  const navigate = useNavigate()
+  const search = routeApi.useSearch()
 
   const formSchema = getFormSchema(t)
   type ComponentForm = z.infer<typeof formSchema>
@@ -68,7 +73,7 @@ export function ComponentCreateDialog() {
   const isLandingPage = watchCategory === Number(LANDING_PAGE_CATEGORY_ID)
 
   useEffect(() => {
-    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '_') : ''
+    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '-') : ''
     form.setValue('componentCode', generatedCode)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchName])
@@ -110,6 +115,16 @@ export function ComponentCreateDialog() {
         onSuccess: () => {
           form.reset()
           setOpen(null)
+          if (String(values.categoryId) !== selectedCategory) {
+            navigate({
+              to: '/iframe/link-generator/component-management',
+              search: {
+                ...search,
+                category: String(values.categoryId),
+                pageIndex: 1,
+              },
+            })
+          }
         },
       }
     )

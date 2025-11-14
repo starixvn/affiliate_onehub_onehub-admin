@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
+const ACTION_COLUMN_WIDTH = 'data-[action=true]:w-10'
+
 function Table({ className, ...props }: React.ComponentProps<'table'>) {
   return (
     <div
@@ -20,7 +22,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
       data-slot='table-header'
-      className={cn('[&_tr]:border-b', className)}
+      className={cn('bg-slate-100 dark:bg-slate-800 [&_tr]:border-b', className)}
       {...props}
     />
   )
@@ -67,7 +69,8 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       data-slot='table-head'
       className={cn(
-        'text-foreground h-10 px-2 text-start align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pe-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'text-foreground h-10 px-2 text-start align-middle font-medium whitespace-nowrap border-e last:border-e-0 [&:has([role=checkbox])]:p-0',
+        ACTION_COLUMN_WIDTH,
         className
       )}
       {...props}
@@ -80,7 +83,8 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
     <td
       data-slot='table-cell'
       className={cn(
-        'p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pe-0 [&>[role=checkbox]]:translate-y-[2px]',
+        'p-2 align-middle whitespace-nowrap border-e last:border-e-0 [&:has([role=checkbox])]:p-0',
+        ACTION_COLUMN_WIDTH,
         className
       )}
       {...props}
