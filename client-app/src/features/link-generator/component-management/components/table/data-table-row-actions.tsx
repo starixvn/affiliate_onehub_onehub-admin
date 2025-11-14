@@ -53,7 +53,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
             setOpen('update')
           }}
         >
-          {t('rowActions.edit')}
+          {t('dataTable.rowActions.edit', { ns: 'common' })}
           <DropdownMenuShortcut>
             <Pencil size={16} />
           </DropdownMenuShortcut>
@@ -66,7 +66,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
           }}
           className='text-red-500!'
         >
-          {t('rowActions.delete')}
+          {t('dataTable.rowActions.delete', { ns: 'common' })}
           <DropdownMenuShortcut>
             <Trash2 size={16} />
           </DropdownMenuShortcut>
