@@ -36,6 +36,8 @@ export function DataTableRowActions<TData>({
   const { t } = useTranslation('common')
   const { setOpen, setCurrentRow } = useTasks()
 
+  const moreActionsLabel = t('dataTable.rowActions.moreAction')
+
   return (
     <DropdownMenu modal={false}>
       <Tooltip>
@@ -46,14 +48,12 @@ export function DataTableRowActions<TData>({
               className='data-[state=open]:bg-muted flex h-8 w-8 p-0'
             >
               <DotsHorizontalIcon className='h-4 w-4' />
-              <span className='sr-only'>
-                {t('dataTable.rowActions.moreAction')}
-              </span>
+              <span className='sr-only'>{moreActionsLabel}</span>
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{t('dataTable.rowActions.moreAction')}</p>
+          <p>{moreActionsLabel}</p>
         </TooltipContent>
       </Tooltip>
       <DropdownMenuContent align='end' className='w-[160px]'>

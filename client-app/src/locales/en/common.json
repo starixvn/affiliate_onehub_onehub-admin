@@ -82,7 +82,9 @@
       "goToPage": "Go to page {{page}}"
     },
     "rowActions": {
-      "moreAction": "More actions"
+      "moreAction": "More actions",
+      "edit": "Edit",
+      "delete": "Delete"
     },
     "bulkActions": {
       "announcement_one": "{{count}} {{entity}} selected. Bulk actions toolbar is available.",

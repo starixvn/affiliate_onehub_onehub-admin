@@ -63,16 +63,30 @@ export function ComponentTable({
     [selectedCategory]
   )
 
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() => {
+  const buildFiltersFromSearch = (
+    searchParams: Record<string, unknown>
+  ): ColumnFiltersState => {
     const filters: ColumnFiltersState = []
-    if (search.status && typeof search.status === 'string') {
-      filters.push({ id: 'status', value: search.status.split(',') })
+
+    if (searchParams.status && typeof searchParams.status === 'string') {
+      filters.push({ id: 'status', value: searchParams.status.split(',') })
+    } else if (searchParams.status === '') {
+      filters.push({ id: 'status', value: undefined })
     }
-    if (search.deviceIds && typeof search.deviceIds === 'string') {
-      filters.push({ id: 'deviceId', value: search.deviceIds.split(',') })
+
+    if (searchParams.deviceIds && typeof searchParams.deviceIds === 'string') {
+      filters.push({
+        id: 'deviceId',
+        value: searchParams.deviceIds.split(','),
+      })
     }
+
     return filters
-  })
+  }
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() =>
+    buildFiltersFromSearch(search)
+  )
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
@@ -143,21 +157,8 @@ export function ComponentTable({
 
   useEffect(() => {
     setColumnFilters((prev) => {
-      const newFilters: ColumnFiltersState = []
-
-      if (search.status && typeof search.status === 'string') {
-        newFilters.push({ id: 'status', value: search.status.split(',') })
-      } else if (search.status === '') {
-        newFilters.push({ id: 'status', value: undefined })
-      }
-
-      if (search.deviceIds && typeof search.deviceIds === 'string') {
-        newFilters.push({ id: 'deviceId', value: search.deviceIds.split(',') })
-      }
-
-      const hasChanged =
-        JSON.stringify(prev) !== JSON.stringify(newFilters)
-
+      const newFilters = buildFiltersFromSearch(search)
+      const hasChanged = JSON.stringify(prev) !== JSON.stringify(newFilters)
       return hasChanged ? newFilters : prev
     })
   }, [search.status, search.deviceIds])
@@ -202,7 +203,6 @@ export function ComponentTable({
         submitLabel={t('searchToolbar.submit')}
         initialSearchValue={(search.search as string) ?? ''}
         defaultSearchValue=''
-        columnFilters={columnFilters}
         onSubmit={(searchValue) => {
           const statusFilter = table.getColumn('status')?.getFilterValue() as
             | string[]

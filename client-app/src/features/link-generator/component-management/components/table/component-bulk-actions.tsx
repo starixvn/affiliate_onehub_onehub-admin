@@ -139,7 +139,12 @@ export function ComponentBulkActions({
       {pendingStatusChange && (
         <ComponentBulkStatusChangeDialog
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open)
+            if (!open) {
+              setPendingStatusChange(null)
+            }
+          }}
           componentIds={pendingStatusChange.componentIds}
           newStatusId={pendingStatusChange.statusId}
           affectedCount={pendingStatusChange.affectedCount}

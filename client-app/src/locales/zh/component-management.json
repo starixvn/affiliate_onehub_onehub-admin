@@ -82,10 +82,6 @@
       "delete": "删除"
     }
   },
-  "rowActions": {
-    "edit": "编辑",
-    "delete": "删除"
-  },
   "bulkActions": {
     "changeToActive": "更改为启用",
     "changeToActiveCount": "更改为启用（影响 {{count}} 个）",
@@ -107,7 +103,7 @@
       "namePlaceholder": "例如：幸运抽奖",
       "code": "代码",
       "codeRequired": "代码为必填项",
-      "codePlaceholder": "例如：Lucky_Draw",
+      "codePlaceholder": "例如：Lucky-Draw",
       "status": "状态",
       "statusPlaceholder": "选择状态",
       "device": "设备",

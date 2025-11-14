@@ -188,7 +188,12 @@ export function CampaignBulkActions({
       {pendingStatusChange && (
         <CampaignBulkStatusChangeDialog
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open)
+            if (!open) {
+              setPendingStatusChange(null)
+            }
+          }}
           campaignIds={pendingStatusChange.campaignIds}
           newStatusId={pendingStatusChange.statusId}
           affectedCount={pendingStatusChange.affectedCount}

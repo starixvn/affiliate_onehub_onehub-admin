@@ -38,10 +38,6 @@
       "actions": "Open menu"
     }
   },
-  "rowActions": {
-    "edit": "Edit",
-    "delete": "Delete"
-  },
   "bulkActions": {
     "changeToPaused": "Change to Paused",
     "changeToPausedCount": "Change to Paused ({{count}} affected)",

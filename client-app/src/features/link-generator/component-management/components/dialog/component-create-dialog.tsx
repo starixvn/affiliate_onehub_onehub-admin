@@ -4,8 +4,8 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useTranslation } from 'react-i18next'
 import { getRouteApi, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -73,7 +73,7 @@ export function ComponentCreateDialog() {
   const isLandingPage = watchCategory === Number(LANDING_PAGE_CATEGORY_ID)
 
   useEffect(() => {
-    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '_') : ''
+    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '-') : ''
     form.setValue('componentCode', generatedCode)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchName])

@@ -81,7 +81,9 @@
       "goToPage": "转到第 {{page}} 页"
     },
     "rowActions": {
-      "moreAction": "更多操作"
+      "moreAction": "更多操作",
+      "edit": "编辑",
+      "delete": "删除"
     },
     "bulkActions": {
       "announcement_other": "已选择 {{count}} 个{{entity}}。批量操作工具栏可用。",

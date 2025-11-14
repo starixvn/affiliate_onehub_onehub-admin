@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react'
 import { Cross2Icon } from '@radix-ui/react-icons'
-import { type Table, type ColumnFiltersState } from '@tanstack/react-table'
+import { type Table } from '@tanstack/react-table'
 import { Search } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
@@ -29,7 +29,6 @@ type DataTableToolbarProps<TData> = {
   onReset?: () => void
   initialSearchValue?: string
   defaultSearchValue?: string
-  columnFilters?: ColumnFiltersState
 }
 
 export function DataTableToolbar<TData>({

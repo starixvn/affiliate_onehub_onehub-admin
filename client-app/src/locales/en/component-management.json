@@ -82,10 +82,6 @@
       "delete": "Delete"
     }
   },
-  "rowActions": {
-    "edit": "Edit",
-    "delete": "Delete"
-  },
   "bulkActions": {
     "changeToActive": "Change to Active",
     "changeToActiveCount": "Change to Active ({{count}} affected)",
@@ -107,7 +103,7 @@
       "namePlaceholder": "e.g., Lucky Draw",
       "code": "Code",
       "codeRequired": "Code is required",
-      "codePlaceholder": "e.g., Lucky_Draw",
+      "codePlaceholder": "e.g., Lucky-Draw",
       "status": "Status",
       "statusPlaceholder": "Select status",
       "device": "Device",
