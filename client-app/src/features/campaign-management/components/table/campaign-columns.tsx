@@ -24,7 +24,9 @@ export const getCampaignColumns = (
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'),
+      className: cn(
+        'sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'
+      ),
     },
     cell: ({ row }) => (
       <Checkbox
@@ -78,12 +80,10 @@ export const getCampaignColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.name')} />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('campaignName')}</LongText>
-    ),
+    cell: ({ row }) => <LongText>{row.getValue('campaignName')}</LongText>,
     meta: {
       displayName: t('table.columns.name'),
-      className: '',
+      className: 'w-48 md:w-64 lg:w-80',
     },
     enableSorting: false,
   },
@@ -95,12 +95,10 @@ export const getCampaignColumns = (
         title={t('table.columns.description')}
       />
     ),
-    cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('description')}</LongText>
-    ),
+    cell: ({ row }) => <LongText>{row.getValue('description')}</LongText>,
     meta: {
       displayName: t('table.columns.description'),
-      className: '',
+      className: 'max-w-64 md:max-w-80 lg:max-w-96',
     },
     enableSorting: false,
   },

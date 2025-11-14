@@ -70,7 +70,8 @@ export const getComponentColumns = (
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none',
+        'w-48 md:w-64 lg:w-80'
       ),
       displayName: t('table.columns.code'),
     },
@@ -83,11 +84,11 @@ export const getComponentColumns = (
       <DataTableColumnHeader column={column} title={t('table.columns.name')} />
     ),
     cell: ({ row }) => (
-      <LongText className='max-w-64'>{row.getValue('componentName')}</LongText>
+      <LongText>{row.getValue('componentName')}</LongText>
     ),
     meta: {
       displayName: t('table.columns.name'),
-      className: '',
+      className: 'w-48 md:w-64 lg:w-80',
     },
     enableSorting: false,
   },

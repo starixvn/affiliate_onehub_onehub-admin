@@ -16,20 +16,30 @@ type LongTextProps = {
   children: React.ReactNode
   className?: string
   contentClassName?: string
+  showTooltip?: boolean
 }
 
 export function LongText({
   children,
   className = '',
   contentClassName = '',
+  showTooltip = false,
 }: LongTextProps) {
   const ref = useRef<HTMLDivElement>(null)
   const [isOverflown, setIsOverflown] = useState(false)
 
   useEffect(() => {
-    if (!ref.current) return
+    if (!ref.current || !showTooltip) return
     setIsOverflown(checkOverflow(ref.current))
-  }, [])
+  }, [showTooltip])
+
+  if (!showTooltip) {
+    return (
+      <div className={cn('whitespace-normal break-words', className)}>
+        {children}
+      </div>
+    )
+  }
 
   if (!isOverflown)
     return (
@@ -49,7 +59,7 @@ export function LongText({
               </div>
             </TooltipTrigger>
             <TooltipContent className="max-w-sm">
-              <p className={cn(contentClassName, 'whitespace-normal wrap-break-word')}>
+              <p className={cn(contentClassName, 'whitespace-normal break-words')}>
                 {children}
               </p>
             </TooltipContent>
@@ -64,7 +74,7 @@ export function LongText({
             </div>
           </PopoverTrigger>
           <PopoverContent className={cn('max-w-sm', contentClassName)}>
-            <p className="whitespace-normal wrap-break-word">
+            <p className="whitespace-normal break-words">
               {children}
             </p>
           </PopoverContent>
