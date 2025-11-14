@@ -41,7 +41,7 @@ const COMPONENT_CONFIG: Record<
 }
 
 const formSchema = z.object({
-  componentName: z.string().min(1, 'Name is required'),
+  componentName: z.string().trim().min(1, 'Name is required'),
   componentCode: z.string(),
   statusId: z.number(),
 })
