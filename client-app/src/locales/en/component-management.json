@@ -116,6 +116,20 @@
       "requiredField": "*"
     },
     "saveChanges": "Save Changes",
+    "statusChange": {
+      "title": "Change Component Status",
+      "message": "Are you sure you want to change the status of",
+      "from": "Status change:",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "bulkStatusChange": {
+      "title": "Change Component Status",
+      "message_one": "{{count}} component will be updated to",
+      "message_other": "{{count}} components will be updated to",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
     "multiDelete": {
       "title_one": "Delete {{count}} component",
       "title_other": "Delete {{count}} components",

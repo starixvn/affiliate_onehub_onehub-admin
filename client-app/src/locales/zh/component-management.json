@@ -116,6 +116,19 @@
       "requiredField": "*"
     },
     "saveChanges": "保存更改",
+    "statusChange": {
+      "title": "更改组件状态",
+      "message": "您确定要更改状态吗",
+      "from": "状态更改：",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "bulkStatusChange": {
+      "title": "更改组件状态",
+      "message_other": "{{count}} 个组件将更新为",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
     "multiDelete": {
       "title_one": "删除 {{count}} 个组件",
       "title_other": "删除 {{count}} 个组件",

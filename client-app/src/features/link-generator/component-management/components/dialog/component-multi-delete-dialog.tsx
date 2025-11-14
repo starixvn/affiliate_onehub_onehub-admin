@@ -1,11 +1,7 @@
-import { useState } from 'react'
 import { type Table } from '@tanstack/react-table'
 import { AlertTriangle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteComponents } from '../../api/commands'
 import { type Component } from '../../data/schema'
@@ -22,20 +18,11 @@ export function ComponentMultiDeleteDialog({
   table,
 }: ComponentMultiDeleteDialogProps) {
   const { t } = useTranslation('component-management')
-  const [value, setValue] = useState('')
   const deleteMutation = useDeleteComponents()
 
   const selectedRows = table.getFilteredSelectedRowModel().rows
-  const CONFIRM_WORD = t('dialog.multiDelete.confirmWord')
 
   const handleDelete = () => {
-    if (value.trim() !== CONFIRM_WORD) {
-      toast.error(
-        t('dialog.multiDeleteToast.confirmRequired', { word: CONFIRM_WORD })
-      )
-      return
-    }
-
     const componentIds = selectedRows.map((row) => row.original.componentId)
 
     if (componentIds.length === 0) {
@@ -46,7 +33,6 @@ export function ComponentMultiDeleteDialog({
       onSuccess: (response) => {
         if (response.errorCode === 0) {
           table.resetRowSelection()
-          setValue('')
           onOpenChange(false)
         }
       },
@@ -56,14 +42,9 @@ export function ComponentMultiDeleteDialog({
   return (
     <ConfirmDialog
       open={open}
-      onOpenChange={(isOpen) => {
-        onOpenChange(isOpen)
-        if (!isOpen) {
-          setValue('')
-        }
-      }}
+      onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
-      disabled={value.trim() !== CONFIRM_WORD || deleteMutation.isPending}
+      disabled={deleteMutation.isPending}
       title={
         <span className='text-destructive'>
           <AlertTriangle
@@ -79,19 +60,6 @@ export function ComponentMultiDeleteDialog({
             {t('dialog.multiDelete.message')} <br />
             {t('dialog.multiDelete.description')}
           </p>
-
-          <Label className='my-4 flex flex-col items-start gap-1.5'>
-            <span>
-              {t('dialog.multiDelete.confirmLabel', { word: CONFIRM_WORD })}
-            </span>
-            <Input
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              placeholder={t('dialog.multiDelete.confirmPlaceholder', {
-                word: CONFIRM_WORD,
-              })}
-            />
-          </Label>
 
           <Alert variant='destructive'>
             <AlertTitle>{t('dialog.multiDelete.warning')}</AlertTitle>

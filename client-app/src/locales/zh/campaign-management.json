@@ -91,6 +91,19 @@
       "requiredField": "*"
     },
     "saveChanges": "保存更改",
+    "statusChange": {
+      "title": "更改活动状态",
+      "message": "您确定要更改状态吗",
+      "from": "状态更改：",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "bulkStatusChange": {
+      "title": "更改活动状态",
+      "message_other": "{{count}} 个活动将更新为",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
     "delete": {
       "title": "删除活动",
       "message": "您确定要删除",
