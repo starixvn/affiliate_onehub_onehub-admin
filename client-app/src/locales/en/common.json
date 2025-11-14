@@ -73,6 +73,7 @@
     "reset": "Reset",
     "submit": "Search",
     "clear": "Clear",
+    "clearFilters": "Clear filters",
     "aria": {
       "firstPage": "Go to first page",
       "previousPage": "Go to previous page",

@@ -166,7 +166,7 @@ export function ComponentTable({
     () => [
       {
         columnId: 'status',
-        title: 'Status',
+        title: t('filters.status'),
         options: status.map(({ label, value }) => ({
           label,
           value,
@@ -175,7 +175,7 @@ export function ComponentTable({
       },
       {
         columnId: 'deviceId',
-        title: 'Device',
+        title: t('filters.device'),
         options: deviceTypes.map(({ label, value }) => ({
           label,
           value,
@@ -184,7 +184,7 @@ export function ComponentTable({
         hidden: !isLandingPage,
       },
     ],
-    [isLandingPage]
+    [t, isLandingPage]
   )
 
   return (

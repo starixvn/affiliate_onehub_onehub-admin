@@ -52,10 +52,9 @@
       "title": "Landing Page"
     }
   },
-  "statusFilters": {
-    "total": "Total",
-    "active": "Active",
-    "inactive": "Inactive"
+  "filters": {
+    "status": "Status",
+    "device": "Device"
   },
   "searchToolbar": {
     "submit": "Search"
