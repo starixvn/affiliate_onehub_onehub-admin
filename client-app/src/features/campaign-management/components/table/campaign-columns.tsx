@@ -195,7 +195,7 @@ export const getCampaignColumns = (
     id: 'actions',
     cell: DataTableRowActions,
     meta: {
-      className: 'text-center flex items-center justify-center',
+      className: 'w-10',
     },
   },
 ]

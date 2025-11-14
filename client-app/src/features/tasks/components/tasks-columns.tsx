@@ -116,7 +116,7 @@ export const tasksColumns: ColumnDef<Task>[] = [
     id: 'actions',
     cell: ({ row }) => <DataTableRowActions row={row} />,
     meta: {
-      className: 'text-center flex items-center justify-center',
+      className: 'w-10',
     },
   },
 ]

@@ -197,7 +197,7 @@ export const getComponentColumns = (
     id: 'actions',
     cell: DataTableRowActions,
     meta: {
-      className: 'text-center flex items-center justify-center',
+      className: 'w-10',
     },
   },
 ]
