@@ -8,14 +8,14 @@ namespace ONEHub.Application.Features.Settings.Queries;
 
 public record GetCountriesQuery : IRequest<Result<IEnumerable<TargetCountry>>>;
 
-public class GetCountriesQueryHandler(ISettingsRepository settingsRepository)
+public class GetCountriesQueryHandler(ISystemRepository settingsRepository)
     : IRequestHandler<GetCountriesQuery, Result<IEnumerable<TargetCountry>>>
 {
     public async Task<Result<IEnumerable<TargetCountry>>> Handle(
         GetCountriesQuery request,
         CancellationToken cancellationToken)
     {
-        var countriesListResult = await settingsRepository.GetTargetCountryListAsync();
+        var countriesListResult = await settingsRepository.GetTargetCountryAsync();
 
         if (countriesListResult.IsFailure)
         {

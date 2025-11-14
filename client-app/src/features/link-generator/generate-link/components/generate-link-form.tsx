@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Controller, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { Info } from 'lucide-react'
@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
 import { useGenerateLink, type DialogType } from './generate-link-provider'
-import { useGetDomains } from '../api/queries'
+import { useGetDomains, useGetLanguages } from '../api/queries'
 import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo } from '../types'
 import { FormFieldError } from './form-field-error'
 
@@ -17,12 +17,15 @@ function getAvailableDomainsText(count: number): string {
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
-  const { form, campaigns, countries, languages, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
+  const { form, campaigns, countries, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
   const { register, control, formState: { errors } } = form
 
   const selectedCountryCode = useWatch({ control, name: 'country' })
-  const selectedLandingPageCode = useWatch({ control, name: 'landingPage' })
   const selectedEventIds = useWatch({ control, name: 'event' })
+
+  const [selectedLandingPage, setSelectedLandingPage] = useState<LandingPageOption | null>(null)
+
+  const { data: languages } = useGetLanguages(selectedCountryCode || '')
 
   useEffect(() => {
     if (selectedEventIds && events) {
@@ -37,9 +40,11 @@ export function GenerateLinkForm() {
     }
   }, [selectedEventIds, events, form])
 
-  const selectedLandingPage = landingPages && selectedLandingPageCode
-    ? Object.values(landingPages).flat().find((lp) => lp.pageCode === selectedLandingPageCode)
-    : null
+  useEffect(() => {
+    if (selectedLandingPage && selectedLandingPage.marketId) {
+      form.setValue('language', selectedLandingPage.marketId)
+    }
+  }, [selectedLandingPage, form])
 
   const domainTypePrimary = selectedLandingPage?.pageType === 3 ? 0 : 1
   const domainTypeShortLink = 2
@@ -52,6 +57,8 @@ export function GenerateLinkForm() {
   }
 
   const handleLandingPageChange = (_value: string, option?: LandingPageOption | null) => {
+    setSelectedLandingPage(option || null)
+
     if (option) {
       if (option.campaignId) {
         form.setValue('campaign', String(option.campaignId))
@@ -59,9 +66,7 @@ export function GenerateLinkForm() {
       }
       if (option.targetCountryCode) {
         form.setValue('country', String(option.targetCountryCode))
-      }
-      if (option.marketId) {
-        form.setValue('language', String(option.marketId))
+        form.setValue('language', '')
       }
       if (option.pageType) {
         form.setValue('pageType', option.pageType)
@@ -69,6 +74,9 @@ export function GenerateLinkForm() {
       if (option.pageCode) {
         form.setValue('pageCode', option.pageCode)
       }
+    } else {
+      form.setValue('pageType', 0)
+      form.setValue('pageCode', '')
     }
   }
 
@@ -196,7 +204,10 @@ export function GenerateLinkForm() {
               render={({ field }) => (
                 <SingleSelect
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value)
+                    form.setValue('language', '')
+                  }}
                   options={countries || []}
                   labelKey='targetCountryName'
                   valueKey='targetCountryCode'
@@ -218,8 +229,8 @@ export function GenerateLinkForm() {
                   value={field.value}
                   onValueChange={field.onChange}
                   options={languages || []}
-                  labelKey='displayName'
-                  valueKey='marketId'
+                  labelKey='languageName'
+                  valueKey='shortedLanguageCode'
                   placeholder={t('form.languagePlaceholder')}
                   searchPlaceholder='Search language...'
                 />

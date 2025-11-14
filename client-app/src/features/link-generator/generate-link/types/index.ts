@@ -38,7 +38,7 @@ export type LandingPageOption = {
   category: string
   pageType: number
   targetCountryCode: number
-  marketId: number
+  marketId: string
   campaignId: number
   campaignCode: string
 }

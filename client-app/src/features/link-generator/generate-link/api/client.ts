@@ -3,7 +3,6 @@ import type {
   GenerateLinkRequest,
   GenerateLinkResponse,
   TargetCountry,
-  Market,
   CampaignInfo,
   ComponentInfo,
   LandingPageOption,
@@ -35,9 +34,10 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async getLanguages(): Promise<IAxiosResponse<Market[]>> {
-    const response = await apiClient.get<IAxiosResponse<Market[]>>(
-      '/settings/languages'
+  async getLanguages(countryCode: string): Promise<IAxiosResponse<TargetCountry[]>> {
+    const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
+      '/settings/languages',
+      { params: { countryCode } }
     )
     return response.data
   },

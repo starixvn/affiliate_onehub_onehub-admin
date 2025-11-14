@@ -7,28 +7,31 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Settings.Queries;
 
-public class GetLanguagesQuery : BaseQuery<IEnumerable<Market>>;
-
-public class GetLanguagesByCountryQueryHandler(ISettingsRepository settingsRepository)
-    : IRequestHandler<GetLanguagesQuery, Result<IEnumerable<Market>>>
+public class GetLanguagesQuery : BaseQuery<IEnumerable<TargetCountry>>
 {
-    public async Task<Result<IEnumerable<Market>>> Handle(
+    public string CountryCode { get; set; } = string.Empty;
+}
+
+public class GetLanguagesByCountryQueryHandler(ISystemRepository settingsRepository)
+    : IRequestHandler<GetLanguagesQuery, Result<IEnumerable<TargetCountry>>>
+{
+    public async Task<Result<IEnumerable<TargetCountry>>> Handle(
         GetLanguagesQuery request,
         CancellationToken cancellationToken)
     {
-        var languageListResult = await settingsRepository.GetLanguagesAsync();
+        var languageListResult = await settingsRepository.GetTargetCountryAsync(false, request.CountryCode);
 
         if (languageListResult.IsFailure)
         {
-            return Result<IEnumerable<Market>>.Failure(languageListResult.Error);
+            return Result<IEnumerable<TargetCountry>>.Failure(languageListResult.Error);
         }
 
         if (languageListResult.Data is null)
         {
-            return Result<IEnumerable<Market>>.Failure(Error.NoData);
+            return Result<IEnumerable<TargetCountry>>.Failure(Error.NoData);
         }
 
-        return Result<IEnumerable<Market>>.Success(languageListResult.Data);
+        return Result<IEnumerable<TargetCountry>>.Success(languageListResult.Data);
     }
 }
 

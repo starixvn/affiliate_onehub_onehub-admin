@@ -5,7 +5,7 @@ export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
   campaigns: () => [...linkGeneratorKeys.all, 'campaigns'] as const,
   countries: () => [...linkGeneratorKeys.all, 'countries'] as const,
-  languages: () => [...linkGeneratorKeys.all, 'languages'] as const,
+  languages: (countryCode: string) => [...linkGeneratorKeys.all, 'languages', countryCode] as const,
   components: (categoryId: number) => [...linkGeneratorKeys.all, 'components', categoryId] as const,
   landingPages: () => [...linkGeneratorKeys.all, 'landing-pages'] as const,
   statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
@@ -28,11 +28,12 @@ export function useGetCountries() {
   })
 }
 
-export function useGetLanguages() {
+export function useGetLanguages(countryCode: string) {
   return useQuery({
-    queryKey: linkGeneratorKeys.languages(),
-    queryFn: () => linkGeneratorApi.getLanguages(),
+    queryKey: linkGeneratorKeys.languages(countryCode),
+    queryFn: () => linkGeneratorApi.getLanguages(countryCode),
     select: (data) => data.data,
+    enabled: !!countryCode,
   })
 }
 
@@ -93,7 +94,7 @@ export function useGetStatusOptions() {
         errorCode: 0,
         data: [
           { label: 'Active', value: 1 },
-          { label: 'Inactive', value: 0 },
+          { label: 'Inactive', value: 2 },
         ],
       }
     },

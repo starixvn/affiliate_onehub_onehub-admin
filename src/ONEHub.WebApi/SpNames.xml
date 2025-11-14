@@ -4,6 +4,18 @@
         <Setting Key="OH_UserInfo_Sel" SpName="OH_UserInfo_Sel" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_UserInfo_Ins" SpName="OH_UserInfo_Ins" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
+    <Function Name="Language">
+        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" >
+            <Mapping DataField="MarketId" ObjectProperty="LanguageCode" />
+            <Mapping DataField="MarketName" ObjectProperty="LanguageName" />
+            <Mapping DataField="ShortedCode" ObjectProperty="ShortedLanguageCode" />
+        </Setting>
+        <Setting Key="OH_Market_Sel" SpName="OH_Market_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" >
+            <Mapping DataField="MarketId" ObjectProperty="LanguageCode" />
+            <Mapping DataField="MarketName" ObjectProperty="LanguageName" />
+            <Mapping DataField="ShortedCode" ObjectProperty="ShortedLanguageCode" />
+        </Setting>
+    </Function>
 	<Functions Name="Campaign Management">
 		<Setting Key="OH_Campaign_Dashboard_Sel" SpName="OH_Campaign_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_ManageSel" SpName="OH_Campaign_ManageSel" DbName="DBOH.ONEHub.wsv_oh" />
@@ -25,10 +37,6 @@
 		<Setting Key="OH_Component_Sel" SpName="OH_Component_Sel_uat1" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Component_Ins" SpName="OH_Component_Ins_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
 	</Function>
-    <Function Name="Settings">
-        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_Market_Sel" SpName="OH_Market_Sel" DbName="DBOH.ONEHub.wsv_oh" />
-    </Function>
     <Function Name="LandingPage">
         <Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>

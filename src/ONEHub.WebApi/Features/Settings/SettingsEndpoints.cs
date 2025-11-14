@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using ONEHub.Application.Features.Settings.Queries;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Results;
@@ -25,10 +26,11 @@ public static class SettingsEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<IEnumerable<Market>>>, ValidationProblem>> GetLanguages(
-        IMediator mediator)
+    private static async Task<Results<Ok<Result<IEnumerable<TargetCountry>>>, ValidationProblem>> GetLanguages(
+        IMediator mediator,
+        [FromQuery] string countryCode)
     {
-        var query = new GetLanguagesQuery();
+        var query = new GetLanguagesQuery { CountryCode = countryCode };
         var result = await mediator.Send(query);
         return TypedResults.Ok(result);
     }

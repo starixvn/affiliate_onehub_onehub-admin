@@ -80,7 +80,7 @@ export function ComponentCreateDialog({
   const watchName = form.watch('componentName')
 
   useEffect(() => {
-    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '_') : ''
+    const generatedCode = watchName ? watchName.trim().replace(/\s+/g, '-') : ''
     form.setValue('componentCode', generatedCode)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchName])
