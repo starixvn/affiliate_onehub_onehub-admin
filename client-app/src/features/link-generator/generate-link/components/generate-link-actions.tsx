@@ -20,6 +20,7 @@ export function GenerateLinkActions() {
       campaignCode: data.campaignCode,
       countryCode: data.country || '',
       marketId: data.language || '',
+      shortedLanguageCode: data.shortedLanguageCode || '',
       eventIds: data.event || '',
       eventCodes: data.eventCodes,
       groupId: parseInt(data.group) || 0,

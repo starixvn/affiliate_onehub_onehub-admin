@@ -24,6 +24,8 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
 
     public string MarketId { get; set; } = string.Empty;
 
+    public string ShortedLanguageCode { get; set; } = string.Empty;
+
     public string EventIds { get; set; } = string.Empty;
 
     public string EventCodes { get; set; } = string.Empty;
@@ -241,7 +243,7 @@ public class InsertLinkCommandHandler(
                $"&ic={Uri.EscapeDataString(identifierCode)}" +
                $"&cmp={Uri.EscapeDataString(request.CampaignCode)}" +
                $"&cty={Uri.EscapeDataString(request.CountryCode)}" +
-               $"&lang={Uri.EscapeDataString(request.MarketId)}" +
+               $"&lang={Uri.EscapeDataString(request.ShortedLanguageCode)}" +
                $"&ev={Uri.EscapeDataString(request.EventCodes)}" +
                $"&grp={Uri.EscapeDataString(request.GroupCode)}" +
                $"&chn={Uri.EscapeDataString(request.ChannelCode)}" +

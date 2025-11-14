@@ -54,6 +54,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
       campaignCode: '',
       country: '',
       language: '',
+      shortedLanguageCode: '',
       group: '',
       groupCode: '',
       event: '',

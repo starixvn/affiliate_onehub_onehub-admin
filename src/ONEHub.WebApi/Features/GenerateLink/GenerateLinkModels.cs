@@ -9,6 +9,7 @@ public record InsertLinkRequest(
     [Required] string CampaignCode,
     [Required] string CountryCode,
     [Required] string MarketId,
+    [Required] string ShortedLanguageCode,
     [Required] string EventIds,
     [Required] string EventCodes,
     [Required] int GroupId,

@@ -36,6 +36,7 @@ public static class GenerateLinkEndpoint
             CampaignCode = request.CampaignCode,
             CountryCode = request.CountryCode,
             MarketId = request.MarketId,
+            ShortedLanguageCode = request.ShortedLanguageCode,
             EventIds = request.EventIds,
             EventCodes = request.EventCodes,
             GroupId = request.GroupId,

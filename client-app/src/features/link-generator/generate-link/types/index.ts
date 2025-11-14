@@ -14,8 +14,12 @@ export type ComponentInfo = {
 }
 
 export type TargetCountry = {
-  targetCountryName: string
   targetCountryCode: string
+  targetCountryName: string
+  languageCode: string
+  languageName: string
+  shortedLanguageCode: string
+  status: number
 }
 
 export type Market = {
@@ -93,6 +97,7 @@ export interface InsertLinkRequest {
   campaignCode: string
   countryCode: string
   marketId: string
+  shortedLanguageCode: string
   eventIds: string
   eventCodes: string
   groupId: number

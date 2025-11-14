@@ -8,7 +8,7 @@ import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
 import { useGenerateLink, type DialogType } from './generate-link-provider'
 import { useGetDomains, useGetLanguages } from '../api/queries'
-import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo } from '../types'
+import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo, TargetCountry } from '../types'
 import { FormFieldError } from './form-field-error'
 
 function getAvailableDomainsText(count: number): string {
@@ -42,9 +42,31 @@ export function GenerateLinkForm() {
 
   useEffect(() => {
     if (selectedLandingPage && selectedLandingPage.marketId) {
-      form.setValue('language', selectedLandingPage.marketId)
+      const language = languages?.find((lang: TargetCountry) => lang.languageCode === selectedLandingPage.marketId)
+      if (language) {
+        form.setValue('language', language.languageCode || '')
+        form.setValue('shortedLanguageCode', language.shortedLanguageCode || '')
+      } else {
+        form.setValue('language', '')
+        form.setValue('shortedLanguageCode', '')
+      }
     }
-  }, [selectedLandingPage, form])
+  }, [selectedLandingPage, languages, form])
+
+  useEffect(() => {
+    if (languages && languages.length > 0 && selectedCountryCode) {
+      const currentLanguage = form.getValues('language')
+      const currentShortedLanguageCode = form.getValues('shortedLanguageCode')
+
+      if (!currentLanguage || !currentShortedLanguageCode) {
+        const firstLanguage = languages[0]
+        if (firstLanguage) {
+          form.setValue('language', firstLanguage.languageCode || '')
+          form.setValue('shortedLanguageCode', firstLanguage.shortedLanguageCode || '')
+        }
+      }
+    }
+  }, [languages, selectedCountryCode, form])
 
   const domainTypePrimary = selectedLandingPage?.pageType === 3 ? 0 : 1
   const domainTypeShortLink = 2
@@ -207,6 +229,7 @@ export function GenerateLinkForm() {
                   onValueChange={(value) => {
                     field.onChange(value)
                     form.setValue('language', '')
+                    form.setValue('shortedLanguageCode', '')
                   }}
                   options={countries || []}
                   labelKey='targetCountryName'
@@ -222,12 +245,21 @@ export function GenerateLinkForm() {
           <div className='space-y-1.5'>
             <Label htmlFor='language' className='text-sm'>{t('form.language')}</Label>
             <Controller
-              name='language'
+              name='shortedLanguageCode'
               control={control}
               render={({ field }) => (
                 <SingleSelect
                   value={field.value}
-                  onValueChange={field.onChange}
+                  onValueChange={(_value, option) => {
+                    if (option) {
+                      const lang = option as TargetCountry
+                      form.setValue('language', lang.languageCode || '')
+                      field.onChange(lang.shortedLanguageCode || '')
+                    } else {
+                      field.onChange('')
+                      form.setValue('language', '')
+                    }
+                  }}
                   options={languages || []}
                   labelKey='languageName'
                   valueKey='shortedLanguageCode'

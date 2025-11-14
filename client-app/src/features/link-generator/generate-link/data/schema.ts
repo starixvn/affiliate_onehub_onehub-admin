@@ -7,6 +7,7 @@ export const generateLinkFormSchema = z.object({
   campaignCode: z.string(),
   country: z.string().min(1, 'Country is required'),
   language: z.string().min(1, 'Language is required'),
+  shortedLanguageCode: z.string(),
   group: z.string().min(1, 'Group is required'),
   groupCode: z.string(),
   event: z.string().min(1, 'Event is required'),
