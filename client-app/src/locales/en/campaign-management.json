@@ -121,9 +121,6 @@
       "title_other": "Delete {{count}} campaigns",
       "message": "Are you sure you want to delete the selected campaigns?",
       "description": "This action cannot be undone. This will permanently delete the selected campaigns and all associated data.",
-      "confirmLabel": "Confirm by typing \"{{word}}\":",
-      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
-      "confirmWord": "DELETE",
       "warning": "Warning!",
       "warningMessage": "Please be careful, this operation cannot be rolled back.",
       "confirm": "Delete",
@@ -133,8 +130,7 @@
       "deleting": "Deleting campaigns...",
       "deleted_one": "Deleted {{count}} campaign",
       "deleted_other": "Deleted {{count}} campaigns",
-      "deleteFailed": "Failed to delete campaigns",
-      "confirmRequired": "Please type \"{{word}}\" to confirm."
+      "deleteFailed": "Failed to delete campaigns"
     }
   }
 }

@@ -134,9 +134,6 @@
       "title_other": "删除 {{count}} 个组件",
       "message": "您确定要删除选中的组件吗？",
       "description": "此操作无法撤销。这将永久删除选中的组件及所有相关数据。",
-      "confirmLabel": "输入 \"{{word}}\" 以确认：",
-      "confirmPlaceholder": "输入 \"{{word}}\" 以确认。",
-      "confirmWord": "DELETE",
       "warning": "警告！",
       "warningMessage": "请谨慎操作，此操作无法回滚。",
       "confirm": "删除"
@@ -145,8 +142,7 @@
       "deleting": "正在删除组件...",
       "deleted_one": "已删除 {{count}} 个组件",
       "deleted_other": "已删除 {{count}} 个组件",
-      "deleteFailed": "删除组件失败",
-      "confirmRequired": "请输入 \"{{word}}\" 以确认。"
+      "deleteFailed": "删除组件失败"
     }
   },
   "createDialog": {
