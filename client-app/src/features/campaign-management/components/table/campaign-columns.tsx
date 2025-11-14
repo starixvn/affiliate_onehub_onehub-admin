@@ -83,7 +83,7 @@ export const getCampaignColumns = (
     cell: ({ row }) => <LongText>{row.getValue('campaignName')}</LongText>,
     meta: {
       displayName: t('table.columns.name'),
-      className: 'w-48 md:w-64 lg:w-80',
+      className: 'max-w-48 md:max-w-64 lg:max-w-80',
     },
     enableSorting: false,
   },
