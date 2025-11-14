@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { getRouteApi } from '@tanstack/react-router'
-import { Calendar, Users, Radio, Building2, Tag, FileText } from 'lucide-react'
+import { Calendar, Users, Radio, Building2, Tag, FileText, Layers, CheckCircle2, XCircle } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import {
   Carousel,
@@ -11,6 +11,7 @@ import {
   type CarouselApi,
 } from '@/components/ui/carousel'
 import { FilterCard } from '@/components/ui/filter-card'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { useComponents } from './component-provider'
 
 const route = getRouteApi('/iframe/link-generator/component-management/')
@@ -24,18 +25,46 @@ type CategoryCountProps = {
 function CategoryCount({ total, active, inactive }: CategoryCountProps) {
   const { t } = useTranslation('component-management')
   return (
-    <div className='text-sm text-gray-700 dark:text-gray-300'>
-      <span>{t('statusFilters.total')}</span>
-      <span>/</span>
-      <span>{t('statusFilters.active')}</span>
-      <span>/</span>
-      <span>{t('statusFilters.inactive')}</span>
-      <span>: </span>
-      <span>{total}</span>
-      <span>/</span>
-      <span>{active}</span>
-      <span>/</span>
-      <span>{inactive}</span>
+    <div className='flex items-center gap-3 text-sm'>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className='flex items-center gap-1 text-blue-600 dark:text-blue-400'>
+            <Layers className='h-3.5 w-3.5' />
+            <span className='font-medium'>{total}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('statusFilters.total')}</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <span className='text-gray-300 dark:text-gray-600'>|</span>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className='flex items-center gap-1 text-green-600 dark:text-green-400'>
+            <CheckCircle2 className='h-3.5 w-3.5' />
+            <span className='font-medium'>{active}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('statusFilters.active')}</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <span className='text-gray-300 dark:text-gray-600'>|</span>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <div className='flex items-center gap-1 text-gray-500 dark:text-gray-400'>
+            <XCircle className='h-3.5 w-3.5' />
+            <span className='font-medium'>{inactive}</span>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{t('statusFilters.inactive')}</p>
+        </TooltipContent>
+      </Tooltip>
     </div>
   )
 }
