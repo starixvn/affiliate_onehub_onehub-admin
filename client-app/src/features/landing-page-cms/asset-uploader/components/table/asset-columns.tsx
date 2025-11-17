@@ -1,17 +1,10 @@
 import { type PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
 import type { AssetDetail } from '../../data/schema'
-import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetRowActions } from './asset-row-actions'
+import { AssetStatusCell } from './asset-status-cell'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,45 +12,6 @@ declare module '@tanstack/react-table' {
     className: string
     displayName?: string
   }
-}
-
-interface StatusCellProps {
-  asset: AssetDetail
-}
-
-function StatusCell({ asset }: StatusCellProps) {
-  const { t } = useTranslation('asset-uploader')
-  const { setOpen, setCurrentRow, setTargetStatusId } = useAssetUploader()
-
-  const handleStatusChange = (value: string) => {
-    const statusId = parseInt(value)
-    setCurrentRow(asset)
-    setTargetStatusId(statusId)
-    setOpen('status-change')
-  }
-
-  const isActive = asset.statusId === 1
-
-  return (
-    <Select
-      value={asset.statusId.toString()}
-      onValueChange={handleStatusChange}
-    >
-      <SelectTrigger
-        className={`h-8 w-[110px] ${
-          isActive
-            ? 'border-green-500 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-400'
-            : 'border-red-500 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950 dark:text-red-400'
-        }`}
-      >
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value='1'>{t('table.active')}</SelectItem>
-        <SelectItem value='2'>{t('table.inactive')}</SelectItem>
-      </SelectContent>
-    </Select>
-  )
 }
 
 export const useAssetColumns = (
@@ -105,11 +59,11 @@ export const useAssetColumns = (
       accessorKey: 'mediaName',
       header: t('table.fileName'),
       meta: {
-        className: '',
+        className: 'whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] truncate font-medium'>
+        <div className='max-w-[200px] break-words font-medium'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -118,10 +72,12 @@ export const useAssetColumns = (
       accessorKey: 'moduleId',
       header: t('table.module'),
       meta: {
-        className: '',
+        className: 'whitespace-normal',
         displayName: t('table.module'),
       },
-      cell: ({ row }) => <div>{row.original.moduleName}</div>,
+      cell: ({ row }) => (
+        <div className='max-w-[200px] break-words'>{row.original.moduleName}</div>
+      ),
     },
     {
       accessorKey: 'targetCountryCode',
@@ -184,26 +140,23 @@ export const useAssetColumns = (
     },
     {
       accessorKey: 'statusId',
-      header: () => <div className='text-center'>{t('table.status')}</div>,
+      header: () => (
+        <div className='text-center'>{t('table.status')}</div>
+      ),
       meta: {
         className: '',
         displayName: t('table.status'),
       },
-      cell: ({ row }) => (
-        <div className='flex justify-center'>
-          <StatusCell asset={row.original} />
-        </div>
-      ),
+      cell: AssetStatusCell,
+      filterFn: (row, id, value) => {
+        return value.includes(String(row.getValue(id)))
+      },
+      enableHiding: false,
+      enableSorting: false,
     },
     {
       id: 'actions',
-      header: () => <div className='text-center'>{t('table.action')}</div>,
-      cell: ({ row }) => (
-        <div className='flex justify-center'>
-          <AssetRowActions row={row} />
-        </div>
-      ),
-      enableHiding: false,
+      cell: AssetRowActions,
     },
   ]
 }

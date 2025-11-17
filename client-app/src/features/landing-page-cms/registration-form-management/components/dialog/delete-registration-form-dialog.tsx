@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteRegisterForm } from '../../api/commands'
 import type { RegisterFormDetail } from '../../data/schema'
+import { toast } from 'sonner'
 
 interface DeleteRegisterFormDialogProps {
   open: boolean
@@ -18,11 +19,13 @@ export function DeleteRegisterFormDialog({
   const deleteMutation = useDeleteRegisterForm()
 
   const handleConfirm = () => {
-    if (registerForm) {
+    if (registerForm && !registerForm.isMediaIdInUse) {
       deleteMutation.mutate(registerForm.mediaId.toString(), {
         onSuccess: (response) => {
           if (response.errorCode === 0) {
             onOpenChange(false)
+          } else {
+            toast.error(response.errorMessage || t('toasts.deleteFailed'))
           }
         },
       })

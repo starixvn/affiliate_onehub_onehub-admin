@@ -43,10 +43,6 @@ export function AssetBulkStatusChangeDialog({
     )
   }
 
-  const statusText =
-    newStatusId === 1
-      ? t('bulkActions.changeToActive')
-      : t('bulkActions.changeToInactive')
   const affectedCount = selectedRows.filter(
     (row) => row.original.statusId !== newStatusId
   ).length
@@ -58,7 +54,7 @@ export function AssetBulkStatusChangeDialog({
       handleConfirm={handleStatusChange}
       disabled={updateStatusMutation.isPending || affectedCount === 0}
       title={t('dialogs.confirmStatusChangeBulk')}
-      desc={`${statusText} ${affectedCount} ${affectedCount > 1 ? 'assets' : 'asset'}.`}
+      desc={''}
       confirmText={
         updateStatusMutation.isPending
           ? t('dialogs.changing')

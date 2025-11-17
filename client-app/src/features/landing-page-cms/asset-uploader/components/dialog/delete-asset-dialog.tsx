@@ -1,8 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
-import type { AssetDetail } from '../../data/schema'
 import { useDeleteAsset } from '../../api/commands'
+import type { AssetDetail } from '../../data/schema'
 
 interface DeleteAssetDialogProps {
   open: boolean
@@ -18,7 +18,7 @@ export function DeleteAssetDialog({
   const { t } = useTranslation('asset-uploader')
   const deleteMutation = useDeleteAsset()
   const handleConfirm = () => {
-    if (asset) {
+    if (asset && !asset.isMediaIdInUse) {
       deleteMutation.mutate(asset.mediaId.toString(), {
         onSuccess: (response: any) => {
           if (response.errorCode === 0) {
@@ -37,11 +37,14 @@ export function DeleteAssetDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title={t('dialogs.deleteAsset')}
-      desc={t('dialogs.confirmDeleteSingle', { assetName: asset.mediaName })}
-      confirmText={t('dialogs.delete')}
+      title={t('dialogs.confirmDeleteSingle', { assetName: asset.mediaName })}
+      desc={t('dialogs.deleteDescription')}
+      confirmText={
+        deleteMutation.isPending ? t('dialogs.deleting') : t('dialogs.delete')
+      }
       destructive
       handleConfirm={handleConfirm}
+      isLoading={deleteMutation.isPending}
     />
   )
 }

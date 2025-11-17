@@ -205,7 +205,11 @@ export function RegisterFormDialog({
         <ConfirmOverwriteDialog
           open={showConfirmOverwrite}
           onOpenChange={(open) => !open && handleCancelOverwrite()}
-          fileName={registerForm?.mediaName || ''}
+          fileName={
+            formWithFiles.files[0]?.file.name ||
+            registerForm?.fileName.split('/').pop() ||
+            ''
+          }
           onConfirm={handleConfirmOverwrite}
           onCancel={handleCancelOverwrite}
         />

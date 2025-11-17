@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import type {
   ValidationErrors,
   ModuleWithFiles,
@@ -76,6 +77,8 @@ export function AssetDialogContent({
   onRemoveFile,
   isModuleSelectedByOther,
 }: AssetDialogContentProps) {
+  const { t } = useTranslation('asset-uploader')
+
   return (
     <div
       ref={scrollContainerRef}
@@ -86,7 +89,9 @@ export function AssetDialogContent({
       {backendError && (
         <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
           <div className='space-y-2'>
-            <p className='text-sm font-medium text-red-800'>Server Error</p>
+            <p className='text-sm font-medium text-red-800'>
+              {t('form.fixIssues')}
+            </p>
             <div
               className='text-sm text-red-700'
               dangerouslySetInnerHTML={{ __html: backendError }}

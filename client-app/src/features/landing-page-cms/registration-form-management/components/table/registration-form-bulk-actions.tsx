@@ -1,5 +1,5 @@
 import { type Table } from '@tanstack/react-table'
-import { Play, Square, Trash2 } from 'lucide-react'
+import { Play, Ban, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import {
@@ -76,7 +76,7 @@ export function RegisterFormBulkActions({
             aria-label={`${t('bulkActions.changeToInactive')}: ${inactiveCount} forms`}
             title={`${t('bulkActions.changeToInactive')}: ${inactiveCount} forms`}
           >
-            <Square />
+            <Ban />
             <span className='sr-only'>{t('bulkActions.changeToInactive')}</span>
           </Button>
         </TooltipTrigger>

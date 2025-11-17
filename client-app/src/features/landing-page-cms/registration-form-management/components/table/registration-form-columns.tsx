@@ -1,63 +1,16 @@
 import { type PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ImagePreviewCell } from '@/components/image-preview-cell'
 import type { RegisterFormDetail } from '../../data/schema'
-import { useRegisterFormManagement } from '../registration-form-management-provider'
 import { RegisterFormRowActions } from './registration-form-row-actions'
+import { RegisterFormStatusCell } from './registration-form-status-cell'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
     className: string
     displayName?: string
   }
-}
-
-interface StatusCellProps {
-  registerForm: RegisterFormDetail
-}
-
-function StatusCell({ registerForm }: StatusCellProps) {
-  const { t } = useTranslation('registration-form-management')
-  const { setOpen, setCurrentRow, setTargetStatusId } =
-    useRegisterFormManagement()
-
-  const handleStatusChange = (value: string) => {
-    const statusId = parseInt(value)
-    setCurrentRow(registerForm)
-    setTargetStatusId(statusId)
-    setOpen('status-change')
-  }
-
-  const isActive = registerForm.statusId === 1
-
-  return (
-    <Select
-      value={registerForm.statusId.toString()}
-      onValueChange={handleStatusChange}
-    >
-      <SelectTrigger
-        className={`h-8 w-[110px] ${
-          isActive
-            ? 'border-green-500 bg-green-50 text-green-700 dark:border-green-700 dark:bg-green-950 dark:text-green-400'
-            : 'border-red-500 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950 dark:text-red-400'
-        }`}
-      >
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value='1'>{t('table.active')}</SelectItem>
-        <SelectItem value='2'>{t('table.inactive')}</SelectItem>
-      </SelectContent>
-    </Select>
-  )
 }
 
 export const useRegisterFormColumns = (
@@ -105,11 +58,11 @@ export const useRegisterFormColumns = (
       accessorKey: 'mediaName',
       header: t('table.formName'),
       meta: {
-        className: '',
+        className: 'whitespace-normal',
         displayName: t('table.formName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] truncate font-medium'>
+        <div className='max-w-[200px] break-words font-medium'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -118,11 +71,13 @@ export const useRegisterFormColumns = (
       accessorKey: 'fileName',
       header: t('table.fileName'),
       meta: {
-        className: '',
+        className: 'whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
-        <div>{(row.getValue('fileName') as string).split('/').pop()}</div>
+        <div className='max-w-[200px] break-words'>
+          {(row.getValue('fileName') as string).split('/').pop()}
+        </div>
       ),
     },
     {
@@ -184,26 +139,23 @@ export const useRegisterFormColumns = (
     },
     {
       accessorKey: 'statusId',
-      header: () => <div className='text-center'>{t('table.status')}</div>,
+      header: () => (
+        <div className='text-center'>{t('table.status')}</div>
+      ),
       meta: {
         className: '',
         displayName: t('table.status'),
       },
-      cell: ({ row }) => (
-        <div className='flex justify-center'>
-          <StatusCell registerForm={row.original} />
-        </div>
-      ),
+      cell: RegisterFormStatusCell,
+      filterFn: (row, id, value) => {
+        return value.includes(String(row.getValue(id)))
+      },
+      enableHiding: false,
+      enableSorting: false,
     },
     {
       id: 'actions',
-      header: () => <div className='text-center'>{t('table.action')}</div>,
-      cell: ({ row }) => (
-        <div className='flex justify-center'>
-          <RegisterFormRowActions row={row} />
-        </div>
-      ),
-      enableHiding: false,
+      cell: RegisterFormRowActions,
     },
   ]
 }

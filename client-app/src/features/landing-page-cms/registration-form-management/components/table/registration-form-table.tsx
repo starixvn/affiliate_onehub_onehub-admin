@@ -221,7 +221,7 @@ export function RegisterFormTable({
     [countryOptions, languageOptions, registerFormStatus, t]
   )
 
-  const handleSubmitFilters = () => {
+  const handleSubmitFilters = (searchValueToUse: string) => {
     const statusFilter = table.getColumn('statusId')?.getFilterValue() as
       | string[]
       | undefined
@@ -233,7 +233,7 @@ export function RegisterFormTable({
       | undefined
 
     updateSearchParams({
-      mediaName: searchValue || undefined,
+      mediaName: searchValueToUse || undefined,
       targetCountrycodes: countryFilter?.length
         ? countryFilter.join(',')
         : 'all',
@@ -256,7 +256,7 @@ export function RegisterFormTable({
         defaultSearchValue=''
         onSubmit={(submittedSearchValue) => {
           setSearchValue(submittedSearchValue)
-          handleSubmitFilters()
+          handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
           setSearchValue('')
@@ -292,7 +292,10 @@ export function RegisterFormTable({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

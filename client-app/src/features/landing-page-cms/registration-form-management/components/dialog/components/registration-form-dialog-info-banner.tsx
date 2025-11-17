@@ -10,13 +10,13 @@ export function RegisterFormDialogInfoBanner({
   const { t } = useTranslation('registration-form-management')
 
   return (
-    <div className='bg-muted rounded-lg p-4'>
-      <div className='text-muted-foreground space-y-1 text-sm'>
+    <div className='rounded-lg border bg-white p-4'>
+      <div className='space-y-1 text-sm text-black'>
         <p>{t('info.validTypes')}</p>
         <p>{t('info.fileSizeLimit')}</p>
         {!isEdit && <p>{t('info.maxFiles')}</p>}
       </div>
-      <div className='text-muted-foreground mt-3 text-sm italic'>
+      <div className='mt-3 text-sm text-black italic'>
         <span className='font-medium not-italic'>{t('info.noteLabel')}</span>{' '}
         {t('info.noteContent')}
       </div>

@@ -104,7 +104,7 @@ public class S3FileService : IFileService
         {
             if (file.Length == 0)
             {
-                message.AppendLine($"File {file.FileName} is empty.");
+                message.AppendLine($"File {file.FileName} is empty. <br />");
                 continue;
             }
 
@@ -113,7 +113,7 @@ public class S3FileService : IFileService
 
             if (!validationResult.IsSuccess)
             {
-                message.AppendLine($"File {file.FileName} is incorrect. {validationResult.ErrorMessage}");
+                message.AppendLine($"File {file.FileName} is incorrect. {validationResult.ErrorMessage} <br />");
             }
         }
 

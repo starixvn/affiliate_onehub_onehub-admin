@@ -47,7 +47,7 @@ export function AssetStatusChangeDialog({
         assetName: asset?.mediaName,
         status: statusLabel,
       })}
-      desc={`Change "${asset?.mediaName}" status to ${statusLabel}?`}
+      desc={''}
       confirmText={
         updateStatusMutation.isPending
           ? t('dialogs.changing')

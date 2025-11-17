@@ -66,14 +66,16 @@
     "confirmDeleteSingle": "Are you sure you want to delete \"{{formName}}\"?",
     "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
     "deleteDescription": "This action cannot be undone. The delete action will only be performed on forms that are not associated with any landing page.",
-    "confirmStatusChange": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of this form?",
-    "confirmStatusChangeBulk": "Only active form are avaialble for selection when creating a new landing page. Are you sure you want to change status of these forms?",
+    "confirmStatusChange": "Only active form is avaialble for selection when creating a new landing page. Are you sure you want to change status of this form?",
+    "confirmStatusChangeBulk": "Only active forms are avaialble for selection when creating a new landing page. Are you sure you want to change status of these forms?",
     "changing": "Changing...",
     "change": "Change",
     "changeAll": "Change All",
     "deleting": "Deleting...",
     "delete": "Delete",
-    "deleteAll": "Delete All"
+    "deleteAll": "Delete All",
+    "confirmOverwriteTitle": "Confirm Overwrite",
+    "confirmOverwriteMessage": "This file name \"{{fileName}}\" already exists. Do you want to overwrite the current file?"
   },
   "form": {
     "country": "Country",
@@ -125,6 +127,10 @@
     "create": "Add Form",
     "update": "Update Form",
     "saving": "Saving..."
+  },
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel"
   },
   "toasts": {
     "exporting": "Exporting forms to Excel...",

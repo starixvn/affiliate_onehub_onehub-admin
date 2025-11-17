@@ -92,7 +92,9 @@ export function useRegisterFormSubmitHandlers({
     if (
       isEdit &&
       formWithFiles.files.length > 0 &&
-      formWithFiles.files[0].file.name === registerForm?.mediaName
+      formWithFiles.files[0].file.name &&
+      formWithFiles.files[0].file.name ===
+        registerForm?.fileName.split('/').pop()
     ) {
       setShowConfirmOverwrite(true)
       return

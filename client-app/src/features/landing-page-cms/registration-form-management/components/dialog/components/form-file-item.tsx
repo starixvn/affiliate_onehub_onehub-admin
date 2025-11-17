@@ -54,15 +54,17 @@ export function FormFileItem({
               }
               maxLength={200}
             />
-            <Button
-              type='button'
-              variant='ghost'
-              size='sm'
-              className='h-10 w-10 flex-shrink-0 p-0 text-red-600 hover:text-red-700'
-              onClick={() => onRemoveFile(index)}
-            >
-              <X className='h-4 w-4' />
-            </Button>
+            {!isEdit && (
+              <Button
+                type='button'
+                variant='ghost'
+                size='sm'
+                className='h-10 w-10 flex-shrink-0 p-0 text-red-600 hover:text-red-700'
+                onClick={() => onRemoveFile(index)}
+              >
+                <X className='h-4 w-4' />
+              </Button>
+            )}
           </div>
           {touched.formNames[index] && errors.formNames?.[index] && (
             <p className='text-destructive text-xs'>

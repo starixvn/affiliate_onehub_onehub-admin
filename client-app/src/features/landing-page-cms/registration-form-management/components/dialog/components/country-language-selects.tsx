@@ -54,9 +54,7 @@ export function CountryLanguageSelects({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='country'>
-          {t('form.country')}
-        </Label>
+        <Label htmlFor='country'>{t('form.country')}</Label>
         <Select
           value={country}
           onValueChange={onCountryChange}
@@ -65,6 +63,7 @@ export function CountryLanguageSelects({
               onCountryBlur()
             }
           }}
+          disabled={isMediaIdInUse}
         >
           <SelectTrigger
             id='country'
@@ -89,9 +88,7 @@ export function CountryLanguageSelects({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='language'>
-          {t('form.language')}
-        </Label>
+        <Label htmlFor='language'>{t('form.language')}</Label>
         <Select
           value={language}
           onValueChange={onLanguageChange}

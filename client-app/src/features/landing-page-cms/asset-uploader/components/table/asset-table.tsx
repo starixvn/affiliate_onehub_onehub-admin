@@ -258,7 +258,7 @@ export function AssetTable({
     [moduleOptions, countryOptions, languageOptions, assetStatus, t]
   )
 
-  const handleSubmitFilters = () => {
+  const handleSubmitFilters = (searchValueToUse: string) => {
     const statusFilter = table.getColumn('statusId')?.getFilterValue() as
       | string[]
       | undefined
@@ -273,7 +273,7 @@ export function AssetTable({
       | undefined
 
     updateSearchParams({
-      mediaName: searchValue || undefined,
+      mediaName: searchValueToUse || undefined,
       moduleIds: moduleFilter?.length
         ? moduleFilter.join(',')
         : defaultModuleIds.join(','),
@@ -300,7 +300,7 @@ export function AssetTable({
         defaultSearchValue=''
         onSubmit={(submittedSearchValue) => {
           setSearchValue(submittedSearchValue)
-          handleSubmitFilters()
+          handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
           setSearchValue('')
@@ -337,7 +337,10 @@ export function AssetTable({
                   data-state={row.getIsSelected() && 'selected'}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      className={cell.column.columnDef.meta?.className}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

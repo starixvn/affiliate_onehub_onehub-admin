@@ -1,4 +1,3 @@
-
 import enCommon from '@/locales/en/common.json'
 import enCampaignManagement from '@/locales/en/campaign-management.json'
 import enComponentManagement from '@/locales/en/component-management.json'
@@ -13,7 +12,6 @@ import zhComponentManagement from '@/locales/zh/component-management.json'
 import zhLinkGenerator from '@/locales/zh/link-generator.json'
 import zhAssetUploader from '@/locales/zh/asset-uploader.json'
 import zhRegistrationFormManagement from '@/locales/zh/registration-form-management.json'
-
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
