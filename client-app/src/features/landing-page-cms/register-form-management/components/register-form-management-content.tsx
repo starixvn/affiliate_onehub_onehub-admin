@@ -1,9 +1,5 @@
-import { useState } from 'react'
-import { type Table as TanstackTable } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Main } from '@/components/layout/main'
-import type { RegisterFormDetail } from '../data/schema'
-import { RegisterFormFilters } from './register-form-filters'
 import { useRegisterFormManagement } from './register-form-management-provider'
 import { RegisterFormPrimaryButtons } from './register-form-primary-buttons'
 import { RegisterFormTable } from './table/register-form-table'
@@ -11,9 +7,6 @@ import { RegisterFormTable } from './table/register-form-table'
 export function RegisterFormManagementContent() {
   const { t } = useTranslation('register-form-management')
   const { isLoading, isError } = useRegisterFormManagement()
-  const [table, setTable] = useState<TanstackTable<RegisterFormDetail> | null>(
-    null
-  )
 
   if (isLoading) {
     return (
@@ -46,14 +39,12 @@ export function RegisterFormManagementContent() {
       </div>
 
       <div className='flex flex-1 flex-col gap-4'>
-        <RegisterFormFilters table={table} />
-
         {isError ? (
           <div className='flex h-24 items-center justify-center'>
             <div className='text-destructive'>{t('page.failedToLoad')}</div>
           </div>
         ) : (
-          <RegisterFormTable onTableReady={setTable} />
+          <RegisterFormTable />
         )}
       </div>
     </Main>

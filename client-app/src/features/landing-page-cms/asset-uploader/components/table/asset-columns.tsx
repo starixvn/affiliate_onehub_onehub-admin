@@ -13,6 +13,14 @@ import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetRowActions } from './asset-row-actions'
 
+declare module '@tanstack/react-table' {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface ColumnMeta<TData, TValue> {
+    className: string
+    displayName?: string
+  }
+}
+
 interface StatusCellProps {
   asset: AssetDetail
 }
@@ -96,6 +104,10 @@ export const useAssetColumns = (
     {
       accessorKey: 'mediaName',
       header: t('table.fileName'),
+      meta: {
+        className: '',
+        displayName: t('table.fileName'),
+      },
       cell: ({ row }) => (
         <div className='max-w-[200px] truncate font-medium'>
           {row.getValue('mediaName')}
@@ -103,27 +115,43 @@ export const useAssetColumns = (
       ),
     },
     {
-      accessorKey: 'moduleName',
+      accessorKey: 'moduleId',
       header: t('table.module'),
-      cell: ({ row }) => <div>{row.getValue('moduleName')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.module'),
+      },
+      cell: ({ row }) => <div>{row.original.moduleName}</div>,
     },
     {
-      accessorKey: 'targetCountryName',
+      accessorKey: 'targetCountryCode',
       header: () => <div className='text-center'>{t('table.country')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.country'),
+      },
       cell: ({ row }) => (
-        <div className='text-center'>{row.getValue('targetCountryName')}</div>
+        <div className='text-center'>{row.original.targetCountryName}</div>
       ),
     },
     {
-      accessorKey: 'marketName',
+      accessorKey: 'languageCode',
       header: () => <div className='text-center'>{t('table.language')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.language'),
+      },
       cell: ({ row }) => (
-        <div className='text-center'>{row.getValue('marketName')}</div>
+        <div className='text-center'>{row.original.marketName}</div>
       ),
     },
     {
       accessorKey: 'dimension',
       header: () => <div className='text-center'>{t('table.dimensions')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.dimensions'),
+      },
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('dimension')}</div>
       ),
@@ -133,6 +161,10 @@ export const useAssetColumns = (
       header: () => (
         <div className='text-center'>{t('table.previewAsset')}</div>
       ),
+      meta: {
+        className: '',
+        displayName: t('table.previewAsset'),
+      },
       cell: ({ row }) => {
         const mediaName = row.getValue('mediaName') as string
         const fileName = row.original.fileName
@@ -153,6 +185,10 @@ export const useAssetColumns = (
     {
       accessorKey: 'statusId',
       header: () => <div className='text-center'>{t('table.status')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.status'),
+      },
       cell: ({ row }) => (
         <div className='flex justify-center'>
           <StatusCell asset={row.original} />

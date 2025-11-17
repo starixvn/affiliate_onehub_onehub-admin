@@ -3,11 +3,11 @@ import { getRouteApi } from '@tanstack/react-router'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
 import { useAssetFilters, useGetAssetList } from '../api/queries'
+import { normalizeSearchParams } from '../data/constants'
 import type { AssetDetail } from '../data/schema'
 import {
   type AssetStatus,
   type Country,
-  type GetAssetListRequest,
   type Language,
   type Module,
 } from '../types'
@@ -48,6 +48,7 @@ type AssetUploaderContextType = {
 
   navigate: NavigateFn
   search: Record<string, unknown>
+  updateSearchParams: (params: Record<string, unknown>) => void
 }
 
 const AssetUploaderContext =
@@ -55,27 +56,25 @@ const AssetUploaderContext =
 
 type AssetUploaderProviderProps = {
   children: React.ReactNode
-  params?: {
-    mediaName?: string
-    moduleIds?: string
-    targetCountrycodes?: string
-    languageCodes?: string
-    status?: number
-    pageIndex?: number
-    pageSize?: number
-  }
 }
 
 export function AssetUploaderProvider({
   children,
-  params,
 }: AssetUploaderProviderProps) {
   const [open, setOpen] = useDialogState<AssetDialogType>(null)
   const [currentRow, setCurrentRow] = useState<AssetDetail | null>(null)
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
   const navigate = route.useNavigate()
-  const search = route.useSearch()
+  const urlSearch = route.useSearch()
+  const [localSearch, setLocalSearch] =
+    useState<Record<string, unknown>>(urlSearch)
+
+  const search = { ...urlSearch, ...localSearch }
+
+  const updateSearchParams = (params: Record<string, unknown>) => {
+    setLocalSearch((prev) => ({ ...prev, ...params }))
+  }
 
   const {
     modules = [],
@@ -89,14 +88,16 @@ export function AssetUploaderProvider({
     allowedExtensions = [],
   } = useAssetFilters() ?? {}
 
-
-  const paramsWithModules = {
-    ...params,
-    moduleIds: modules.map((module) => module.moduleId.toString()).join(','),
+  const normalizedParams = normalizeSearchParams(search)
+  const shouldUseAllModules =
+    localSearch.moduleIdsAuto === true || !normalizedParams.moduleIds
+  const params = {
+    ...normalizedParams,
+    moduleIds: shouldUseAllModules
+      ? modules.map((_) => _.moduleId.toString()).join(',')
+      : normalizedParams.moduleIds,
   }
-  const { data, isLoading, isError } = useGetAssetList(
-    paramsWithModules as GetAssetListRequest
-  )
+  const { data, isLoading, isError } = useGetAssetList(params)
 
   return (
     <AssetUploaderContext
@@ -127,6 +128,7 @@ export function AssetUploaderProvider({
 
         navigate,
         search,
+        updateSearchParams,
       }}
     >
       {children}

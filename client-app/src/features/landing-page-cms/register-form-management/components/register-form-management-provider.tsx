@@ -3,6 +3,7 @@ import { getRouteApi } from '@tanstack/react-router'
 import useDialogState from '@/hooks/use-dialog-state'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
 import { useRegisterFormFilters, useGetRegisterFormList } from '../api/queries'
+import { normalizeSearchParams } from '../data/constants'
 import type { RegisterFormDetail } from '../data/schema'
 import {
   type RegisterFormStatus,
@@ -48,6 +49,7 @@ type RegisterFormManagementContextType = {
 
   navigate: NavigateFn
   search: Record<string, unknown>
+  updateSearchParams: (params: Record<string, unknown>) => void
 }
 
 const RegisterFormManagementContext =
@@ -55,27 +57,25 @@ const RegisterFormManagementContext =
 
 type RegisterFormManagementProviderProps = {
   children: React.ReactNode
-  params?: {
-    mediaName?: string
-    moduleIds?: string
-    targetCountrycodes?: string
-    languageCodes?: string
-    status?: number
-    pageIndex?: number
-    pageSize?: number
-  }
 }
 
 export function RegisterFormManagementProvider({
   children,
-  params,
 }: RegisterFormManagementProviderProps) {
   const [open, setOpen] = useDialogState<RegisterFormDialogType>(null)
   const [currentRow, setCurrentRow] = useState<RegisterFormDetail | null>(null)
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
   const navigate = route.useNavigate()
-  const search = route.useSearch()
+  const urlSearch = route.useSearch()
+  const [localSearch, setLocalSearch] =
+    useState<Record<string, unknown>>(urlSearch)
+
+  const search = { ...urlSearch, ...localSearch }
+
+  const updateSearchParams = (params: Record<string, unknown>) => {
+    setLocalSearch((prev) => ({ ...prev, ...params }))
+  }
 
   const {
     modules = [],
@@ -89,8 +89,9 @@ export function RegisterFormManagementProvider({
     allowedExtensions = [],
   } = useRegisterFormFilters() ?? {}
 
+  const normalizedParams = normalizeSearchParams(search)
   const { data, isLoading, isError } = useGetRegisterFormList(
-    params as GetRegisterFormListRequest
+    normalizedParams as GetRegisterFormListRequest
   )
 
   return (
@@ -122,6 +123,7 @@ export function RegisterFormManagementProvider({
 
         navigate,
         search,
+        updateSearchParams,
       }}
     >
       {children}

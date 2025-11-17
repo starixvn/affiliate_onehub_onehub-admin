@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -21,7 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination } from '@/components/data-table'
+import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import type { RegisterFormDetail } from '../../data/schema'
 import { RegisterFormBulkDeleteDialog } from '../dialog/register-form-bulk-delete-dialog'
 import { RegisterFormBulkStatusChangeDialog } from '../dialog/register-form-bulk-status-change-dialog'
@@ -42,9 +42,12 @@ export function RegisterFormTable({
     totalCount,
     pageIndex,
     pageSize,
-    navigate,
     search,
+    countries,
+    languages,
+    registerFormStatus,
     bannerRootUrl,
+    updateSearchParams,
   } = useRegisterFormManagement()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -54,6 +57,9 @@ export function RegisterFormTable({
   const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
     useState(false)
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
+  const [searchValue, setSearchValue] = useState(
+    (search.mediaName as string) || ''
+  )
 
   const pagination = {
     pageIndex: pageIndex - 1,
@@ -66,12 +72,9 @@ export function RegisterFormTable({
         ? updater({ pageIndex: pageIndex - 1, pageSize })
         : updater
 
-    navigate({
-      search: {
-        ...search,
-        pageIndex: nextState.pageIndex + 1,
-        pageSize: nextState.pageSize,
-      },
+    updateSearchParams({
+      pageIndex: nextState.pageIndex + 1,
+      pageSize: nextState.pageSize,
     })
   }
 
@@ -83,6 +86,7 @@ export function RegisterFormTable({
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    manualFiltering: true,
     manualPagination: true,
     pageCount: Math.ceil(totalCount / (pageSize ?? 10)),
     enableRowSelection: true,
@@ -111,8 +115,157 @@ export function RegisterFormTable({
     }
   }, [columnVisibility, table, onTableReady])
 
+  useEffect(() => {
+    const statusColumn = table.getColumn('statusId')
+    if (!statusColumn) return
+
+    const currentFilterValue = statusColumn.getFilterValue() as
+      | string[]
+      | undefined
+    let newFilterValue: string[] = []
+
+    if (search.currentStatus) {
+      newFilterValue = (search.currentStatus as number[]).map(String)
+    } else {
+      newFilterValue = ['1']
+    }
+
+    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const newStr = newFilterValue.sort().join(',')
+    if (currentStr !== newStr) {
+      statusColumn.setFilterValue(newFilterValue)
+    }
+  }, [search.currentStatus, table])
+
+  useEffect(() => {
+    const countryColumn = table.getColumn('targetCountryCode')
+    if (!countryColumn) return
+
+    const currentFilterValue = countryColumn.getFilterValue() as
+      | string[]
+      | undefined
+    let newFilterValue: string[] = []
+
+    if (search.targetCountrycodes && search.targetCountrycodes !== 'all') {
+      newFilterValue = (search.targetCountrycodes as string).split(',')
+    } else {
+      newFilterValue = []
+    }
+
+    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const newStr = newFilterValue.sort().join(',')
+    if (currentStr !== newStr) {
+      countryColumn.setFilterValue(newFilterValue)
+    }
+  }, [search.targetCountrycodes, table])
+
+  useEffect(() => {
+    const languageColumn = table.getColumn('languageCode')
+    if (!languageColumn) return
+
+    const currentFilterValue = languageColumn.getFilterValue() as
+      | string[]
+      | undefined
+    let newFilterValue: string[] = []
+
+    if (search.languageCodes && search.languageCodes !== 'all') {
+      newFilterValue = (search.languageCodes as string).split(',')
+    } else {
+      newFilterValue = []
+    }
+
+    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const newStr = newFilterValue.sort().join(',')
+    if (currentStr !== newStr) {
+      languageColumn.setFilterValue(newFilterValue)
+    }
+  }, [search.languageCodes, table])
+
+  const countryOptions = countries.map((country) => ({
+    value: country.targetCountryCode,
+    label: country.targetCountryName,
+  }))
+  const languageOptions = [
+    ...new Map(
+      languages.map((language) => [language.languageCode, language])
+    ).values(),
+  ].map((language) => ({
+    value: language.languageCode,
+    label: language.languageName,
+  }))
+
+  const filters = useMemo(
+    () => [
+      {
+        columnId: 'targetCountryCode',
+        title: t('filters.country'),
+        options: countryOptions,
+        defaultValue: [],
+      },
+      {
+        columnId: 'languageCode',
+        title: t('filters.language'),
+        options: languageOptions,
+        defaultValue: [],
+      },
+      {
+        columnId: 'statusId',
+        title: t('filters.status'),
+        options: registerFormStatus.map(({ statusId, status }) => ({
+          label: status,
+          value: statusId.toString(),
+        })),
+        defaultValue: ['1'],
+      },
+    ],
+    [countryOptions, languageOptions, registerFormStatus, t]
+  )
+
+  const handleSubmitFilters = () => {
+    const statusFilter = table.getColumn('statusId')?.getFilterValue() as
+      | string[]
+      | undefined
+    const countryFilter = table
+      .getColumn('targetCountryCode')
+      ?.getFilterValue() as string[] | undefined
+    const languageFilter = table.getColumn('languageCode')?.getFilterValue() as
+      | string[]
+      | undefined
+
+    updateSearchParams({
+      mediaName: searchValue || undefined,
+      targetCountrycodes: countryFilter?.length
+        ? countryFilter.join(',')
+        : 'all',
+      languageCodes: languageFilter?.length ? languageFilter.join(',') : 'all',
+      currentStatus: statusFilter?.map(Number) || [],
+      status: statusFilter?.length === 1 ? Number(statusFilter[0]) : -1,
+      pageIndex: 1,
+    })
+  }
+
   return (
     <div className='space-y-4'>
+      <DataTableToolbar
+        table={table}
+        searchPlaceholder={t('filters.searchPlaceholder')}
+        searchClassName='w-[250px] lg:w-[350px]'
+        filters={filters}
+        submitLabel={t('filters.search')}
+        initialSearchValue={searchValue}
+        defaultSearchValue=''
+        onSubmit={(submittedSearchValue) => {
+          setSearchValue(submittedSearchValue)
+          handleSubmitFilters()
+        }}
+        onReset={() => {
+          setSearchValue('')
+          table.getColumn('statusId')?.setFilterValue(['1'])
+          table.getColumn('targetCountryCode')?.setFilterValue([])
+          table.getColumn('languageCode')?.setFilterValue([])
+        }}
+      />
+
       <div className='bg-card rounded-lg border'>
         <Table>
           <TableHeader>

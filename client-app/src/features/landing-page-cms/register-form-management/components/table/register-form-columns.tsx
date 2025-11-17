@@ -13,6 +13,13 @@ import type { RegisterFormDetail } from '../../data/schema'
 import { useRegisterFormManagement } from '../register-form-management-provider'
 import { RegisterFormRowActions } from './register-form-row-actions'
 
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData, TValue> {
+    className: string
+    displayName?: string
+  }
+}
+
 interface StatusCellProps {
   registerForm: RegisterFormDetail
 }
@@ -97,6 +104,10 @@ export const useRegisterFormColumns = (
     {
       accessorKey: 'mediaName',
       header: t('table.formName'),
+      meta: {
+        className: '',
+        displayName: t('table.formName'),
+      },
       cell: ({ row }) => (
         <div className='max-w-[200px] truncate font-medium'>
           {row.getValue('mediaName')}
@@ -106,27 +117,43 @@ export const useRegisterFormColumns = (
     {
       accessorKey: 'fileName',
       header: t('table.fileName'),
+      meta: {
+        className: '',
+        displayName: t('table.fileName'),
+      },
       cell: ({ row }) => (
         <div>{(row.getValue('fileName') as string).split('/').pop()}</div>
       ),
     },
     {
-      accessorKey: 'targetCountryName',
+      accessorKey: 'targetCountryCode',
       header: () => <div className='text-center'>{t('table.country')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.country'),
+      },
       cell: ({ row }) => (
-        <div className='text-center'>{row.getValue('targetCountryName')}</div>
+        <div className='text-center'>{row.original.targetCountryName}</div>
       ),
     },
     {
-      accessorKey: 'marketName',
+      accessorKey: 'languageCode',
       header: () => <div className='text-center'>{t('table.language')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.language'),
+      },
       cell: ({ row }) => (
-        <div className='text-center'>{row.getValue('marketName')}</div>
+        <div className='text-center'>{row.original.marketName}</div>
       ),
     },
     {
       accessorKey: 'dimension',
       header: () => <div className='text-center'>{t('table.dimensions')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.dimensions'),
+      },
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('dimension')}</div>
       ),
@@ -134,6 +161,10 @@ export const useRegisterFormColumns = (
     {
       id: 'preview',
       header: () => <div className='text-center'>{t('table.previewForm')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.previewForm'),
+      },
       cell: ({ row }) => {
         const mediaName = row.getValue('mediaName') as string
         const fileName = row.original.fileName
@@ -154,6 +185,10 @@ export const useRegisterFormColumns = (
     {
       accessorKey: 'statusId',
       header: () => <div className='text-center'>{t('table.status')}</div>,
+      meta: {
+        className: '',
+        displayName: t('table.status'),
+      },
       cell: ({ row }) => (
         <div className='flex justify-center'>
           <StatusCell registerForm={row.original} />

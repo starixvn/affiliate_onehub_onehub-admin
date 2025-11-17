@@ -1,9 +1,5 @@
-import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type Table } from '@tanstack/react-table'
 import { Main } from '@/components/layout/main'
-import type { AssetDetail } from '../data/schema'
-import { AssetFilters } from './asset-filters'
 import { AssetPrimaryButtons } from './asset-primary-buttons'
 import { useAssetUploader } from './asset-uploader-provider'
 import { AssetTable } from './table/asset-table'
@@ -11,7 +7,6 @@ import { AssetTable } from './table/asset-table'
 export function AssetUploaderContent() {
   const { t } = useTranslation('asset-uploader')
   const { assets, bannerRootUrl, totalCount, isLoading, isError } = useAssetUploader()
-  const [table, setTable] = useState<Table<AssetDetail> | null>(null)
 
   if (isLoading) {
     return (
@@ -46,8 +41,6 @@ export function AssetUploaderContent() {
       </div>
 
       <div className='flex flex-1 flex-col gap-4'>
-        <AssetFilters table={table} />
-
         {isError ? (
           <div className='flex h-24 items-center justify-center'>
             <div className='text-destructive'>{t('page.failedToLoad')}</div>
@@ -55,7 +48,6 @@ export function AssetUploaderContent() {
         ) : (
           <AssetTable
             data={assets}
-            onTableReady={setTable}
             bannerRootUrl={bannerRootUrl}
             totalCount={totalCount}
           />
