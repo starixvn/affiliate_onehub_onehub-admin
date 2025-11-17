@@ -66,14 +66,15 @@ export function RegisterFormManagementProvider({
   const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
 
   const navigate = route.useNavigate()
-  const urlSearch = route.useSearch()
-  const [localSearch, setLocalSearch] =
-    useState<Record<string, unknown>>(urlSearch)
-
-  const search = { ...urlSearch, ...localSearch }
+  const search = route.useSearch()
 
   const updateSearchParams = (params: Record<string, unknown>) => {
-    setLocalSearch((prev) => ({ ...prev, ...params }))
+    navigate({
+      search: {
+        ...search,
+        ...params,
+      },
+    })
   }
 
   const {

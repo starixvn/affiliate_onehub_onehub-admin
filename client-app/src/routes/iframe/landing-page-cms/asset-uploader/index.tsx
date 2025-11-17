@@ -5,6 +5,7 @@ import { AssetUploader } from '@/features/landing-page-cms/asset-uploader'
 const searchSchema = z.object({
   mediaName: z.string().optional(),
   moduleIds: z.string().optional(),
+  moduleIdsAuto: z.boolean().optional(),
   targetCountrycodes: z.string().optional(),
   languageCodes: z.string().optional(),
   status: z.number().optional(),

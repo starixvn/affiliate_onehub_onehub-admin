@@ -54,6 +54,8 @@ export function AssetTable({
     updateSearchParams,
     setOpen,
     setCurrentRow,
+    targetStatusId,
+    setTargetStatusId,
   } = useAssetUploader()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -62,10 +64,6 @@ export function AssetTable({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
     useState(false)
-  const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
-  const [searchValue, setSearchValue] = useState(
-    (search.mediaName as string) || ''
-  )
 
   const pagination = {
     pageIndex: pageIndex - 1,
@@ -323,14 +321,12 @@ export function AssetTable({
         searchClassName='w-[250px] lg:w-[350px]'
         filters={filters}
         submitLabel={t('filters.search')}
-        initialSearchValue={searchValue}
+        initialSearchValue={(search.mediaName as string) ?? ''}
         defaultSearchValue=''
         onSubmit={(submittedSearchValue) => {
-          setSearchValue(submittedSearchValue)
           handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
-          setSearchValue('')
           table.getColumn('statusId')?.setFilterValue(['1'])
           table.getColumn('moduleId')?.setFilterValue([])
           table.getColumn('targetCountryCode')?.setFilterValue([])

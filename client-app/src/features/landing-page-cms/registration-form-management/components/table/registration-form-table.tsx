@@ -53,6 +53,8 @@ export function RegisterFormTable({
     updateSearchParams,
     setOpen,
     setCurrentRow,
+    targetStatusId,
+    setTargetStatusId,
   } = useRegisterFormManagement()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -61,10 +63,6 @@ export function RegisterFormTable({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
     useState(false)
-  const [targetStatusId, setTargetStatusId] = useState<number | null>(null)
-  const [searchValue, setSearchValue] = useState(
-    (search.mediaName as string) || ''
-  )
 
   const pagination = {
     pageIndex: pageIndex - 1,
@@ -279,14 +277,12 @@ export function RegisterFormTable({
         searchClassName='w-[250px] lg:w-[350px]'
         filters={filters}
         submitLabel={t('filters.search')}
-        initialSearchValue={searchValue}
+        initialSearchValue={(search.mediaName as string) ?? ''}
         defaultSearchValue=''
         onSubmit={(submittedSearchValue) => {
-          setSearchValue(submittedSearchValue)
           handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
-          setSearchValue('')
           table.getColumn('statusId')?.setFilterValue(['1'])
           table.getColumn('targetCountryCode')?.setFilterValue([])
           table.getColumn('languageCode')?.setFilterValue([])
