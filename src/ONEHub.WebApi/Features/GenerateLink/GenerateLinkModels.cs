@@ -26,7 +26,7 @@ public record InsertLinkRequest(
     [Required] string DomainName,
     [Required][MaxLength(200)] string DomainNote,
     [Required] string ShortDomain,
-    [RegularExpression(@"^(|[a-z0-9]{5,20})$", ErrorMessage = "Short path must be empty or contain 5-20 lowercase letters and numbers")]
+    [RegularExpression(@"^(|[a-z0-9\-.]{5,20})$", ErrorMessage = "Short path must be empty or contain 5-20 lowercase letters, numbers, hyphens, and dots")]
     string ShortPath,
     string? Note
 );
