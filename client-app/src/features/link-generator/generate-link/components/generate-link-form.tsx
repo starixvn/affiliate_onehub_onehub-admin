@@ -17,8 +17,9 @@ function getAvailableDomainsText(count: number): string {
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
-  const { form, campaigns, countries, events, groups, channels, agencies, types, landingPages, setDialogOpen } = useGenerateLink()
+  const { form, campaigns, countries, events, groups, channels, agencies, types, landingPages, setDialogOpen, generatedResult } = useGenerateLink()
   const { register, control, formState: { errors } } = form
+  const isDisabled = !!generatedResult
 
   const selectedCountryCode = useWatch({ control, name: 'country' })
   const selectedEventIds = useWatch({ control, name: 'event' })
@@ -150,6 +151,7 @@ export function GenerateLinkForm() {
               placeholder={t('form.linkNamePlaceholder')}
               {...register('linkName')}
               maxLength={200}
+              disabled={isDisabled}
             />
             <FormFieldError message={errors.linkName?.message} />
           </div>
@@ -161,6 +163,7 @@ export function GenerateLinkForm() {
               placeholder={t('form.identifierCodePlaceholder')}
               {...register('identifierCode')}
               maxLength={20}
+              disabled={isDisabled}
             />
             <FormFieldError message={errors.identifierCode?.message} />
           </div>
@@ -186,6 +189,7 @@ export function GenerateLinkForm() {
                   valueKey='pageCode'
                   placeholder={t('form.landingPagePlaceholder')}
                   searchPlaceholder='Search landing page...'
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -214,6 +218,7 @@ export function GenerateLinkForm() {
                     const campaign = option as CampaignInfo
                     return `${campaign.campaignCode} | ${campaign.campaignName}`
                   }}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -238,6 +243,7 @@ export function GenerateLinkForm() {
                   valueKey='targetCountryCode'
                   placeholder={t('form.countryPlaceholder')}
                   searchPlaceholder='Search country...'
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -267,6 +273,7 @@ export function GenerateLinkForm() {
                   valueKey='shortedLanguageCode'
                   placeholder={t('form.languagePlaceholder')}
                   searchPlaceholder='Search language...'
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -295,6 +302,7 @@ export function GenerateLinkForm() {
                         const domain = option as DomainInfo
                         return `${domain.domainName} --- (Score: ${domain.score})`
                       }}
+                      disabled={isDisabled}
                     />
                   )}
                 />
@@ -306,6 +314,7 @@ export function GenerateLinkForm() {
                   {...register('domainReservedNote')}
                   required
                   maxLength={200}
+                  disabled={isDisabled}
                 />
               </div>
             </div>
@@ -334,6 +343,7 @@ export function GenerateLinkForm() {
                         const domain = option as DomainInfo
                         return `${domain.domainName} --- (Score: ${domain.score})`
                       }}
+                      disabled={isDisabled}
                     />
                   )}
                 />
@@ -354,6 +364,7 @@ export function GenerateLinkForm() {
                     placeholder={t('form.shortLinkValuePlaceholder')}
                     {...register('shortPath')}
                     className='flex-1 min-w-0 pl-9'
+                    disabled={isDisabled}
                     maxLength={20}
                   />
                 </div>
@@ -380,6 +391,7 @@ export function GenerateLinkForm() {
                   searchPlaceholder='Search event...'
                   selectedDisplayPattern='{0} events selected'
                   onCreateNew={() => handleCreateNew('event')}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -404,6 +416,7 @@ export function GenerateLinkForm() {
                   placeholder={t('form.groupPlaceholder')}
                   searchPlaceholder='Search group...'
                   onCreateNew={() => handleCreateNew('group')}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -428,6 +441,7 @@ export function GenerateLinkForm() {
                   placeholder={t('form.channelPlaceholder')}
                   searchPlaceholder='Search channel...'
                   onCreateNew={() => handleCreateNew('channel')}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -452,6 +466,7 @@ export function GenerateLinkForm() {
                   placeholder={t('form.agencyPlaceholder')}
                   searchPlaceholder='Search agency...'
                   onCreateNew={() => handleCreateNew('agency')}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -476,6 +491,7 @@ export function GenerateLinkForm() {
                   placeholder={t('form.typePlaceholder')}
                   searchPlaceholder='Search type...'
                   onCreateNew={() => handleCreateNew('type')}
+                  disabled={isDisabled}
                 />
               )}
             />
@@ -489,6 +505,7 @@ export function GenerateLinkForm() {
               placeholder={t('form.notePlaceholder')}
               {...register('note')}
               maxLength={500}
+              disabled={isDisabled}
             />
             <FormFieldError message={errors.note?.message} />
           </div>
