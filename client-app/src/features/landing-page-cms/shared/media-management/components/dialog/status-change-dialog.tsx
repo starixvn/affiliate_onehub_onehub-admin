@@ -1,6 +1,7 @@
 import { UseMutationResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { status } from '../../data/data'
 import type { MediaDetail } from '../../schema'
 
 type AssetStatusChangeDialogProps = {
@@ -39,6 +40,8 @@ export function StatusChangeDialog({
   }
 
   const entity = t('dialogs.status')
+  const targetStatus =
+    status.find((s) => s.value === String(newStatusId))?.label || 'Unknown'
 
   return (
     <ConfirmDialog
@@ -46,9 +49,10 @@ export function StatusChangeDialog({
       onOpenChange={onOpenChange}
       handleConfirm={handleConfirm}
       disabled={updateStatusMutation.isPending}
-      title={t('dialogs.confirmStatusChangeBulkDynamic', {
+      title={t('dialogs.confirmStatusChangeWithTarget', {
         count: 1,
         entity,
+        targetStatus,
       })}
       desc={t('dialogs.confirmStatusChangeDesc')}
       confirmText={

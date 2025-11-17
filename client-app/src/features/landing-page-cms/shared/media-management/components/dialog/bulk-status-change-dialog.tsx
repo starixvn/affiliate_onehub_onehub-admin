@@ -2,6 +2,7 @@ import { UseMutationResult } from '@tanstack/react-query'
 import { type Table } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
+import { status } from '../../data/data'
 import type { MediaDetail, UpdateMediaStatusResponse } from '../../schema'
 
 type MediaBulkStatusChangeDialogProps = {
@@ -58,6 +59,7 @@ export function MediaBulkStatusChangeDialog({
 
   const entity =
     affectedCount > 1 ? t('dialogs.statuses') : t('dialogs.status')
+  const targetStatus = status.find(s => s.value === String(newStatusId))?.label || 'Unknown'
 
   return (
     <ConfirmDialog
@@ -65,9 +67,10 @@ export function MediaBulkStatusChangeDialog({
       onOpenChange={onOpenChange}
       handleConfirm={handleStatusChange}
       disabled={updateStatusMutation.isPending || affectedCount === 0}
-      title={t('dialogs.confirmStatusChangeBulkDynamic', {
+      title={t('dialogs.confirmStatusChangeBulkWithTarget', {
         count: affectedCount,
         entity,
+        targetStatus,
       })}
       desc={t('dialogs.confirmStatusChangeBulkDesc')}
       confirmText={

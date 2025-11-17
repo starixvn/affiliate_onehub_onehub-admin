@@ -17,19 +17,16 @@
     "status": "Status",
     "statusPlaceholder": "Search status...",
     "search": "Search",
-    "reset": "Reset",
     "toggleColumns": "Toggle Columns",
     "view": "View"
   },
   "buttons": {
-    "export": "Export",
     "edit": "Edit",
     "delete": "Delete",
     "processing": "Processing...",
     "save": "Save",
     "add": "Add",
     "cancel": "Cancel",
-    "confirm": "Confirm",
     "create": "Create"
   },
   "table": {
@@ -81,6 +78,8 @@
     "delete": "Delete",
     "deleteAll": "Delete All",
     "confirmStatusChangeBulkDynamic": "Change {{count}} {{entity}}",
+    "confirmStatusChangeWithTarget": "Change {{entity}} to {{targetStatus}}",
+    "confirmStatusChangeBulkWithTarget": "Change {{count}} {{entity}} to {{targetStatus}}",
     "statuses": "statuses",
     "status": "status",
     "images": "images",

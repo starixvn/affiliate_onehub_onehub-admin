@@ -28,30 +28,36 @@ export const useRegisterFormColumns = (
     {
       id: 'select',
       header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label={t('table.selectAll')}
-        />
+        <div className='flex justify-center'>
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && 'indeterminate')
+            }
+            onCheckedChange={(value) =>
+              table.toggleAllPageRowsSelected(!!value)
+            }
+            aria-label={t('table.selectAll')}
+          />
+        </div>
       ),
       cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label={t('table.selectRow')}
-        />
+        <div className='flex justify-center'>
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => row.toggleSelected(!!value)}
+            aria-label={t('table.selectRow')}
+          />
+        </div>
       ),
       enableSorting: false,
       enableHiding: false,
     },
     {
       accessorKey: 'mediaId',
-      header: '#',
+      header: () => <div className='text-center'>#</div>,
       cell: ({ row }) => (
-        <div className='w-10'>
+        <div className='text-center'>
           {row.index +
             (pagination?.pageIndex ?? 0) * (pagination?.pageSize ?? 10) +
             1}
@@ -119,7 +125,7 @@ export const useRegisterFormColumns = (
       ),
     },
     {
-      id: 'preview',
+      accessorKey: 'preview',
       header: () => <div className='text-center'>{t('table.previewForm')}</div>,
       meta: {
         className: '',
@@ -158,18 +164,19 @@ export const useRegisterFormColumns = (
       filterFn: (row, id, value) => {
         return value.includes(String(row.getValue(id)))
       },
-      enableHiding: false,
       enableSorting: false,
     },
     {
       id: 'actions',
       cell: ({ row }) => (
-        <MediaRowActions
-          row={row}
-          translationKey={TRANSLATION_KEY}
-          onEdit={onEdit || (() => {})}
-          onDelete={onDelete || (() => {})}
-        />
+        <div className='flex justify-center'>
+          <MediaRowActions
+            row={row}
+            translationKey={TRANSLATION_KEY}
+            onEdit={onEdit || (() => {})}
+            onDelete={onDelete || (() => {})}
+          />
+        </div>
       ),
     },
   ]

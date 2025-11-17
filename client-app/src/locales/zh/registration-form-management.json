@@ -17,19 +17,16 @@
     "status": "状态",
     "statusPlaceholder": "搜索状态...",
     "search": "搜索",
-    "reset": "重置",
     "toggleColumns": "切换列",
     "view": "查看"
   },
   "buttons": {
-    "export": "导出",
     "edit": "编辑",
     "delete": "删除",
     "processing": "处理中...",
     "save": "保存",
     "add": "添加",
     "cancel": "取消",
-    "confirm": "确认",
     "create": "创建"
   },
   "table": {
@@ -79,6 +76,8 @@
     "delete": "删除",
     "deleteAll": "全部删除",
     "confirmStatusChangeBulkDynamic": "更改 {{count}} 个{{entity}}",
+    "confirmStatusChangeWithTarget": "将{{entity}}更改为{{targetStatus}}",
+    "confirmStatusChangeBulkWithTarget": "将 {{count}} 个{{entity}}更改为{{targetStatus}}",
     "statuses": "状态",
     "status": "状态",
     "forms": "表单",
