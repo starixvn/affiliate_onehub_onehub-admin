@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -10,6 +10,13 @@ type GenerateLinkResultProps = {
 
 export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
     const [copied, setCopied] = useState(false)
+    const resultRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (resultRef.current) {
+            resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+    }, [])
 
     const handleCopyShortLink = async () => {
         try {
@@ -22,7 +29,7 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
     }
 
     return (
-        <div className='rounded-lg border bg-card p-4 sm:p-6 space-y-4'>
+        <div ref={resultRef} className='rounded-lg border bg-card p-4 sm:p-6 space-y-4'>
             <h3 className='text-lg font-semibold'>Link Generated</h3>
 
             <div className='space-y-4'>

@@ -354,6 +354,7 @@ export function GenerateLinkForm() {
                     placeholder={t('form.shortLinkValuePlaceholder')}
                     {...register('shortPath')}
                     className='flex-1 min-w-0 pl-9'
+                    maxLength={20}
                   />
                 </div>
               </div>
@@ -487,6 +488,7 @@ export function GenerateLinkForm() {
               id='note'
               placeholder={t('form.notePlaceholder')}
               {...register('note')}
+              maxLength={500}
             />
             <FormFieldError message={errors.note?.message} />
           </div>
