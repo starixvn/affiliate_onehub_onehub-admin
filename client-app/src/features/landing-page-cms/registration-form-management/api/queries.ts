@@ -16,6 +16,7 @@ export const useGetMediaList = (params?: GetMediaListRequest) => {
     queryFn: () =>
       registrationFormManagementApi.getMediaList(params as GetMediaListRequest),
     select: (data) => data.data,
+    enabled: !!params,
   })
 }
 

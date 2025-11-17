@@ -71,6 +71,7 @@ export function AssetUploaderProvider({
     setLocalSearch((prev) => ({ ...prev, ...params }))
   }
 
+  const mediaFilters = useMediaFilters()
   const {
     modules = [],
     countries = [],
@@ -81,7 +82,7 @@ export function AssetUploaderProvider({
     maximumFiles = 50,
     maxFileSize = 3,
     allowedExtensions = [],
-  } = useMediaFilters() ?? {}
+  } = mediaFilters ?? {}
 
   const normalizedParams = createNormalizeSearchParams({})(search)
   const shouldUseAllModules =
@@ -93,7 +94,9 @@ export function AssetUploaderProvider({
       : normalizedParams.moduleIds,
   }
   const { data, isLoading, isError } = useGetMediaList(
-    params as GetMediaListRequest
+    mediaFilters?.isLoading === false
+      ? (params as GetMediaListRequest)
+      : undefined
   )
 
   return (

@@ -19,8 +19,9 @@ export const assetUploaderKeys = {
 export const useGetMediaList = (params?: GetMediaListRequest) => {
   return useQuery({
     queryKey: assetUploaderKeys.list(params),
-    queryFn: () => assetUploaderApi.getMediaList(params as GetMediaListRequest),
+    queryFn: () => assetUploaderApi.getMediaList(params!),
     select: (data) => data.data,
+    enabled: !!params,
   })
 }
 
