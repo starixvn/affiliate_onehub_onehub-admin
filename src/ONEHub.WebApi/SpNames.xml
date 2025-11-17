@@ -62,5 +62,10 @@
         <Setting Key="OH_Media_Sel" SpName="OH_Media_Sel" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Module_Sel" SpName="OH_Module_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Functions>
+	<Functions Name="Link Management">
+		<Setting Key="OH_LinkManagement_Dashboard_Sel" SpName="OH_LinkManagement_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+		<Setting Key="OH_LinkManagement_ManageSel" SpName="OH_LinkManagement_ManageSel" DbName="DBOH.ONEHub.wsv_oh" />
+		<Setting Key="OH_LinkGenerator_Upd" SpName="OH_LinkGenerator_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+    </Functions>
 </Functions>
 
