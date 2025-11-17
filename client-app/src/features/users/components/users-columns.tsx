@@ -23,7 +23,7 @@ export const usersColumns: ColumnDef<User>[] = [
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+      className: cn('sticky md:table-cell start-0 z-20 rounded-tl-[inherit] w-11 min-w-11 border-e text-center'),
     },
     cell: ({ row }) => (
       <Checkbox
@@ -47,7 +47,7 @@ export const usersColumns: ColumnDef<User>[] = [
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        'sticky start-11 z-10 border-e @4xl/content:table-cell @4xl/content:drop-shadow-none @4xl/content:border-e-0'
       ),
     },
     enableHiding: false,

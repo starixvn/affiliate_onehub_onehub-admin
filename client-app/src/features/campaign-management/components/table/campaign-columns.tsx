@@ -25,7 +25,7 @@ export const getCampaignColumns = (
     ),
     meta: {
       className: cn(
-        'sticky md:table-cell start-0 z-10 rounded-tl-[inherit] w-11 text-center'
+        'sticky md:table-cell start-0 z-20 rounded-tl-[inherit] w-11 min-w-11 border-e text-center'
       ),
     },
     cell: ({ row }) => (
@@ -45,7 +45,7 @@ export const getCampaignColumns = (
     ),
     cell: ({ row }) => <div>{row.getValue('rowIdx')}</div>,
     meta: {
-      className: cn('sticky start-6 z-10 w-12'),
+      className: cn('sticky start-11 z-10 w-12 min-w-12 border-e'),
       displayName: t('table.columns.no'),
     },
     enableSorting: false,
@@ -68,7 +68,7 @@ export const getCampaignColumns = (
     meta: {
       className: cn(
         'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-8 @4xl/content:table-cell @4xl/content:drop-shadow-none'
+        'sticky start-[92px] z-10 border-e @4xl/content:table-cell @4xl/content:drop-shadow-none @4xl/content:border-e-0'
       ),
       displayName: t('table.columns.code'),
     },
