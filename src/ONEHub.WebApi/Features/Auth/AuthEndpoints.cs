@@ -88,13 +88,24 @@ public static class AuthEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static Task<Ok<Result>> Logout(
-        IHttpContextAccessor contextAccessor)
+    private static async Task<Ok<Result>> Logout(
+        IHttpContextAccessor contextAccessor,
+        ICurrentUserService currentUserService,
+        ICacheProvider cacheProvider)
     {
+        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
+        var userId = currentUserService.GetUserId();
+
+        if (userId > 0 && !string.IsNullOrEmpty(refreshToken))
+        {
+            var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{userId}:{refreshToken}";
+            await cacheProvider.RemoveFromCacheAsync(cacheKey);
+        }
+
         HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN);
         HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
 
-        return Task.FromResult(TypedResults.Ok(Result.Success()));
+        return TypedResults.Ok(Result.Success());
     }
 
     private static async Task<Results<Ok<Result<SsoResponse>>, UnauthorizedHttpResult>> Sso(

@@ -46,7 +46,7 @@ public class SsoHandler(
         var accessToken = jwtTokenService.GenerateAccessToken(user);
         var refreshToken = jwtTokenService.GenerateRefreshToken();
 
-        var cacheKey = $"{CacheKeys.REFRESH_TOKEN}{user.UserId}";
+        var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{user.UserId}:{refreshToken}";
         var expirationTimeSpan = TimeSpan.FromDays(jwtSetting.Value.RefreshTokenExpirationDays);
         await cacheProvider.SetValueToCacheAsync(cacheKey, refreshToken, expirationTimeSpan);
 
