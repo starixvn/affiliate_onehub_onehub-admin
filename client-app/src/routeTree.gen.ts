@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SsoRouteImport } from './routes/sso'
 import { Route as IframeRouteRouteImport } from './routes/iframe/route'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
@@ -41,6 +42,11 @@ import { Route as AuthenticatedLandingPageCmsPageManagementIndexRouteImport } fr
 import { Route as AuthenticatedLandingPageCmsPageBuilderIndexRouteImport } from './routes/_authenticated/landing-page-cms/page-builder/index'
 import { Route as AuthenticatedLandingPageCmsAssetUploaderIndexRouteImport } from './routes/_authenticated/landing-page-cms/asset-uploader/index'
 
+const SsoRoute = SsoRouteImport.update({
+  id: '/sso',
+  path: '/sso',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IframeRouteRoute = IframeRouteRouteImport.update({
   id: '/iframe',
   path: '/iframe',
@@ -219,6 +225,7 @@ const AuthenticatedLandingPageCmsAssetUploaderIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/iframe': typeof IframeRouteRouteWithChildren
+  '/sso': typeof SsoRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/401': typeof errors401Route
@@ -251,6 +258,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/iframe': typeof IframeRouteRouteWithChildren
+  '/sso': typeof SsoRoute
   '/forgot-password': typeof authForgotPasswordRoute
   '/sign-in': typeof authSignInRoute
   '/401': typeof errors401Route
@@ -285,6 +293,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/iframe': typeof IframeRouteRouteWithChildren
+  '/sso': typeof SsoRoute
   '/(auth)/forgot-password': typeof authForgotPasswordRoute
   '/(auth)/sign-in': typeof authSignInRoute
   '/(errors)/401': typeof errors401Route
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/iframe'
+    | '/sso'
     | '/forgot-password'
     | '/sign-in'
     | '/401'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/iframe'
+    | '/sso'
     | '/forgot-password'
     | '/sign-in'
     | '/401'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/iframe'
+    | '/sso'
     | '/(auth)/forgot-password'
     | '/(auth)/sign-in'
     | '/(errors)/401'
@@ -418,6 +430,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   IframeRouteRoute: typeof IframeRouteRouteWithChildren
+  SsoRoute: typeof SsoRoute
   authForgotPasswordRoute: typeof authForgotPasswordRoute
   authSignInRoute: typeof authSignInRoute
   errors401Route: typeof errors401Route
@@ -429,6 +442,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sso': {
+      id: '/sso'
+      path: '/sso'
+      fullPath: '/sso'
+      preLoaderRoute: typeof SsoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/iframe': {
       id: '/iframe'
       path: '/iframe'
@@ -730,6 +750,7 @@ const IframeRouteRouteWithChildren = IframeRouteRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   IframeRouteRoute: IframeRouteRouteWithChildren,
+  SsoRoute: SsoRoute,
   authForgotPasswordRoute: authForgotPasswordRoute,
   authSignInRoute: authSignInRoute,
   errors401Route: errors401Route,

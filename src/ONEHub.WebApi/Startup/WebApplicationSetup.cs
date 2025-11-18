@@ -145,6 +145,37 @@ public static class WebApplicationSetup
         return app;
     }
 
+    public static WebApplication UseFrameSecurity(this WebApplication app, IConfiguration configuration)
+    {
+        var appSetting = configuration.GetSection(AppSetting.SettingName).Get<AppSetting>();
+        ArgumentNullException.ThrowIfNull(appSetting);
+
+        app.Use(async (context, next) =>
+        {
+            var allowedDomains = appSetting.AllowedDomains;
+
+            if (allowedDomains is not null && allowedDomains.Length > 0)
+            {
+                var formattedDomains = allowedDomains.Select(domain =>
+                {
+                    if (!domain.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                        && !domain.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return $"https://{domain}";
+                    }
+                    return domain;
+                });
+
+                var frameAncestors = string.Join(" ", formattedDomains);
+                context.Response.Headers.Append("Content-Security-Policy", $"frame-ancestors {frameAncestors}");
+            }
+
+            await next();
+        });
+
+        return app;
+    }
+
     public static WebApplication UseHttpRequestLogging(this WebApplication app)
     {
         app.UseSerilogRequestLogging(options =>

@@ -20,17 +20,7 @@ public static class DependencyInjection
             .AddApplication()
             .AddInfrastructure(configuration);
 
-        services.AddCors(options =>
-        {
-            // allow all origins, headers, and methods - adjust as needed for production
-            options.AddDefaultPolicy(policy =>
-            {
-                policy
-                    .AllowAnyOrigin()
-                    .AllowAnyHeader()
-                    .AllowAnyMethod();
-            });
-        });
+        services.AddCors(configuration);
 
         services.Configure<ForwardedHeadersOptions>(options =>
         {
@@ -47,6 +37,56 @@ public static class DependencyInjection
         services.InstallServices(configuration, typeof(IServiceInstaller).Assembly);
 
         return services;
+    }
+
+    private static void AddCors(this IServiceCollection services, IConfiguration configuration)
+    {
+        var appSetting = configuration.GetSection(AppSetting.SettingName).Get<AppSetting>();
+        ArgumentNullException.ThrowIfNull(appSetting);
+
+        var allowedDomains = appSetting.AllowedDomains;
+
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy
+                    .SetIsOriginAllowed(origin =>
+                    {
+                        if (allowedDomains is null || allowedDomains.Length == 0)
+                        {
+                            return true;
+                        }
+
+                        if (string.IsNullOrEmpty(origin))
+                        {
+                            return false;
+                        }
+
+                        var uri = new Uri(origin);
+                        var host = uri.Host;
+
+                        return Array.Exists(allowedDomains, allowedDomain =>
+                        {
+                            if (allowedDomain.StartsWith("*.", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var domain = allowedDomain.Substring(2);
+                                return host.EndsWith(domain, StringComparison.OrdinalIgnoreCase) ||
+                                       host.Equals(domain, StringComparison.OrdinalIgnoreCase);
+                            }
+
+                            var domainToMatch = allowedDomain
+                                .Replace("https://", "", StringComparison.OrdinalIgnoreCase)
+                                .Replace("http://", "", StringComparison.OrdinalIgnoreCase);
+
+                            return host.Equals(domainToMatch, StringComparison.OrdinalIgnoreCase);
+                        });
+                    })
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+        });
     }
 
     private static void InstallServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
