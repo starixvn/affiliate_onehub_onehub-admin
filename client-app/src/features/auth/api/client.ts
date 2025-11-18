@@ -25,4 +25,9 @@ export const authApi = {
     const response = await apiClient.get<UserProfileResponse>('/auth/me')
     return response.data
   },
+
+  async sso(): Promise<LoginResponse> {
+    const response = await apiClient.post<LoginResponse>('/auth/sso')
+    return response.data
+  },
 }

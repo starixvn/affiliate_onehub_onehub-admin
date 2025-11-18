@@ -127,7 +127,6 @@ export function UsersTable({ data }: DataTableProps) {
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         header.column.columnDef.meta?.className ?? ''
                       )}
                     >
@@ -155,7 +154,6 @@ export function UsersTable({ data }: DataTableProps) {
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         cell.column.columnDef.meta?.className ?? ''
                       )}
                     >

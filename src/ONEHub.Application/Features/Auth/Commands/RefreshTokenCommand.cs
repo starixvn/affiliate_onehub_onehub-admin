@@ -24,8 +24,9 @@ public class RefreshTokenHandler(
 {
     public async Task<Result<RefreshTokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var cachedRefreshToken = await cacheProvider.GetValueFromCacheAsync<string>($"{CacheKeys.REFRESH_TOKEN}{request.UserId}");
-        if (cachedRefreshToken != request.RefreshToken)
+        var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{request.UserId}:{request.RefreshToken}";
+        var cachedRefreshToken = await cacheProvider.GetValueFromCacheAsync<string>(cacheKey);
+        if (cachedRefreshToken is null)
         {
             return Result<RefreshTokenResponse>.Failure(AuthError.InvalidToken);
         }

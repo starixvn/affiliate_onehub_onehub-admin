@@ -197,6 +197,7 @@ export function ComponentTable({
     >
       <DataTableToolbar
         table={table}
+        columnFilters={columnFilters}
         searchPlaceholder={t('table.search')}
         searchClassName='w-[250px] lg:w-[350px]'
         filters={filters}
@@ -220,6 +221,17 @@ export function ComponentTable({
             },
           })
         }}
+        onReset={() => {
+          navigate({
+            search: {
+              ...search,
+              search: undefined,
+              status: '1',
+              deviceIds: undefined,
+              pageIndex: 1,
+            },
+          })
+        }}
       />
       <div className='overflow-hidden rounded-md border'>
         <Table>
@@ -232,7 +244,6 @@ export function ComponentTable({
                       key={header.id}
                       colSpan={header.colSpan}
                       className={cn(
-                        'group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         header.column.columnDef.meta?.className ?? ''
                       )}
                     >
@@ -260,7 +271,6 @@ export function ComponentTable({
                     <TableCell
                       key={cell.id}
                       className={cn(
-                        'bg-background group-hover/row:bg-muted group-data-[state=selected]/row:bg-muted',
                         cell.column.columnDef.meta?.className ?? ''
                       )}
                     >

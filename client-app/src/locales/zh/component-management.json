@@ -52,6 +52,11 @@
       "title": "落地页"
     }
   },
+  "statusFilters": {
+    "total": "总数",
+    "active": "启用",
+    "inactive": "停用"
+  },
   "filters": {
     "status": "状态",
     "device": "设备"

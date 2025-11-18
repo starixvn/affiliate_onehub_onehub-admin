@@ -18,6 +18,8 @@ try
 
     app.UseCors();
 
+    app.UseFrameSecurity(builder.Configuration);
+
     app.UsePing();
 
     app.UseForwardedHeaders();
