@@ -82,27 +82,6 @@ export const registrationFormManagementApi = {
     }
   },
 
-  async deleteMedia(mediaIds: string): Promise<DeleteMediaResponse> {
-    try {
-      const response = await apiClient.delete<DeleteMediaResponse>(
-        `/registration-form/delete/${mediaIds}`
-      )
-      return response.data
-    } catch (error: unknown) {
-      const err = error as {
-        errorCode?: number
-        message?: string
-        errorMessage?: string
-      }
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage:
-          err.message || err.errorMessage || 'Delete register form failed',
-        result: null,
-      } as unknown as DeleteMediaResponse
-    }
-  },
-
   async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
       const response = await apiClient.delete<DeleteMediaResponse>(
@@ -118,7 +97,7 @@ export const registrationFormManagementApi = {
       return {
         errorCode: err.errorCode || 1,
         errorMessage:
-          err.message || err.errorMessage || 'Delete register forms failed',
+          err.message || err.errorMessage || 'Delete registration forms failed',
         result: null,
       } as unknown as DeleteMediaResponse
     }
@@ -133,7 +112,7 @@ export const registrationFormManagementApi = {
       formData.append('languageCode', data.languageCode)
       formData.append('inputFileName', data.inputFileName ?? '')
       formData.append('inputMediaName', data.inputMediaName ?? '')
-      formData.append('file', data.file ?? new File([], ''))
+      if (data.file) formData.append('file', data.file)
 
       const response = await apiClient.post<UpdateMediaResponse>(
         '/registration-form/update',
@@ -154,7 +133,7 @@ export const registrationFormManagementApi = {
       return {
         errorCode: err.errorCode || 1,
         errorMessage:
-          err.message || err.errorMessage || 'Update register form failed',
+          err.message || err.errorMessage || 'Update registration form failed',
         result: null,
       } as unknown as UpdateMediaResponse
     }
@@ -181,7 +160,7 @@ export const registrationFormManagementApi = {
         errorMessage:
           err.message ||
           err.errorMessage ||
-          'Update register forms status failed',
+          'Update registration forms status failed',
         result: null,
       } as unknown as UpdateMediaStatusResponse
     }

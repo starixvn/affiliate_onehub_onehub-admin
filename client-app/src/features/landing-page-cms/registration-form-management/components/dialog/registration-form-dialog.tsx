@@ -102,7 +102,6 @@ export function RegisterFormDialog({
     if (open) {
       setBackendError(null)
       if (registerForm) {
-        console.log('registerForm', registerForm)
         setCountry(registerForm.targetCountryCode)
         setLanguageOptions(
           languages

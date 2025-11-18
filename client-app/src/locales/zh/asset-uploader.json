@@ -81,7 +81,8 @@
     "statuses": "状态",
     "status": "状态",
     "images": "图片",
-    "image": "图片"
+    "image": "图片",
+    "unknownStatus": "未知"
   },
   "form": {
     "country": "国家",
@@ -95,7 +96,6 @@
     "uploadFile": "上传文件",
     "uploadFileButton": "上传文件",
     "noFileChosen": "未选择文件",
-    "noFileChosen2": "未选择文件",
     "files": "文件",
     "files_plural": "文件",
     "selected": "（已选择）",

@@ -82,6 +82,7 @@
     "status": "状态",
     "forms": "表单",
     "form": "表单",
+    "unknownStatus": "未知",
     "confirmOverwriteTitle": "确认覆盖",
     "confirmOverwriteMessage": "文件名 \"{{fileName}}\" 已存在。您要覆盖当前文件吗？"
   },

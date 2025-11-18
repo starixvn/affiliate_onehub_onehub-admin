@@ -3,7 +3,7 @@ import {
   StatusChangeDialog,
   SharedDialogManager,
 } from '@/features/landing-page-cms/shared'
-import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
+import { useDeleteMedias, useUpdateMediaStatus } from '../../api/commands'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetDialog } from './asset-dialog'
 import { TRANSLATION_KEY } from '../../data/schema'
@@ -15,7 +15,7 @@ export function AssetDialogManager() {
     return (
       <DeleteMediaDialog
         translationKey={TRANSLATION_KEY}
-        useDeleteMutation={useDeleteMedia}
+        useDeleteMutation={useDeleteMedias}
         media={currentRow}
         open={open === 'delete' ? true : false}
         onOpenChange={(open: boolean) => setOpen(open ? 'delete' : null)}

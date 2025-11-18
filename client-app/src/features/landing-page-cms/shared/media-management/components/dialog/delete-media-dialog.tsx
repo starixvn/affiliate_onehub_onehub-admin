@@ -1,6 +1,5 @@
 import { type UseMutationResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
-import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import type { MediaDetail } from '../../schema'
 import type { DeleteMediaResponse } from '../../schema/types'
@@ -32,8 +31,6 @@ export function DeleteMediaDialog({
         onSuccess: (response: any) => {
           if (response.errorCode === 0) {
             onOpenChange(false)
-          } else {
-            toast.error(response.errorMessage || t('toasts.deleteFailed'))
           }
         },
       })

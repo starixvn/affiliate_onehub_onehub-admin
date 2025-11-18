@@ -82,8 +82,8 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     value: any,
     setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
     index?: number
-  ) => {
-    validateAssetField(field, value, setErrors, errorMessages, index)
+  ): boolean => {
+    return validateAssetField(field, value, setErrors, errorMessages, index)
   }
 
   const validateFormWrapper = (
@@ -132,7 +132,8 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
       languageByCountry: Language[],
       selectedCountry?: Country
     ) => {
-      return selectedCountry?.languageCode || languageByCountry[0].languageCode
+      const firstLanguage = languageByCountry[0]
+      return selectedCountry?.languageCode || firstLanguage?.languageCode || ''
     },
   })
 
@@ -179,6 +180,12 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     language: string,
     moduleRows: AssetModuleWithFiles[]
   ) => {
+    if (!moduleRows.length || !moduleRows[0].files?.length) {
+      throw new Error(
+        errorMessages.MODULE_REQUIRED
+      )
+    }
+
     const mediaId = asset.mediaId
     const inputFileName = moduleRows[0].files?.[0]?.name || asset.mediaName
     const moduleId = Number(moduleRows[0].module)
@@ -200,10 +207,14 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     language: string,
     formData: AssetModuleWithFiles[]
   ) => {
+    if (!formData.length || !formData[0]?.files?.length) {
+      return false
+    }
+
     const hasChangedCountry = country !== mediaDetail.targetCountryCode
     const hasChangedLanguage = language !== mediaDetail.marketId
     const hasChangedModule =
-      formData[0]?.module !== mediaDetail.moduleId.toString()
+      formData[0].module !== mediaDetail.moduleId.toString()
 
     return hasChangedCountry || hasChangedLanguage || hasChangedModule
   }
@@ -211,7 +222,12 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
   const shouldShowOverwriteConfirm = (
     mediaDetail: AssetDetail,
     formData: AssetModuleWithFiles[]
-  ) => formData[0].files[0].name === mediaDetail.mediaName
+  ) => {
+    if (!formData.length || !formData[0].files?.length) {
+      return false
+    }
+    return formData[0].files[0].name === mediaDetail.mediaName
+  }
 
   const submitHandlers = useSubmitHandlers<AssetModuleWithFiles[], AssetDetail>(
     {

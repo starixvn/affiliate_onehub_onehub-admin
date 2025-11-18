@@ -27,10 +27,7 @@ export const useMediaFilters = () => {
     select: (data) => {
       const response = data.data
       return {
-        modules:
-          response?.modules.filter((module) =>
-            module.moduleName.toLowerCase().includes('registration form')
-          ) ?? [],
+        modules: response?.modules ?? [],
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
         mediaStatus:

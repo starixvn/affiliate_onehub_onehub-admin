@@ -27,7 +27,7 @@ import {
   MediaBulkStatusChangeDialog,
   MediaBulkActions,
 } from '@/features/landing-page-cms/shared'
-import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
+import { useDeleteMedias, useUpdateMediaStatus } from '../../api/commands'
 import { TRANSLATION_KEY, type RegisterFormDetail } from '../../data/schema'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
 import { useRegisterFormColumns } from './registration-form-columns'
@@ -353,7 +353,7 @@ export function RegisterFormTable({
       />
       <MediaBulkDeleteDialog
         translationKey={TRANSLATION_KEY}
-        useDeleteMutation={useDeleteMedia}
+        useDeleteMutation={useDeleteMedias}
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         table={table}

@@ -36,6 +36,10 @@ export function MediaBulkStatusChangeDialog({
       (row) => row.original.statusId !== newStatusId
     )
 
+    if (affectedMedia.length === 0) {
+      return
+    }
+
     const mediaIds = affectedMedia
       .map((row) => row.original.mediaId.toString())
       .join(',')
@@ -57,9 +61,10 @@ export function MediaBulkStatusChangeDialog({
     (row) => row.original.statusId !== newStatusId
   ).length
 
-  const entity =
-    affectedCount > 1 ? t('dialogs.statuses') : t('dialogs.status')
-  const targetStatus = status.find(s => s.value === String(newStatusId))?.label || 'Unknown'
+  const entity = affectedCount > 1 ? t('dialogs.statuses') : t('dialogs.status')
+  const targetStatus =
+    status.find((s) => s.value === String(newStatusId))?.label ||
+    t('dialogs.unknownStatus')
 
   return (
     <ConfirmDialog

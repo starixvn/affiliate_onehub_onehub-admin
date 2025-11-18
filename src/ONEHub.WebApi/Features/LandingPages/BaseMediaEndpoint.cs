@@ -68,7 +68,7 @@ public static class BaseMediaEndpoint
 
     public static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
         [FromForm] UploadAssetsRequest request,
-        IFormFileCollection? files,
+        IFormFileCollection files,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -76,7 +76,7 @@ public static class BaseMediaEndpoint
             return TypedResults.ValidationProblem(errors);
         }
 
-        if (files is null || files.Count == 0)
+        if (files.Count == 0)
         {
             return TypedResults.Ok(Result.Failure(Error.SystemError with
             {

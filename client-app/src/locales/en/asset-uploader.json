@@ -83,7 +83,8 @@
     "statuses": "statuses",
     "status": "status",
     "images": "images",
-    "image": "image"
+    "image": "image",
+    "unknownStatus": "Unknown"
   },
   "form": {
     "country": "Country",
@@ -96,8 +97,7 @@
     "moduleNumber": "Module #{{number}}",
     "uploadFile": "Upload File",
     "uploadFileButton": "Upload File",
-    "noFileChosen": "No file chosen",
-    "noFileChosen2": "No File Chosen",
+    "noFileChosen": "No File Chosen",
     "files": "File",
     "files_plural": "Files",
     "selected": " (selected)",

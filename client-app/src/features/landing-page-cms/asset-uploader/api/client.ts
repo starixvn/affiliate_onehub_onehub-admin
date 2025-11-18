@@ -66,22 +66,6 @@ export const assetUploaderApi = {
     }
   },
 
-  async deleteMedia(mediaIds: string): Promise<DeleteMediaResponse> {
-    try {
-      const response = await apiClient.delete<DeleteMediaResponse>(
-        `/asset-uploader/delete/${mediaIds}`
-      )
-      return response.data
-    } catch (error: any) {
-      return {
-        errorCode: error?.errorCode || 1,
-        errorMessage:
-          error?.message || error?.errorMessage || 'Delete asset failed',
-        result: null,
-      } as unknown as DeleteMediaResponse
-    }
-  },
-
   async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
       const response = await apiClient.delete<DeleteMediaResponse>(
@@ -89,10 +73,13 @@ export const assetUploaderApi = {
       )
       return response.data
     } catch (error: any) {
+      const isMultiple = Array.isArray(mediaIds) || mediaIds.includes(',')
       return {
         errorCode: error?.errorCode || 1,
         errorMessage:
-          error?.message || error?.errorMessage || 'Delete assets failed',
+          error?.message ||
+          error?.errorMessage ||
+          `Delete ${isMultiple ? 'assets' : 'asset'} failed`,
         result: null,
       } as unknown as DeleteMediaResponse
     }
@@ -107,7 +94,7 @@ export const assetUploaderApi = {
       formData.append('languageCode', data.languageCode)
       formData.append('inputFileName', data.inputFileName ?? '')
       formData.append('inputMediaName', data.inputMediaName ?? '')
-      formData.append('file', data.file ?? new File([], ''))
+      if (data.file) formData.append('file', data.file)
 
       const response = await apiClient.post<UpdateMediaResponse>(
         '/asset-uploader/update',

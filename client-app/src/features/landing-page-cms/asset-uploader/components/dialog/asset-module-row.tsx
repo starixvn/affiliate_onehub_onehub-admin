@@ -142,7 +142,7 @@ export function AssetModuleRow({
                 className='h-8 w-full justify-center p-0 hover:bg-transparent sm:w-auto'
               >
                 <Label className='text-muted-foreground text-sm font-medium'>
-                  {fileName || 'No file chosen'}
+                  {fileName || t('form.noFileChosen')}
                 </Label>
               </Button>
             ) : (
@@ -161,7 +161,7 @@ export function AssetModuleRow({
                 <Label className='cursor-pointer text-sm font-medium'>
                   {moduleRow.files.length > 0
                     ? `(${moduleRow.files.length}) ${moduleRow.files.length > 1 ? t('form.files_plural') : t('form.files')}`
-                    : t('form.noFileChosen2')}
+                    : t('form.noFileChosen')}
                 </Label>
               </Button>
             )}

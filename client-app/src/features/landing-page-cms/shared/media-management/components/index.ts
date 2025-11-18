@@ -7,7 +7,6 @@ export * from './media-status-cell'
 
 export * from './dialog/delete-media-dialog'
 export * from './dialog/confirm-overwrite-dialog'
-export * from './dialog/delete-media-dialog'
 export * from './dialog/status-change-dialog'
 export * from './dialog/bulk-status-change-dialog'
 export * from './dialog/bulk-delete-dialog'

@@ -57,8 +57,12 @@ export function MediaBulkDeleteDialog({
 
   const entity =
     translationKey === 'asset-uploader'
-      ? (selectedRows.length > 1 ? t('dialogs.images') : t('dialogs.image'))
-      : (selectedRows.length > 1 ? t('dialogs.forms') : t('dialogs.form'))
+      ? selectedRows.length > 1
+        ? t('dialogs.images')
+        : t('dialogs.image')
+      : selectedRows.length > 1
+        ? t('dialogs.forms')
+        : t('dialogs.form')
 
   return (
     <ConfirmDialog

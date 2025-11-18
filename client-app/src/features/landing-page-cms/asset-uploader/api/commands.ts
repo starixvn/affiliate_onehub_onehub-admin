@@ -40,25 +40,11 @@ export const useUpdateMedia = (onError?: (error: string) => void) => {
   })
 }
 
-export const useDeleteMedia = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (mediaIds: string) => assetUploaderApi.deleteMedia(mediaIds),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
-        toast.success('Asset deleted successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to delete asset')
-      }
-    },
-  })
-}
-
 export const useDeleteMedias = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) => assetUploaderApi.deleteMedias(mediaIds),
+    mutationFn: (mediaIds: string) =>
+      assetUploaderApi.deleteMedias(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })

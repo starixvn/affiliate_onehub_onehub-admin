@@ -137,11 +137,18 @@ export function useRegisterFormFormHandlers({
     language: string,
     formWithFiles: FormWithFiles
   ) => {
-    const inputMediaName = formWithFiles.files[0].formName || ''
-    const file = formWithFiles.files[0].file
-    const inputFileName = file.name
-      ? file.name
-      : registerForm.fileName.split('/').pop() || ''
+    if (
+      !Array.isArray(formWithFiles.files) ||
+      formWithFiles.files.length === 0
+    ) {
+      throw new Error('Form must contain at least one file')
+    }
+
+    const firstFile = formWithFiles.files[0]
+    const inputMediaName = firstFile?.formName ?? ''
+    const file = firstFile?.file
+    const inputFileName =
+      file?.name || registerForm.fileName.split('/').pop() || ''
 
     return {
       mediaId: registerForm.mediaId,
@@ -169,11 +176,18 @@ export function useRegisterFormFormHandlers({
   const shouldShowOverwriteConfirm = (
     mediaDetail: RegisterFormDetail,
     formData: FormWithFiles
-  ): boolean =>
-    formData.files.length > 0 &&
-    !!formData.files[0].file.name &&
-    formData.files[0].file.name ===
-      (mediaDetail.fileName.split('/').pop() || '')
+  ): boolean => {
+    if (!Array.isArray(formData.files) || formData.files.length === 0) {
+      return false
+    }
+
+    const firstFile = formData.files[0]
+    if (!firstFile?.file?.name) {
+      return false
+    }
+
+    return firstFile.file.name === (mediaDetail.fileName.split('/').pop() || '')
+  }
 
   const submitHandlers = useSubmitHandlers<FormWithFiles, RegisterFormDetail>({
     mediaDetail: registerForm,

@@ -3,7 +3,7 @@ import {
   StatusChangeDialog,
   SharedDialogManager,
 } from '@/features/landing-page-cms/shared'
-import { useDeleteMedia, useUpdateMediaStatus } from '../../api/commands'
+import { useDeleteMedias, useUpdateMediaStatus } from '../../api/commands'
 import { TRANSLATION_KEY } from '../../data/schema'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
 import { RegisterFormDialog } from './registration-form-dialog'
@@ -16,7 +16,7 @@ export function RegisterFormDialogManager() {
     return (
       <DeleteMediaDialog
         translationKey={TRANSLATION_KEY}
-        useDeleteMutation={useDeleteMedia}
+        useDeleteMutation={useDeleteMedias}
         media={currentRow}
         open={open === 'delete' ? true : false}
         onOpenChange={(open: boolean) => setOpen(open ? 'delete' : null)}

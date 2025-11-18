@@ -85,11 +85,17 @@ export const useRegisterFormColumns = (
         className: 'whitespace-normal',
         displayName: t('table.fileName'),
       },
-      cell: ({ row }) => (
-        <div className='max-w-[200px] break-words'>
-          {(row.getValue('fileName') as string).split('/').pop()}
-        </div>
-      ),
+      cell: ({ row }) => {
+        const fileName = row.getValue('fileName')
+        const fileNameStr = typeof fileName === 'string' ? fileName : ''
+        const displayName = fileNameStr.includes('/')
+          ? fileNameStr.split('/').pop() || ''
+          : fileNameStr
+
+        return (
+          <div className='max-w-[200px] break-words'>{displayName}</div>
+        )
+      },
     },
     {
       accessorKey: 'targetCountryCode',

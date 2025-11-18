@@ -17,9 +17,9 @@ export const useCreateMedia = (onError?: (error: string) => void) => {
         queryClient.invalidateQueries({
           queryKey: registrationFormManagementKeys.lists(),
         })
-        toast.success('Register form created successfully')
+        toast.success('Registration form created successfully')
       } else {
-        onError?.(response.errorMessage || 'Failed to create register form')
+        onError?.(response.errorMessage || 'Failed to create registration form')
       }
     },
   })
@@ -35,27 +35,9 @@ export const useUpdateMedia = (onError?: (error: string) => void) => {
         queryClient.invalidateQueries({
           queryKey: registrationFormManagementKeys.lists(),
         })
-        toast.success('Register form updated successfully')
+        toast.success('Registration form updated successfully')
       } else {
-        onError?.(response.errorMessage || 'Failed to update register form')
-      }
-    },
-  })
-}
-
-export const useDeleteMedia = () => {
-  const queryClient = useQueryClient()
-  return useMutation({
-    mutationFn: (mediaIds: string) =>
-      registrationFormManagementApi.deleteMedia(mediaIds),
-    onSuccess: (response) => {
-      if (response.errorCode === 0) {
-        queryClient.invalidateQueries({
-          queryKey: registrationFormManagementKeys.lists(),
-        })
-        toast.success('Register form deleted successfully')
-      } else {
-        toast.error(response.errorMessage || 'Failed to delete register form')
+        onError?.(response.errorMessage || 'Failed to update registration form')
       }
     },
   })
@@ -71,9 +53,9 @@ export const useDeleteMedias = () => {
         queryClient.invalidateQueries({
           queryKey: registrationFormManagementKeys.lists(),
         })
-        toast.success('Register forms deleted successfully')
+        toast.success('Registration forms deleted successfully')
       } else {
-        toast.error(response.errorMessage || 'Failed to delete register forms')
+        toast.error(response.errorMessage || 'Failed to delete registration forms')
       }
     },
   })
@@ -90,11 +72,11 @@ export const useUpdateMediaStatus = () => {
           queryKey: registrationFormManagementKeys.lists(),
         })
         toast.success(
-          `Register forms updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
+          `Registration forms updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
         )
       } else {
         toast.error(
-          response.errorMessage || 'Failed to update register forms status'
+          response.errorMessage || 'Failed to update registration forms status'
         )
       }
     },
