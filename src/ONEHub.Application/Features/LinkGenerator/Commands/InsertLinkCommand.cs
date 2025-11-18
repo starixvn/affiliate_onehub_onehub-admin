@@ -239,12 +239,13 @@ public class InsertLinkCommandHandler(
             _ => "www"
         };
 
-        return $"https://{subdomain}.{request.DomainName}/{Uri.EscapeDataString(request.PageCode)}" +
+        var pathSegment = request.PageType == 3 ? "/p1" : "";
+
+        return $"https://{subdomain}.{request.DomainName}{pathSegment}/{Uri.EscapeDataString(request.ShortedLanguageCode)}/{Uri.EscapeDataString(request.PageCode)}" +
                $"?ln={Uri.EscapeDataString(request.LinkName)}" +
                $"&ic={Uri.EscapeDataString(identifierCode)}" +
                $"&cmp={Uri.EscapeDataString(request.CampaignCode)}" +
                $"&cty={Uri.EscapeDataString(request.CountryCode)}" +
-               $"&lang={Uri.EscapeDataString(request.ShortedLanguageCode)}" +
                $"&ev={Uri.EscapeDataString(request.EventCodes)}" +
                $"&grp={Uri.EscapeDataString(request.GroupCode)}" +
                $"&chn={Uri.EscapeDataString(request.ChannelCode)}" +
