@@ -17,7 +17,7 @@ public static class LandingPageEndPoint
         return groupEndpoint;
     }
 
-    private static async Task<Results<Ok<Result<Dictionary<string, List<LandingPageOption>>>>, ValidationProblem>> GetOptions(
+    private static async Task<Ok<Result<Dictionary<string, List<LandingPageOption>>>>> GetOptions(
         IMediator mediator)
     {
         var query = new GetLandingPageOptionsQuery();

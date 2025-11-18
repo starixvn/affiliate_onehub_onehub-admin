@@ -90,7 +90,7 @@ public class InsertLinkCommandHandler(
                 return result;
             }
 
-            if (ShouldRetry(result, isAutoGenerating, attempt))
+            if (ShouldRetry(result, isAutoGenerating))
             {
                 shortPath = GenerateShortPath();
                 continue;
@@ -154,7 +154,7 @@ public class InsertLinkCommandHandler(
         return Result<LinkGeneratedResult>.Success(result);
     }
 
-    private static bool ShouldRetry(Result<LinkGeneratedResult> result, bool isAutoGenerating, int attempt)
+    private static bool ShouldRetry(Result<LinkGeneratedResult> result, bool isAutoGenerating)
     {
         if (result.Error is null)
         {
@@ -162,7 +162,7 @@ public class InsertLinkCommandHandler(
         }
 
         var isDuplicate = result.Error.Code == DUPLICATE_ERROR_CODE;
-        return isAutoGenerating && attempt < MAX_ATTEMPTS && isDuplicate;
+        return isAutoGenerating && isDuplicate;
     }
 
     private static InsertLinkParam BuildInsertParam(
@@ -210,6 +210,7 @@ public class InsertLinkCommandHandler(
 
     private static string ConvertToBase36(long value)
     {
+        const int Base36 = 36;
         const string Chars = "0123456789abcdefghijklmnopqrstuvwxyz";
         if (value == 0)
         {
@@ -219,8 +220,8 @@ public class InsertLinkCommandHandler(
         var result = new StringBuilder();
         while (value > 0)
         {
-            result.Append(Chars[(int)(value % 36)]);
-            value /= 36;
+            result.Append(Chars[(int)(value % Base36)]);
+            value /= Base36;
         }
 
         var chars = result.ToString().ToCharArray();

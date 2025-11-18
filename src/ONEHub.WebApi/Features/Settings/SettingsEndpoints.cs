@@ -26,7 +26,7 @@ public static class SettingsEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<IEnumerable<TargetCountry>>>, ValidationProblem>> GetLanguages(
+    private static async Task<Ok<Result<IEnumerable<TargetCountry>>>> GetLanguages(
         IMediator mediator,
         [FromQuery] string countryCode)
     {

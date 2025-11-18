@@ -22,9 +22,11 @@ public class GetCampaignDropdownQueryHandler(ICampaignRepository repository)
         GetCampaignDropdownQuery request,
         CancellationToken cancellationToken)
     {
+        const string ActiveStatusId = "1";
         var param = new GetCampaignInfoParam
         {
-            StatusIds = "1"
+            CampaignId = request.CampaignId,
+            StatusIds = request.StatusIds ?? ActiveStatusId
         };
 
         var campaigns = await repository.GetCampaignInfoAsync(param);

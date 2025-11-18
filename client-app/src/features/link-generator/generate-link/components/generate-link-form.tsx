@@ -356,7 +356,7 @@ export function GenerateLinkForm() {
                       <Info className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help' />
                     </TooltipTrigger>
                     <TooltipContent side='top'>
-                      <p>Customized the last part of your short link. Use 5-20 characters, including letters and numbers.</p>
+                      <p>Customized the last part of your short link. Use 5-20 characters, including lowercase letters, numbers, hyphens, and dots.</p>
                     </TooltipContent>
                   </Tooltip>
                   <Input

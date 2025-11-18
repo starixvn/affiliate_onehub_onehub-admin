@@ -11,10 +11,20 @@ type GenerateLinkResultProps = {
 export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
     const [copied, setCopied] = useState(false)
     const resultRef = useRef<HTMLDivElement>(null)
+    const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined)
+
+    const clearExistingTimeout = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current)
+        }
+    }
 
     useEffect(() => {
         if (resultRef.current) {
             resultRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+        }
+        return () => {
+            clearExistingTimeout()
         }
     }, [])
 
@@ -22,7 +32,8 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
         try {
             await navigator.clipboard.writeText(result.shortLink)
             setCopied(true)
-            setTimeout(() => setCopied(false), 2000)
+            clearExistingTimeout()
+            timeoutRef.current = setTimeout(() => setCopied(false), 2000)
         } catch {
             setCopied(false)
         }
