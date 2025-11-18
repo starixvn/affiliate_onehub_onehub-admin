@@ -215,7 +215,13 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
           disabled={disabled}
           className={cn('w-full justify-between', className)}
         >
-          {value ? getSelectedLabel() : placeholder}
+          {value && getSelectedLabel() ? (
+            <span className='truncate flex-1 text-left' title={getSelectedLabel() || undefined}>
+              {getSelectedLabel()}
+            </span>
+          ) : (
+            <span className='truncate flex-1 text-left'>{placeholder}</span>
+          )}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>

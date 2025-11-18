@@ -103,7 +103,7 @@ export function MultipleSelect({
   const handleToggleGroup = (groupOptions: SelectOption[]) => {
     const groupValues = groupOptions.map((opt) => getValue(opt))
     const allSelected = groupValues.every((v) => value.includes(v))
-    
+
     if (allSelected) {
       onValueChange(value.filter((v) => !groupValues.includes(v)))
     } else {
@@ -125,7 +125,7 @@ export function MultipleSelect({
   const getGroupCheckboxState = (groupOptions: SelectOption[]): boolean | 'indeterminate' => {
     const groupValues = groupOptions.map((opt) => getValue(opt))
     const selectedCount = groupValues.filter((v) => value.includes(v)).length
-    
+
     if (selectedCount === 0) return false
     if (selectedCount === groupValues.length) return true
     return 'indeterminate'
@@ -155,11 +155,11 @@ export function MultipleSelect({
     if (isSelectGroup(firstItem)) {
       return (options as SelectGroup[]).map((group) => {
         const checkboxState = getGroupCheckboxState(group.options)
-        
+
         return (
           <CommandGroup key={group.groupLabel}>
             {enableGroupSelect && (
-              <div 
+              <div
                 className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
                 onClick={() => handleToggleGroup(group.options)}
               >
@@ -202,11 +202,11 @@ export function MultipleSelect({
           ...(topGroup.groups?.flatMap((g) => g.options) || []),
         ]
         const topCheckboxState = getGroupCheckboxState(allTopGroupOptions)
-        
+
         return (
           <CommandGroup key={topGroup.groupLabel}>
             {enableGroupSelect && (
-              <div 
+              <div
                 className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
                 onClick={() => handleToggleGroup(allTopGroupOptions)}
               >
@@ -239,11 +239,11 @@ export function MultipleSelect({
             ))}
             {topGroup.groups?.map((group) => {
               const subCheckboxState = getGroupCheckboxState(group.options)
-              
+
               return (
                 <div key={group.groupLabel} className='pl-2'>
                   {enableGroupSelect && (
-                    <div 
+                    <div
                       className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
                       onClick={() => handleToggleGroup(group.options)}
                     >
@@ -295,7 +295,13 @@ export function MultipleSelect({
           disabled={disabled}
           className={cn('w-full justify-between', className)}
         >
-          {value.length > 0 ? getSelectedLabel() : placeholder}
+          {value.length > 0 && getSelectedLabel() ? (
+            <span className='truncate flex-1 text-left' title={getSelectedLabel() || undefined}>
+              {getSelectedLabel()}
+            </span>
+          ) : (
+            <span className='truncate flex-1 text-left'>{placeholder}</span>
+          )}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
