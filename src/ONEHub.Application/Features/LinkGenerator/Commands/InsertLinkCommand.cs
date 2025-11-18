@@ -239,7 +239,7 @@ public class InsertLinkCommandHandler(
             _ => "www"
         };
 
-        return $"https://{subdomain}.{request.DomainName}/{request.PageCode}" +
+        return $"https://{subdomain}.{request.DomainName}/{Uri.EscapeDataString(request.PageCode)}" +
                $"?ln={Uri.EscapeDataString(request.LinkName)}" +
                $"&ic={Uri.EscapeDataString(identifierCode)}" +
                $"&cmp={Uri.EscapeDataString(request.CampaignCode)}" +

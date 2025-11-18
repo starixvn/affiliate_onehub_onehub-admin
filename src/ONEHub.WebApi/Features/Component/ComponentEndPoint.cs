@@ -164,7 +164,7 @@ public static class ComponentEndPoint
 
         return TypedResults.Ok(result);
     }
-    private static async Task<Results<Ok<Result<IEnumerable<ONEHub.Domain.Entities.Component>>>, ValidationProblem>> GetListByCategory(
+    private static async Task<Results<Ok<Result<IEnumerable<ComponentByCategoryResponse>>>, ValidationProblem>> GetListByCategory(
         [AsParameters] GetComponentsByCategoryRequest request,
         IMediator mediator)
     {

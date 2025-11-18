@@ -93,21 +93,6 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async generateLink(
-    _data: GenerateLinkRequest
-  ): Promise<GenerateLinkResponse> {
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    
-    return {
-      errorCode: 0,
-      errorMessage: '',
-      data: {
-        fullLink: `https://example.com/track/${Date.now()}`,
-        shortLink: `https://short.link/${Math.random().toString(36).substring(7)}`,
-      },
-    }
-  },
-
   async insertLink(data: InsertLinkRequest): Promise<InsertLinkResponse> {
     const response = await apiClient.post<InsertLinkResponse>(
       '/generate-link/insert',

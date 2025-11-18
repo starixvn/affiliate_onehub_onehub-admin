@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Copy, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import type { LinkGeneratedResult } from '../types'
@@ -34,7 +35,8 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
             setCopied(true)
             clearExistingTimeout()
             timeoutRef.current = setTimeout(() => setCopied(false), 2000)
-        } catch {
+        } catch (_error) {
+            toast.error('Failed to copy link to clipboard')
             setCopied(false)
         }
     }

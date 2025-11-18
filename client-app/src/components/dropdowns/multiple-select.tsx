@@ -47,6 +47,29 @@ function isNestedSelectGroup(item: unknown): item is NestedSelectGroup {
   return (item as NestedSelectGroup).groupLabel !== undefined && (item as NestedSelectGroup).groups !== undefined
 }
 
+function flattenOptions(options: SelectOption[] | SelectGroup[] | NestedSelectGroup[]): SelectOption[] {
+  const result: SelectOption[] = []
+
+  for (const item of options) {
+    if (isSelectOption(item)) {
+      result.push(item)
+    } else if (isSelectGroup(item)) {
+      result.push(...item.options)
+    } else if (isNestedSelectGroup(item)) {
+      if (item.options) {
+        result.push(...item.options)
+      }
+      if (item.groups) {
+        for (const group of item.groups) {
+          result.push(...group.options)
+        }
+      }
+    }
+  }
+
+  return result
+}
+
 export function MultipleSelect({
   value = [],
   onValueChange,
@@ -70,25 +93,9 @@ export function MultipleSelect({
   const getSelectedLabel = () => {
     if (value.length === 0) return null
     if (value.length === 1) {
-      for (const item of options) {
-        if (isSelectOption(item)) {
-          if (getValue(item) === value[0]) return getLabel(item)
-        } else if (isSelectGroup(item)) {
-          const found = item.options.find((opt: SelectOption) => getValue(opt) === value[0])
-          if (found) return getLabel(found)
-        } else if (isNestedSelectGroup(item)) {
-          if (item.options) {
-            const found = item.options.find((opt: SelectOption) => getValue(opt) === value[0])
-            if (found) return getLabel(found)
-          }
-          if (item.groups) {
-            for (const group of item.groups) {
-              const found = group.options.find((opt: SelectOption) => getValue(opt) === value[0])
-              if (found) return getLabel(found)
-            }
-          }
-        }
-      }
+      const flatOptions = flattenOptions(options)
+      const found = flatOptions.find((opt) => getValue(opt) === value[0])
+      if (found) return getLabel(found)
     }
     return selectedDisplayPattern.replace('{0}', value.length.toString())
   }

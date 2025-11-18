@@ -38,6 +38,6 @@ public record DeleteBatchComponentRequest(
 );
 
 public record GetComponentsByCategoryRequest(
-    int CategoryId,
+    [Required][Range(1, int.MaxValue)] int CategoryId,
     int? ComponentId
 );

@@ -12,8 +12,6 @@ public class SystemRepository(IDynamicRepository dynamicRepository)
     public async Task<Result<IEnumerable<TargetCountry>>> GetTargetCountryAsync(bool isDefault = true, string targetCountryCode = "")
     {
         var criteria = new GetTargetCountryCriteria(isDefault, targetCountryCode);
-        var result = await FetchDataAsync<TargetCountry>(criteria);
-
-        return result;
+        return await FetchDataAsync<TargetCountry>(criteria);
     }
 }

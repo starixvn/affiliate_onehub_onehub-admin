@@ -147,7 +147,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
 
       return filteredEntries.map(([groupLabel, groupOptions]) => {
         const isExpanded = searchValue.trim()
-          ? (expandedGroups[groupLabel] ?? true)
+          ? true
           : (expandedGroups[groupLabel] ?? defaultExpandAll)
         const IconComponent = isExpanded ? ChevronDown : ChevronRight
 

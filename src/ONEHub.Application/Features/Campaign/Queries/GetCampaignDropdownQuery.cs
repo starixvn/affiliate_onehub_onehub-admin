@@ -12,7 +12,7 @@ public class GetCampaignDropdownQuery : BaseQuery<IEnumerable<CampaignBase>>
 {
     public int? CampaignId { get; set; }
 
-    public string? StatusIds { get; set; } = string.Empty;
+    public string? StatusIds { get; set; }
 }
 
 public class GetCampaignDropdownQueryHandler(ICampaignRepository repository)

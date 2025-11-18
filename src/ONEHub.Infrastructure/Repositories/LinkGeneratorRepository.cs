@@ -16,7 +16,7 @@ public class LinkGeneratorRepository(IDynamicRepository dynamicRepository)
         return await GetDataAsync<string>(criteria);
     }
 
-    public async Task<Result<string>> InsertLinkAsync(InsertLinkParam param)
+    public async Task<Result> InsertLinkAsync(InsertLinkParam param)
     {
         var command = new InsertLinkCommand
         {
@@ -45,14 +45,9 @@ public class LinkGeneratorRepository(IDynamicRepository dynamicRepository)
             Host = param.Host
         };
 
-        await dynamicRepository.ExecuteAsync(command);
+        var result = await ExecuteCommandAsync(command);
 
-        if (command.ErrCode != 0 || !string.IsNullOrWhiteSpace(command.ErrMsg))
-        {
-            return Result<string>.Failure(new Domain.Errors.Error(command.ErrCode, command.ErrMsg));
-        }
-
-        return Result<string>.Success(command.IDCode ?? string.Empty);
+        return result;
     }
 }
 

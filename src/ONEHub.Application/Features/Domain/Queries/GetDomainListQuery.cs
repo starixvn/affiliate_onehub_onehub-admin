@@ -17,6 +17,8 @@ public class GetDomainListQuery : IRequest<Result<IEnumerable<DomainInfo>>>
 public class GetDomainListQueryHandler(IDomainRepository repository)
     : IRequestHandler<GetDomainListQuery, Result<IEnumerable<DomainInfo>>>
 {
+    private const int DEFAULT_SITE_ID = 101;
+
     public async Task<Result<IEnumerable<DomainInfo>>> Handle(
         GetDomainListQuery request,
         CancellationToken cancellationToken)
@@ -25,7 +27,7 @@ public class GetDomainListQueryHandler(IDomainRepository repository)
         {
             CountryCode = request.CountryCode,
             DomainType = request.DomainType,
-            SiteId = 101
+            SiteId = DEFAULT_SITE_ID
         };
 
         var domainListResult = await repository.GetDomainListAsync(param);

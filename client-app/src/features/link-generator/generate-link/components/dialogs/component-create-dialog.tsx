@@ -1,4 +1,3 @@
-import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useEffect } from 'react'
@@ -23,30 +22,7 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateComponent } from '../../api/commands'
 import { useGetStatusOptions } from '../../api/queries'
-
-type ComponentType = 'event' | 'group' | 'channel' | 'agency' | 'type'
-
-const COMPONENT_CONFIG: Record<
-  ComponentType,
-  {
-    label: string
-    categoryId: number
-  }
-> = {
-  event: { label: 'Event', categoryId: 1 },
-  group: { label: 'Group', categoryId: 2 },
-  channel: { label: 'Channel', categoryId: 3 },
-  agency: { label: 'Agency', categoryId: 4 },
-  type: { label: 'Type', categoryId: 5 },
-}
-
-const formSchema = z.object({
-  componentName: z.string().trim().min(1, 'Name is required'),
-  componentCode: z.string(),
-  statusId: z.number(),
-})
-
-type ComponentForm = z.infer<typeof formSchema>
+import { COMPONENT_CONFIG, componentCreateFormSchema, type ComponentType, type ComponentCreateForm } from '../../data/schema'
 
 type ComponentCreateDialogProps = {
   componentType: ComponentType
@@ -67,8 +43,8 @@ export function ComponentCreateDialog({
   const { data: statusData, isLoading: isLoadingStatus } = useGetStatusOptions()
   const statusOptions = statusData?.data || []
 
-  const form = useForm<ComponentForm>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ComponentCreateForm>({
+    resolver: zodResolver(componentCreateFormSchema),
     mode: 'onChange',
     defaultValues: {
       componentName: '',
@@ -85,7 +61,7 @@ export function ComponentCreateDialog({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchName])
 
-  const onSubmit = (values: ComponentForm) => {
+  const onSubmit = (values: ComponentCreateForm) => {
     createMutation.mutate(
       {
         categoryId: config.categoryId,

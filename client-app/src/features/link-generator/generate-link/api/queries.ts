@@ -106,7 +106,7 @@ export function useGetDomains(countryCode: string, domainType: number) {
     queryKey: linkGeneratorKeys.domains(countryCode, domainType),
     queryFn: () => linkGeneratorApi.getDomains(countryCode, domainType),
     select: (data) => data.data,
-    enabled: !!countryCode,
+    enabled: !!countryCode && domainType != null,
   })
 }
 

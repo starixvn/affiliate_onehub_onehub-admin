@@ -11,7 +11,7 @@ import {
   useGetTypes,
   useGetLandingPages,
 } from '../api/queries'
-import { generateLinkFormSchema, type GenerateLinkFormValues } from '../data/schema'
+import { generateLinkFormSchema, generateLinkDefaultValues, type GenerateLinkFormValues } from '../data/schema'
 import type { CampaignInfo, TargetCountry, ComponentInfo, LandingPageOption, LinkGeneratedResult } from '../types'
 import useDialogState from '@/hooks/use-dialog-state'
 
@@ -47,33 +47,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
 
   const form = useForm<GenerateLinkFormValues>({
     resolver: zodResolver(generateLinkFormSchema),
-    defaultValues: {
-      linkName: '',
-      identifierCode: '',
-      campaign: '',
-      campaignCode: '',
-      country: '',
-      language: '',
-      shortedLanguageCode: '',
-      group: '',
-      groupCode: '',
-      event: '',
-      eventCodes: '',
-      domainName: '',
-      domainReservedNote: '',
-      shortDomain: '',
-      shortPath: '',
-      channel: '',
-      channelCode: '',
-      type: '',
-      typeCode: '',
-      agency: '',
-      agencyCode: '',
-      landingPage: '',
-      pageType: 0,
-      pageCode: '',
-      note: '',
-    },
+    defaultValues: generateLinkDefaultValues,
   })
 
   const { data: campaigns, isLoading: isLoadingCampaigns, isError: isErrorCampaigns } = useGetCampaigns()
@@ -105,26 +79,45 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     isErrorTypes ||
     isErrorLandingPages
 
+  const contextValue = React.useMemo(
+    () => ({
+      form,
+      campaigns,
+      countries,
+      events,
+      groups,
+      channels,
+      agencies,
+      types,
+      landingPages,
+      isLoading,
+      isError,
+      dialogOpen,
+      setDialogOpen,
+      generatedResult,
+      setGeneratedResult,
+    }),
+    [
+      form,
+      campaigns,
+      countries,
+      events,
+      groups,
+      channels,
+      agencies,
+      types,
+      landingPages,
+      isLoading,
+      isError,
+      dialogOpen,
+      generatedResult,
+      setDialogOpen,
+      setGeneratedResult,
+    ]
+  )
+
   return (
-    <GenerateLinkContext
-      value={{
-        form,
-        campaigns,
-        countries,
-        events,
-        groups,
-        channels,
-        agencies,
-        types,
-        landingPages,
-        isLoading,
-        isError,
-        dialogOpen,
-        setDialogOpen,
-        generatedResult,
-        setGeneratedResult,
-      }}
-    >
+    <GenerateLinkContext value={contextValue}>
       {children}
     </GenerateLinkContext>
   )

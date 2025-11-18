@@ -2,10 +2,10 @@ namespace ONEHub.Domain.Entities;
 
 public class LinkGeneratedResult
 {
-    public string IDCode { get; set; } = string.Empty;
+    public required string IDCode { get; set; }
 
-    public string FullLink { get; set; } = string.Empty;
+    public required string FullLink { get; set; }
 
-    public string ShortLink { get; set; } = string.Empty;
+    public required string ShortLink { get; set; }
 }
 

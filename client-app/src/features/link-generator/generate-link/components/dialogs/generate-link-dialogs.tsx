@@ -5,6 +5,8 @@ import { ComponentCreateDialog } from './component-create-dialog'
 export function GenerateLinkDialogs() {
   const { dialogOpen, setDialogOpen } = useGenerateLink()
 
+  const componentTypes = ['group', 'channel', 'type', 'agency', 'event'] as const
+
   return (
     <>
       <CampaignCreateDialog
@@ -12,35 +14,14 @@ export function GenerateLinkDialogs() {
         onOpenChange={(open) => setDialogOpen(open ? 'campaign' : null)}
       />
 
-      <ComponentCreateDialog
-        componentType='group'
-        open={dialogOpen === 'group'}
-        onOpenChange={(open) => setDialogOpen(open ? 'group' : null)}
-      />
-
-      <ComponentCreateDialog
-        componentType='channel'
-        open={dialogOpen === 'channel'}
-        onOpenChange={(open) => setDialogOpen(open ? 'channel' : null)}
-      />
-
-      <ComponentCreateDialog
-        componentType='type'
-        open={dialogOpen === 'type'}
-        onOpenChange={(open) => setDialogOpen(open ? 'type' : null)}
-      />
-
-      <ComponentCreateDialog
-        componentType='agency'
-        open={dialogOpen === 'agency'}
-        onOpenChange={(open) => setDialogOpen(open ? 'agency' : null)}
-      />
-
-      <ComponentCreateDialog
-        componentType='event'
-        open={dialogOpen === 'event'}
-        onOpenChange={(open) => setDialogOpen(open ? 'event' : null)}
-      />
+      {componentTypes.map((componentType) => (
+        <ComponentCreateDialog
+          key={componentType}
+          componentType={componentType}
+          open={dialogOpen === componentType}
+          onOpenChange={(open) => setDialogOpen(open ? componentType : null)}
+        />
+      ))}
     </>
   )
 }

@@ -41,7 +41,7 @@ export type LandingPageOption = {
   isComponent: boolean
   category: string
   pageType: number
-  targetCountryCode: number
+  targetCountryCode: string
   marketId: string
   campaignId: number
   campaignCode: string

@@ -1,8 +1,8 @@
 using Fanex.Data.Repository;
-using ONEHub.Domain.Criterias.LandingPages;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
+using ONEHub.Infrastructure.Repositories.Criterias;
 
 namespace ONEHub.Infrastructure.Repositories;
 
