@@ -30,7 +30,14 @@ interface AssetDialogProps {
 
 export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
-  const { countries, languages, modules } = useAssetUploader()
+  const {
+    countries,
+    languages,
+    modules,
+    maximumFiles,
+    maxFileSize,
+    allowedExtensions,
+  } = useAssetUploader()
   const isMediaIdInUse = asset?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
 
@@ -91,6 +98,11 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     resetTouchedForModules,
     onOpenChange,
     onBackendError: setBackendError,
+    fileConfig: {
+      maximumFiles,
+      maxFileSize,
+      allowedExtensions,
+    },
   })
 
   const {

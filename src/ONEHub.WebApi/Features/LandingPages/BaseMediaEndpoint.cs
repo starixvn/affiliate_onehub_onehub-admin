@@ -24,7 +24,8 @@ public static class BaseMediaEndpoint
 
     public static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
         [FromBody] GetAssetListRequest request,
-        IMediator mediator)
+        IMediator mediator,
+        string functionName)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
         {
@@ -40,6 +41,7 @@ public static class BaseMediaEndpoint
             Status = request.Status,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize,
+            FunctionName = functionName
         };
 
         var result = await mediator.Send(query);

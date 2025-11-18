@@ -17,6 +17,8 @@ public class AssetListParam : PagingParam
     public int MediaId { get; set; }
 
     public int UserId { get; set; }
+
+    public string FunctionName { get; set; }
 }
 
 public class AssetDetailParam : BaseParam

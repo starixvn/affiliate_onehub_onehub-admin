@@ -37,7 +37,8 @@ export const validateAssetForm = (
   moduleRows: AssetModuleWithFiles[],
   setErrors: (errors: ValidationErrors) => void,
   setTouched: (touched: TouchedFields) => void,
-  errorMessages: ReturnType<typeof useErrorMessages>
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
 ): boolean => {
   return validateForm(
     country,
@@ -46,7 +47,7 @@ export const validateAssetForm = (
     setErrors,
     setTouched,
     errorMessages,
-    DEFAULT_FILE_UPLOAD_CONFIG,
+    config,
     'modules'
   )
 }
@@ -62,13 +63,14 @@ export const isAssetFormValid = (
 
 export const validateAssetFiles = (
   moduleRows: AssetModuleWithFiles[],
-  errorMessages: ReturnType<typeof useErrorMessages>
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
 ): ValidationErrors['files'] => {
   const allFiles = moduleRows.flatMap((row) => row.files)
   return validateFiles(
     allFiles,
     errorMessages,
-    DEFAULT_FILE_UPLOAD_CONFIG,
+    config,
     'modules'
   )
 }

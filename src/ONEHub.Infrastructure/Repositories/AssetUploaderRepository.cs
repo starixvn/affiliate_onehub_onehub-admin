@@ -24,7 +24,7 @@ public class AssetUploaderRepository(IDynamicRepository dynamicRepository)
             PageIndex = param.PageIndex,
             PageSize = param.PageSize,
             UserId = param.UserId,
-            FunctionName = "AssetUploader"
+            FunctionName = param.FunctionName
         };
 
         return await FetchPagingDataAsync<AssetDetail>(criteria);

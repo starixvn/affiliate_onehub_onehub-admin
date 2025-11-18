@@ -1,15 +1,19 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ONEHub.WebApi.Features.LandingPages.AssetUploader;
 
 public static class AssetUploaderEndpoint
 {
+    private const string FUNCTION_NAME = "[AssetUploader]";
+
     public static IEndpointRouteBuilder RegisterAssetUploaderEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var groupEndpoint = endpoints.MapGroup("/api/asset-uploader").RequireAuthorization();
 
         groupEndpoint.MapGet("/filters", BaseMediaEndpoint.GetFilters);
-        groupEndpoint.MapPost("/list", BaseMediaEndpoint.GetList);
+        groupEndpoint.MapPost("/list", (GetAssetListRequest request, IMediator mediator)
+            => BaseMediaEndpoint.GetList(request, mediator, FUNCTION_NAME));
         groupEndpoint.MapPost("/detail", BaseMediaEndpoint.GetDetail);
         groupEndpoint.MapPost("/upload", BaseMediaEndpoint.UploadAssets)
             .Accepts<IFormFileCollection>("multipart/form-data")

@@ -40,7 +40,7 @@ interface UseSubmitHandlersProps<TData, TDetail extends MediaDetail> {
 
   setErrors: React.Dispatch<React.SetStateAction<any>>
   onOpenChange: (open: boolean) => void
-  onBackendError: (error: string) => void
+  onBackendError: (error: string | null) => void
 
   translationKey: string
 }
@@ -76,6 +76,7 @@ export function useSubmitHandlers<TData, TDetail extends MediaDetail>({
   }
 
   const handleSubmit = async (validateForm: () => boolean) => {
+    onBackendError(null)
     if (!validateForm()) {
       return
     }

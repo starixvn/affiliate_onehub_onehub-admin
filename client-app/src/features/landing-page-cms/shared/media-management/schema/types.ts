@@ -81,14 +81,26 @@ export interface FileUploadConfig {
   regSpecialCharacters: string
 }
 
-export const DEFAULT_FILE_UPLOAD_CONFIG: FileUploadConfig = {
-  allowedFileTypes: ['.jpg', '.jpeg', '.png', '.gif', '.webp'] as const,
-  maxFileSizeMB: 3,
-  maxFilesPerModule: 50,
+export const createFileUploadConfig = (apiConfig?: {
+  maximumFiles?: number
+  maxFileSize?: number
+  allowedExtensions?: string[]
+}): FileUploadConfig => ({
+  allowedFileTypes: apiConfig?.allowedExtensions ?? [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.webp',
+  ],
+  maxFileSizeMB: apiConfig?.maxFileSize ?? 3,
+  maxFilesPerModule: apiConfig?.maximumFiles ?? 50,
   maxFileNameLength: 50,
   maxFormNameLength: 200,
   regSpecialCharacters: '[\\/:*?"<>|#%&+]',
-}
+})
+
+export const DEFAULT_FILE_UPLOAD_CONFIG = createFileUploadConfig()
 
 export type ValidationMode = 'modules' | 'formNames'
 

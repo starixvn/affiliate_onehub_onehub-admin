@@ -18,6 +18,8 @@ public class GetAssetListQuery : PagingQuery<AssetDetail>
     public string? LanguageCodes { get; set; } = string.Empty;
 
     public int Status { get; set; }
+
+    public string FunctionName { get; set; }
 }
 
 public class GetAssetListHandler(
@@ -35,7 +37,8 @@ public class GetAssetListHandler(
             Status = request.Status,
             PageIndex = request.PageIndex,
             PageSize = request.PageSize,
-            UserId = request.UserId
+            UserId = request.UserId,
+            FunctionName = request.FunctionName
         };
 
         return await assetUploaderRepository.GetAssetListAsync(param);

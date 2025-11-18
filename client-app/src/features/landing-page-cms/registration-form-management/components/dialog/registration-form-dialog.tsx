@@ -38,7 +38,8 @@ export function RegisterFormDialog({
   registerForm,
 }: RegisterFormDialogProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
-  const { countries, languages } = useRegisterFormManagement()
+  const { countries, languages, maximumFiles, maxFileSize, allowedExtensions } =
+    useRegisterFormManagement()
   const isMediaIdInUse = registerForm?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
 
@@ -86,6 +87,11 @@ export function RegisterFormDialog({
     resetTouchedForFormNames,
     onOpenChange,
     onBackendError: setBackendError,
+    fileConfig: {
+      maximumFiles,
+      maxFileSize,
+      allowedExtensions,
+    },
   })
 
   const {

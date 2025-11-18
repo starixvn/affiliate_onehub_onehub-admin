@@ -11,7 +11,11 @@ import type {
   ValidationErrors,
   TouchedFields,
 } from '../../../data/schema'
-import { REGISTER_FORM_MODULE_ID, TRANSLATION_KEY } from '../../../data/schema'
+import {
+  REGISTER_FORM_MODULE_ID,
+  TRANSLATION_KEY,
+  createRegistrationFormUploadConfig,
+} from '../../../data/schema'
 import {
   validateRegistrationFormField,
   validateRegistrationForm,
@@ -41,7 +45,12 @@ interface UseRegisterFormFormHandlersProps {
   setTouched: React.Dispatch<React.SetStateAction<TouchedFields>>
   resetTouchedForFormNames: (fileCount: number) => void
   onOpenChange: (open: boolean) => void
-  onBackendError: (error: string) => void
+  onBackendError: (error: string | null) => void
+  fileConfig?: {
+    maximumFiles?: number
+    maxFileSize?: number
+    allowedExtensions?: string[]
+  }
 }
 
 export function useRegisterFormFormHandlers({
@@ -63,8 +72,10 @@ export function useRegisterFormFormHandlers({
   resetTouchedForFormNames,
   onOpenChange,
   onBackendError,
+  fileConfig,
 }: UseRegisterFormFormHandlersProps) {
   const errorMessages = useErrorMessages()
+  const uploadConfig = createRegistrationFormUploadConfig(fileConfig)
 
   const validateFieldWrapper = (
     field: string,
@@ -88,7 +99,8 @@ export function useRegisterFormFormHandlers({
       formData,
       setErrors,
       setTouched,
-      errorMessages
+      errorMessages,
+      uploadConfig
     )
   }
   const fieldHandlers = useFieldHandlers({

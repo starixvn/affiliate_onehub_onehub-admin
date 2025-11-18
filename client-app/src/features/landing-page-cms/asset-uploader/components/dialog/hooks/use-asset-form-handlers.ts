@@ -14,6 +14,7 @@ import type {
   TouchedFields,
 } from '../../../data/schema'
 import { TRANSLATION_KEY } from '../../../data/schema'
+import { createAssetUploadConfig } from '../../../data/schema'
 import {
   validateAssetField,
   validateAssetForm,
@@ -48,7 +49,12 @@ interface UseAssetFormHandlersProps {
   resetForm: () => void
   resetTouchedForModules: (moduleCount: number) => void
   onOpenChange: (open: boolean) => void
-  onBackendError: (error: string) => void
+  onBackendError: (error: string | null) => void
+  fileConfig?: {
+    maximumFiles?: number
+    maxFileSize?: number
+    allowedExtensions?: string[]
+  }
 }
 
 export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
@@ -73,9 +79,11 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     resetTouchedForModules,
     onOpenChange,
     onBackendError,
+    fileConfig,
   } = props
 
   const errorMessages = useErrorMessages()
+  const uploadConfig = createAssetUploadConfig(fileConfig)
 
   const validateFieldWrapper = (
     field: string,
@@ -99,7 +107,8 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
       formData,
       setErrors,
       setTouched,
-      errorMessages
+      errorMessages,
+      uploadConfig
     )
   }
 
@@ -181,9 +190,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     moduleRows: AssetModuleWithFiles[]
   ) => {
     if (!moduleRows.length || !moduleRows[0].files?.length) {
-      throw new Error(
-        errorMessages.MODULE_REQUIRED
-      )
+      throw new Error(errorMessages.MODULE_REQUIRED)
     }
 
     const mediaId = asset.mediaId

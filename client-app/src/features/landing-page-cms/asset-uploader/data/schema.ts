@@ -4,6 +4,7 @@ import {
   type ModuleWithFiles,
   type ValidationErrors,
   type TouchedFields,
+  createFileUploadConfig,
   DEFAULT_FILE_UPLOAD_CONFIG,
 } from '@/features/landing-page-cms/shared'
 
@@ -14,6 +15,12 @@ export type AssetDetail = MediaDetail
 
 export type AssetModuleWithFiles = ModuleWithFiles<File>
 export type { ValidationErrors, TouchedFields, ModuleWithFiles }
+
+export const createAssetUploadConfig = (apiConfig?: {
+  maximumFiles?: number
+  maxFileSize?: number
+  allowedExtensions?: string[]
+}) => createFileUploadConfig(apiConfig)
 
 export const ALLOWED_FILE_TYPES = DEFAULT_FILE_UPLOAD_CONFIG.allowedFileTypes
 export const MAX_FILE_SIZE_MB = DEFAULT_FILE_UPLOAD_CONFIG.maxFileSizeMB

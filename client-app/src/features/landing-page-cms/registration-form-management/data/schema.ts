@@ -5,6 +5,7 @@ import {
   type TouchedFields,
   type FormWithFiles,
   type FormFile,
+  createFileUploadConfig,
   DEFAULT_FILE_UPLOAD_CONFIG,
 } from '@/features/landing-page-cms/shared'
 import type {} from '@/features/landing-page-cms/shared'
@@ -19,6 +20,14 @@ export type RegisterFormDetail = MediaDetail
 export type RegistrationFormWithFiles = FormWithFiles
 
 export type { ValidationErrors, TouchedFields, FormWithFiles, FormFile }
+
+export const createRegistrationFormUploadConfig = (
+  apiConfig?: {
+    maximumFiles?: number
+    maxFileSize?: number
+    allowedExtensions?: string[]
+  }
+) => createFileUploadConfig(apiConfig)
 
 export const ALLOWED_FILE_TYPES = DEFAULT_FILE_UPLOAD_CONFIG.allowedFileTypes
 export const MAX_FILE_SIZE_MB = DEFAULT_FILE_UPLOAD_CONFIG.maxFileSizeMB

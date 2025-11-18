@@ -45,7 +45,8 @@ export const validateRegistrationForm = (
   formWithFiles: FormWithFiles,
   setErrors: (errors: ValidationErrors) => void,
   setTouched: (touched: TouchedFields) => void,
-  errorMessages: ReturnType<typeof useErrorMessages>
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
 ): boolean => {
   return validateForm(
     country,
@@ -54,7 +55,7 @@ export const validateRegistrationForm = (
     setErrors,
     setTouched,
     errorMessages,
-    DEFAULT_FILE_UPLOAD_CONFIG,
+    config,
     'formNames'
   )
 }
@@ -70,12 +71,8 @@ export const isRegistrationFormValid = (
 
 export const validateRegistrationFormFiles = (
   formFiles: FormWithFiles['files'],
-  errorMessages: ReturnType<typeof useErrorMessages>
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
 ): ValidationErrors['files'] => {
-  return validateFiles(
-    formFiles,
-    errorMessages,
-    DEFAULT_FILE_UPLOAD_CONFIG,
-    'formNames'
-  )
+  return validateFiles(formFiles, errorMessages, config, 'formNames')
 }

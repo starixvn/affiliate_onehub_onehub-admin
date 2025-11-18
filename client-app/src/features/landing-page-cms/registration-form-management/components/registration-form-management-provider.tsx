@@ -42,9 +42,9 @@ type RegisterFormManagementContextType = {
   mediaStatus: Array<MediaStatus>
   landingPageUrl: string
   bannerRootUrl: string
-  maximumFiles: number
-  maxFileSize: number
-  allowedExtensions: Array<string>
+  maximumFiles?: number
+  maxFileSize?: number
+  allowedExtensions?: Array<string>
 
   navigate: NavigateFn
   search: Record<string, unknown>
@@ -84,9 +84,9 @@ export function RegisterFormManagementProvider({
     mediaStatus = [],
     landingPageUrl = '',
     bannerRootUrl = '',
-    maximumFiles = 50,
-    maxFileSize = 3,
-    allowedExtensions = [],
+    maximumFiles,
+    maxFileSize,
+    allowedExtensions,
   } = useMediaFilters() ?? {}
 
   const normalizedParams = createNormalizeSearchParams({})(search)
