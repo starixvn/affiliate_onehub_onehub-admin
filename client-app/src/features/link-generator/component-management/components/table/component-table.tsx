@@ -197,6 +197,7 @@ export function ComponentTable({
     >
       <DataTableToolbar
         table={table}
+        columnFilters={columnFilters}
         searchPlaceholder={t('table.search')}
         searchClassName='w-[250px] lg:w-[350px]'
         filters={filters}
@@ -216,6 +217,17 @@ export function ComponentTable({
               search: searchValue || undefined,
               status: statusFilter?.length ? statusFilter.join(',') : '',
               deviceIds: deviceFilter?.join(',') || undefined,
+              pageIndex: 1,
+            },
+          })
+        }}
+        onReset={() => {
+          navigate({
+            search: {
+              ...search,
+              search: undefined,
+              status: '1',
+              deviceIds: undefined,
               pageIndex: 1,
             },
           })
