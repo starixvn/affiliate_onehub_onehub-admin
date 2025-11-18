@@ -46,6 +46,7 @@ export const validateRegistrationForm = (
   setErrors: (errors: ValidationErrors) => void,
   setTouched: (touched: TouchedFields) => void,
   errorMessages: ReturnType<typeof useErrorMessages>,
+  isEdit: boolean,
   config = DEFAULT_FILE_UPLOAD_CONFIG
 ): boolean => {
   return validateForm(
@@ -56,7 +57,8 @@ export const validateRegistrationForm = (
     setTouched,
     errorMessages,
     config,
-    'formNames'
+    'formNames',
+    isEdit
   )
 }
 

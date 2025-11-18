@@ -108,6 +108,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
       setErrors,
       setTouched,
       errorMessages,
+      isEdit,
       uploadConfig
     )
   }
@@ -189,7 +190,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     language: string,
     moduleRows: AssetModuleWithFiles[]
   ) => {
-    if (!moduleRows.length || !moduleRows[0].files?.length) {
+    if (!moduleRows.length) {
       throw new Error(errorMessages.MODULE_REQUIRED)
     }
 

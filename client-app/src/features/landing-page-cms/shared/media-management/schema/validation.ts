@@ -145,7 +145,8 @@ export const validateForm = <T extends FileItem>(
   setTouched: (touched: TouchedFields) => void,
   errorMessages: ErrorMessages,
   config: FileUploadConfig,
-  mode: ValidationMode
+  mode: ValidationMode,
+  isEdit = false
 ): boolean => {
   const newErrors: ValidationErrors = {}
   let isValid = true
@@ -183,17 +184,19 @@ export const validateForm = <T extends FileItem>(
       }
     })
 
-    const emptyModuleIndexes: number[] = []
-    moduleGroups.forEach((group, index) => {
-      if (group.files.length === 0) {
-        emptyModuleIndexes.push(index)
-      }
-    })
+    if (!isEdit) {
+      const emptyModuleIndexes: number[] = []
+      moduleGroups.forEach((group, index) => {
+        if (group.files.length === 0) {
+          emptyModuleIndexes.push(index)
+        }
+      })
 
-    if (emptyModuleIndexes.length > 0) {
-      newErrors.modulesWithoutFiles =
-        errorMessages.MODULES_WITHOUT_FILES(emptyModuleIndexes)
-      isValid = false
+      if (emptyModuleIndexes.length > 0) {
+        newErrors.modulesWithoutFiles =
+          errorMessages.MODULES_WITHOUT_FILES(emptyModuleIndexes)
+        isValid = false
+      }
     }
 
     const fileErrors = validateFiles(
@@ -282,7 +285,7 @@ export const validateFiles = <T extends FileItem>(
   files: T[],
   errorMessages: ErrorMessages,
   config: FileUploadConfig,
-  mode: ValidationMode
+  mode: ValidationMode,
 ): ValidationErrors['files'] => {
   const errors: ValidationErrors['files'] = {}
 

@@ -8,12 +8,12 @@ import {
   validateFiles,
   DEFAULT_FILE_UPLOAD_CONFIG,
 } from '@/features/landing-page-cms/shared'
+import { TRANSLATION_KEY } from './schema'
 import type {
   AssetModuleWithFiles,
   ValidationErrors,
   TouchedFields,
 } from './schema'
-import { TRANSLATION_KEY } from '../data/schema'
 
 export { resetFileErrors }
 
@@ -38,6 +38,7 @@ export const validateAssetForm = (
   setErrors: (errors: ValidationErrors) => void,
   setTouched: (touched: TouchedFields) => void,
   errorMessages: ReturnType<typeof useErrorMessages>,
+  isEdit: boolean,
   config = DEFAULT_FILE_UPLOAD_CONFIG
 ): boolean => {
   return validateForm(
@@ -48,7 +49,8 @@ export const validateAssetForm = (
     setTouched,
     errorMessages,
     config,
-    'modules'
+    'modules',
+    isEdit
   )
 }
 
@@ -67,10 +69,5 @@ export const validateAssetFiles = (
   config = DEFAULT_FILE_UPLOAD_CONFIG
 ): ValidationErrors['files'] => {
   const allFiles = moduleRows.flatMap((row) => row.files)
-  return validateFiles(
-    allFiles,
-    errorMessages,
-    config,
-    'modules'
-  )
+  return validateFiles(allFiles, errorMessages, config, 'modules')
 }

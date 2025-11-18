@@ -100,6 +100,7 @@ export function useRegisterFormFormHandlers({
       setErrors,
       setTouched,
       errorMessages,
+      isEdit,
       uploadConfig
     )
   }
@@ -120,7 +121,7 @@ export function useRegisterFormFormHandlers({
     isFormValid: isRegistrationFormValid,
     resetFileErrors,
     getInitialLanguage: (languageByCountry: Language[]) =>
-      languageByCountry[0].languageCode,
+      languageByCountry[0]?.languageCode || '',
   })
 
   const fileHandlers = useRegisterFormFileHandlers({
