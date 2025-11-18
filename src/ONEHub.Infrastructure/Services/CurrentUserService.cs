@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using ONEHub.Application.Services;
 using ONEHub.Application.Utils;
+using ONEHub.Domain.Constants;
 
 namespace ONEHub.Infrastructure.Services;
 
@@ -47,7 +48,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
     {
         var httpContext = httpContextAccessor.HttpContext;
 
-        var accessToken = HttpContextUtils.GetCookie(httpContext, "accessToken");
+        var accessToken = HttpContextUtils.GetCookie(httpContext, CookieKeys.ACCESS_TOKEN);
         if (string.IsNullOrEmpty(accessToken))
         {
             return -1;

@@ -6,15 +6,13 @@ using ONEHub.Application.Features.Auth.Commands;
 using ONEHub.Application.Features.Auth.Queries;
 using ONEHub.Application.Services;
 using ONEHub.Application.Utils;
+using ONEHub.Domain.Constants;
 using ONEHub.Domain.Results;
 
 namespace ONEHub.WebApi.Features.Auth;
 
 public static class AuthEndpoints
 {
-    private const string ACCESS_TOKEN_KEY = "accessToken";
-
-    private const string REFRESH_TOKEN_KEY = "refreshToken";
 
     public static IEndpointRouteBuilder RegisterAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
@@ -23,6 +21,7 @@ public static class AuthEndpoints
         groupEndpoint.MapPost("/login", Login).AllowAnonymous();
         groupEndpoint.MapPost("/refresh", Refresh).AllowAnonymous();
         groupEndpoint.MapPost("/logout", Logout).AllowAnonymous();
+        groupEndpoint.MapPost("/sso", Sso).AllowAnonymous();
         groupEndpoint.MapGet("/me", Profile);
 
         return groupEndpoint;
@@ -51,8 +50,8 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, ACCESS_TOKEN_KEY, result.Data.AccessToken);
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, REFRESH_TOKEN_KEY, result.Data.RefreshToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
 
         return TypedResults.Ok(result);
     }
@@ -63,7 +62,7 @@ public static class AuthEndpoints
         ICurrentUserService currentUserService,
         IMediator mediator)
     {
-        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, REFRESH_TOKEN_KEY);
+        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
         var userId = currentUserService.GetUserIdFromExpiredToken();
 
         if (userId <= 0)
@@ -84,7 +83,7 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, ACCESS_TOKEN_KEY, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
 
         return TypedResults.Ok(result);
     }
@@ -92,10 +91,34 @@ public static class AuthEndpoints
     private static Task<Ok<Result>> Logout(
         IHttpContextAccessor contextAccessor)
     {
-        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, ACCESS_TOKEN_KEY);
-        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, REFRESH_TOKEN_KEY);
+        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN);
+        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
 
         return Task.FromResult(TypedResults.Ok(Result.Success()));
+    }
+
+    private static async Task<Results<Ok<Result<SsoResponse>>, UnauthorizedHttpResult>> Sso(
+        IHttpContextAccessor contextAccessor,
+        IMediator mediator)
+    {
+        var externalAccessToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.EXTERNAL_ACCESS_TOKEN);
+
+        var command = new SsoCommand
+        {
+            ExternalAccessToken = externalAccessToken
+        };
+
+        var result = await mediator.Send(command);
+
+        if (result.IsFailure || result.Data is null)
+        {
+            return TypedResults.Unauthorized();
+        }
+
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
+
+        return TypedResults.Ok(result);
     }
 
     private static async Task<Ok<Result<UserResponse>>> Profile(

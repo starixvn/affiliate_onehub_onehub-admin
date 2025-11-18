@@ -18,7 +18,7 @@ public static class DependencyInjection
 
         services
             .AddApplication()
-            .AddInfrastructure();
+            .AddInfrastructure(configuration);
 
         services.AddCors(options =>
         {
