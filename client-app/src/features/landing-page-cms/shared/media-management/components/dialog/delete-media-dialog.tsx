@@ -28,7 +28,7 @@ export function DeleteMediaDialog({
   const handleConfirm = () => {
     if (media && !media.isMediaIdInUse) {
       deleteMutation.mutate(media.mediaId.toString(), {
-        onSuccess: (response: any) => {
+        onSuccess: (response) => {
           if (response.errorCode === 0) {
             onOpenChange(false)
           }

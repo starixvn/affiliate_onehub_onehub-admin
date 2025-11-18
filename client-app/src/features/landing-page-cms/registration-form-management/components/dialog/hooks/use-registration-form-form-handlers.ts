@@ -26,7 +26,7 @@ import {
 import { useRegisterFormFileHandlers } from './use-registration-form-file-handlers'
 
 interface UseRegisterFormFormHandlersProps {
-  registerForm?: RegisterFormDetail | null
+  item?: RegisterFormDetail | null
   country: string
   language: string
   formWithFiles: FormWithFiles
@@ -54,7 +54,7 @@ interface UseRegisterFormFormHandlersProps {
 }
 
 export function useRegisterFormFormHandlers({
-  registerForm,
+  item,
   country,
   language,
   formWithFiles,
@@ -79,7 +79,7 @@ export function useRegisterFormFormHandlers({
 
   const validateFieldWrapper = (
     field: string,
-    value: any,
+    value: string,
     setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
     index?: number
   ) => {
@@ -150,18 +150,11 @@ export function useRegisterFormFormHandlers({
     language: string,
     formWithFiles: FormWithFiles
   ) => {
-    if (
-      !Array.isArray(formWithFiles.files) ||
-      formWithFiles.files.length === 0
-    ) {
-      throw new Error('Form must contain at least one file')
-    }
-
     const firstFile = formWithFiles.files[0]
-    const inputMediaName = firstFile?.formName ?? ''
-    const file = firstFile?.file
+    const inputMediaName = firstFile.formName ?? ''
+    const file = firstFile.file
     const inputFileName =
-      file?.name || registerForm.fileName.split('/').pop() || ''
+      file.name || registerForm.fileName.split('/').pop() || ''
 
     return {
       mediaId: registerForm.mediaId,
@@ -203,7 +196,7 @@ export function useRegisterFormFormHandlers({
   }
 
   const submitHandlers = useSubmitHandlers<FormWithFiles, RegisterFormDetail>({
-    mediaDetail: registerForm,
+    mediaDetail: item,
     country,
     language,
     formData: formWithFiles,

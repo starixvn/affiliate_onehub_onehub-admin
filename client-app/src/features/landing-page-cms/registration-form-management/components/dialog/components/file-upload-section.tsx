@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { Upload } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ export function FileUploadSection({
   onFileChange,
 }: FileUploadSectionProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   return (
     <div className='space-y-2'>
@@ -26,7 +28,7 @@ export function FileUploadSection({
           type='button'
           variant='outline'
           size='sm'
-          onClick={() => document.getElementById('file-input')?.click()}
+          onClick={() => fileInputRef.current?.click()}
         >
           <Upload className='mr-2 h-4 w-4' />
           {t('form.uploadFileButton')}
@@ -41,11 +43,11 @@ export function FileUploadSection({
       </div>
       <input
         key={formWithFiles.files.length}
-        id='file-input'
         type='file'
         accept='.jpg,.jpeg,.png,.gif,.webp'
         multiple={!isEdit}
         className='hidden'
+        ref={fileInputRef}
         onChange={(e) => onFileChange(e.target.files)}
       />
     </div>

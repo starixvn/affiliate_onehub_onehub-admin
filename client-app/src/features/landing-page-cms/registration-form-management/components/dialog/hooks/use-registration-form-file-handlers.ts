@@ -33,7 +33,7 @@ export function useRegisterFormFileHandlers({
 
   const createFormFile = (file: File): FormFile => ({
     file,
-    formName: file.name.replace(/\.[^/.]+$/, ''),
+    formName: file.name.replace(/\.[^/.]+$/, '') || file.name,
     fileName: file.name,
   })
 
@@ -61,22 +61,14 @@ export function useRegisterFormFileHandlers({
   }
 
   const handleFormNameBlur = (index: number) => {
-    fileHandlers.handleFormNameBlur?.(
-      index,
-      (
-        field: string,
-        value: string,
-        setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
-        errorMessages: any,
-        index?: number
-      ) =>
-        validateRegistrationFormField(
-          field,
-          value,
-          setErrors,
-          errorMessages,
-          index
-        )
+    fileHandlers.handleFormNameBlur?.(index, (field, value) =>
+      validateRegistrationFormField(
+        field,
+        value,
+        setErrors,
+        errorMessages,
+        index
+      )
     )
   }
 

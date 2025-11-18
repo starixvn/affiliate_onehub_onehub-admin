@@ -30,6 +30,10 @@ export function MediaBulkDeleteDialog({
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
   const handleDelete = () => {
+    if (selectedRows.length === 0) {
+      return
+    }
+
     const associatedMedia = selectedRows.filter((row) => {
       return row.original.isMediaIdInUse === true
     })
@@ -50,6 +54,8 @@ export function MediaBulkDeleteDialog({
         if (response.errorCode === 0) {
           table.resetRowSelection()
           onOpenChange(false)
+        } else {
+          toast.error(t('toasts.deleteError'))
         }
       },
     })

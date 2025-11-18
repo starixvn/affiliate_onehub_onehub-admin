@@ -51,7 +51,7 @@ export function useAssetModuleHandlers({
   const handleModuleBlur = (moduleIndex: number) => {
     setTouched((prev) => ({
       ...prev,
-      modules: { ...prev.modules, [moduleIndex]: true },
+      modules: { ...(prev.modules ?? {}), [moduleIndex]: true },
     }))
     validateAssetField(
       'module',

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Upload } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/select'
 import type { ValidationErrors, TouchedFields } from '../../data/schema'
 import { TRANSLATION_KEY } from '../../data/schema'
+
+const MODULE_INDEX = 0
 
 interface AssetEditFormProps {
   isMediaIdInUse: boolean
@@ -39,6 +41,7 @@ export function AssetEditForm({
   const { t } = useTranslation(TRANSLATION_KEY)
   const [moduleValue, setModuleValue] = useState(initialModule)
   const [fileName, setFileName] = useState(initialFileName)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     setModuleValue(initialModule)
@@ -50,11 +53,11 @@ export function AssetEditForm({
 
   const handleModuleChange = (value: string) => {
     setModuleValue(value)
-    onModuleChange(0, value)
+    onModuleChange(MODULE_INDEX, value)
   }
 
   const handleModuleBlur = () => {
-    onModuleBlur(0)
+    onModuleBlur(MODULE_INDEX)
   }
 
   const handleFileChange = (files: FileList | null) => {
@@ -62,7 +65,7 @@ export function AssetEditForm({
       const newFileName = files[0].name
       setFileName(newFileName)
     }
-    onFileChange(0, files)
+    onFileChange(MODULE_INDEX, files)
   }
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
@@ -73,14 +76,14 @@ export function AssetEditForm({
           value={moduleValue}
           onValueChange={handleModuleChange}
           onOpenChange={(open) => {
-            if (!open && !touched.modules?.[0]) {
+            if (!open && !touched.modules?.[MODULE_INDEX]) {
               handleModuleBlur()
             }
           }}
         >
           <SelectTrigger
             className={
-              touched.modules?.[0] && errors.modules?.[0]
+              touched.modules?.[MODULE_INDEX] && errors.modules?.[MODULE_INDEX]
                 ? 'border-destructive'
                 : ''
             }
@@ -95,31 +98,35 @@ export function AssetEditForm({
             ))}
           </SelectContent>
         </Select>
-        {touched.modules?.[0] && errors.modules?.[0] && (
-          <p className='text-destructive text-xs'>{errors.modules[0]}</p>
+        {touched.modules?.[MODULE_INDEX] && errors.modules?.[MODULE_INDEX] && (
+          <p className='text-destructive text-xs'>
+            {errors.modules?.[MODULE_INDEX]}
+          </p>
         )}
       </div>
 
       <div className='space-y-2'>
-        <Label>{t('form.uploadFile')}</Label>
+        <Label htmlFor='asset-file-input'>{t('form.uploadFile')}</Label>
         <div className='flex items-center gap-2'>
           <Button
             type='button'
             variant='outline'
             className='hover:border-input'
-            onClick={() => document.getElementById('file-input-edit')?.click()}
+            onClick={() => fileInputRef.current?.click()}
           >
             <Upload className='mr-2 h-4 w-4' />
             {t('form.uploadFileButton')}
           </Button>
           <input
+            id='asset-file-input'
             key={fileName}
-            id='file-input-edit'
             type='file'
             accept='.jpg,.jpeg,.png,.gif,.webp'
             multiple={false}
             className='hidden'
+            ref={fileInputRef}
             onChange={(e) => handleFileChange(e.target.files)}
+            aria-label={t('form.uploadFile')}
           />
           <span className='text-muted-foreground flex-1 text-sm'>
             {fileName || t('form.noFileChosen')}

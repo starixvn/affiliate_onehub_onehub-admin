@@ -4,6 +4,7 @@ import type {
   CreateMediaRequest,
   UpdateMediaRequest,
 } from '@/features/landing-page-cms/shared'
+import { MEDIA_STATUS } from '@/features/landing-page-cms/shared'
 import { registrationFormManagementApi } from './client'
 import { registrationFormManagementKeys } from './queries'
 
@@ -28,7 +29,7 @@ export const useCreateMedia = (onError?: (error: string) => void) => {
 export const useUpdateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ data }: { data: UpdateMediaRequest }) =>
+    mutationFn: (data: UpdateMediaRequest) =>
       registrationFormManagementApi.updateMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
@@ -43,7 +44,7 @@ export const useUpdateMedia = (onError?: (error: string) => void) => {
   })
 }
 
-export const useDeleteMedias = () => {
+export const useDeleteMedias = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (mediaIds: string) =>
@@ -55,13 +56,18 @@ export const useDeleteMedias = () => {
         })
         toast.success('Registration forms deleted successfully')
       } else {
-        toast.error(response.errorMessage || 'Failed to delete registration forms')
+        const errorMessage =
+          response.errorMessage || 'Failed to delete registration forms'
+        onError?.(errorMessage)
+        if (!onError) {
+          toast.error(errorMessage)
+        }
       }
     },
   })
 }
 
-export const useUpdateMediaStatus = () => {
+export const useUpdateMediaStatus = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ ids, statusId }: { ids: string; statusId: number }) =>
@@ -72,12 +78,15 @@ export const useUpdateMediaStatus = () => {
           queryKey: registrationFormManagementKeys.lists(),
         })
         toast.success(
-          `Registration forms updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
+          `Registration forms updated to ${statusId === MEDIA_STATUS.ACTIVE ? 'active' : 'inactive'} successfully`
         )
       } else {
-        toast.error(
+        const errorMessage =
           response.errorMessage || 'Failed to update registration forms status'
-        )
+        onError?.(errorMessage)
+        if (!onError) {
+          toast.error(errorMessage)
+        }
       }
     },
   })

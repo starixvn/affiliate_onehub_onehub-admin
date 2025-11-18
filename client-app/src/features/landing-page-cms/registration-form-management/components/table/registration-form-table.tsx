@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -10,7 +10,6 @@ import {
   useReactTable,
   type OnChangeFn,
   type PaginationState,
-  type Table as TanstackTable,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import {
@@ -32,13 +31,11 @@ import { TRANSLATION_KEY, type RegisterFormDetail } from '../../data/schema'
 import { useRegisterFormManagement } from '../registration-form-management-provider'
 import { useRegisterFormColumns } from './registration-form-columns'
 
-interface RegisterFormTableProps {
-  onTableReady?: (table: TanstackTable<RegisterFormDetail>) => void
-}
+const DEFAULT_STATUS_FILTER = ['1']
+const DEFAULT_EMPTY_FILTER: string[] = []
+const DEFAULT_PAGE_SIZE = 10
 
-export function RegisterFormTable({
-  onTableReady,
-}: RegisterFormTableProps = {}) {
+export function RegisterFormTable() {
   const { t } = useTranslation(TRANSLATION_KEY)
   const {
     registerForms,
@@ -113,7 +110,7 @@ export function RegisterFormTable({
     getFilteredRowModel: getFilteredRowModel(),
     manualFiltering: true,
     manualPagination: true,
-    pageCount: Math.ceil(totalCount / (pageSize ?? 10)),
+    pageCount: Math.ceil(totalCount / (pageSize ?? DEFAULT_PAGE_SIZE)),
     enableRowSelection: true,
     rowCount: totalCount,
     onSortingChange: setSorting,
@@ -130,18 +127,15 @@ export function RegisterFormTable({
     },
   })
 
+  const tableRef = useRef(table)
+  tableRef.current = table
+
   useEffect(() => {
     setRowSelection({})
-  }, [pageIndex, pageSize, registerForms])
+  }, [pageIndex, pageSize])
 
   useEffect(() => {
-    if (onTableReady) {
-      onTableReady(table)
-    }
-  }, [columnVisibility, table, onTableReady])
-
-  useEffect(() => {
-    const statusColumn = table.getColumn('statusId')
+    const statusColumn = tableRef.current.getColumn('statusId')
     if (!statusColumn) return
 
     const currentFilterValue = statusColumn.getFilterValue() as
@@ -155,15 +149,15 @@ export function RegisterFormTable({
       newFilterValue = ['1']
     }
 
-    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       statusColumn.setFilterValue(newFilterValue)
     }
-  }, [search.currentStatus, table])
+  }, [search.currentStatus])
 
   useEffect(() => {
-    const countryColumn = table.getColumn('targetCountryCode')
+    const countryColumn = tableRef.current.getColumn('targetCountryCode')
     if (!countryColumn) return
 
     const currentFilterValue = countryColumn.getFilterValue() as
@@ -177,15 +171,15 @@ export function RegisterFormTable({
       newFilterValue = []
     }
 
-    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       countryColumn.setFilterValue(newFilterValue)
     }
-  }, [search.targetCountrycodes, table])
+  }, [search.targetCountrycodes])
 
   useEffect(() => {
-    const languageColumn = table.getColumn('languageCode')
+    const languageColumn = tableRef.current.getColumn('languageCode')
     if (!languageColumn) return
 
     const currentFilterValue = languageColumn.getFilterValue() as
@@ -199,12 +193,12 @@ export function RegisterFormTable({
       newFilterValue = []
     }
 
-    const currentStr = currentFilterValue?.sort().join(',') || ''
+    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       languageColumn.setFilterValue(newFilterValue)
     }
-  }, [search.languageCodes, table])
+  }, [search.languageCodes])
 
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
@@ -225,13 +219,13 @@ export function RegisterFormTable({
         columnId: 'targetCountryCode',
         title: t('filters.country'),
         options: countryOptions,
-        defaultValue: [],
+        defaultValue: DEFAULT_EMPTY_FILTER,
       },
       {
         columnId: 'languageCode',
         title: t('filters.language'),
         options: languageOptions,
-        defaultValue: [],
+        defaultValue: DEFAULT_EMPTY_FILTER,
       },
       {
         columnId: 'statusId',
@@ -240,7 +234,7 @@ export function RegisterFormTable({
           label: status,
           value: statusId.toString(),
         })),
-        defaultValue: ['1'],
+        defaultValue: DEFAULT_STATUS_FILTER,
       },
     ],
     [countryOptions, languageOptions, mediaStatus, t]
@@ -283,9 +277,11 @@ export function RegisterFormTable({
           handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
-          table.getColumn('statusId')?.setFilterValue(['1'])
-          table.getColumn('targetCountryCode')?.setFilterValue([])
-          table.getColumn('languageCode')?.setFilterValue([])
+          table.getColumn('statusId')?.setFilterValue(DEFAULT_STATUS_FILTER)
+          table
+            .getColumn('targetCountryCode')
+            ?.setFilterValue(DEFAULT_EMPTY_FILTER)
+          table.getColumn('languageCode')?.setFilterValue(DEFAULT_EMPTY_FILTER)
         }}
       />
 
@@ -295,7 +291,10 @@ export function RegisterFormTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className={header.column.columnDef.meta?.className}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

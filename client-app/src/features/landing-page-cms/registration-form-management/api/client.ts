@@ -62,7 +62,7 @@ export const registrationFormManagementApi = {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': undefined,
           },
         }
       )
@@ -119,7 +119,7 @@ export const registrationFormManagementApi = {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': undefined,
           },
         }
       )

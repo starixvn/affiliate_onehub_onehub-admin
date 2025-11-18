@@ -24,7 +24,7 @@ import {
 import { useAssetModuleHandlers } from './use-asset-module-handlers'
 
 interface UseAssetFormHandlersProps {
-  asset: AssetDetail | null | undefined
+  item: AssetDetail | null | undefined
   country: string
   language: string
   fileName: string
@@ -59,7 +59,7 @@ interface UseAssetFormHandlersProps {
 
 export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
   const {
-    asset,
+    item,
     country,
     language,
     moduleRows,
@@ -132,7 +132,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
       if (index !== undefined) {
         setTouched((prev) => ({
           ...prev,
-          modules: { ...prev.modules, [index]: true },
+          modules: { ...(prev.modules ?? {}), [index]: true },
         }))
       } else {
         setTouched((prev) => ({ ...prev, [field]: true }))
@@ -142,8 +142,10 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
       languageByCountry: Language[],
       selectedCountry?: Country
     ) => {
-      const firstLanguage = languageByCountry[0]
-      return selectedCountry?.languageCode || firstLanguage?.languageCode || ''
+      if (selectedCountry?.languageCode) {
+        return selectedCountry.languageCode
+      }
+      return languageByCountry[0]?.languageCode ?? ''
     },
   })
 
@@ -189,25 +191,14 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
     country: string,
     language: string,
     moduleRows: AssetModuleWithFiles[]
-  ) => {
-    if (!moduleRows.length) {
-      throw new Error(errorMessages.MODULE_REQUIRED)
-    }
-
-    const mediaId = asset.mediaId
-    const inputFileName = moduleRows[0].files?.[0]?.name || asset.mediaName
-    const moduleId = Number(moduleRows[0].module)
-    const file = moduleRows[0].files[0]
-
-    return {
-      mediaId,
-      moduleId,
-      targetCountryCode: country,
-      languageCode: language,
-      inputFileName,
-      file,
-    }
-  }
+  ) => ({
+    mediaId: asset.mediaId,
+    moduleId: Number(moduleRows[0].module),
+    targetCountryCode: country,
+    languageCode: language,
+    inputFileName: moduleRows[0].files?.[0]?.name || asset.mediaName,
+    file: moduleRows[0].files[0],
+  })
 
   const hasRestrictedFieldsChanged = (
     mediaDetail: AssetDetail,
@@ -239,7 +230,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
 
   const submitHandlers = useSubmitHandlers<AssetModuleWithFiles[], AssetDetail>(
     {
-      mediaDetail: asset,
+      mediaDetail: item,
       country,
       language,
       formData: moduleRows,

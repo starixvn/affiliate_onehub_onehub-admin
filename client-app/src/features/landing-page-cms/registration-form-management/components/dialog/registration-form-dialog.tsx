@@ -29,18 +29,18 @@ import { useRegisterFormFormState } from './hooks/use-registration-form-form-sta
 interface RegisterFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  registerForm?: RegisterFormDetail | null
+  item?: RegisterFormDetail | null
 }
 
 export function RegisterFormDialog({
   open,
   onOpenChange,
-  registerForm,
+  item,
 }: RegisterFormDialogProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
   const { countries, languages, maximumFiles, maxFileSize, allowedExtensions } =
     useRegisterFormManagement()
-  const isMediaIdInUse = registerForm?.isMediaIdInUse ?? false
+  const isMediaIdInUse = item?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
 
   const countryOptions = countries.map((country) => ({
@@ -66,10 +66,10 @@ export function RegisterFormDialog({
     setTouched,
     resetForm,
     resetTouchedForFormNames,
-  } = useRegisterFormFormState(registerForm)
+  } = useRegisterFormFormState(item)
 
   const handlers = useRegisterFormFormHandlers({
-    registerForm,
+    item,
     country,
     language,
     formWithFiles,
@@ -107,27 +107,27 @@ export function RegisterFormDialog({
   useEffect(() => {
     if (open) {
       setBackendError(null)
-      if (registerForm) {
-        setCountry(registerForm.targetCountryCode)
+      if (item) {
+        setCountry(item.targetCountryCode)
         setLanguageOptions(
           languages
             .filter(
               (language) =>
-                language.targetCountryCode === registerForm.targetCountryCode
+                language.targetCountryCode === item.targetCountryCode
             )
             .map((language) => ({
               value: language.languageCode,
               label: language.languageName,
             }))
         )
-        setLanguage(registerForm.marketId)
+        setLanguage(item.marketId)
         setFormWithFiles({
-          module: registerForm.moduleName,
+          module: item.moduleName,
           files: [
             {
               file: new File([], ''),
-              formName: registerForm.mediaName,
-              fileName: registerForm.fileName.split('/').pop() || '',
+              formName: item.mediaName,
+              fileName: item.fileName.split('/').pop() || '',
             },
           ],
         })
@@ -139,8 +139,7 @@ export function RegisterFormDialog({
         resetTouchedForFormNames(1)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [registerForm, open])
+  }, [item, open, languages])
 
   useEffect(() => {
     if (
@@ -158,7 +157,7 @@ export function RegisterFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='max-h-[90vh] w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl'>
+      <DialogContent className='flex max-h-[90vh] w-[95vw] flex-col sm:max-w-2xl md:max-w-3xl lg:max-w-4xl'>
         <DialogHeader>
           <DialogTitle>
             {isEdit
@@ -174,7 +173,7 @@ export function RegisterFormDialog({
 
         <div
           ref={scrollContainerRef}
-          className='max-h-[calc(90vh-10rem)] space-y-4 overflow-y-auto px-1 pr-3 sm:px-0 sm:pr-2'
+          className='min-h-0 flex-1 space-y-4 overflow-y-auto border-b px-1 pr-3 sm:px-0 sm:pr-2'
         >
           <MediaDialogErrorBanner
             errors={errors}
@@ -246,7 +245,7 @@ export function RegisterFormDialog({
           onOpenChange={(open) => !open && handleCancelOverwrite()}
           fileName={
             formWithFiles.files[0]?.file.name ||
-            registerForm?.fileName.split('/').pop() ||
+            item?.fileName.split('/').pop() ||
             ''
           }
           onConfirm={handleConfirmOverwrite}

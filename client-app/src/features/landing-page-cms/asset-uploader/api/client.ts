@@ -51,7 +51,7 @@ export const assetUploaderApi = {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': undefined,
           },
         }
       )
@@ -101,7 +101,7 @@ export const assetUploaderApi = {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': undefined,
           },
         }
       )

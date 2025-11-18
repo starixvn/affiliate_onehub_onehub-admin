@@ -3,7 +3,7 @@ import type { DialogType } from '../schema/types'
 export interface SharedDialogManagerProps<TDetail> {
   open: DialogType | null
   setOpen: (str: DialogType | null) => void
-  currentRow: TDetail | null
+  currentItem: TDetail | null
   targetStatusId: number | null
   UploadDialog: React.ComponentType<{
     open: boolean
@@ -12,20 +12,17 @@ export interface SharedDialogManagerProps<TDetail> {
   EditDialog: React.ComponentType<{
     open: boolean
     onOpenChange: (open: boolean) => void
-    asset?: TDetail | null
-    registerForm?: TDetail | null
+    item: TDetail
   }>
   DeleteDialog: React.ComponentType<{
     open: boolean
     onOpenChange: (open: boolean) => void
-    asset?: TDetail | null
-    registerForm?: TDetail | null
+    item: TDetail
   }>
   StatusChangeDialog: React.ComponentType<{
     open: boolean
     onOpenChange: (open: boolean) => void
-    asset?: TDetail | null
-    registerForm?: TDetail | null
+    item: TDetail
     newStatusId: number
   }>
 }
@@ -33,7 +30,7 @@ export interface SharedDialogManagerProps<TDetail> {
 export function SharedDialogManager<TDetail>({
   open,
   setOpen,
-  currentRow,
+  currentItem,
   targetStatusId,
   UploadDialog,
   EditDialog,
@@ -49,22 +46,19 @@ export function SharedDialogManager<TDetail>({
       <EditDialog
         open={open === 'edit'}
         onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'edit' : null)}
-        asset={currentRow}
-        registerForm={currentRow}
+        item={currentItem!}
       />
       <DeleteDialog
         open={open === 'delete'}
         onOpenChange={(isOpen: boolean) => setOpen(isOpen ? 'delete' : null)}
-        asset={currentRow}
-        registerForm={currentRow}
+        item={currentItem!}
       />
       <StatusChangeDialog
         open={open === 'status-change'}
         onOpenChange={(isOpen: boolean) =>
           setOpen(isOpen ? 'status-change' : null)
         }
-        asset={currentRow}
-        registerForm={currentRow}
+        item={currentItem!}
         newStatusId={targetStatusId || 1}
       />
     </>

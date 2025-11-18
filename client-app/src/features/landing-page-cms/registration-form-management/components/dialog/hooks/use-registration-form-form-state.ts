@@ -7,7 +7,7 @@ import type {
 import { INITIAL_VALIDATION_STATE } from '../../../data/validation'
 
 export function useRegisterFormFormState(
-  registerForm?: RegisterFormDetail | null
+  item?: RegisterFormDetail | null
 ) {
   const [languageOptions, setLanguageOptions] = useState<
     Array<{ value: string; label: string }>
@@ -24,7 +24,7 @@ export function useRegisterFormFormState(
     formNames: INITIAL_VALIDATION_STATE.touched.formNames || {},
   })
 
-  const isEdit = !!registerForm
+  const isEdit = !!item
 
   const resetForm = () => {
     setCountry('')

@@ -5,6 +5,7 @@ import type {
   UpdateMediaRequest,
   UpdateMediaStatusResponse,
 } from '@/features/landing-page-cms/shared'
+import { MEDIA_STATUS } from '@/features/landing-page-cms/shared'
 import { assetUploaderApi } from './client'
 import { assetUploaderKeys } from './queries'
 
@@ -27,7 +28,7 @@ export const useCreateMedia = (onError?: (error: string) => void) => {
 export const useUpdateMedia = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: ({ data }: { data: UpdateMediaRequest }) =>
+    mutationFn: (data: UpdateMediaRequest) =>
       assetUploaderApi.updateMedia(data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
@@ -40,23 +41,26 @@ export const useUpdateMedia = (onError?: (error: string) => void) => {
   })
 }
 
-export const useDeleteMedias = () => {
+export const useDeleteMedias = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (mediaIds: string) =>
-      assetUploaderApi.deleteMedias(mediaIds),
+    mutationFn: (mediaIds: string) => assetUploaderApi.deleteMedias(mediaIds),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success('Assets deleted successfully')
       } else {
-        toast.error(response.errorMessage || 'Failed to delete assets')
+        const errorMessage = response.errorMessage || 'Failed to delete assets'
+        onError?.(errorMessage)
+        if (!onError) {
+          toast.error(errorMessage)
+        }
       }
     },
   })
 }
 
-export const useUpdateMediaStatus = () => {
+export const useUpdateMediaStatus = (onError?: (error: string) => void) => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: ({ ids, statusId }: { ids: string; statusId: number }) =>
@@ -65,10 +69,15 @@ export const useUpdateMediaStatus = () => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success(
-          `Assets updated to ${statusId === 1 ? 'active' : 'inactive'} successfully`
+          `Assets updated to ${statusId === MEDIA_STATUS.ACTIVE ? 'active' : 'inactive'} successfully`
         )
       } else {
-        toast.error(response.errorMessage || 'Failed to update assets status')
+        const errorMessage =
+          response.errorMessage || 'Failed to update assets status'
+        onError?.(errorMessage)
+        if (!onError) {
+          toast.error(errorMessage)
+        }
       }
     },
   })

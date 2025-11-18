@@ -63,7 +63,7 @@ export function MediaBulkStatusChangeDialog({
 
   const entity = affectedCount > 1 ? t('dialogs.statuses') : t('dialogs.status')
   const targetStatus =
-    status.find((s) => s.value === String(newStatusId))?.label ||
+    status.find((s) => s.value === String(newStatusId))?.label ??
     t('dialogs.unknownStatus')
 
   return (

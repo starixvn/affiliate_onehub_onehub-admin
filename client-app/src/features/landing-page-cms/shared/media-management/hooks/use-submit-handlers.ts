@@ -15,7 +15,7 @@ interface UseSubmitHandlersProps<TData, TDetail extends MediaDetail> {
     isPending: boolean
   }
   useUpdateMutation: (onError: (error: string) => void) => {
-    mutateAsync: (data: { data: any }) => Promise<{ errorCode: number }>
+    mutateAsync: (data: any) => Promise<{ errorCode: number }>
     isPending: boolean
   }
 
@@ -115,7 +115,7 @@ export function useSubmitHandlers<TData, TDetail extends MediaDetail>({
         language,
         formData
       )
-      const response = await updateMutation.mutateAsync({ data: request })
+      const response = await updateMutation.mutateAsync(request)
       if (response.errorCode === 0) {
         handleCancel()
       }

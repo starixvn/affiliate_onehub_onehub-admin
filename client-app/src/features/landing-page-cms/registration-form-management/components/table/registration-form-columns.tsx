@@ -27,6 +27,9 @@ export const useRegisterFormColumns = (
   return [
     {
       id: 'select',
+      meta: {
+        className: 'w-[50px] min-w-[50px] max-w-[50px]',
+      },
       header: ({ table }) => (
         <div className='flex justify-center'>
           <Checkbox
@@ -42,7 +45,7 @@ export const useRegisterFormColumns = (
         </div>
       ),
       cell: ({ row }) => (
-        <div className='flex justify-center'>
+        <div className='flex min-w-7 justify-center'>
           <Checkbox
             checked={row.getIsSelected()}
             onCheckedChange={(value) => row.toggleSelected(!!value)}
@@ -55,6 +58,9 @@ export const useRegisterFormColumns = (
     },
     {
       accessorKey: 'mediaId',
+      meta: {
+        className: 'w-[60px] min-w-[60px] max-w-[60px]',
+      },
       header: () => <div className='text-center'>#</div>,
       cell: ({ row }) => (
         <div className='text-center'>
@@ -92,9 +98,7 @@ export const useRegisterFormColumns = (
           ? fileNameStr.split('/').pop() || ''
           : fileNameStr
 
-        return (
-          <div className='max-w-[200px] break-words'>{displayName}</div>
-        )
+        return <div className='max-w-[200px] break-words'>{displayName}</div>
       },
     },
     {
@@ -138,18 +142,18 @@ export const useRegisterFormColumns = (
         displayName: t('table.previewForm'),
       },
       cell: ({ row }) => {
-        const mediaName = row.getValue('mediaName') as string
-        const fileName = row.original.fileName
-        const imageUrl =
-          bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
-        const thumbnailUrl =
+        const mediaNameValue = row.getValue('mediaName')
+        const mediaName =
+          typeof mediaNameValue === 'string' ? mediaNameValue : ''
+        const fileName = row.original.fileName || ''
+        const bannerUrl =
           bannerRootUrl && fileName ? `${bannerRootUrl}/${fileName}` : ''
 
         return (
           <ImagePreviewCell
             fileName={mediaName}
-            imageUrl={imageUrl}
-            thumbnailUrl={thumbnailUrl}
+            imageUrl={bannerUrl}
+            thumbnailUrl={bannerUrl}
           />
         )
       },

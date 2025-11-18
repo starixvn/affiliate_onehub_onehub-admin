@@ -30,8 +30,9 @@ export const useMediaFilters = () => {
         modules: response?.modules ?? [],
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
-        mediaStatus:
-          response?.statusInfos.filter((status) => status.statusId !== 0) ?? [],
+        mediaStatus: (response?.statusInfos ?? []).filter(
+          (status) => status.statusId !== 0
+        ),
         landingPageUrl: response?.landingPageUrl ?? '',
         bannerRootUrl: response?.bannerRootUrl ?? '',
         maximumFiles: response?.maximumFiles ?? 50,
@@ -42,7 +43,15 @@ export const useMediaFilters = () => {
   })
 
   return {
-    ...query.data,
+    modules: query.data?.modules ?? [],
+    countries: query.data?.countries ?? [],
+    languages: query.data?.languages ?? [],
+    mediaStatus: query.data?.mediaStatus ?? [],
+    landingPageUrl: query.data?.landingPageUrl ?? '',
+    bannerRootUrl: query.data?.bannerRootUrl ?? '',
+    maximumFiles: query.data?.maximumFiles ?? 50,
+    maxFileSize: query.data?.maxFileSize ?? 3,
+    allowedExtensions: query.data?.allowedExtensions ?? [],
     isLoading: query.isLoading,
     error: query.error,
   }

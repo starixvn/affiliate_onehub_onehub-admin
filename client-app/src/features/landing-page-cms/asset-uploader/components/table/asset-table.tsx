@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -36,6 +36,10 @@ interface AssetTableProps {
   bannerRootUrl?: string
   totalCount?: number
 }
+
+const DEFAULT_STATUS_FILTER = ['1']
+const DEFAULT_EMPTY_FILTER: string[] = []
+const DEFAULT_PAGE_SIZE = 10
 
 export function AssetTable({
   data,
@@ -84,7 +88,7 @@ export function AssetTable({
 
   useEffect(() => {
     setRowSelection({})
-  }, [pageIndex, pageSize, data])
+  }, [pageIndex, pageSize])
 
   const handleEdit = (asset: AssetDetail) => {
     setCurrentRow(asset)
@@ -118,7 +122,7 @@ export function AssetTable({
     getFilteredRowModel: getFilteredRowModel(),
     manualFiltering: true,
     manualPagination: true,
-    pageCount: Math.ceil(totalCount / (pageSize ?? 10)),
+    pageCount: Math.ceil(totalCount / (pageSize ?? DEFAULT_PAGE_SIZE)),
     enableRowSelection: true,
     rowCount: totalCount,
     onSortingChange: setSorting,
@@ -135,8 +139,11 @@ export function AssetTable({
     },
   })
 
+  const tableRef = useRef(table)
+  tableRef.current = table
+
   useEffect(() => {
-    const statusColumn = table.getColumn('statusId')
+    const statusColumn = tableRef.current.getColumn('statusId')
     if (!statusColumn) return
 
     const currentFilterValue = statusColumn.getFilterValue() as
@@ -145,7 +152,9 @@ export function AssetTable({
     let newFilterValue: string[] = []
 
     if (search.currentStatus) {
-      newFilterValue = (search.currentStatus as number[]).map(String)
+      newFilterValue = Array.isArray(search.currentStatus)
+        ? search.currentStatus.map(String)
+        : []
     } else {
       newFilterValue = ['1']
     }
@@ -155,7 +164,7 @@ export function AssetTable({
     if (currentStr !== newStr) {
       statusColumn.setFilterValue(newFilterValue)
     }
-  }, [search.currentStatus, table])
+  }, [search.currentStatus])
 
   const moduleOptions = modules.map((module) => ({
     value: module.moduleId.toString(),
@@ -167,7 +176,7 @@ export function AssetTable({
   )
 
   useEffect(() => {
-    const moduleColumn = table.getColumn('moduleId')
+    const moduleColumn = tableRef.current.getColumn('moduleId')
     if (!moduleColumn) return
 
     const currentFilterValue = moduleColumn.getFilterValue() as
@@ -176,7 +185,8 @@ export function AssetTable({
     let newFilterValue: string[] = []
 
     if (search.moduleIds) {
-      const moduleValues = (search.moduleIds as string).split(',')
+      const moduleValues =
+        typeof search.moduleIds === 'string' ? search.moduleIds.split(',') : []
       const isAutoSet = search.moduleIdsAuto === true
       if (isAutoSet) {
         newFilterValue = []
@@ -192,10 +202,10 @@ export function AssetTable({
     if (currentStr !== newStr) {
       moduleColumn.setFilterValue(newFilterValue)
     }
-  }, [search.moduleIds, search.moduleIdsAuto, table, defaultModuleIds])
+  }, [search.moduleIds, search.moduleIdsAuto, defaultModuleIds])
 
   useEffect(() => {
-    const countryColumn = table.getColumn('targetCountryCode')
+    const countryColumn = tableRef.current.getColumn('targetCountryCode')
     if (!countryColumn) return
 
     const currentFilterValue = countryColumn.getFilterValue() as
@@ -204,20 +214,20 @@ export function AssetTable({
     let newFilterValue: string[] = []
 
     if (search.targetCountrycodes && search.targetCountrycodes !== 'all') {
-      newFilterValue = (search.targetCountrycodes as string).split(',')
-    } else {
-      newFilterValue = []
+      newFilterValue =
+        typeof search.targetCountrycodes === 'string'
+          ? search.targetCountrycodes.split(',')
+          : []
     }
-
     const currentStr = currentFilterValue?.sort().join(',') || ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       countryColumn.setFilterValue(newFilterValue)
     }
-  }, [search.targetCountrycodes, table])
+  }, [search.targetCountrycodes])
 
   useEffect(() => {
-    const languageColumn = table.getColumn('languageCode')
+    const languageColumn = tableRef.current.getColumn('languageCode')
     if (!languageColumn) return
 
     const currentFilterValue = languageColumn.getFilterValue() as
@@ -226,9 +236,10 @@ export function AssetTable({
     let newFilterValue: string[] = []
 
     if (search.languageCodes && search.languageCodes !== 'all') {
-      newFilterValue = (search.languageCodes as string).split(',')
-    } else {
-      newFilterValue = []
+      newFilterValue =
+        typeof search.languageCodes === 'string'
+          ? search.languageCodes.split(',')
+          : []
     }
 
     const currentStr = currentFilterValue?.sort().join(',') || ''
@@ -236,7 +247,7 @@ export function AssetTable({
     if (currentStr !== newStr) {
       languageColumn.setFilterValue(newFilterValue)
     }
-  }, [search.languageCodes, table])
+  }, [search.languageCodes])
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
     label: country.targetCountryName,
@@ -277,7 +288,7 @@ export function AssetTable({
           label: status,
           value: statusId.toString(),
         })),
-        defaultValue: ['1'],
+        defaultValue: DEFAULT_STATUS_FILTER,
       },
     ],
     [moduleOptions, countryOptions, languageOptions, mediaStatus, t]
@@ -327,10 +338,12 @@ export function AssetTable({
           handleSubmitFilters(submittedSearchValue)
         }}
         onReset={() => {
-          table.getColumn('statusId')?.setFilterValue(['1'])
-          table.getColumn('moduleId')?.setFilterValue([])
-          table.getColumn('targetCountryCode')?.setFilterValue([])
-          table.getColumn('languageCode')?.setFilterValue([])
+          table.getColumn('statusId')?.setFilterValue(DEFAULT_STATUS_FILTER)
+          table.getColumn('moduleId')?.setFilterValue(DEFAULT_EMPTY_FILTER)
+          table
+            .getColumn('targetCountryCode')
+            ?.setFilterValue(DEFAULT_EMPTY_FILTER)
+          table.getColumn('languageCode')?.setFilterValue(DEFAULT_EMPTY_FILTER)
         }}
       />
 
@@ -340,7 +353,10 @@ export function AssetTable({
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className={header.column.columnDef.meta?.className}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(

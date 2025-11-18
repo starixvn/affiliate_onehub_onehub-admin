@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { ChevronDown, ChevronRight, Upload } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
@@ -59,6 +60,7 @@ export function AssetModuleRow({
   isModuleSelectedByOther,
 }: AssetModuleRowProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   return (
     <div className='bg-card rounded-lg border p-4'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-4'>
@@ -117,20 +119,18 @@ export function AssetModuleRow({
               size='sm'
               title={t('form.uploadFile')}
               className='w-full sm:w-auto'
-              onClick={() =>
-                document.getElementById(`file-input-${moduleIndex}`)?.click()
-              }
+              onClick={() => fileInputRef.current?.click()}
             >
               <Upload className='mr-2 h-4 w-4' />
               <span className='sm:inline'>{t('form.uploadFileButton')}</span>
             </Button>
             <input
               key={`${moduleIndex}-${moduleRow.files.length}`}
-              id={`file-input-${moduleIndex}`}
               type='file'
               accept='.jpg,.jpeg,.png,.gif,.webp'
               multiple={!isEdit}
               className='hidden'
+              ref={fileInputRef}
               onChange={(e) => onFileChange(moduleIndex, e.target.files)}
             />
             {isEdit ? (

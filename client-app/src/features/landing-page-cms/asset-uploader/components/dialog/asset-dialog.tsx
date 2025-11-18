@@ -25,10 +25,10 @@ import { useAssetFormState } from './hooks/use-asset-form-state'
 interface AssetDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  asset?: AssetDetail | null
+  item?: AssetDetail | null
 }
 
-export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
+export function AssetDialog({ open, onOpenChange, item }: AssetDialogProps) {
   const { t } = useTranslation(TRANSLATION_KEY)
   const {
     countries,
@@ -38,7 +38,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     maxFileSize,
     allowedExtensions,
   } = useAssetUploader()
-  const isMediaIdInUse = asset?.isMediaIdInUse ?? false
+  const isMediaIdInUse = item?.isMediaIdInUse ?? false
   const [backendError, setBackendError] = useState<string | null>(null)
 
   const countryOptions = countries.map((country) => ({
@@ -73,10 +73,10 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     setExpandedModules,
     resetForm,
     resetTouchedForModules,
-  } = useAssetFormState(asset)
+  } = useAssetFormState(item)
 
   const handlers = useAssetFormHandlers({
-    asset,
+    item,
     country,
     language,
     fileName,
@@ -115,22 +115,22 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
   useEffect(() => {
     if (open) {
       setBackendError(null)
-      if (asset) {
-        setCountry(asset.targetCountryCode)
+      if (item) {
+        setCountry(item.targetCountryCode)
         setLanguageOptions(
           languages
             .filter(
               (language) =>
-                language.targetCountryCode === asset.targetCountryCode
+                language.targetCountryCode === item.targetCountryCode
             )
             .map((language) => ({
               value: language.languageCode,
               label: language.languageName,
             }))
         )
-        setLanguage(asset.marketId)
-        setFileName(asset.mediaName)
-        setModuleRows([{ module: asset.moduleId.toString(), files: [] }])
+        setLanguage(item.marketId)
+        setFileName(item.mediaName)
+        setModuleRows([{ module: item.moduleId.toString(), files: [] }])
         setErrors(INITIAL_VALIDATION_STATE.errors)
         resetTouchedForModules(1)
       } else {
@@ -138,7 +138,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
         resetTouchedForModules(1)
       }
     }
-  }, [asset, open])
+  }, [item, open, languages])
 
   useEffect(() => {
     if (
