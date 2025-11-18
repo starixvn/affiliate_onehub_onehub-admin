@@ -20,6 +20,7 @@ public record UploadAssetsCommand(
     string FunctionName) : IRequest<ResultInfo>;
 
 public class UploadAssetsCommandHandler(
+    IStorageService storageService,
     IDynamicRepository repository,
     IFileService fileService,
     IImageService imageService,
@@ -101,9 +102,7 @@ public class UploadAssetsCommandHandler(
             var fileName = file.FileName;
             var path = $"{folder}/{fileName}";
 
-            await using var stream = file.OpenReadStream();
-
-            await fileService.UploadFileAsync(file, path);
+            await storageService.UploadFileAsync(file, path);
         }
     }
 
@@ -115,11 +114,6 @@ public class UploadAssetsCommandHandler(
         string ip,
         string functionName)
     {
-
-        //var allowedExtensions = configuration["AppSettings:AllowedImageExtensions"]!.Split(',');
-        //var extensionPattern = string.Join("|", allowedExtensions.Select(ext => ext.StartsWith(".") ? ext.Substring(1) : ext));
-        //var extensionRemovalRegex = new Regex(@"\.(" + extensionPattern + ")$", RegexOptions.IgnoreCase);
-
         var filePaths = new List<string>();
         var moduleMedias = new List<ModuleMedia>();
         foreach (var moduleRow in moduleRows)
@@ -140,7 +134,6 @@ public class UploadAssetsCommandHandler(
                 await using var stream = file.OpenReadStream();
                 var dimension = imageService.ExtractImageDimensions(stream);
                 var fileName = $"{folder}/{file.FileName}";
-                //var mediaName = extensionRemovalRegex.Replace(file.FileName, string.Empty);
 
                 filePaths.Add(fileName);
                 moduleMedia.Files.Add(new MediaItem
