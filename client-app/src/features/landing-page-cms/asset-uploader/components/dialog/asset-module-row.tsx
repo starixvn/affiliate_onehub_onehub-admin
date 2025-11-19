@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronRight, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -56,12 +57,13 @@ export function AssetModuleRow({
   onRemoveFile,
   isModuleSelectedByOther,
 }: AssetModuleRowProps) {
+  const { t } = useTranslation('asset-uploader')
   return (
     <div className='bg-card rounded-lg border p-4'>
       <div className='flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-4'>
         <div className='flex-1 space-y-2'>
           <Label htmlFor={`module-${moduleIndex}`}>
-            Module #{moduleIndex + 1}
+            {t('form.moduleNumber', { number: moduleIndex + 1 })}
           </Label>
           <Select
             value={moduleRow.module}
@@ -74,14 +76,14 @@ export function AssetModuleRow({
           >
             <SelectTrigger
               id={`module-${moduleIndex}`}
-              title='Select module'
+              title={t('form.modulePlaceholder')}
               className={
                 touched.modules[moduleIndex] && errors.modules[moduleIndex]
                   ? 'border-destructive'
                   : ''
               }
             >
-              <SelectValue placeholder='Select module' />
+              <SelectValue placeholder={t('form.modulePlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {modules.map((m) => {
@@ -93,7 +95,7 @@ export function AssetModuleRow({
                     disabled={isDisabled}
                   >
                     {m.label}
-                    {isDisabled && ' (selected)'}
+                    {isDisabled && t('form.selected')}
                   </SelectItem>
                 )
               })}
@@ -106,20 +108,20 @@ export function AssetModuleRow({
           )}
         </div>
         <div className='-mt-1 space-y-2'>
-          <Label className='text-sm font-medium'>Upload File</Label>
+          <Label className='text-sm font-medium'>{t('form.uploadFile')}</Label>
           <div className='flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-2'>
             <Button
               type='button'
               variant='outline'
               size='sm'
-              title='Upload files'
+              title={t('form.uploadFile')}
               className='w-full sm:w-auto'
               onClick={() =>
                 document.getElementById(`file-input-${moduleIndex}`)?.click()
               }
             >
               <Upload className='mr-2 h-4 w-4' />
-              <span className='sm:inline'>Upload File</span>
+              <span className='sm:inline'>{t('form.uploadFileButton')}</span>
             </Button>
             <input
               id={`file-input-${moduleIndex}`}
@@ -156,8 +158,8 @@ export function AssetModuleRow({
                 )}
                 <Label className='cursor-pointer text-sm font-medium'>
                   {moduleRow.files.length > 0
-                    ? `(${moduleRow.files.length}) File${moduleRow.files.length > 1 ? 's' : ''}`
-                    : 'No File Chosen'}
+                    ? `(${moduleRow.files.length}) ${moduleRow.files.length > 1 ? t('form.files_plural') : t('form.files')}`
+                    : t('form.noFileChosen2')}
                 </Label>
               </Button>
             )}
@@ -169,24 +171,24 @@ export function AssetModuleRow({
               type='button'
               variant='outline'
               size='sm'
-              title='Add new module'
+              title={t('form.addNewModule')}
               className='w-full text-green-600 hover:text-green-700 sm:w-auto'
               onClick={() => onAddModule(moduleIndex)}
             >
               <span className='sm:hidden'>+</span>
-              <span className='hidden sm:inline'>+</span> Add
+              <span className='hidden sm:inline'>+</span> {t('form.add')}
             </Button>
             <Button
               type='button'
               variant='outline'
               size='sm'
-              title='Remove this module and all its files'
+              title={t('form.removeModule')}
               className='w-full border-red-200 text-red-600 hover:border-red-300 hover:text-red-700 sm:w-auto'
               disabled={totalModules === 1}
               onClick={() => onRemoveModule(moduleIndex)}
             >
               <span className='sm:hidden'>-</span>
-              <span className='hidden sm:inline'>-</span> Remove
+              <span className='hidden sm:inline'>-</span> {t('form.remove')}
             </Button>
           </div>
         )}

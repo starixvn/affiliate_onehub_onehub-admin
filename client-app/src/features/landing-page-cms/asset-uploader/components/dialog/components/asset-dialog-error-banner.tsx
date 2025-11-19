@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import type { ValidationErrors } from '../../../data/schema'
 
 interface AssetDialogErrorBannerProps {
@@ -5,6 +6,8 @@ interface AssetDialogErrorBannerProps {
 }
 
 export function AssetDialogErrorBanner({ errors }: AssetDialogErrorBannerProps) {
+  const { t } = useTranslation('asset-uploader')
+
   if (!errors.files || Object.keys(errors.files).length === 0) {
     return null
   }
@@ -13,7 +16,7 @@ export function AssetDialogErrorBanner({ errors }: AssetDialogErrorBannerProps) 
     <div className='rounded-lg border border-red-200 bg-red-50 p-4'>
       <div className='space-y-2'>
         <p className='text-sm font-medium text-red-800'>
-          Please fix the following issues:
+          {t('form.fixIssues')}
         </p>
         <div className='space-y-1'>
           {[

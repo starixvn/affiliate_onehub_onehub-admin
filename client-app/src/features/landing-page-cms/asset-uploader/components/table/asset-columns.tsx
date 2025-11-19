@@ -1,4 +1,5 @@
 import { PaginationState, type ColumnDef } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Select,
@@ -12,13 +13,13 @@ import { useUpdateAssetsStatus } from '../../api/commands'
 import type { AssetDetail } from '../../data/schema'
 import { AssetRowActions } from './asset-row-actions'
 
-function StatusCell({
-  mediaId,
-  initialStatus,
-}: {
+interface StatusCellProps {
   mediaId: number
   initialStatus: number
-}) {
+}
+
+function StatusCell({ mediaId, initialStatus }: StatusCellProps) {
+  const { t } = useTranslation('asset-uploader')
   const updateStatusMutation = useUpdateAssetsStatus()
 
   const handleStatusChange = (value: string) => {
@@ -40,124 +41,128 @@ function StatusCell({
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value='1'>Active</SelectItem>
-        <SelectItem value='2'>Inactive</SelectItem>
+        <SelectItem value='1'>{t('table.active')}</SelectItem>
+        <SelectItem value='2'>{t('table.inactive')}</SelectItem>
       </SelectContent>
     </Select>
   )
 }
 
-export const assetColumns = (
+export const useAssetColumns = (
   bannerRootUrl?: string,
   pagination?: PaginationState
-): ColumnDef<AssetDetail>[] => [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label='Select all'
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label='Select row'
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'mediaId',
-    header: '#',
-    cell: ({ row }) => (
-      <div className='w-10'>
-        {row.index +
-          (pagination?.pageIndex ?? 0) * (pagination?.pageSize ?? 10) +
-          1}
-      </div>
-    ),
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'mediaName',
-    header: 'File Name',
-    cell: ({ row }) => (
-      <div className='max-w-[200px] truncate font-medium'>
-        {row.getValue('mediaName')}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'moduleName',
-    header: 'Module',
-    cell: ({ row }) => <div>{row.getValue('moduleName')}</div>,
-  },
-  {
-    accessorKey: 'targetCountryName',
-    header: () => <div className='text-center'>Country</div>,
-    cell: ({ row }) => (
-      <div className='text-center'>{row.getValue('targetCountryName')}</div>
-    ),
-  },
-  {
-    accessorKey: 'marketName',
-    header: () => <div className='text-center'>Language</div>,
-    cell: ({ row }) => (
-      <div className='text-center'>{row.getValue('marketName')}</div>
-    ),
-  },
-  {
-    accessorKey: 'dimension',
-    header: () => <div className='text-center'>Dimensions</div>,
-    cell: ({ row }) => (
-      <div className='text-center'>{row.getValue('dimension')}</div>
-    ),
-  },
-  {
-    id: 'preview',
-    header: () => <div className='text-center'>Preview Asset</div>,
-    cell: ({ row }) => {
-      const mediaName = row.getValue('mediaName') as string
-      const fileName = row.original.fileName
-      const imageUrl = `${bannerRootUrl}/${fileName}`
-      const thumbnailUrl = `${bannerRootUrl}/${fileName}`
+): ColumnDef<AssetDetail>[] => {
+  const { t } = useTranslation('asset-uploader')
 
-      return (
-        <ImagePreviewCell
-          fileName={mediaName}
-          imageUrl={imageUrl}
-          thumbnailUrl={thumbnailUrl}
+  return [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label={t('table.selectAll')}
         />
-      )
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label={t('table.selectRow')}
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
     },
-  },
-  {
-    accessorKey: 'statusId',
-    header: () => <div className='text-center'>Status</div>,
-    cell: ({ row }) => {
-      const status = row.getValue('statusId') as number
-      return (
-        <div className='flex justify-center'>
-          <StatusCell initialStatus={status} mediaId={row.original.mediaId} />
+    {
+      accessorKey: 'mediaId',
+      header: '#',
+      cell: ({ row }) => (
+        <div className='w-10'>
+          {row.index +
+            (pagination?.pageIndex ?? 0) * (pagination?.pageSize ?? 10) +
+            1}
         </div>
-      )
+      ),
+      enableHiding: false,
     },
-  },
-  {
-    id: 'actions',
-    header: () => <div className='text-center'>Action</div>,
-    cell: ({ row }) => (
-      <div className='flex justify-center'>
-        <AssetRowActions row={row} />
-      </div>
-    ),
-    enableHiding: false,
-  },
-]
+    {
+      accessorKey: 'mediaName',
+      header: t('table.fileName'),
+      cell: ({ row }) => (
+        <div className='max-w-[200px] truncate font-medium'>
+          {row.getValue('mediaName')}
+        </div>
+      ),
+    },
+    {
+      accessorKey: 'moduleName',
+      header: t('table.module'),
+      cell: ({ row }) => <div>{row.getValue('moduleName')}</div>,
+    },
+    {
+      accessorKey: 'targetCountryName',
+      header: () => <div className='text-center'>{t('table.country')}</div>,
+      cell: ({ row }) => (
+        <div className='text-center'>{row.getValue('targetCountryName')}</div>
+      ),
+    },
+    {
+      accessorKey: 'marketName',
+      header: () => <div className='text-center'>{t('table.language')}</div>,
+      cell: ({ row }) => (
+        <div className='text-center'>{row.getValue('marketName')}</div>
+      ),
+    },
+    {
+      accessorKey: 'dimension',
+      header: () => <div className='text-center'>{t('table.dimensions')}</div>,
+      cell: ({ row }) => (
+        <div className='text-center'>{row.getValue('dimension')}</div>
+      ),
+    },
+    {
+      id: 'preview',
+      header: () => <div className='text-center'>{t('table.previewAsset')}</div>,
+      cell: ({ row }) => {
+        const mediaName = row.getValue('mediaName') as string
+        const fileName = row.original.fileName
+        const imageUrl = `${bannerRootUrl}/${fileName}`
+        const thumbnailUrl = `${bannerRootUrl}/${fileName}`
+
+        return (
+          <ImagePreviewCell
+            fileName={mediaName}
+            imageUrl={imageUrl}
+            thumbnailUrl={thumbnailUrl}
+          />
+        )
+      },
+    },
+    {
+      accessorKey: 'statusId',
+      header: () => <div className='text-center'>{t('table.status')}</div>,
+      cell: ({ row }) => {
+        const status = row.getValue('statusId') as number
+        return (
+          <div className='flex justify-center'>
+            <StatusCell initialStatus={status} mediaId={row.original.mediaId} />
+          </div>
+        )
+      },
+    },
+    {
+      id: 'actions',
+      header: () => <div className='text-center'>{t('table.action')}</div>,
+      cell: ({ row }) => (
+        <div className='flex justify-center'>
+          <AssetRowActions row={row} />
+        </div>
+      ),
+      enableHiding: false,
+    },
+  ]
+}

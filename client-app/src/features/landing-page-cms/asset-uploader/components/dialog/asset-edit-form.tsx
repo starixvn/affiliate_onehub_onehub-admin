@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -32,6 +33,7 @@ export function AssetEditForm({
   onModuleBlur,
   onFileChange,
 }: AssetEditFormProps) {
+  const { t } = useTranslation('asset-uploader')
   const [moduleValue, setModuleValue] = useState(initialModule)
   const [fileName, setFileName] = useState(initialFileName)
 
@@ -62,7 +64,7 @@ export function AssetEditForm({
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
       <div className='space-y-2'>
-        <Label>Module</Label>
+        <Label>{t('form.module')}</Label>
         <Select
           value={moduleValue}
           onValueChange={handleModuleChange}
@@ -79,7 +81,7 @@ export function AssetEditForm({
                 : ''
             }
           >
-            <SelectValue placeholder='Select module' />
+            <SelectValue placeholder={t('form.modulePlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {modules.map((m) => (
@@ -97,7 +99,7 @@ export function AssetEditForm({
       </div>
 
       <div className='space-y-2'>
-        <Label>Upload File</Label>
+        <Label>{t('form.uploadFile')}</Label>
         <div className='flex items-center gap-2'>
           <Button
             type='button'
@@ -108,7 +110,7 @@ export function AssetEditForm({
             }
           >
             <Upload className='mr-2 h-4 w-4' />
-            Upload File
+            {t('form.uploadFileButton')}
           </Button>
           <input
             id='file-input-edit'
@@ -119,7 +121,7 @@ export function AssetEditForm({
             onChange={(e) => handleFileChange(e.target.files)}
           />
           <span className='text-sm text-muted-foreground flex-1'>
-            {fileName || 'No file chosen'}
+            {fileName || t('form.noFileChosen')}
           </span>
         </div>
       </div>

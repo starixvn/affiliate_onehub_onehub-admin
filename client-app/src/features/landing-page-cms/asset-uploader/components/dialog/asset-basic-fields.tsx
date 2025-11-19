@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 // No hooks needed - fully controlled component
 import { Label } from '@/components/ui/label'
 import {
@@ -34,10 +35,11 @@ export function AssetBasicFields({
   onCountryBlur,
   onLanguageBlur,
 }: AssetBasicFieldsProps) {
+  const { t } = useTranslation('asset-uploader')
   return (
     <div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
       <div className='space-y-2'>
-        <Label htmlFor='country'>Country</Label>
+        <Label htmlFor='country'>{t('form.country')}</Label>
         <Select
           value={country}
           onValueChange={onCountryChange}
@@ -53,7 +55,7 @@ export function AssetBasicFields({
               touched.country && errors.country ? 'border-destructive' : ''
             }
           >
-            <SelectValue placeholder='Select country' />
+            <SelectValue placeholder={t('form.countryPlaceholder')} />
           </SelectTrigger>
           <SelectContent>
             {countryOptions.map((c) => (
@@ -69,7 +71,7 @@ export function AssetBasicFields({
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='language'>Language</Label>
+        <Label htmlFor='language'>{t('form.language')}</Label>
         <Select
           disabled={!country || languageOptions.length === 0}
           value={language}
@@ -89,8 +91,8 @@ export function AssetBasicFields({
             <SelectValue
               placeholder={
                 !country || languageOptions.length === 0
-                  ? 'Please select target country first'
-                  : 'Select language'
+                  ? t('form.languagePlaceholder')
+                  : t('form.languagePlaceholder2')
               }
             />
           </SelectTrigger>

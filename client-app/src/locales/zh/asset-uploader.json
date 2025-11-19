@@ -1,0 +1,99 @@
+{
+  "page": {
+    "title": "资源上传",
+    "description": "创建和管理促销页面，快速部署营销活动",
+    "loading": "正在加载资源...",
+    "failedToLoad": "加载资源失败",
+    "noResults": "未找到结果。"
+  },
+  "filters": {
+    "searchPlaceholder": "按文件名搜索...",
+    "module": "模块",
+    "modulePlaceholder": "搜索模块...",
+    "country": "国家",
+    "countryPlaceholder": "搜索国家...",
+    "language": "语言",
+    "languagePlaceholder": "搜索语言...",
+    "status": "状态",
+    "statusPlaceholder": "搜索状态...",
+    "search": "搜索",
+    "reset": "重置",
+    "toggleColumns": "切换列",
+    "view": "视图"
+  },
+  "buttons": {
+    "export": "导出",
+    "addAsset": "添加资源",
+    "editAsset": "编辑资源",
+    "deleteAsset": "删除资源",
+    "processing": "处理中...",
+    "saveChanges": "保存更改",
+    "addAsset": "添加资源",
+    "cancel": "取消"
+  },
+  "table": {
+    "selectAll": "全选",
+    "selectRow": "选择行",
+    "fileName": "文件名",
+    "module": "模块",
+    "country": "国家",
+    "language": "语言",
+    "dimensions": "尺寸",
+    "previewAsset": "预览资源",
+    "status": "状态",
+    "action": "操作",
+    "active": "活跃",
+    "inactive": "非活跃"
+  },
+  "bulkActions": {
+    "changeToActive": "更改为活跃",
+    "changeToInactive": "更改为非活跃",
+    "deleteSelected": "删除选中的资源"
+  },
+  "dialogs": {
+    "addNewAsset": "添加新资源",
+    "editAsset": "编辑资源",
+    "deleteAsset": "删除资源",
+    "deleteAssets": "删除资源",
+    "confirmDelete": "您确定要删除选中的资源吗？此操作无法撤销。",
+    "confirmDeleteSingle": "您确定要删除\"{{assetName}}\"吗？此操作无法撤销。",
+    "confirmDeleteBulk": "您确定要删除 {{count}} 个{{entity}}吗？",
+    "deleteDescription": "此操作无法撤销。删除操作仅对未与任何着陆页关联的资源执行。",
+    "deleting": "正在删除...",
+    "delete": "删除",
+    "deleteAll": "删除全部"
+  },
+  "form": {
+    "country": "国家",
+    "countryPlaceholder": "选择国家",
+    "language": "语言",
+    "languagePlaceholder": "请先选择目标国家",
+    "languagePlaceholder2": "选择语言",
+    "module": "模块",
+    "modulePlaceholder": "选择模块",
+    "moduleNumber": "模块 #{{number}}",
+    "uploadFile": "上传文件",
+    "uploadFileButton": "上传文件",
+    "noFileChosen": "未选择文件",
+    "noFileChosen2": "未选择文件",
+    "files": "文件",
+    "files_plural": "文件",
+    "selected": "（已选择）",
+    "add": "添加",
+    "remove": "移除",
+    "addNewModule": "添加新模块",
+    "removeModule": "移除此模块及其所有文件",
+    "fixIssues": "请修复以下问题："
+  },
+  "info": {
+    "validTypes": "有效类型：.jpg、.jpeg、.png、.gif、.webp",
+    "fileSizeLimit": "文件大小限制：3MB",
+    "maxFiles": "最大文件数：50",
+    "note": "注意：如果图片已在现有着陆页中使用，则无法更改模块、国家和语言。"
+  },
+  "toasts": {
+    "exporting": "正在导出资源到 Excel...",
+    "deleteInUseError": "所有选中的项目当前正在使用中，无法删除。",
+    "deleteFailed": "删除资源失败"
+  }
+}

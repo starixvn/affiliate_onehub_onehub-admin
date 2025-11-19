@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetDialog } from './asset-dialog'
 import { DeleteAssetDialog } from './delete-asset-dialog'
 
 export function AssetDialogManager() {
+  const { t } = useTranslation('asset-uploader')
   const { open, setOpen, currentRow } = useAssetUploader()
 
   const confirmDelete = () => {
@@ -31,8 +33,8 @@ export function AssetDialogManager() {
         onOpenChange={(isOpen: boolean) =>
           setOpen(isOpen ? 'delete-bulk' : null)
         }
-        title='Delete Assets'
-        desc='Are you sure you want to delete selected assets? This action cannot be undone.'
+        title={t('dialogs.deleteAssets')}
+        desc={t('dialogs.confirmDelete')}
         handleConfirm={confirmDelete}
       />
     </>

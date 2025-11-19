@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import type { AssetDetail } from '../../data/schema'
@@ -14,6 +15,7 @@ export function DeleteAssetDialog({
   onOpenChange,
   asset,
 }: DeleteAssetDialogProps) {
+  const { t } = useTranslation('asset-uploader')
   const deleteMutation = useDeleteAsset()
   const handleConfirm = () => {
     if (asset) {
@@ -22,7 +24,7 @@ export function DeleteAssetDialog({
           if (response.errorCode === 0) {
             onOpenChange(false)
           } else {
-            toast.error(response.errorMessage || 'Failed to delete asset')
+            toast.error(response.errorMessage || t('toasts.deleteFailed'))
           }
         },
       })
@@ -35,9 +37,9 @@ export function DeleteAssetDialog({
     <ConfirmDialog
       open={open}
       onOpenChange={onOpenChange}
-      title='Delete Asset'
-      desc={`Are you sure you want to delete "${asset.mediaName}"? This action cannot be undone.`}
-      confirmText='Delete'
+      title={t('dialogs.deleteAsset')}
+      desc={t('dialogs.confirmDeleteSingle', { assetName: asset.mediaName })}
+      confirmText={t('dialogs.delete')}
       destructive
       handleConfirm={handleConfirm}
     />

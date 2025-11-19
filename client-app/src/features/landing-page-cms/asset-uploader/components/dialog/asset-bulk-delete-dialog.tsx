@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { useDeleteAssets } from '../../api/commands'
@@ -15,6 +16,7 @@ export function AssetBulkDeleteDialog({
   onOpenChange,
   table,
 }: AssetBulkDeleteDialogProps) {
+  const { t } = useTranslation('asset-uploader')
   const deleteMutation = useDeleteAssets()
   const selectedRows = table.getFilteredSelectedRowModel().rows
 
@@ -23,9 +25,7 @@ export function AssetBulkDeleteDialog({
       return row.original.isMediaIdInUse === true
     })
     if (associatedAssets.length === selectedRows.length) {
-      toast.error(
-        'All selected items are currently in use and cannot be deleted.'
-      )
+      toast.error(t('toasts.deleteInUseError'))
       return
     }
 
@@ -52,9 +52,12 @@ export function AssetBulkDeleteDialog({
       onOpenChange={onOpenChange}
       handleConfirm={handleDelete}
       disabled={deleteMutation.isPending}
-      title={`Are you sure you want to delete ${selectedRows.length} ${selectedRows.length > 1 ? 'images' : 'image'}?`}
-      desc={`This action cannot be undone. The delete action will only be performed on assets that are not associated with any landing page.`}
-      confirmText={deleteMutation.isPending ? 'Deleting...' : 'Delete All'}
+      title={t('dialogs.confirmDeleteBulk', {
+        count: selectedRows.length,
+        entity: selectedRows.length > 1 ? 'images' : 'image'
+      })}
+      desc={t('dialogs.deleteDescription')}
+      confirmText={deleteMutation.isPending ? t('dialogs.deleting') : t('dialogs.deleteAll')}
       destructive
       isLoading={deleteMutation.isPending}
     />

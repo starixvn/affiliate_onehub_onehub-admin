@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   type ColumnFiltersState,
   type SortingState,
@@ -25,7 +26,7 @@ import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetBulkDeleteDialog } from '../dialog/asset-bulk-delete-dialog'
 import { AssetBulkActions } from './asset-bulk-actions'
-import { assetColumns } from './asset-columns'
+import { useAssetColumns } from './asset-columns'
 
 interface AssetTableProps {
   data: AssetDetail[]
@@ -40,6 +41,7 @@ export function AssetTable({
   bannerRootUrl,
   totalCount = 0,
 }: AssetTableProps) {
+  const { t } = useTranslation('asset-uploader')
   const { pageIndex, pageSize, navigate, search } = useAssetUploader()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -71,9 +73,11 @@ export function AssetTable({
     setRowSelection({})
   }, [pageIndex, pageSize])
 
+  const columns = useAssetColumns(bannerRootUrl, pagination)
+
   const table = useReactTable({
     data,
-    columns: assetColumns(bannerRootUrl, pagination),
+    columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -143,7 +147,7 @@ export function AssetTable({
                   colSpan={table.getAllColumns().length}
                   className='text-muted-foreground h-24 text-center'
                 >
-                  No results.
+                  {t('page.noResults')}
                 </TableCell>
               </TableRow>
             )}

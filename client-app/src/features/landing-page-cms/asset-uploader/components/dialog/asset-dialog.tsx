@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -20,6 +21,7 @@ interface AssetDialogProps {
 }
 
 export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
+  const { t } = useTranslation('asset-uploader')
   const { countries, languages, modules } = useAssetUploader()
   const countryOptions = countries.map((country) => ({
     value: country.targetCountryCode,
@@ -122,7 +124,7 @@ export function AssetDialog({ open, onOpenChange, asset }: AssetDialogProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className='max-h-[90vh] w-[95vw] sm:max-w-2xl md:max-w-3xl lg:max-w-4xl'>
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Asset' : 'Add New Asset'}</DialogTitle>
+          <DialogTitle>{isEdit ? t('dialogs.editAsset') : t('dialogs.addNewAsset')}</DialogTitle>
         </DialogHeader>
 
         <AssetDialogContent

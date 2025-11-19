@@ -1,4 +1,5 @@
 import { type Row } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { type AssetDetail } from '../../data/schema'
@@ -9,6 +10,7 @@ type AssetRowActionsProps = {
 }
 
 export function AssetRowActions({ row }: AssetRowActionsProps) {
+  const { t } = useTranslation('asset-uploader')
   const { setOpen, setCurrentRow } = useAssetUploader()
 
   return (
@@ -17,7 +19,7 @@ export function AssetRowActions({ row }: AssetRowActionsProps) {
         variant='ghost'
         size='icon'
         className='h-8 w-8'
-        title='Edit asset'
+        title={t('buttons.editAsset')}
         onClick={() => {
           setCurrentRow(row.original)
           setOpen('edit')
@@ -30,7 +32,7 @@ export function AssetRowActions({ row }: AssetRowActionsProps) {
         variant='ghost'
         size='icon'
         className='h-8 w-8'
-        title='Delete asset'
+        title={t('buttons.deleteAsset')}
         onClick={() => {
           if (!row.original.isMediaIdInUse) {
             setCurrentRow(row.original)

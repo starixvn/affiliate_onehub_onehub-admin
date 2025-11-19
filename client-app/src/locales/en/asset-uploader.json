@@ -1,0 +1,99 @@
+{
+  "page": {
+    "title": "Asset Uploader",
+    "description": "Create and manage promotional pages, quickly and deploy marketing campaigns",
+    "loading": "Loading assets...",
+    "failedToLoad": "Failed to load assets",
+    "noResults": "No results."
+  },
+  "filters": {
+    "searchPlaceholder": "Search by file name...",
+    "module": "Module",
+    "modulePlaceholder": "Search module...",
+    "country": "Country",
+    "countryPlaceholder": "Search country...",
+    "language": "Language",
+    "languagePlaceholder": "Search language...",
+    "status": "Status",
+    "statusPlaceholder": "Search status...",
+    "search": "Search",
+    "reset": "Reset",
+    "toggleColumns": "Toggle Columns",
+    "view": "View"
+  },
+  "buttons": {
+    "export": "Export",
+    "addAsset": "Add Asset",
+    "editAsset": "Edit Asset",
+    "deleteAsset": "Delete Asset",
+    "processing": "Processing...",
+    "saveChanges": "Save Changes",
+    "addAsset": "Add Asset",
+    "cancel": "Cancel"
+  },
+  "table": {
+    "selectAll": "Select all",
+    "selectRow": "Select row",
+    "fileName": "File Name",
+    "module": "Module",
+    "country": "Country",
+    "language": "Language",
+    "dimensions": "Dimensions",
+    "previewAsset": "Preview Asset",
+    "status": "Status",
+    "action": "Action",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "bulkActions": {
+    "changeToActive": "Change to Active",
+    "changeToInactive": "Change to Inactive",
+    "deleteSelected": "Delete selected assets"
+  },
+  "dialogs": {
+    "addNewAsset": "Add New Asset",
+    "editAsset": "Edit Asset",
+    "deleteAsset": "Delete Asset",
+    "deleteAssets": "Delete Assets",
+    "confirmDelete": "Are you sure you want to delete selected assets? This action cannot be undone.",
+    "confirmDeleteSingle": "Are you sure you want to delete \"{{assetName}}\"? This action cannot be undone.",
+    "confirmDeleteBulk": "Are you sure you want to delete {{count}} {{entity}}?",
+    "deleteDescription": "This action cannot be undone. The delete action will only be performed on assets that are not associated with any landing page.",
+    "deleting": "Deleting...",
+    "delete": "Delete",
+    "deleteAll": "Delete All"
+  },
+  "form": {
+    "country": "Country",
+    "countryPlaceholder": "Select country",
+    "language": "Language",
+    "languagePlaceholder": "Please select target country first",
+    "languagePlaceholder2": "Select language",
+    "module": "Module",
+    "modulePlaceholder": "Select module",
+    "moduleNumber": "Module #{{number}}",
+    "uploadFile": "Upload File",
+    "uploadFileButton": "Upload File",
+    "noFileChosen": "No file chosen",
+    "noFileChosen2": "No File Chosen",
+    "files": "File",
+    "files_plural": "Files",
+    "selected": " (selected)",
+    "add": "Add",
+    "remove": "Remove",
+    "addNewModule": "Add new module",
+    "removeModule": "Remove this module and all its files",
+    "fixIssues": "Please fix the following issues:"
+  },
+  "info": {
+    "validTypes": "Valid Types: .jpg, .jpeg, .png, .gif, .webp",
+    "fileSizeLimit": "File Size Limit: 3MB",
+    "maxFiles": "Maximum files: 50",
+    "note": "Note: Module, Country, and Language cannot be changed if the image is already used in an existing landing page."
+  },
+  "toasts": {
+    "exporting": "Exporting assets to Excel...",
+    "deleteInUseError": "All selected items are currently in use and cannot be deleted.",
+    "deleteFailed": "Failed to delete asset"
+  }
+}

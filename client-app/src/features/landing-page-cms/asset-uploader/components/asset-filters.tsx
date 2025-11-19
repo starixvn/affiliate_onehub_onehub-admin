@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu'
 import { type Table } from '@tanstack/react-table'
 import { Search, X, Settings2 } from 'lucide-react'
@@ -21,6 +22,7 @@ interface AssetFiltersProps {
 }
 
 export function AssetFilters({ table }: AssetFiltersProps) {
+  const { t } = useTranslation('asset-uploader')
   const { modules, countries, languages, assetStatus, navigate, search } =
     useAssetUploader()
 
@@ -109,7 +111,7 @@ export function AssetFilters({ table }: AssetFiltersProps) {
       <div className='relative w-full sm:max-w-md sm:flex-1'>
         <Search className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2' />
         <Input
-          placeholder='Search by file name...'
+          placeholder={t('filters.searchPlaceholder')}
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onKeyDown={(e) => {
@@ -123,35 +125,35 @@ export function AssetFilters({ table }: AssetFiltersProps) {
 
       <div className='flex flex-wrap items-center gap-2'>
         <MultiSelectFilter
-          title='Module'
+          title={t('filters.module')}
           options={moduleOptions}
           selectedValues={selectedModules}
           onValuesChange={setSelectedModules}
-          searchPlaceholder='Search module...'
+          searchPlaceholder={t('filters.modulePlaceholder')}
         />
 
         <MultiSelectFilter
-          title='Country'
+          title={t('filters.country')}
           options={countryOptions}
           selectedValues={selectedCountries}
           onValuesChange={setSelectedCountries}
-          searchPlaceholder='Search country...'
+          searchPlaceholder={t('filters.countryPlaceholder')}
         />
 
         <MultiSelectFilter
-          title='Language'
+          title={t('filters.language')}
           options={languageOptions}
           selectedValues={selectedLanguages}
           onValuesChange={setSelectedLanguages}
-          searchPlaceholder='Search language...'
+          searchPlaceholder={t('filters.languagePlaceholder')}
         />
 
         <MultiSelectFilter
-          title='Status'
+          title={t('filters.status')}
           options={assetStatusOptions}
           selectedValues={selectedStatus}
           onValuesChange={setSelectedStatus}
-          searchPlaceholder='Search status...'
+          searchPlaceholder={t('filters.statusPlaceholder')}
         />
 
         <Button
@@ -161,7 +163,7 @@ export function AssetFilters({ table }: AssetFiltersProps) {
           className='h-9 flex-1 sm:flex-initial'
         >
           <Search className='mr-2 h-4 w-4' />
-          Search
+          {t('filters.search')}
         </Button>
 
         {isFiltered && (
@@ -171,7 +173,7 @@ export function AssetFilters({ table }: AssetFiltersProps) {
             onClick={handleReset}
             className='h-9 flex-1 gap-2 sm:flex-initial'
           >
-            Reset
+            {t('filters.reset')}
             <X className='h-4 w-4' />
           </Button>
         )}
@@ -184,14 +186,14 @@ export function AssetFilters({ table }: AssetFiltersProps) {
               variant='outline'
               size='sm'
               className='ml-auto h-9'
-              title='Toggle columns'
+              title={t('filters.toggleColumns')}
             >
               <Settings2 className='h-4 w-4 sm:mr-2' />
-              <span className='hidden sm:inline'>View</span>
+              <span className='hidden sm:inline'>{t('filters.view')}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end' className='w-[200px]'>
-            <DropdownMenuLabel>Toggle Columns</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('filters.toggleColumns')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {table
               .getAllColumns()

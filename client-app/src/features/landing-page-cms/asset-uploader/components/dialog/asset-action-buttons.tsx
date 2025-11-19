@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
 interface AssetActionButtonsProps {
@@ -15,6 +16,8 @@ export function AssetActionButtons({
   onSubmit,
   onCancel,
 }: AssetActionButtonsProps) {
+  const { t } = useTranslation('asset-uploader')
+
   return (
     <div className='flex flex-col gap-2 border-t pt-4 sm:flex-row sm:justify-end'>
       <Button
@@ -24,7 +27,7 @@ export function AssetActionButtons({
         disabled={!isFormValid || isLoading}
         className='w-full sm:w-auto'
       >
-        {isLoading ? 'Processing...' : isEdit ? 'Save Changes' : 'Add Asset'}
+        {isLoading ? t('buttons.processing') : isEdit ? t('buttons.saveChanges') : t('buttons.addAsset')}
       </Button>
       <Button
         type='button'
@@ -33,7 +36,7 @@ export function AssetActionButtons({
         disabled={isLoading}
         className='w-full sm:w-auto'
       >
-        Cancel
+        {t('buttons.cancel')}
       </Button>
     </div>
   )

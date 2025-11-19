@@ -1,4 +1,5 @@
 import { type Table } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { Play, Square, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,6 +20,7 @@ export function AssetBulkActions({
   table,
   onDeleteClick,
 }: AssetBulkActionsProps) {
+  const { t } = useTranslation('asset-uploader')
   const selectedRows = table.getFilteredSelectedRowModel().rows
   const updateStatusMutation = useUpdateAssetsStatus()
 
@@ -62,15 +64,15 @@ export function AssetBulkActions({
             disabled={activeCount === 0 || updateStatusMutation.isPending}
             onClick={() => handleStatusChange(1)}
             className='size-8'
-            aria-label={`Change to Active: ${activeCount} assets`}
-            title={`Change to Active: ${activeCount} assets`}
+            aria-label={`${t('bulkActions.changeToActive')}: ${activeCount} assets`}
+            title={`${t('bulkActions.changeToActive')}: ${activeCount} assets`}
           >
             <Play />
-            <span className='sr-only'>Change to Active</span>
+            <span className='sr-only'>{t('bulkActions.changeToActive')}</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Change to Active: {activeCount} assets</p>
+          <p>{t('bulkActions.changeToActive')}: {activeCount} assets</p>
         </TooltipContent>
       </Tooltip>
 
@@ -82,15 +84,15 @@ export function AssetBulkActions({
             disabled={inactiveCount === 0 || updateStatusMutation.isPending}
             onClick={() => handleStatusChange(2)}
             className='size-8'
-            aria-label={`Change to Inactive: ${inactiveCount} assets`}
-            title={`Change to Inactive: ${inactiveCount} assets`}
+            aria-label={`${t('bulkActions.changeToInactive')}: ${inactiveCount} assets`}
+            title={`${t('bulkActions.changeToInactive')}: ${inactiveCount} assets`}
           >
             <Square />
-            <span className='sr-only'>Change to Inactive</span>
+            <span className='sr-only'>{t('bulkActions.changeToInactive')}</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Change to Inactive: {inactiveCount} assets</p>
+          <p>{t('bulkActions.changeToInactive')}: {inactiveCount} assets</p>
         </TooltipContent>
       </Tooltip>
 
@@ -102,15 +104,15 @@ export function AssetBulkActions({
             onClick={onDeleteClick}
             disabled={updateStatusMutation.isPending}
             className='size-8'
-            aria-label='Delete selected assets'
-            title='Delete selected assets'
+            aria-label={t('bulkActions.deleteSelected')}
+            title={t('bulkActions.deleteSelected')}
           >
             <Trash2 />
-            <span className='sr-only'>Delete selected assets</span>
+            <span className='sr-only'>{t('bulkActions.deleteSelected')}</span>
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>Delete selected assets</p>
+          <p>{t('bulkActions.deleteSelected')}</p>
         </TooltipContent>
       </Tooltip>
     </BulkActionsToolbar>
