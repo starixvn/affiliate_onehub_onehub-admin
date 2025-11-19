@@ -40,7 +40,12 @@ function SsoPage() {
             })
           }
 
-          const targetPath = target ? `/iframe/${target}` : '/iframe/campaign-management'
+          if (!target) {
+            navigate({ to: '/404' })
+            return
+          }
+
+          const targetPath = `/iframe/${target}`
           navigate({ to: targetPath })
         } else {
           setError(response.errorMessage || 'SSO authentication failed')

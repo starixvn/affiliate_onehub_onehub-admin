@@ -1,0 +1,126 @@
+{
+  "entity_one": "landing page",
+  "entity_other": "landing pages",
+  "page": {
+    "title": "Page Management",
+    "description": "Create and manage promotional pages, quickly deploy marketing campaigns",
+    "loading": "Loading Landing Pages..."
+  },
+  "buttons": {
+    "export": "Export",
+    "create": "Create Landing Page"
+  },
+  "statusFilters": {
+    "total": "Total Landing Pages",
+    "active": "Active Landing Pages",
+    "draft": "Draft Landing Pages",
+    "inactive": "Inactive Landing Pages"
+  },
+  "searchToolbar": {
+    "submit": "Search"
+  },
+  "table": {
+    "search": "Search campaigns or landing page...",
+    "noResults": "No results.",
+    "columns": {
+      "number": "#",
+      "select": "Select all",
+      "selectRow": "Select row",
+      "campaignCode": "Campaign Code",
+      "campaignName": "Campaign Name",
+      "lpCode": "LP Code",
+      "lpName": "LP Name",
+      "country": "Country",
+      "language": "Language",
+      "createdDate": "Created Date",
+      "createdBy": "Created By",
+      "modifiedDate": "Modified Date",
+      "modifiedBy": "Modified By",
+      "click": "Click",
+      "registration": "Registration",
+      "ftd": "FTD",
+      "revenue": "Revenue",
+      "status": "Status",
+      "actions": "Open menu"
+    }
+  },
+  "rowActions": {
+    "edit": "Edit",
+    "duplicate": "Duplicate",
+    "delete": "Delete"
+  },
+  "bulkActions": {
+    "changeToActive": "Change to Active",
+    "changeToActiveCount": "Change to Active ({{count}} affected)",
+    "changeToInactive": "Change to Inactive",
+    "changeToInactiveCount": "Change to Inactive ({{count}} affected)",
+    "changeToDraft": "Change to Draft",
+    "changeToDraftCount": "Change to Draft ({{count}} affected)",
+    "deleteSelected": "Delete all selected landing pages"
+  },
+  "bulkActionsToast": {
+    "updating": "Updating landing pages to {{status}}...",
+    "updated_one": "Updated {{count}} landing page to {{status}}",
+    "updated_other": "Updated {{count}} landing pages to {{status}}",
+    "updateFailed": "Failed to update landing pages",
+    "alreadyStatus": "All selected landing pages are already {{status}}"
+  },
+  "excel": {
+    "titlePrefix": "LANDING PAGE MANAGEMENT",
+    "allLandingPages": "All Landing Pages",
+    "searchPrefix": "Landing Page Name",
+    "allStatus": "All Status",
+    "statusPrefix": "Status",
+    "rowNumber": "#"
+  },
+  "dialog": {
+    "create": {
+      "title": "Add New Campaign",
+      "description": "Create new campaign here. Click save when you're done."
+    },
+    "edit": {
+      "title": "Edit Campaign",
+      "description": "Update the campaign here. Click save when you're done."
+    },
+    "form": {
+      "code": "Code",
+      "codePlaceholder": "LP001",
+      "name": "Name",
+      "namePlaceholder": "Summer Campaign",
+      "nameRequired": "Name is required.",
+      "status": "Status",
+      "statusPlaceholder": "Select a status",
+      "statusRequired": "Status is required.",
+      "statusWarning": "Only active landing pages are available for selection when editing a landing page.",
+      "requiredField": "*"
+    },
+    "saveChanges": "Save changes",
+    "delete": {
+      "title": "Delete Landing Page",
+      "message": "Are you sure you want to delete",
+      "description": "This action cannot be undone. This will permanently delete the landing page and all associated data.",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDelete": {
+      "title_one": "Delete {{count}} landing page",
+      "title_other": "Delete {{count}} landing pages",
+      "message": "Are you sure you want to delete the selected landing pages?",
+      "description": "This action cannot be undone. This will permanently delete the selected landing pages and all associated data.",
+      "confirmLabel": "Confirm by typing \"{{word}}\":",
+      "confirmPlaceholder": "Type \"{{word}}\" to confirm.",
+      "confirmWord": "DELETE",
+      "warning": "Warning!",
+      "warningMessage": "Please be careful, this operation cannot be rolled back.",
+      "confirm": "Delete"
+    },
+    "multiDeleteToast": {
+      "deleting": "Deleting landing pages...",
+      "deleted_one": "Deleted {{count}} landing page",
+      "deleted_other": "Deleted {{count}} landing pages",
+      "deleteFailed": "Failed to delete landing pages",
+      "confirmRequired": "Please type \"{{word}}\" to confirm."
+    }
+  }
+}
