@@ -1,27 +1,15 @@
-using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using ONEHub.Domain.Interfaces;
+using Microsoft.Extensions.Options;
+using ONEHub.Application.Services;
+using ONEHub.Domain.Settings;
 
 namespace ONEHub.Infrastructure.Services;
 
-public sealed class S3StorageService : IStorageService, IDisposable
+public sealed class S3StorageService(IAmazonS3 s3Client, IOptions<AwsS3Settings> settings) : IStorageService
 {
-    private readonly string _bucketName;
-    private readonly AmazonS3Client _s3Client;
-    private bool _disposed;
-
-    public S3StorageService(IConfiguration config)
-    {
-        var accessKey = config["AWS:AccessKey"];
-        var secretKey = config["AWS:SecretKey"];
-        var region = config["AWS:Region"];
-        _bucketName = config["AWS:BucketName"]!;
-
-        _s3Client = new AmazonS3Client(accessKey, secretKey, RegionEndpoint.GetBySystemName(region));
-    }
+    private readonly string _bucketName = settings.Value.BucketName;
 
     public async Task<bool> UploadFileAsync(IFormFile file, string key)
     {
@@ -34,7 +22,7 @@ public sealed class S3StorageService : IStorageService, IDisposable
             ContentType = file.ContentType
         };
 
-        var response = await _s3Client.PutObjectAsync(request);
+        var response = await s3Client.PutObjectAsync(request);
         return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
     }
 
@@ -46,7 +34,7 @@ public sealed class S3StorageService : IStorageService, IDisposable
             Key = key
         };
 
-        var response = await _s3Client.DeleteObjectAsync(request);
+        var response = await s3Client.DeleteObjectAsync(request);
         return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
     }
 
@@ -60,7 +48,7 @@ public sealed class S3StorageService : IStorageService, IDisposable
             DestinationKey = destinationKey
         };
 
-        var response = await _s3Client.CopyObjectAsync(copyRequest);
+        var response = await s3Client.CopyObjectAsync(copyRequest);
 
         return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
     }
@@ -69,26 +57,12 @@ public sealed class S3StorageService : IStorageService, IDisposable
     {
         try
         {
-            var response = await _s3Client.GetObjectMetadataAsync(_bucketName, key);
+            var response = await s3Client.GetObjectMetadataAsync(_bucketName, key);
             return response.HttpStatusCode == System.Net.HttpStatusCode.OK;
         }
         catch (AmazonS3Exception ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
         {
             return false;
-        }
-    }
-
-    public void Dispose() => Dispose(true);
-
-    private void Dispose(bool disposing)
-    {
-        if (!_disposed)
-        {
-            if (disposing)
-            {
-                _s3Client.Dispose();
-            }
-            _disposed = true;
         }
     }
 }

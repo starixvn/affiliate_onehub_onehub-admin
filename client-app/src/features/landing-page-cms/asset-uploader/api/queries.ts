@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { type GetAssetListRequest } from '../types'
-import { assetUploaderApi } from './client'
 import { EXCLUDE_MODULE_TYPES } from '../data/constants'
+import { AssetStatus, Module, type GetAssetListRequest } from '../types'
+import { assetUploaderApi } from './client'
 
 export const assetUploaderKeys = {
   all: ['asset-uploader'] as const,
@@ -18,7 +18,7 @@ export const useGetAssetList = (params?: GetAssetListRequest) => {
   return useQuery({
     queryKey: assetUploaderKeys.list(params),
     queryFn: () => assetUploaderApi.getAssetList(params as GetAssetListRequest),
-    select: (data) => data.result,
+    select: (data) => data.data,
   })
 }
 
@@ -26,27 +26,34 @@ export const useGetAssetDetail = (mediaId: number) => {
   return useQuery({
     queryKey: assetUploaderKeys.detail(mediaId),
     queryFn: () => assetUploaderApi.getAssetDetail(mediaId),
-    select: (data) => data.result,
+    select: (data) => data.data,
   })
 }
 
-export const useAssetFilters = (params?: GetAssetListRequest) => {
+export const useAssetFilters = () => {
   const query = useQuery({
     queryKey: assetUploaderKeys.filters(),
     queryFn: () =>
-      assetUploaderApi.getAssetFilters(params ?? ({} as GetAssetListRequest)),
+      assetUploaderApi.getAssetFilters(),
     select: (data) => {
+      const response = data.data;
       return {
-        modules: data?.moduleList.filter((module) => !EXCLUDE_MODULE_TYPES.includes(module.moduleType as (typeof EXCLUDE_MODULE_TYPES)[number])) ?? [],
-        countries: data?.targetCountryList ?? [],
-        languages: data?.allLanguagesInSystem ?? [],
+        modules:
+          response?.modules.filter(
+            (module: Module) =>
+              !EXCLUDE_MODULE_TYPES.includes(
+                module.moduleType as (typeof EXCLUDE_MODULE_TYPES)[number]
+              )
+          ) ?? [],
+        countries: response?.targetCountries ?? [],
+        languages: response?.languages ?? [],
         assetStatus:
-          data?.statusList.filter((status) => status.statusId !== 0) ?? [],
-        landingPageUrl: data?.landingPageUrl ?? '',
-        bannerRootUrl: data?.bannerRootUrl ?? '',
-        maximumFiles: data?.maximumFiles ?? 50,
-        maxFileSize: data?.maxFileSize ?? 3,
-        allowedExtensions: data?.allowedExtensions ?? [],
+          response?.statusInfos.filter((status: AssetStatus) => status.statusId !== 0) ?? [],
+        landingPageUrl: response?.landingPageUrl ?? '',
+        bannerRootUrl: response?.bannerRootUrl ?? '',
+        maximumFiles: response?.maximumFiles ?? 50,
+        maxFileSize: response?.maxFileSize ?? 3,
+        allowedExtensions: response?.allowedExtensions ?? [],
       }
     },
   })

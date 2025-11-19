@@ -1,6 +1,6 @@
 using Fanex.Data.Repository;
 
-namespace ONEHub.Domain.Criterias.LandingPages;
+namespace ONEHub.Infrastructure.Repositories.Criterias;
 
 public class GetAssetDetailCriteria : CriteriaBase
 {
@@ -14,4 +14,3 @@ public class GetAssetDetailCriteria : CriteriaBase
 
     public int UserId { get; set; }
 }
-

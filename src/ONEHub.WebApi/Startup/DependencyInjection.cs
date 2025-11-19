@@ -15,6 +15,7 @@ public static class DependencyInjection
         services.Configure<SentrySetting>(configuration.GetSection(SentrySetting.SettingName));
         services.Configure<RedisSetting>(configuration.GetSection(RedisSetting.SettingName));
         services.Configure<JwtSetting>(configuration.GetSection(JwtSetting.SettingName));
+        services.Configure<AwsS3Settings>(configuration.GetSection(AwsS3Settings.SETTING_NAME));
 
         services
             .AddApplication()

@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using ONEHub.Domain.Common;
-using ONEHub.Domain.Constants;
-using ONEHub.Domain.Interfaces;
+using ONEHub.Application.Services;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Infrastructure.Services;
 
@@ -51,65 +51,59 @@ public class S3FileService : IFileService
         _maxImageHeight = int.Parse(_configuration["AppSettings:MaxImageHeight"]!, CultureInfo.InvariantCulture);
     }
 
-    public ResultInfo ValidateFile(string fileName, long contentLength, Stream inputStream)
+    public Result ValidateFile(string fileName, long contentLength, Stream inputStream)
     {
         if (contentLength > _maxFileSizeBytes)
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = string.Format(FILE_SIZE_EXCEEDED_MESSAGE, _maxFileSizeBytes / (1024 * 1024))
-            };
+            });
         }
 
         var extension = Path.GetExtension(fileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = INVALID_FILE_TYPE_MESSAGE
-            };
+            });
         }
 
         var validationResult = _imageService.ValidateImageDimensions(inputStream, _maxImageWidth, _maxImageHeight);
-        if (!validationResult.IsSuccessful)
+        if (!validationResult.IsSuccess)
         {
             return validationResult;
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
-    public ResultInfo ValidateAllFiles(IFormFileCollection files)
+    public Result ValidateAllFiles(IFormFileCollection files)
     {
         if (files.Count == 0)
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = "No files provided"
-            };
+            });
         }
 
         var maxFiles = int.Parse(_configuration["AppSettings:MaximumFiles"] ?? "50", CultureInfo.InvariantCulture);
         if (files.Count > maxFiles)
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = $"Maximum {maxFiles} files allowed"
-            };
+            });
         }
 
-        var result = new ResultInfo();
         var message = new StringBuilder();
 
         foreach (var file in files)
         {
             if (file.Length == 0)
             {
-                result.Code = ErrorCodes.GeneralErrorCode;
                 message.AppendLine($"File {file.FileName} is empty.");
                 continue;
             }
@@ -117,21 +111,27 @@ public class S3FileService : IFileService
             using var stream = file.OpenReadStream();
             var validationResult = ValidateFile(file.FileName, file.Length, stream);
 
-            if (!validationResult.IsSuccessful)
+            if (!validationResult.IsSuccess)
             {
-                result.Code = validationResult.Code;
-                message.AppendLine($"File {file.FileName} is incorrect. {validationResult.Message}");
+                message.AppendLine($"File {file.FileName} is incorrect. {validationResult.ErrorMessage}");
             }
         }
 
-        result.Message = message.ToString();
-        return result;
+        if (!string.IsNullOrWhiteSpace(message.ToString()))
+        {
+            return Result.Failure(Error.SystemError with
+            {
+                Message = message.ToString()
+            });
+        }
+        
+        return Result.Success();
     }
 
-    public ResultInfo ValidateAllInputFileNames(string[] inputFileNames)
+    public Result ValidateAllInputFileNames(string[] inputFileNames)
     {
         var result = CheckDuplicateFileNames(inputFileNames);
-        if (!result.IsSuccessful)
+        if (!result.IsSuccess)
         {
             return result;
         }
@@ -139,49 +139,56 @@ public class S3FileService : IFileService
         var message = new StringBuilder();
         for (var i = 0; i < inputFileNames.Length; i++)
         {
-            var validationResult = ValidateProvidedInputFileName(inputFileNames[i], i, message);
-            if (!validationResult.IsSuccessful)
-            {
-                result.Code = validationResult.Code;
-            }
+            _ = ValidateProvidedInputFileName(inputFileNames[i], i, message);
         }
 
-        result.Message = message.ToString();
-        return result;
+        if (!string.IsNullOrWhiteSpace(message.ToString()))
+        {
+            return Result.Failure(Error.SystemError with
+            {
+                Message = message.ToString()
+            });
+        }
+
+        return Result.Success();
     }
 
-    private ResultInfo ValidateProvidedInputFileName(string inputFileName, int index, StringBuilder message)
+    private Result ValidateProvidedInputFileName(string inputFileName, int index, StringBuilder message)
     {
-        var result = new ResultInfo();
 
         if (string.IsNullOrEmpty(inputFileName))
         {
-            return result;
+            return Result.Success();
         }
 
         if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} cannot contain special characters: \\ / : * ? \" < > # % & +<br />");
         }
 
         var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
-            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} has invalid file type. Only image files are allowed.<br />");
         }
 
         if (inputFileName.Length > MAX_LENGTH)
         {
-            result.Code = ErrorCodes.GeneralErrorCode;
             message.Append($"File Name {index + 1} exceeds maximum length of 200 characters.<br />");
         }
 
-        return result;
+        if (!string.IsNullOrWhiteSpace(message.ToString()))
+        {
+            return Result.Failure(Error.SystemError with
+            {
+                Message = message.ToString()
+            });
+        }
+
+        return Result.Success();
     }
 
-    public async Task<ResultInfo> CheckMultipleFilesInFolderAsync(string[] inputFileNames, string folder)
+    public async Task<Result> CheckMultipleFilesInFolderAsync(string[] inputFileNames, string folder)
     {
         var existingFiles = new List<string>();
 
@@ -204,17 +211,16 @@ public class S3FileService : IFileService
 
         if (existingFiles.Any())
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.ErrTheFileNameAlreadyExists,
                 Message = string.Format(EXISTED_FILE_NAMES_MESSAGE, string.Join(", ", existingFiles))
-            };
+            });
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
-    public ResultInfo CheckDuplicateFileNames(string[] inputFileNames, string nameType = "File")
+    public Result CheckDuplicateFileNames(string[] inputFileNames, string nameType = "File")
     {
         var length = inputFileNames.Length;
         for (var i = 0; i <= length - 1; i++)
@@ -225,82 +231,76 @@ public class S3FileService : IFileService
             {
                 if (string.Equals(fileName, inputFileNames[j].Trim(), StringComparison.OrdinalIgnoreCase))
                 {
-                    return new ResultInfo
+                    return Result.Failure(Error.SystemError with
                     {
-                        Code = ErrorCodes.GeneralErrorCode,
                         Message = string.Format(DUPLICATE_FILE_NAME_MESSAGE, nameType)
-                    };
+                    });
                 }
             }
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
-    public ResultInfo ValidateInputFileNameForUpdate(string inputFileName)
+    public Result ValidateInputFileNameForUpdate(string? inputFileName)
     {
         if (string.IsNullOrEmpty(inputFileName))
         {
-            return ResultInfo.Success;
+            return Result.Success();
         }
 
         if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = FILE_NAME_CAN_NOT_CONTAIN
-            };
+            });
         }
 
         var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
         if (!_allowedExtensions.Contains(extension))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = INVALID_FILE_TYPE_MESSAGE
-            };
+            });
         }
 
         if (inputFileName.Length > MAX_LENGTH)
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = MAX_LENGTH_FILE_NAME_MESSAGE
-            };
+            });
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
-    public ResultInfo ValidateInputMediaNameForUpdate(string inputMediaName)
+    public Result ValidateInputMediaNameForUpdate(string? inputMediaName)
     {
         if (string.IsNullOrEmpty(inputMediaName))
         {
-            return ResultInfo.Success;
+            return Result.Success();
         }
 
         if (Regex.IsMatch(inputMediaName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = FILE_NAME_CAN_NOT_CONTAIN
-            };
+            });
         }
 
         if (inputMediaName.Length > MAX_LENGTH)
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = "The maximum length of media name is 200."
-            };
+            });
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
     public async Task UploadFileAsync(IFormFile file, string filePath)
@@ -331,33 +331,31 @@ public class S3FileService : IFileService
         return inputFileNames.Split('|');
     }
 
-    public ResultInfo ValidateUploadRequest(IFormFileCollection files, string inputFileNames, string? inputMediaNames = null)
+    public Result ValidateUploadRequest(IFormFileCollection files, string inputFileNames, string? inputMediaNames = null)
     {
         var result = ValidateAllFiles(files);
-        if (!result.IsSuccessful)
+        if (!result.IsSuccess)
         {
             return result;
         }
 
         if (!string.IsNullOrEmpty(inputFileNames) && Regex.IsMatch(inputFileNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = FILE_NAME_CAN_NOT_CONTAIN
-            };
+            });
         }
 
         if (!string.IsNullOrEmpty(inputMediaNames) && Regex.IsMatch(inputMediaNames, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.GeneralErrorCode,
                 Message = "Media name cannot contain special characters"
-            };
+            });
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
     public async Task CleanupUploadedFilesAsync(List<string> filePaths)

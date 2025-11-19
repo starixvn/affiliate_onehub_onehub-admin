@@ -79,7 +79,7 @@ export function AssetUploaderProvider({
     maximumFiles = 50,
     maxFileSize = 3,
     allowedExtensions = [],
-  } = useAssetFilters(params as GetAssetListRequest) || {}
+  } = useAssetFilters() ?? {}
 
   const { data, isLoading, isError } = useGetAssetList(
     params as GetAssetListRequest
@@ -94,7 +94,7 @@ export function AssetUploaderProvider({
         setCurrentRow,
 
         assets: data?.items ?? [],
-        totalCount: data?.totalCount ?? 0,
+        totalCount: data?.totalItem ?? 0,
         pageIndex: data?.pageIndex ?? 1,
         pageSize: data?.pageSize ?? 10,
         isLoading,

@@ -3,77 +3,78 @@ using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ONEHub.Domain.Common;
-using ONEHub.Domain.Constants;
-using ONEHub.Domain.Criterias.LandingPages;
-using ONEHub.Domain.Entities.LandingPages;
-using ONEHub.Domain.Interfaces;
-using UpdateCommand = ONEHub.Domain.Commands.LandingPages.UpdateAssetCommand;
+using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Services;
+using ONEHub.Domain.Entities;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
 
-public record UpdateAssetCommand(
-    IFormFile? File,
-    int MediaId,
-    int ModuleId,
-    string TargetCountryCode,
-    string LanguageCode,
-    string InputFileName,
-    string InputMediaName,
-    int UserId,
-    string Ip,
-    string FunctionName) : IRequest<ResultInfo>;
+public class UpdateAssetCommand : BaseNonResultCommand
+{
+    public IFormFile? File { get; set; }
+
+    public int MediaId { get; set; }
+
+    public int ModuleId { get; set; }
+
+    public string TargetCountryCode { get; set; } = string.Empty;
+
+    public string LanguageCode { get; set; } = string.Empty;
+
+    public string? InputFileName { get; set; } = string.Empty;
+
+    public string? InputMediaName { get; set; } = string.Empty;
+}
 
 public class UpdateAssetCommandHandler(
-    IDynamicRepository repository,
+    IAssetUploaderRepository assetUploaderRepository,
     IStorageService storageService,
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
     ILogger<UpdateAssetCommandHandler> logger)
-    : IRequestHandler<UpdateAssetCommand, ResultInfo>
+    : IRequestHandler<UpdateAssetCommand, Result>
 {
-    private const string ASSET_NOT_FOUND_MESSAGE = "Asset not found.";
     private const string FILE_ALREADY_EXISTS_MESSAGE = "A file with this name {0} already exists on the server. Please use a different name.";
 
-    public async Task<ResultInfo> Handle(
+    public async Task<Result> Handle(
         UpdateAssetCommand request,
         CancellationToken cancellationToken)
     {
         try
         {
-            var oldAssetCriteria = new GetAssetDetailCriteria
+            var oldAssetResult = await assetUploaderRepository.GetAssetDetailAsync(new AssetDetailParam
             {
                 MediaId = request.MediaId,
                 UserId = request.UserId
-            };
+            });
 
-            var oldAssetInfo = await repository.GetAsync<AssetDetail>(oldAssetCriteria);
+            var oldAssetInfo = oldAssetResult.Data;
             if (oldAssetInfo == null)
             {
-                return new ResultInfo
-                {
-                    Code = ErrorCodes.GeneralErrorCode,
-                    Message = ASSET_NOT_FOUND_MESSAGE
-                };
+                return Result.Failure(Error.NoData);
             }
 
-            var validationResult = landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
-            if (!validationResult.IsSuccessful)
+            var validationResult = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
+            if (validationResult.IsFailure)
             {
-                return validationResult;
+                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
             }
 
             validationResult = fileService.ValidateInputFileNameForUpdate(request.InputFileName);
-            if (!validationResult.IsSuccessful)
+            if (validationResult.IsFailure)
             {
-                return validationResult;
+                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
             }
 
             validationResult = fileService.ValidateInputMediaNameForUpdate(request.InputMediaName);
-            if (!validationResult.IsSuccessful)
+            if (validationResult.IsFailure)
             {
-                return validationResult;
+                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
             }
 
             return await ProcessAssetUpdate(request, oldAssetInfo);
@@ -81,22 +82,25 @@ public class UpdateAssetCommandHandler(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error updating asset");
-            return ResultInfo.GenerateError("Error updating asset");
+            return Result.Failure(Error.SystemError with
+            {
+                Message = "Error updating asset"
+            });
         }
     }
 
-    private async Task<ResultInfo> ProcessAssetUpdate(UpdateAssetCommand request, AssetDetail oldAssetInfo)
+    private async Task<Result> ProcessAssetUpdate(UpdateAssetCommand request, AssetDetail oldAssetInfo)
     {
         var oldFilePath = oldAssetInfo.FileName;
-        var folder = landingPageService.GetAssetFolder(request.ModuleId, request.TargetCountryCode, request.LanguageCode);
+        var folder = await landingPageService.GetAssetFolder(request.ModuleId, request.TargetCountryCode, request.LanguageCode);
         var inputFileName = string.IsNullOrEmpty(request.InputFileName) ? request.File?.FileName : request.InputFileName;
         var inputMediaName = request.InputFileName;
         var path = $"{folder}/{inputFileName}";
 
         var result = await CheckFileInFolderForUpdate(path, oldFilePath, inputFileName);
-        if (!result.IsSuccessful)
+        if (result.IsFailure)
         {
-            return result;
+            return Result.Failure(new Error(result.ErrorCode, result.ErrorMessage));
         }
 
         return request.File != null
@@ -104,7 +108,7 @@ public class UpdateAssetCommandHandler(
             : await ProcessMetadataUpdate(request, path, oldFilePath, oldAssetInfo, inputMediaName);
     }
 
-    private async Task<ResultInfo> ProcessFileUpdate(
+    private async Task<Result> ProcessFileUpdate(
         UpdateAssetCommand request,
         string path,
         string oldFilePath,
@@ -115,16 +119,16 @@ public class UpdateAssetCommandHandler(
         {
             dimension = imageService.ExtractImageDimensions(stream);
 
-            var result = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
-            if (!result.IsSuccessful)
+            var validateFile = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
+            if (validateFile.IsFailure)
             {
-                return result;
+                return Result.Failure(new Error(validateFile.ErrorCode, validateFile.ErrorMessage));
             }
         }
 
         var filesXml = BuildSingleFileXml(inputMediaName, path, dimension);
 
-        var command = new UpdateCommand
+        var param = new UpdateAssetParam
         {
             MediaId = request.MediaId,
             ModuleId = request.ModuleId,
@@ -133,22 +137,21 @@ public class UpdateAssetCommandHandler(
             Files = filesXml,
             UserId = request.UserId,
             Ip = request.Ip,
-            FunctionName = request.FunctionName
+            Host = request.Host
         };
 
-        await repository.ExecuteAsync(command);
+        var result = await assetUploaderRepository.UpdateAssetAsync(param);
 
-        if (command.ErrCode == 0)
+        if (result.IsSuccess)
         {
             await fileService.DeleteFileAsync(oldFilePath);
             await fileService.UploadFileAsync(request.File, path);
-            return ResultInfo.Success;
         }
 
-        return ResultInfo.GenerateError(command.ErrMsg);
+        return result;
     }
 
-    private async Task<ResultInfo> ProcessMetadataUpdate(
+    private async Task<Result> ProcessMetadataUpdate(
         UpdateAssetCommand request,
         string path,
         string oldFilePath,
@@ -158,7 +161,7 @@ public class UpdateAssetCommandHandler(
         var dimension = oldAssetInfo.Dimension;
         var filesXml = BuildSingleFileXml(inputMediaName, path, dimension);
 
-        var command = new UpdateCommand
+        var param = new UpdateAssetParam
         {
             MediaId = request.MediaId,
             ModuleId = request.ModuleId,
@@ -167,19 +170,17 @@ public class UpdateAssetCommandHandler(
             Files = filesXml,
             UserId = request.UserId,
             Ip = request.Ip,
-            FunctionName = request.FunctionName
+            Host = request.Host
         };
 
-        await repository.ExecuteAsync(command);
+        var result = await assetUploaderRepository.UpdateAssetAsync(param);
 
-        if (command.ErrCode == 0 && !string.Equals(path, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
+        if (result.IsSuccess && !string.Equals(path, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
         {
             await MoveFile(path, oldFilePath);
         }
 
-        return command.ErrCode == 0
-            ? ResultInfo.Success
-            : ResultInfo.GenerateError(command.ErrMsg);
+        return result;
     }
 
     private async Task MoveFile(string newFilePath, string oldFilePath)
@@ -188,11 +189,11 @@ public class UpdateAssetCommandHandler(
         _ = await storageService.DeleteFileAsync(oldFilePath);
     }
 
-    private async Task<ResultInfo> CheckFileInFolderForUpdate(string? filePath, string? oldFilePath, string? fileName)
+    private async Task<Result> CheckFileInFolderForUpdate(string? filePath, string? oldFilePath, string? fileName)
     {
         if (string.IsNullOrEmpty(filePath))
         {
-            return ResultInfo.Success;
+            return Result.Success();
         }
 
         var fileExisting = await storageService.FileExistsAsync(filePath);
@@ -201,17 +202,16 @@ public class UpdateAssetCommandHandler(
             if (!string.IsNullOrEmpty(oldFilePath)
                 && string.Equals(filePath, oldFilePath, StringComparison.CurrentCultureIgnoreCase))
             {
-                return ResultInfo.Success;
+                return Result.Success();
             }
 
-            return new ResultInfo
+            return Result.Failure(Error.SystemError with
             {
-                Code = ErrorCodes.ErrTheFileNameAlreadyExists,
                 Message = string.Format(FILE_ALREADY_EXISTS_MESSAGE, fileName)
-            };
+            });
         }
 
-        return ResultInfo.Success;
+        return Result.Success();
     }
 
     private static string BuildSingleFileXml(string mediaName, string filePath, string dimension)
@@ -223,4 +223,3 @@ public class UpdateAssetCommandHandler(
         return result.ToString();
     }
 }
-

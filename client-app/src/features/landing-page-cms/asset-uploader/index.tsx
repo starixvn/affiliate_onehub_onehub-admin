@@ -9,7 +9,6 @@ const route = getRouteApi('/iframe/landing-page-cms/asset-uploader/')
 export function AssetUploader() {
   const search = route.useSearch()
 
-  // Normalize search params với defaults
   const params = normalizeSearchParams(search)
 
   return (

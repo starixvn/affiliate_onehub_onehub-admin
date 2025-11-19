@@ -1,26 +1,26 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using ONEHub.Domain.Common;
-using ONEHub.Domain.Criterias.LandingPages;
-using ONEHub.Domain.Entities.LandingPages;
-using ONEHub.Domain.Interfaces;
-using DeleteCommand = ONEHub.Domain.Commands.LandingPages.DeleteAssetsCommand;
+using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Services;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
 
-public record DeleteAssetsCommand(
-    string MediaIds,
-    int UserId,
-    string Ip,
-    string FunctionName) : IRequest<ResultInfo>;
+public class DeleteAssetsCommand : BaseNonResultCommand
+{
+    public string MediaIds { get; set; } = string.Empty;
+}
 
 public class DeleteAssetsCommandHandler(
-    IDynamicRepository repository,
+    IAssetUploaderRepository assetUploaderRepository,
     IFileService fileService,
     ILogger<DeleteAssetsCommandHandler> logger)
-    : IRequestHandler<DeleteAssetsCommand, ResultInfo>
+    : IRequestHandler<DeleteAssetsCommand, Result>
 {
-    public async Task<ResultInfo> Handle(
+    public async Task<Result> Handle(
         DeleteAssetsCommand request,
         CancellationToken cancellationToken)
     {
@@ -28,27 +28,28 @@ public class DeleteAssetsCommandHandler(
         {
             var fileNameList = await GetAssetFileNameList(request.UserId, request.MediaIds);
 
-            var command = new DeleteCommand
+            var param = new DeleteAssetsParam
             {
                 MediaIds = request.MediaIds,
                 UserId = request.UserId,
-                Ip = request.Ip,
-                FunctionName = request.FunctionName
+                Ip = request.Ip
             };
 
-            await repository.ExecuteAsync(command);
-            if (command.ErrCode == 0)
+            var result = await assetUploaderRepository.DeleteAssetsAsync(param);
+            if (result.IsSuccess)
             {
                 await DeleteFilesAsync(fileNameList);
-                return ResultInfo.Success;
             }
 
-            return ResultInfo.GenerateError(command.ErrMsg);
+            return result;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error deleting assets: {@MediaIds}", request.MediaIds);
-            return ResultInfo.GenerateError("Error deleting assets");
+            return Result.Failure(Error.SystemError with
+            {
+                Message = "Error deleting assets"
+            });
         }
     }
 
@@ -61,16 +62,15 @@ public class DeleteAssetsCommandHandler(
         {
             if (int.TryParse(mediaId.Trim(), out var id))
             {
-                var criteria = new GetAssetDetailCriteria
+                var result = await assetUploaderRepository.GetAssetDetailAsync(new AssetDetailParam
                 {
                     MediaId = id,
                     UserId = userId
-                };
+                });
 
-                var assetInfo = await repository.GetAsync<AssetDetail>(criteria);
-                if (assetInfo != null && !string.IsNullOrEmpty(assetInfo.FileName))
+                if (result is { IsSuccess: true, Data: not null } && !string.IsNullOrEmpty(result.Data.FileName))
                 {
-                    fileNameList.Add(assetInfo.FileName);
+                    fileNameList.Add(result.Data.FileName);
                 }
             }
         }

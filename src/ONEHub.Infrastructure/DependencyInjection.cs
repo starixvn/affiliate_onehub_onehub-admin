@@ -37,8 +37,12 @@ public static class DependencyInjection
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<ICacheProvider, DistributedCacheProvider>();
         services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.AddSingleton<ILandingPageService, LandingPageService>();
+        services.AddSingleton<IFileService, S3FileService>();
+        services.AddSingleton<IImageService, ImageService>();
 
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
+        services.AddSingleton<ISystemRepository, SystemRepository>();
         services.AddSingleton<IAuthRepository, AuthRepository>();
         services.AddSingleton<ICampaignRepository, CampaignRepository>();
         services.AddSingleton<IComponentRepository, ComponentRepository>();
@@ -46,6 +50,7 @@ public static class DependencyInjection
         services.AddSingleton<ILandingPageRepository, LandingPageRepository>();
         services.AddSingleton<ISystemRepository, SystemRepository>();
         services.AddSingleton<ILinkGeneratorRepository, LinkGeneratorRepository>();
+        services.AddSingleton<IAssetUploaderRepository, AssetUploaderRepository>();
 
         return services;
     }

@@ -1,4 +1,5 @@
-import type { IAxiosResponse, IPaginatedResponse } from '@/lib/types/common'
+import type { IPaginatedResponse } from '@/lib/types/common'
+import type { IAxiosResponse } from '@/lib/api/types'
 import type { AssetDetail, ModuleWithFiles } from '../data/schema'
 
 export interface GetAssetListRequest {
@@ -39,9 +40,9 @@ export interface UpdateAssetRequest {
   moduleId: number
   targetCountryCode: string
   languageCode: string
-  file: File
-  inputFileName: string
-  inputMediaName: string
+  file?: File
+  inputFileName?: string
+  inputMediaName?: string
 }
 
 export interface UpdateAssetResponseData {
@@ -87,14 +88,16 @@ export interface AssetStatus {
   status: string
 }
 
-export interface GetAssetFiltersResponseData {
-  moduleList: Array<Module>
-  targetCountryList: Array<Country>
-  allLanguagesInSystem: Array<Language>
-  statusList: Array<AssetStatus>
+export interface GetAssetFiltersData {
+  modules: Array<Module>
+  targetCountries: Array<Country>
+  languages: Array<Language>
+  statusInfos: Array<AssetStatus>
   landingPageUrl: string
   bannerRootUrl: string
   maximumFiles: number
   maxFileSize: number
   allowedExtensions: Array<string>
 }
+
+export type GetAssetFiltersResponse = IAxiosResponse<GetAssetFiltersData>

@@ -3,34 +3,37 @@ using System.Text.Json;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ONEHub.Domain.Commands.LandingPages;
-using ONEHub.Domain.Common;
-using ONEHub.Domain.DTOs.LandingPages;
+using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Services;
 using ONEHub.Domain.Entities.LandingPages;
-using ONEHub.Domain.Interfaces;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
 
-public record UploadAssetsCommand(
-    List<ModuleRow> ModuleRows,
-    string TargetCountryCode,
-    string LanguageCode,
-    int UserId,
-    string Ip,
-    string FunctionName) : IRequest<ResultInfo>;
+public class UploadAssetsCommand : BaseNonResultCommand
+{
+    public List<ModuleRow>? ModuleRows { get; set; } = [];
+
+    public string TargetCountryCode { get; set; } = string.Empty;
+
+    public string LanguageCode { get; set; } = string.Empty;
+}
 
 public class UploadAssetsCommandHandler(
     IStorageService storageService,
-    IDynamicRepository repository,
+    IAssetUploaderRepository assetUploaderRepository,
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
     ILogger<UploadAssetsCommandHandler> logger)
-    : IRequestHandler<UploadAssetsCommand, ResultInfo>
+    : IRequestHandler<UploadAssetsCommand, Result>
 {
     private const string DATABASE_INSERTION_FAILS_MESSAGE = "Database insertion fails";
 
-    public async Task<ResultInfo> Handle(
+    public async Task<Result> Handle(
         UploadAssetsCommand request,
         CancellationToken cancellationToken)
     {
@@ -44,33 +47,36 @@ public class UploadAssetsCommandHandler(
 
             var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
 
-            var validations = new[]
+            var uploadValidation = fileService.ValidateUploadRequest(allFiles, string.Empty);
+            if (uploadValidation.IsFailure)
             {
-                fileService.ValidateUploadRequest(allFiles, string.Empty),
-                fileService.ValidateAllInputFileNames(inputFileNames),
-                landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode)
-            };
+                return Result.Failure(new Error(uploadValidation.ErrorCode, uploadValidation.ErrorMessage));
+            }
 
-            foreach (var validation in validations)
+            var fileNameValidation = fileService.ValidateAllInputFileNames(inputFileNames);
+            if (fileNameValidation.IsFailure)
             {
-                if (!validation.IsSuccessful)
-                {
-                    return validation;
-                }
+                return Result.Failure(new Error(fileNameValidation.ErrorCode, fileNameValidation.ErrorMessage));
+            }
+
+            var languageValidation = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
+            if (languageValidation.IsFailure)
+            {
+                return Result.Failure(new Error(languageValidation.ErrorCode, languageValidation.ErrorMessage));
             }
 
             foreach (var row in request.ModuleRows)
             {
-                var folder = landingPageService.GetAssetFolder(
+                var folder = await landingPageService.GetAssetFolder(
                     row.ModuleId,
                     request.TargetCountryCode,
                     request.LanguageCode
                 );
 
                 var folderCheck = await fileService.CheckMultipleFilesInFolderAsync(inputFileNames, folder);
-                if (!folderCheck.IsSuccessful)
+                if (folderCheck.IsFailure)
                 {
-                    return folderCheck;
+                    return Result.Failure(new Error(folderCheck.ErrorCode, folderCheck.ErrorMessage));
                 }
                 await ProcessAndUploadFiles(row.Files, folder);
             }
@@ -81,17 +87,20 @@ public class UploadAssetsCommandHandler(
                 request.LanguageCode,
                 request.UserId,
                 request.Ip,
-                request.FunctionName);
+                request.Host);
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error uploading assets");
-            return ResultInfo.GenerateError("Error uploading assets");
+            return Result.Failure(Error.SystemError with
+            {
+                Message = DATABASE_INSERTION_FAILS_MESSAGE
+            });
         }
     }
 
     private async Task ProcessAndUploadFiles(
-        IFormFileCollection files,
+        List<IFormFile> files,
         string folder)
     {
         foreach (var file in files)
@@ -103,13 +112,13 @@ public class UploadAssetsCommandHandler(
         }
     }
 
-    private async Task<ResultInfo> SaveAssetsToDatabase(
-        List<ModuleRow> moduleRows,
+    private async Task<Result> SaveAssetsToDatabase(
+        List<ModuleRow>? moduleRows,
         string targetCountryCode,
         string languageCode,
         int userId,
         string ip,
-        string functionName)
+        string host)
     {
         var (filePaths, moduleMedias) = await BuildModel(moduleRows, targetCountryCode, languageCode);
 
@@ -120,34 +129,37 @@ public class UploadAssetsCommandHandler(
                 WriteIndented = true
             });
 
-            var command = new CreateAssetsCommand
+            var param = new UploadAssetsParam
             {
                 Files = files,
                 TargetCountryCode = WebUtility.HtmlEncode(targetCountryCode),
                 LanguageCode = WebUtility.HtmlEncode(languageCode),
                 UserId = userId,
                 Ip = ip,
-                FunctionName = functionName
+                Host = host
             };
-            await repository.ExecuteAsync(command);
 
-            if (command.ErrCode != 0)
+            var result = await assetUploaderRepository.UploadAssetsAsync(param);
+
+            if (result.IsFailure)
             {
                 await fileService.CleanupUploadedFilesAsync(filePaths);
-                return ResultInfo.GenerateError(command.ErrMsg);
             }
 
-            return ResultInfo.Success;
+            return result;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error saving assets to database");
             await fileService.CleanupUploadedFilesAsync(filePaths);
-            return ResultInfo.GenerateError(DATABASE_INSERTION_FAILS_MESSAGE);
+            return Result.Failure(Error.SystemError with
+            {
+                Message = DATABASE_INSERTION_FAILS_MESSAGE
+            });
         }
     }
 
-    private async Task<(List<string>, List<ModuleMedia>)> BuildModel(List<ModuleRow> moduleRows, string targetCountryCode, string languageCode)
+    private async Task<(List<string>, List<ModuleMedia>)> BuildModel(List<ModuleRow>? moduleRows, string targetCountryCode, string languageCode)
     {
         var filePaths = new List<string>();
         var moduleMedias = new List<ModuleMedia>();
@@ -159,15 +171,19 @@ public class UploadAssetsCommandHandler(
                 Files = []
             };
 
-            var folder = landingPageService.GetAssetFolder(
+            var folder = await landingPageService.GetAssetFolder(
                 moduleRow.ModuleId,
                 targetCountryCode,
                 languageCode
             );
             foreach (var file in moduleRow.Files)
             {
-                await using var stream = file.OpenReadStream();
-                var dimension = imageService.ExtractImageDimensions(stream);
+                string dimension;
+                await using (var stream = file.OpenReadStream())
+                {
+                    dimension = imageService.ExtractImageDimensions(stream);
+                }
+
                 var fileName = $"{folder}/{file.FileName}";
 
                 filePaths.Add(fileName);

@@ -1,50 +1,50 @@
 using MediatR;
 using Microsoft.Extensions.Logging;
-using ONEHub.Domain.Common;
-using ONEHub.Domain.Interfaces;
-using ToggleCommand = ONEHub.Domain.Commands.LandingPages.UpdateAssetsStatusCommand;
+using ONEHub.Application.Features.Shared;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Repositories;
+using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
 
-public record ToggleAssetStatusCommand(
-    string MediaIds,
-    int StatusId,
-    int UserId,
-    string Ip,
-    string FunctionName) : IRequest<ResultInfo>;
+public class ToggleAssetStatusCommand : BaseNonResultCommand
+{
+    public string MediaIds { get; set; } = string.Empty;
+
+    public int StatusId { get; set; }
+}
 
 public class ToggleAssetStatusCommandHandler(
-    IDynamicRepository repository,
+    IAssetUploaderRepository assetUploaderRepository,
     ILogger<ToggleAssetStatusCommandHandler> logger)
-    : IRequestHandler<ToggleAssetStatusCommand, ResultInfo>
+    : IRequestHandler<ToggleAssetStatusCommand, Result>
 {
-    public async Task<ResultInfo> Handle(
+    public async Task<Result> Handle(
         ToggleAssetStatusCommand request,
         CancellationToken cancellationToken)
     {
         try
         {
-            var command = new ToggleCommand
+            var param = new UpdateAssetStatusParam
             {
                 MediaIds = request.MediaIds,
                 StatusId = request.StatusId,
                 UserId = request.UserId,
                 Ip = request.Ip,
-                FunctionName = request.FunctionName
+                Host = request.Host
             };
 
-            await repository.ExecuteAsync(command);
-            if (command.ErrCode != 0)
-            {
-                return ResultInfo.GenerateError(command.ErrMsg);
-            }
-
-            return ResultInfo.Success;
+            var result = await assetUploaderRepository.UpdateAssetStatusAsync(param);
+            return result;
         }
         catch (Exception ex)
         {
             logger.LogError(ex, "Error toggling asset status: {@MediaIds}", request.MediaIds);
-            return ResultInfo.GenerateError("Error toggling asset status");
+            return Result.Failure(Error.SystemError with
+            {
+                Message = "Error toggling asset status"
+            });
         }
     }
 }

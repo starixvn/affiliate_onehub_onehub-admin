@@ -8,7 +8,7 @@ import type {
   UpdateAssetResponse,
   CreateAssetRequest,
   GetAssetDetailResponse,
-  GetAssetFiltersResponseData,
+  GetAssetFiltersResponse,
   UpdateAssetsStatusResponse,
 } from '../types'
 
@@ -39,11 +39,11 @@ export const assetUploaderApi = {
 
       data.moduleRows.forEach((moduleRow, index) => {
         formData.append(
-          `moduleRows[${index}].moduleId`,
-          moduleRow.module.toString()
+          `moduleRows[${index}]`,
+          moduleRow.module
         )
         moduleRow.files.forEach((file) => {
-          formData.append(`moduleRows[${index}].files`, file)
+          formData.append(`${moduleRow.module}`, file)
         })
       })
 
@@ -106,8 +106,9 @@ export const assetUploaderApi = {
       formData.append('moduleId', data.moduleId.toString())
       formData.append('targetCountryCode', data.targetCountryCode)
       formData.append('languageCode', data.languageCode)
-      formData.append('inputFileName', data.inputFileName)
-      formData.append('file', data.file)
+      formData.append('inputFileName', data.inputFileName ?? '')
+      formData.append('inputMediaName', data.inputMediaName ?? '')
+      formData.append('file', data.file ?? new File([], ''))
 
       const response = await apiClient.post<UpdateAssetResponse>(
         '/asset-uploader/update',
@@ -151,12 +152,9 @@ export const assetUploaderApi = {
     }
   },
 
-  async getAssetFilters(
-    params: GetAssetListRequest
-  ): Promise<GetAssetFiltersResponseData> {
-    const response = await apiClient.get<GetAssetFiltersResponseData>(
-      '/landingpage/filters',
-      { params }
+  async getAssetFilters(): Promise<GetAssetFiltersResponse> {
+    const response = await apiClient.get<GetAssetFiltersResponse>(
+      '/asset-uploader/filters'
     )
     return response.data
   },

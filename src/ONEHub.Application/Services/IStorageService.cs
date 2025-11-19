@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Http;
 
-namespace ONEHub.Domain.Interfaces;
+namespace ONEHub.Application.Services;
 
 public interface IStorageService
 {

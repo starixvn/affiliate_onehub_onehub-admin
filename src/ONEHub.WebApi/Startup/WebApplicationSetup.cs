@@ -5,6 +5,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using ONEHub.Domain.Settings;
+using ONEHub.WebApi.Features.AssetUploader;
 using ONEHub.WebApi.Features.Auth;
 using ONEHub.WebApi.Features.Campaign;
 using ONEHub.WebApi.Features.Component;
@@ -231,6 +232,7 @@ public static class WebApplicationSetup
         app.RegisterGenerateLinkEndpoints();
         app.RegisterLandingPageEndpoints();
         app.RegisterSettingsEndpoints();
+        app.RegisterAssetUploaderEndpoints();
         return app;
     }
 }
