@@ -16,6 +16,7 @@ public class PageManagementRepository(IDynamicRepository dynamicRepository)
         var criteria = new GetPageManagementDashboardCriteria
         {
             PageName = param.Search,
+            CampaignName = param.Search,
             StatusIds = param.StatusIds,
             TargetCountryCodes = param.TargetCountryCodes,
             LanguageCodes = param.LanguageCodes,
@@ -34,6 +35,7 @@ public class PageManagementRepository(IDynamicRepository dynamicRepository)
             PageSize = param.PageSize,
             PageIndex = param.PageIndex,
             PageName = param.Search,
+            CampaignName = param.Search,
             StatusIds = param.StatusIds,
             TargetCountryCodes = param.TargetCountryCodes,
             LanguageCodes = param.LanguageCodes,

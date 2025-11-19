@@ -9,11 +9,16 @@ namespace ONEHub.Application.Features.LandingPages.PageManagement.Queries;
 
 public class GetPageManagementDashboardQuery : BaseQuery<PageManagementDashboardResponse>
 {
-    public string? Search { get; set; } = string.Empty;
-    public string? StatusIds { get; set; } = string.Empty;
-    public string? CountryCodes { get; set; } = string.Empty;
-    public string? LanguageCodes { get; set; } = string.Empty;
+    public string? Search { get; set; }
+
+    public string? StatusIds { get; set; }
+
+    public string? CountryCodes { get; set; }
+
+    public string? LanguageCodes { get; set; }
+
     public DateTime? FromDate { get; set; }
+
     public DateTime? ToDate { get; set; }
 }
 

@@ -4,12 +4,6 @@ namespace ONEHub.Infrastructure.Repositories.Criterias.LandingPages;
 
 public class GetLandingPageListCriteria : PagingCriteria
 {
-    private const string SP_NAME = "OH_PageBuilder_ManageSel";
-
-    public override string GetSettingKey() => SP_NAME;
-
-    public override bool IsValid() => true;
-
     public string? TargetCountryCodes { get; set; }
 
     [SpParam(SqlParamName = "MarketIds")]
@@ -23,5 +17,11 @@ public class GetLandingPageListCriteria : PagingCriteria
 
     public string? PageName { get; set; }
 
+    public string? CampaignName { get; set; }
+
     public bool? IsExportExcel { get; set; }
+
+    public override string GetSettingKey() => "OH_PageBuilder_ManageSel";
+
+    public override bool IsValid() => true;
 }

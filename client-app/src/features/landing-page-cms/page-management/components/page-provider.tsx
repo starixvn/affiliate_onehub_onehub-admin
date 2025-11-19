@@ -32,8 +32,8 @@ type LandingPagesContextType = {
   today: Date
   defaultFromDate: Date
   defaultToDate: Date
-  navigate: any
-  search: any
+  navigate: ReturnType<typeof route.useNavigate>
+  search: ReturnType<typeof route.useSearch>
 }
 
 const LandingPagesContext = React.createContext<LandingPagesContextType | null>(

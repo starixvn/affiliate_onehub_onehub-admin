@@ -2,23 +2,28 @@ namespace ONEHub.Domain.Params;
 
 public class PageManagementDashboardParam : BaseParam
 {
-    public string? Search { get; set; } = string.Empty;
-    public string? StatusIds { get; set; } = string.Empty;
-    public string? TargetCountryCodes { get; set; } = string.Empty;
-    public string? LanguageCodes { get; set; } = string.Empty;
+    public string? Search { get; set; }
+
+    public string? StatusIds { get; set; }
+
+    public string? TargetCountryCodes { get; set; }
+
+    public string? LanguageCodes { get; set; }
+
     public DateTime? FromDate { get; set; }
+
     public DateTime? ToDate { get; set; }
 }
 
 public class LandingPageListParam : PagingParam
 {
-    public string? Search { get; set; } = string.Empty;
+    public string? Search { get; set; }
 
-    public string? StatusIds { get; set; } = string.Empty;
+    public string? StatusIds { get; set; }
 
-    public string? TargetCountryCodes { get; set; } = string.Empty;
+    public string? TargetCountryCodes { get; set; }
 
-    public string? LanguageCodes { get; set; } = string.Empty;
+    public string? LanguageCodes { get; set; }
 
     public DateTime? FromDate { get; set; }
 

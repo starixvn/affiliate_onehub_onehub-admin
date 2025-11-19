@@ -16,6 +16,18 @@
     "draft": "Draft Landing Pages",
     "inactive": "Inactive Landing Pages"
   },
+  "filters": {
+    "searchPlaceholder": "Search by campaign or landing page...",
+    "clear": "Clear",
+    "country": "Country",
+    "language": "Language",
+    "status": "Status",
+    "createdDate": "Created Date",
+    "selectDateRange": "Select date range",
+    "entirePeriod": "Entire Period",
+    "search": "Search",
+    "reset": "Reset"
+  },
   "searchToolbar": {
     "submit": "Search"
   },
@@ -23,7 +35,7 @@
     "search": "Search campaigns or landing page...",
     "noResults": "No results.",
     "columns": {
-      "number": "#",
+      "no": "#",
       "select": "Select all",
       "selectRow": "Select row",
       "campaignCode": "Campaign Code",

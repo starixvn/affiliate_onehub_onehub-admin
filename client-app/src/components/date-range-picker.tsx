@@ -8,9 +8,10 @@ import { cn } from '@/lib/utils'
 type DateRangePickerProps = {
   from: Date | undefined
   to: Date | undefined
-  onSelect: (range: { from: Date | undefined; to: Date | undefined }) => void
+  onSelect: (range: { from: Date | undefined; to: Date | undefined; preset?: string | null }) => void
   minDate?: Date
   maxDate?: Date
+  disabledPresets?: string[]
 }
 
 type PresetOption = {
@@ -25,6 +26,7 @@ export function DateRangePicker({
   onSelect,
   minDate,
   maxDate,
+  disabledPresets = [],
 }: DateRangePickerProps) {
   const [selectedRange, setSelectedRange] = useState<DateRange | undefined>({
     from,
@@ -99,7 +101,7 @@ export function DateRangePicker({
       id: 'entirePeriod',
       label: 'Entire Period',
       getValue: () => ({
-        from: minDate || startOfDay(new Date('2025-01-01')),
+        from: minDate || startOfDay(new Date('2024-12-31')),
         to: maxDate || endOfDay(new Date()),
       }),
     },
@@ -126,20 +128,20 @@ export function DateRangePicker({
     setSelectedRange({ from, to })
     const matchingPreset = detectMatchingPreset(from, to)
     setSelectedPreset(matchingPreset)
-  }, [from, to])
+  }, [from, to, minDate, maxDate])
 
   const handlePresetClick = (preset: PresetOption) => {
     const range = preset.getValue()
     setSelectedRange(range)
     setSelectedPreset(preset.id)
-    onSelect({ from: range.from, to: range.to })
+    onSelect({ from: range.from, to: range.to, preset: preset.id })
   }
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setSelectedRange(range)
     setSelectedPreset(null)
     if (range?.from && range?.to) {
-      onSelect({ from: range.from, to: range.to })
+      onSelect({ from: range.from, to: range.to, preset: null })
     }
   }
 
@@ -149,21 +151,26 @@ export function DateRangePicker({
         <div className='text-foreground mb-2 text-sm font-semibold'>
           Date Range
         </div>
-        {presetOptions.map((preset) => (
-          <button
-            key={preset.id}
-            onClick={() => handlePresetClick(preset)}
-            className={cn(
-              'hover:bg-accent hover:text-accent-foreground relative flex w-full items-center justify-between rounded-md px-3 py-2 text-start text-sm transition-colors',
-              selectedPreset === preset.id && 'bg-accent'
-            )}
-          >
-            <span>{preset.label}</span>
-            {selectedPreset === preset.id && (
-              <Check className='h-4 w-4' />
-            )}
-          </button>
-        ))}
+        {presetOptions.map((preset) => {
+          const isDisabled = disabledPresets.includes(preset.id)
+          return (
+            <button
+              key={preset.id}
+              onClick={() => !isDisabled && handlePresetClick(preset)}
+              disabled={isDisabled}
+              className={cn(
+                'hover:bg-accent hover:text-accent-foreground relative flex w-full items-center justify-between rounded-md px-3 py-2 text-start text-sm transition-colors',
+                selectedPreset === preset.id && 'bg-accent',
+                isDisabled && 'cursor-not-allowed opacity-50 hover:bg-transparent'
+              )}
+            >
+              <span>{preset.label}</span>
+              {selectedPreset === preset.id && (
+                <Check className='h-4 w-4' />
+              )}
+            </button>
+          )
+        })}
       </div>
       <div className='p-3'>
         <Calendar

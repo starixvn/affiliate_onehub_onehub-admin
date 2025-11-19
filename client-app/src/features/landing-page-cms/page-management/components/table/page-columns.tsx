@@ -23,18 +23,18 @@ export const getPageColumns = (
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label={t('table.columns.select')}
-        className='translate-y-[2px]'
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-10 rounded-tl-[inherit]'),
+      className: cn(
+        'sticky md:table-cell start-0 z-20 rounded-tl-[inherit] w-11 min-w-11 border-e text-center'
+      ),
     },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label={t('table.columns.selectRow')}
-        className='translate-y-[2px]'
       />
     ),
     enableSorting: false,
@@ -43,21 +43,12 @@ export const getPageColumns = (
   {
     accessorKey: 'rowIdx',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={t('table.columns.number')}
-        className='ps-3'
-      />
+      <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => (
-      <div className='text-nowrap ps-3'>{row.getValue('rowIdx')}</div>
-    ),
+    cell: ({ row }) => <div className='text-center'>{row.getValue('rowIdx')}</div>,
     meta: {
-      className: cn(
-        'drop-shadow-[0_1px_2px_rgb(0_0_0_/_0.1)] dark:drop-shadow-[0_1px_2px_rgb(255_255_255_/_0.1)]',
-        'sticky start-6 @4xl/content:table-cell @4xl/content:drop-shadow-none'
-      ),
-      displayName: t('table.columns.number'),
+      className: cn('sticky start-11 z-10 w-12 min-w-12 border-e'),
+      displayName: t('table.columns.no'),
     },
     enableSorting: false,
     enableHiding: false,
@@ -335,5 +326,8 @@ export const getPageColumns = (
   {
     id: 'actions',
     cell: DataTableRowActions,
+    meta: {
+      className: 'w-10',
+    },
   },
 ]

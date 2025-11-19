@@ -53,7 +53,8 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        SetAuthTokenCookies(contextAccessor.HttpContext, result.Data.AccessToken, result.Data.RefreshToken, jwtOptions.Value);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
 
         return TypedResults.Ok(result);
     }
@@ -86,7 +87,7 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        SetAccessTokenCookie(contextAccessor.HttpContext, result.Data.AccessToken, jwtOptions.Value);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
 
         return TypedResults.Ok(result);
     }
@@ -130,7 +131,8 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        SetAuthTokenCookies(contextAccessor.HttpContext, result.Data.AccessToken, result.Data.RefreshToken, jwtOptions.Value);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
 
         return TypedResults.Ok(result);
     }
@@ -145,18 +147,5 @@ public static class AuthEndpoints
         return TypedResults.Ok(result);
     }
 
-    private static void SetAuthTokenCookies(HttpContext? httpContext, string accessToken, string refreshToken, JwtSetting jwtSetting)
-    {
-        var accessTokenExpiration = TimeSpan.FromMinutes(jwtSetting.AccessTokenExpirationMinutes * 2);
-        var refreshTokenExpiration = TimeSpan.FromDays(jwtSetting.RefreshTokenExpirationDays * 2);
 
-        HttpContextUtils.SetCookie(httpContext, CookieKeys.ACCESS_TOKEN, accessToken, accessTokenExpiration);
-        HttpContextUtils.SetCookie(httpContext, CookieKeys.REFRESH_TOKEN, refreshToken, refreshTokenExpiration);
-    }
-
-    private static void SetAccessTokenCookie(HttpContext? httpContext, string accessToken, JwtSetting jwtSetting)
-    {
-        var accessTokenExpiration = TimeSpan.FromMinutes(jwtSetting.AccessTokenExpirationMinutes * 2);
-        HttpContextUtils.SetCookie(httpContext, CookieKeys.ACCESS_TOKEN, accessToken, accessTokenExpiration);
-    }
 }
