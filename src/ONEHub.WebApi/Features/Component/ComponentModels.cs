@@ -36,3 +36,8 @@ public record UpdateBatchComponentStatusRequest(
 public record DeleteBatchComponentRequest(
     [Required] string ComponentIds
 );
+
+public record GetComponentsByCategoryRequest(
+    [Required][Range(1, int.MaxValue)] int CategoryId,
+    int? ComponentId
+);

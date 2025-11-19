@@ -23,6 +23,13 @@ public abstract class BaseRepository(IDynamicRepository dynamicRepository)
         return Result<PagingData<T>>.Success(pagingData);
     }
 
+    public virtual async Task<Result<IEnumerable<T>>> FetchDataAsync<T>(CriteriaBase criteria) where T : class
+    {
+        var data = await dynamicRepository.FetchAsync<T>(criteria);
+
+        return Result<IEnumerable<T>>.Success(data);
+    }
+
     public virtual async Task<Result<T>> GetDataAsync<T>(CriteriaBase criteria) where T : class
     {
         var data = await dynamicRepository.GetAsync<T>(criteria);

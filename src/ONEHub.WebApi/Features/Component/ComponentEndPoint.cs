@@ -23,6 +23,7 @@ public static class ComponentEndPoint
         groupEndpoint.MapPut("/{id}", Update);
         groupEndpoint.MapPut("/status/batch", UpdateBatchStatus);
         groupEndpoint.MapDelete("/batch", DeleteBatch);
+        groupEndpoint.MapGet("/category", GetListByCategory);
 
         return groupEndpoint;
     }
@@ -160,6 +161,25 @@ public static class ComponentEndPoint
             ComponentIds = request.ComponentIds
         };
         var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+    private static async Task<Results<Ok<Result<IEnumerable<ComponentByCategoryResponse>>>, ValidationProblem>> GetListByCategory(
+        [AsParameters] GetComponentsByCategoryRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var query = new GetComponentsByCategoryQuery
+        {
+            CategoryId = request.CategoryId,
+            ComponentId = request.ComponentId
+        };
+
+        var result = await mediator.Send(query);
 
         return TypedResults.Ok(result);
     }

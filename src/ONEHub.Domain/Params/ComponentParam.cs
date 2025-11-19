@@ -50,3 +50,10 @@ public class DeleteBatchComponentParam : BaseParam
 {
     public string ComponentIds { get; set; } = string.Empty;
 }
+
+public class GetComponentByCategoryParam : BaseParam
+{
+    public int CategoryId { get; set; }
+
+    public int? ComponentId { get; set; }
+}

@@ -92,4 +92,15 @@ public class CampaignRepository(IDynamicRepository dynamicRepository)
 
         return result;
     }
+
+    public async Task<Result<IEnumerable<CampaignBase>>> GetCampaignInfoAsync(GetCampaignInfoParam param)
+    {
+        var criteria = new GetCampaignInfoCriteria
+        {
+            CampaignId = param.CampaignId,
+            StatusIds = param.StatusIds
+        };
+
+        return await FetchDataAsync<CampaignBase>(criteria);
+    }
 }

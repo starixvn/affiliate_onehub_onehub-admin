@@ -4,6 +4,13 @@
         <Setting Key="OH_UserInfo_Sel" SpName="OH_UserInfo_Sel" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_UserInfo_Ins" SpName="OH_UserInfo_Ins" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
+    <Function Name="Language">
+        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel" DbName="DBOH.ONEHub.wsv_oh" >
+            <Mapping DataField="MarketId" ObjectProperty="LanguageCode" />
+            <Mapping DataField="MarketName" ObjectProperty="LanguageName" />
+            <Mapping DataField="ShortedCode" ObjectProperty="ShortedLanguageCode" />
+        </Setting>
+    </Function>
 	<Functions Name="Campaign Management">
 		<Setting Key="OH_Campaign_Dashboard_Sel" SpName="OH_Campaign_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_ManageSel" SpName="OH_Campaign_ManageSel" DbName="DBOH.ONEHub.wsv_oh" />
@@ -11,6 +18,7 @@
 		<Setting Key="OH_Campaign_Upd" SpName="OH_Campaign_Upd" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_Del" SpName="OH_Campaign_Del" DbName="DBOH.ONEHub.wsv_oh" />
 		<Setting Key="OH_Campaign_Status_Upd" SpName="OH_Campaign_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Campaign_Sel" SpName="OH_Campaign_Sel" DbName="DBOH.ONEHub.wsv_oh" />
 	</Functions>
 	<Functions Name="Component Management">
 		<Setting Key="OH_Component_Dashboard_Sel" SpName="OH_Component_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
@@ -19,6 +27,17 @@
         <Setting Key="OH_Component_Upd" SpName="OH_Component_Upd" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Component_Del" SpName="OH_Component_Del" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Component_Status_Upd" SpName="OH_Component_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Component_Sel" SpName="OH_Component_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Functions>
+    <Function Name="LandingPage">
+        <Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
+    <Function Name="Domain">
+        <Setting Key="OH_Domain_Sel" SpName="OH_Domain_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
+    <Function Name="GenerateLink">
+        <Setting Key="OH_IDCode_Ins" SpName="OH_IDCode_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_LinkGenerator_Ins" SpName="OH_LinkGenerator_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+    </Function>
 </Functions>
 

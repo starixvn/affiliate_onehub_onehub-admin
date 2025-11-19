@@ -17,4 +17,6 @@ public interface IComponentRepository
     public Task<Result> UpdateBatchComponentStatusAsync(UpdateBatchComponentStatusParam param);
 
     public Task<Result> DeleteBatchComponentAsync(DeleteBatchComponentParam param);
+
+    public Task<Result<IEnumerable<Component>>> GetComponentByCategoryAsync(GetComponentByCategoryParam param);
 }
