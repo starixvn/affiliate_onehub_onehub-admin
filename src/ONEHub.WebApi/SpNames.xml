@@ -50,5 +50,17 @@
         <Setting Key="OH_AssetUploader_Status_Upd" SpName="OH_AssetUploader_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Module_Sel" SpName="OH_Module_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
+    <Functions Name="Page Management">
+        <Setting Key="OH_PageBuilder_Status_Sel" SpName="OH_PageBuilder_Status_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Dashboard_Sel" SpName="OH_PageBuilder_Dashboard_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_ManageSel" SpName="OH_PageBuilder_ManageSel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Sel" SpName="OH_PageBuilder_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Ins" SpName="OH_PageBuilder_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Upd" SpName="OH_PageBuilder_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Del" SpName="OH_PageBuilder_Del" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_PageBuilder_Status_Upd" SpName="OH_PageBuilder_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Media_Sel" SpName="OH_Media_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_Module_Sel" SpName="OH_Module_Sel" DbName="DBOH.ONEHub.wsv_oh" />
+    </Functions>
 </Functions>
 

@@ -1,5 +1,6 @@
 using Fanex.Data.Repository;
 using ONEHub.Domain.Entities;
+using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 using ONEHub.Infrastructure.Repositories.Criterias;
@@ -21,6 +22,14 @@ public class LandingPageRepository(IDynamicRepository dynamicRepository)
     {
         var criteria = new GetModuleCriteria(moduleTypes);
         var result = await FetchDataAsync<ModuleInfo>(criteria);
+
+        return result;
+    }
+
+    public async Task<Result<IEnumerable<StatusInfo>>> GetStatusAsync()
+    {
+        var criteria = new GetStatusCriteria();
+        var result = await FetchDataAsync<StatusInfo>(criteria);
 
         return result;
     }
