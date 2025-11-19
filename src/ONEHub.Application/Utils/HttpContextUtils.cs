@@ -11,7 +11,7 @@ public static class HttpContextUtils
         return request.Cookies.TryGetValue(key, out var value) ? value : string.Empty;
     }
 
-    public static void SetCookie(HttpContext? httpContext, string key, string value, CookieOptions? options = null)
+    public static void SetCookie(HttpContext? httpContext, string key, string value, TimeSpan? expiresIn = null, CookieOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(httpContext);
         var response = httpContext.Response;
@@ -22,6 +22,12 @@ public static class HttpContextUtils
             SameSite = SameSiteMode.Lax,
             Path = "/"
         };
+        
+        if (expiresIn.HasValue)
+        {
+            options.Expires = DateTimeOffset.UtcNow.Add(expiresIn.Value);
+        }
+        
         response.Cookies.Append(key, value, options);
     }
 
