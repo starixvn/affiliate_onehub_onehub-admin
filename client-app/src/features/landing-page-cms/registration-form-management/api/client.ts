@@ -19,7 +19,7 @@ export const registrationFormManagementApi = {
     params: GetMediaListRequest
   ): Promise<GetMediaListResponse> {
     const response = await apiClient.post<GetMediaListResponse>(
-      '/asset-uploader/list',
+      '/registration-form/list',
       params
     )
     return response.data
@@ -27,7 +27,7 @@ export const registrationFormManagementApi = {
 
   async getMediaDetail(mediaId: number): Promise<GetMediaDetailResponse> {
     const response = await apiClient.get<GetMediaDetailResponse>(
-      '/asset-uploader/detail',
+      '/registration-form/detail',
       { params: { mediaId } }
     )
     return response.data
@@ -58,7 +58,7 @@ export const registrationFormManagementApi = {
       })
 
       const response = await apiClient.post<CreateMediaResponse>(
-        '/asset-uploader/upload',
+        '/registration-form/upload',
         formData,
         {
           headers: {
@@ -85,7 +85,7 @@ export const registrationFormManagementApi = {
   async deleteMedia(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
       const response = await apiClient.delete<DeleteMediaResponse>(
-        `/asset-uploader/delete/${mediaIds}`
+        `/registration-form/delete/${mediaIds}`
       )
       return response.data
     } catch (error: unknown) {
@@ -106,7 +106,7 @@ export const registrationFormManagementApi = {
   async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
       const response = await apiClient.delete<DeleteMediaResponse>(
-        `/asset-uploader/delete/${mediaIds}`
+        `/registration-form/delete/${mediaIds}`
       )
       return response.data
     } catch (error: unknown) {
@@ -136,7 +136,7 @@ export const registrationFormManagementApi = {
       formData.append('file', data.file ?? new File([], ''))
 
       const response = await apiClient.post<UpdateMediaResponse>(
-        '/asset-uploader/update',
+        '/registration-form/update',
         formData,
         {
           headers: {
@@ -166,7 +166,7 @@ export const registrationFormManagementApi = {
   ): Promise<UpdateMediaStatusResponse> {
     try {
       const response = await apiClient.post<UpdateMediaStatusResponse>(
-        '/asset-uploader/status',
+        '/registration-form/status',
         { mediaIds: ids, statusId }
       )
       return response.data
@@ -189,7 +189,7 @@ export const registrationFormManagementApi = {
 
   async getMediaFilters(): Promise<GetMediaFiltersResponse> {
     const response = await apiClient.get<GetMediaFiltersResponse>(
-      '/asset-uploader/filters'
+      '/registration-form/filters'
     )
     return response.data
   },

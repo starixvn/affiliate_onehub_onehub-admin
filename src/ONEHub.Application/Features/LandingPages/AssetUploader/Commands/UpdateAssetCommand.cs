@@ -60,19 +60,19 @@ public class UpdateAssetCommandHandler(
             var validationResult = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
             if (validationResult.IsFailure)
             {
-                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
+                return validationResult;
             }
 
             validationResult = fileService.ValidateInputFileNameForUpdate(request.InputFileName);
             if (validationResult.IsFailure)
             {
-                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
+                return validationResult;
             }
 
             validationResult = fileService.ValidateInputMediaNameForUpdate(request.InputMediaName);
             if (validationResult.IsFailure)
             {
-                return Result.Failure(new Error(validationResult.ErrorCode, validationResult.ErrorMessage));
+                return validationResult;
             }
 
             return await ProcessAssetUpdate(request, oldAssetInfo);
@@ -95,7 +95,7 @@ public class UpdateAssetCommandHandler(
         var result = await CheckFileInFolderForUpdate(path, oldFilePath, inputFileName);
         if (result.IsFailure)
         {
-            return Result.Failure(new Error(result.ErrorCode, result.ErrorMessage));
+            return result;
         }
 
         return request.File != null
@@ -118,7 +118,7 @@ public class UpdateAssetCommandHandler(
             var validateFile = fileService.ValidateFile(request.File.FileName, request.File.Length, stream);
             if (validateFile.IsFailure)
             {
-                return Result.Failure(new Error(validateFile.ErrorCode, validateFile.ErrorMessage));
+                return validateFile;
             }
         }
 

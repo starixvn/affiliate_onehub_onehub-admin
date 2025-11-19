@@ -10,35 +10,11 @@ using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.WebApi.Features.AssetUploader;
+namespace ONEHub.WebApi.Features.LandingPages;
 
-public static class AssetUploaderEndpoint
+public static class BaseMediaEndpoint
 {
-    public static IEndpointRouteBuilder RegisterAssetUploaderEndpoints(this IEndpointRouteBuilder endpoints)
-    {
-        var groupEndpoint = endpoints.MapGroup("/api/asset-uploader").RequireAuthorization();
-
-        groupEndpoint.MapGet("/filters", GetFilters);
-        groupEndpoint.MapPost("/list", GetList);
-        groupEndpoint.MapPost("/detail", GetDetail);
-        groupEndpoint.MapPost("/upload", UploadAssets)
-            .Accepts<IFormFileCollection>("multipart/form-data")
-            .WithMetadata(new RequestSizeLimitAttribute(100_000_000))
-            .WithMetadata(new RequestFormLimitsAttribute { MultipartBodyLengthLimit = 100_000_000 })
-            .DisableAntiforgery();
-        
-        groupEndpoint.MapPost("/update", UpdateAsset)
-            .Accepts<IFormFile>("multipart/form-data")
-            .WithMetadata(new RequestSizeLimitAttribute(100_000_000))
-            .WithMetadata(new RequestFormLimitsAttribute { MultipartBodyLengthLimit = 100_000_000 })
-            .DisableAntiforgery();
-        groupEndpoint.MapPost("/status", UpdateAssetStatus);
-        groupEndpoint.MapDelete("/delete/{mediaIds}", DeleteAssets);
-
-        return groupEndpoint;
-    }
-
-    private static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
+    public static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
     {
         var query = new GetFiltersQuery();
 
@@ -46,7 +22,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
+    public static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
         [FromBody] GetAssetListRequest request,
         IMediator mediator)
     {
@@ -71,7 +47,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
+    public static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
         [FromBody] GetAssetDetailRequest request,
         IMediator mediator)
     {
@@ -90,7 +66,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
+    public static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
         [FromForm] UploadAssetsRequest request,
         IFormFileCollection? files,
         IMediator mediator)
@@ -130,7 +106,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
+    public static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
         [FromForm] UpdateAssetRequest request,
         IFormFile? file,
         IMediator mediator)
@@ -156,7 +132,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
+    public static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
         [FromBody] UpdateAssetStatusRequest request,
         IMediator mediator)
     {
@@ -176,7 +152,7 @@ public static class AssetUploaderEndpoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
+    public static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
         string mediaIds,
         IMediator mediator)
     {

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using ONEHub.Domain.Settings;
-using ONEHub.WebApi.Features.AssetUploader;
 using ONEHub.WebApi.Features.Auth;
 using ONEHub.WebApi.Features.Campaign;
 using ONEHub.WebApi.Features.Component;
@@ -13,6 +12,8 @@ using ONEHub.WebApi.Features.Domain;
 using ONEHub.WebApi.Features.GenerateLink;
 using ONEHub.WebApi.Features.LandingPage;
 using ONEHub.WebApi.Features.Settings;
+using ONEHub.WebApi.Features.LandingPages.AssetUploader;
+using ONEHub.WebApi.Features.LandingPages.RegistrationForm;
 using Serilog;
 using Serilog.Events;
 
@@ -233,6 +234,7 @@ public static class WebApplicationSetup
         app.RegisterLandingPageEndpoints();
         app.RegisterSettingsEndpoints();
         app.RegisterAssetUploaderEndpoints();
+        app.RegisterRegistrationFormEndpoint();
         return app;
     }
 }

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ONEHub.WebApi.Features.AssetUploader;
+namespace ONEHub.WebApi.Features.LandingPages;
 
 public record GetAssetListRequest(
     string? MediaName,

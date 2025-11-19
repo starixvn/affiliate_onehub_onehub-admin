@@ -12,4 +12,7 @@ public static class AssetUploaderError
 
     public static readonly Error FileAlreadyExists = new(105,
         "A file with this name {0} already exists on the server. Please use a different name.");
+
+    public static readonly Error ModulesWithoutFiles = new(106,
+        "The following modules have no files uploaded: {0}. Please upload at least one file for each module.");
 }

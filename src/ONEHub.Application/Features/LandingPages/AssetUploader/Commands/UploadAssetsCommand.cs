@@ -37,6 +37,12 @@ public class UploadAssetsCommandHandler(
     {
         try
         {
+            var modulesWithoutFilesValidation = ValidateModulesWithoutFiles(request.ModuleRows);
+            if (modulesWithoutFilesValidation.IsFailure)
+            {
+                return modulesWithoutFilesValidation;
+            }
+
             var allFiles = new FormFileCollection();
 
             allFiles.AddRange(request.ModuleRows!
@@ -57,19 +63,19 @@ public class UploadAssetsCommandHandler(
 
             if (uploadValidation.IsFailure)
             {
-                return Result.Failure(new Error(uploadValidation.ErrorCode, uploadValidation.ErrorMessage));
+                return uploadValidation;
             }
 
             var fileNameValidation = ValidateInputNames(inputFileNames, inputMediaNames);
             if (fileNameValidation.IsFailure)
             {
-                return Result.Failure(new Error(fileNameValidation.ErrorCode, fileNameValidation.ErrorMessage));
+                return fileNameValidation;
             }
 
             var languageValidation = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
             if (languageValidation.IsFailure)
             {
-                return Result.Failure(new Error(languageValidation.ErrorCode, languageValidation.ErrorMessage));
+                return languageValidation;
             }
 
             foreach (var row in request.ModuleRows)
@@ -83,7 +89,7 @@ public class UploadAssetsCommandHandler(
                 var folderCheck = await fileService.CheckMultipleFilesInFolderAsync(inputFileNames, folder);
                 if (folderCheck.IsFailure)
                 {
-                    return Result.Failure(new Error(folderCheck.ErrorCode, folderCheck.ErrorMessage));
+                    return folderCheck;
                 }
                 await ProcessAndUploadFiles(row.Files, folder);
             }
@@ -103,12 +109,37 @@ public class UploadAssetsCommandHandler(
         }
     }
 
+    private Result ValidateModulesWithoutFiles(List<ModuleRow> moduleRows)
+    {
+        var emptyModuleIndexes = new List<int>();
+
+        for (var index = 0; index < moduleRows.Count; index++)
+        {
+            var moduleRow = moduleRows[index];
+            if (moduleRow.Files == null || !moduleRow.Files.Any())
+            {
+                emptyModuleIndexes.Add(index);
+            }
+        }
+
+        if (emptyModuleIndexes.Any())
+        {
+            var moduleIndexesString = string.Join(", ", emptyModuleIndexes);
+            return Result.Failure(AssetUploaderError.ModulesWithoutFiles with
+            {
+                Message = string.Format(AssetUploaderError.ModulesWithoutFiles.Message, moduleIndexesString)
+            });
+        }
+
+        return Result.Success();
+    }
+
     private Result ValidateInputNames(string[] inputFileNames, string[]? inputMediaNames)
     {
         var fileNameValidation = fileService.ValidateAllInputFileNames(inputFileNames);
         if (fileNameValidation.IsFailure)
         {
-            return Result.Failure(new Error(fileNameValidation.ErrorCode, fileNameValidation.ErrorMessage));
+            return fileNameValidation;
         }
 
         return inputMediaNames == null ? Result.Success() : fileService.ValidateAllInputFileNames(inputMediaNames, "Form");
