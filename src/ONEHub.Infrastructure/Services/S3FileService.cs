@@ -128,10 +128,10 @@ public class S3FileService : IFileService
         return Result.Success();
     }
 
-    public Result ValidateAllInputFileNames(string[] inputFileNames)
+    public Result ValidateAllInputFileNames(string[] inputFileNames, string type = "File")
     {
-        var result = CheckDuplicateFileNames(inputFileNames);
-        if (!result.IsSuccess)
+        var result = CheckDuplicateFileNames(inputFileNames, type);
+        if (result.IsFailure)
         {
             return result;
         }
@@ -139,7 +139,7 @@ public class S3FileService : IFileService
         var message = new StringBuilder();
         for (var i = 0; i < inputFileNames.Length; i++)
         {
-            _ = ValidateProvidedInputFileName(inputFileNames[i], i, message);
+            _ = ValidateProvidedInputFileName(inputFileNames[i], i, message, type);
         }
 
         if (!string.IsNullOrWhiteSpace(message.ToString()))
@@ -153,7 +153,7 @@ public class S3FileService : IFileService
         return Result.Success();
     }
 
-    private Result ValidateProvidedInputFileName(string inputFileName, int index, StringBuilder message)
+    private Result ValidateProvidedInputFileName(string inputFileName, int index, StringBuilder message, string type)
     {
 
         if (string.IsNullOrEmpty(inputFileName))
@@ -163,18 +163,18 @@ public class S3FileService : IFileService
 
         if (Regex.IsMatch(inputFileName, RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN, RegexOptions.None, TimeSpan.FromMilliseconds(100)))
         {
-            message.Append($"File Name {index + 1} cannot contain special characters: \\ / : * ? \" < > # % & +<br />");
+            message.Append($"{type} Name {index + 1} cannot contain special characters: \\ / : * ? \" < > # % & +<br />");
         }
 
         var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
-        if (!_allowedExtensions.Contains(extension))
+        if (type == "File" && !_allowedExtensions.Contains(extension))
         {
-            message.Append($"File Name {index + 1} has invalid file type. Only image files are allowed.<br />");
+            message.Append($"{type} Name {index + 1} has invalid file type. Only image files are allowed.<br />");
         }
 
         if (inputFileName.Length > MAX_LENGTH)
         {
-            message.Append($"File Name {index + 1} exceeds maximum length of 200 characters.<br />");
+            message.Append($"{type} Name {index + 1} exceeds maximum length of 200 characters.<br />");
         }
 
         if (!string.IsNullOrWhiteSpace(message.ToString()))

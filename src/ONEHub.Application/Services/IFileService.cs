@@ -9,7 +9,7 @@ public interface IFileService
 
     Result ValidateAllFiles(IFormFileCollection files);
 
-    Result ValidateAllInputFileNames(string[] inputFileNames);
+    Result ValidateAllInputFileNames(string[] inputFileNames, string type = "File");
 
     Task<Result> CheckMultipleFilesInFolderAsync(string[] inputFileNames, string folder);
 

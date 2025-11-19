@@ -1,22 +1,20 @@
-import { Button } from '@/components/ui/button'
-import { Main } from '@/components/layout/main'
+import { getRouteApi } from '@tanstack/react-router'
+import { RegisterFormManagementContent } from './components/register-form-management-content'
+import { RegisterFormManagementProvider } from './components/register-form-management-provider'
+import { RegisterFormDialogManager } from './components/dialog/register-form-dialog-manager'
+import { normalizeSearchParams } from './data/constants'
+
+const route = getRouteApi('/iframe/landing-page-cms/register-form-management/')
 
 export function RegisterFormManagement() {
+  const search = route.useSearch()
+
+  const params = normalizeSearchParams(search)
+
   return (
-    <Main>
-      <div className='mb-2 flex items-center justify-between space-y-2'>
-        <h1 className='text-2xl font-bold tracking-tight'>
-          Register Form Management
-        </h1>
-        <div className='flex items-center space-x-2'>
-          <Button>Create Form</Button>
-        </div>
-      </div>
-      <div className='space-y-4'>
-        <p className='text-muted-foreground'>
-          Manage registration forms for your landing pages.
-        </p>
-      </div>
-    </Main>
+    <RegisterFormManagementProvider params={params}>
+      <RegisterFormManagementContent />
+      <RegisterFormDialogManager />
+    </RegisterFormManagementProvider>
   )
 }

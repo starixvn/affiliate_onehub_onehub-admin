@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { EXCLUDE_MODULE_TYPES } from '../data/constants'
-import { AssetStatus, Module, type GetAssetListRequest } from '../types'
+import { type AssetStatus, type Module, type GetAssetListRequest } from '../types'
 import { assetUploaderApi } from './client'
 
 export const assetUploaderKeys = {

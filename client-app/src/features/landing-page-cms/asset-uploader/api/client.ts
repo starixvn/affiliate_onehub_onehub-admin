@@ -38,10 +38,8 @@ export const assetUploaderApi = {
       formData.append('languageCode', data.languageCode)
 
       data.moduleRows.forEach((moduleRow, index) => {
-        formData.append(
-          `moduleRows[${index}]`,
-          moduleRow.module
-        )
+        formData.append(`moduleRows[${index}]`, moduleRow.module)
+        formData.append(`inputMediaNames[${index}]`, '')
         moduleRow.files.forEach((file) => {
           formData.append(`${moduleRow.module}`, file)
         })

@@ -63,7 +63,7 @@ public static class AssetUploaderEndpoint
             LanguageCodes = request.LanguageCodes,
             Status = request.Status,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
         };
 
         var result = await mediator.Send(query);
@@ -109,9 +109,10 @@ public static class AssetUploaderEndpoint
         }
 
         var moduleRows = request.ModuleRows
-            .Select(moduleId => new ModuleRow
+            .Select((moduleId, index) => new ModuleRow
             {
                 ModuleId = moduleId,
+                InputMediaNames = request.InputMediaNames?[index],
                 Files = files
                     .Where(f => f.Name.Equals(moduleId.ToString(), StringComparison.OrdinalIgnoreCase))
                     .ToList()

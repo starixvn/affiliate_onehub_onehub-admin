@@ -17,6 +17,7 @@ public record GetAssetDetailRequest(
 public record UploadAssetsRequest(
     [Required] string TargetCountryCode,
     [Required] string LanguageCode,
+    List<string>? InputMediaNames,
     List<int> ModuleRows);
 
 public record UpdateAssetRequest(

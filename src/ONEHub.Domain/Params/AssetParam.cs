@@ -62,5 +62,7 @@ public class ModuleRow
 {
     public int ModuleId { get; set; }
 
+    public string? InputMediaNames { get; set; }
+
     public List<IFormFile> Files { get; set; }
 }

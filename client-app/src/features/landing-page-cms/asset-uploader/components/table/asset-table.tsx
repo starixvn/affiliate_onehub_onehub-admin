@@ -9,8 +9,8 @@ import {
   getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
-  OnChangeFn,
-  PaginationState,
+  type OnChangeFn,
+  type PaginationState,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import {

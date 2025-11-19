@@ -5,11 +5,11 @@ import { type NavigateFn } from '@/hooks/use-table-url-state'
 import { useAssetFilters, useGetAssetList } from '../api/queries'
 import type { AssetDetail } from '../data/schema'
 import {
-  AssetStatus,
-  Country,
-  GetAssetListRequest,
-  Language,
-  Module,
+  type AssetStatus,
+  type Country,
+  type GetAssetListRequest,
+  type Language,
+  type Module,
 } from '../types'
 
 type AssetDialogType =
@@ -89,8 +89,13 @@ export function AssetUploaderProvider({
     allowedExtensions = [],
   } = useAssetFilters() ?? {}
 
+
+  const paramsWithModules = {
+    ...params,
+    moduleIds: modules.map((module) => module.moduleId.toString()).join(','),
+  }
   const { data, isLoading, isError } = useGetAssetList(
-    params as GetAssetListRequest
+    paramsWithModules as GetAssetListRequest
   )
 
   return (

@@ -103,7 +103,7 @@
     "fileSizeLimit": "File Size Limit: 3MB",
     "maxFiles": "Maximum files: 50",
     "noteLabel": "Note:",
-    "noteContent": "Module, Country, and Language cannot be changed if the image is already used in an existing landing page."
+    "noteContent": "Module, Country and Language cannot be changed if the image is already used in an existing landing page."
   },
   "validation": {
     "countryRequired": "Please select a Country",

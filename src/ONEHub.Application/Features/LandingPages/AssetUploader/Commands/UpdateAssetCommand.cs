@@ -89,7 +89,7 @@ public class UpdateAssetCommandHandler(
         var oldFilePath = oldAssetInfo.FileName;
         var folder = await landingPageService.GetAssetFolder(request.ModuleId, request.TargetCountryCode, request.LanguageCode);
         var inputFileName = string.IsNullOrEmpty(request.InputFileName) ? request.File?.FileName : request.InputFileName;
-        var inputMediaName = request.InputFileName;
+        var inputMediaName = string.IsNullOrWhiteSpace(request.InputMediaName) ? inputFileName : request.InputMediaName;
         var path = $"{folder}/{inputFileName}";
 
         var result = await CheckFileInFolderForUpdate(path, oldFilePath, inputFileName);

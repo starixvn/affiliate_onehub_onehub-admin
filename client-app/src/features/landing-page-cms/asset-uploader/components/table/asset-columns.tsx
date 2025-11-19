@@ -1,4 +1,4 @@
-import { PaginationState, type ColumnDef } from '@tanstack/react-table'
+import { type PaginationState, type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import { Checkbox } from '@/components/ui/checkbox'
 import {

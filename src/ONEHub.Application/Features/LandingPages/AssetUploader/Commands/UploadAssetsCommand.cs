@@ -38,20 +38,26 @@ public class UploadAssetsCommandHandler(
         try
         {
             var allFiles = new FormFileCollection();
-            foreach (var row in request.ModuleRows.Where(row => row.Files.Any()))
-            {
-                allFiles.AddRange(row.Files);
-            }
 
+            allFiles.AddRange(request.ModuleRows!
+                .Where(row => row.Files.Any())
+                .SelectMany(row => row.Files));
+
+            var inputMediaNames = request.ModuleRows!.Select(r => r.InputMediaNames).ToArray();
             var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
 
-            var uploadValidation = fileService.ValidateUploadRequest(allFiles, string.Empty);
+            var uploadValidation = fileService.ValidateUploadRequest(
+                allFiles,
+                string.Join("|", inputFileNames),
+                string.Join("|", inputMediaNames)
+            );
+
             if (uploadValidation.IsFailure)
             {
                 return Result.Failure(new Error(uploadValidation.ErrorCode, uploadValidation.ErrorMessage));
             }
 
-            var fileNameValidation = fileService.ValidateAllInputFileNames(inputFileNames);
+            var fileNameValidation = ValidateInputNames(inputFileNames, inputMediaNames);
             if (fileNameValidation.IsFailure)
             {
                 return Result.Failure(new Error(fileNameValidation.ErrorCode, fileNameValidation.ErrorMessage));
@@ -92,6 +98,17 @@ public class UploadAssetsCommandHandler(
             logger.LogError(ex, AssetUploaderError.UploadAssetsFailed.Message);
             return Result.Failure(AssetUploaderError.UploadAssetsFailed);
         }
+    }
+
+    private Result ValidateInputNames(string[] inputFileNames, string[]? inputMediaNames)
+    {
+        var fileNameValidation = fileService.ValidateAllInputFileNames(inputFileNames);
+        if (fileNameValidation.IsFailure)
+        {
+            return Result.Failure(new Error(fileNameValidation.ErrorCode, fileNameValidation.ErrorMessage));
+        }
+
+        return inputMediaNames == null ? Result.Success() : fileService.ValidateAllInputFileNames(inputMediaNames, "Form");
     }
 
     private async Task ProcessAndUploadFiles(
@@ -168,6 +185,11 @@ public class UploadAssetsCommandHandler(
                 targetCountryCode,
                 languageCode
             );
+
+            var index = 0;
+            var mediaNamesByModule = string.IsNullOrWhiteSpace(moduleRow.InputMediaNames)
+                ? null
+                : moduleRow.InputMediaNames?.Split("|");
             foreach (var file in moduleRow.Files)
             {
                 string dimension;
@@ -178,14 +200,21 @@ public class UploadAssetsCommandHandler(
                 }
 
                 var fileName = $"{folder}/{file.FileName}";
+                var mediaName = file.FileName;
+                if (mediaNamesByModule != null)
+                {
+                    mediaName = mediaNamesByModule[index];
+                }
 
                 filePaths.Add(fileName);
                 moduleMedia.Files.Add(new MediaItem
                 {
                     FileName = WebUtility.HtmlEncode(fileName),
-                    MediaName = WebUtility.HtmlEncode(file.FileName),
+                    MediaName = WebUtility.HtmlEncode(mediaName),
                     Dimension = dimension,
                 });
+
+                index++;
             }
             moduleMedias.Add(moduleMedia);
         }
