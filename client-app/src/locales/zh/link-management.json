@@ -1,0 +1,87 @@
+{
+  "page": {
+    "title": "链接管理",
+    "description": "管理和跟踪所有生成的链接",
+    "loading": "加载中..."
+  },
+  "buttons": {
+    "export": "导出"
+  },
+  "filters": {
+    "all": "全部",
+    "active": "激活",
+    "inactive": "停用",
+    "country": "国家",
+    "channel": "渠道",
+    "status": "状态",
+    "createdDate": "创建日期"
+  },
+  "summary": {
+    "totalLinks": "总链接数",
+    "uniqueClicks": "唯一点击数",
+    "totalRegistrations": "总注册数",
+    "totalFtds": "总首存数",
+    "avgFtdAmount": "平均首存金额"
+  },
+  "table": {
+    "search": "搜索链接...",
+    "noResults": "未找到结果。",
+    "columns": {
+      "select": "全选",
+      "selectRow": "选择行",
+      "linkName": "链接名称",
+      "shortLink": "短链接",
+      "domainName": "域名",
+      "campaignName": "活动",
+      "countryName": "国家",
+      "channelName": "渠道",
+      "idCode": "ID代码",
+      "createdDate": "创建日期",
+      "click": "唯一点击数",
+      "registration": "注册数",
+      "bonusUser": "奖金用户",
+      "ftd": "首存数",
+      "avgFtdAmount": "平均首存金额",
+      "status": "状态"
+    },
+    "actions": {
+      "openMenu": "打开菜单",
+      "viewDetails": "查看详情",
+      "duplicate": "复制"
+    }
+  },
+  "searchToolbar": {
+    "submit": "搜索"
+  },
+  "dialogs": {
+    "detail": {
+      "title": "链接详情",
+      "description": "查看跟踪链接详情，包括参数、定位和域名。",
+      "event": "事件",
+      "landingPage": "落地页",
+      "group": "组别",
+      "agency": "代理",
+      "language": "语言",
+      "type": "类型",
+      "note": "备注",
+      "fullUrl": "完整链接",
+      "shortUrl": "短链接"
+    },
+    "statusChange": {
+      "title": "确认状态更改",
+      "description": "您确定要更改 \"{{name}}\" 的状态吗？",
+      "cancel": "取消",
+      "confirm": "确认",
+      "updating": "更新中..."
+    }
+  },
+  "excel": {
+    "titlePrefix": "链接",
+    "searchPrefix": "搜索",
+    "allLinks": "所有链接",
+    "statusPrefix": "状态",
+    "allStatus": "所有状态",
+    "rowNumber": "#"
+  }
+}
+

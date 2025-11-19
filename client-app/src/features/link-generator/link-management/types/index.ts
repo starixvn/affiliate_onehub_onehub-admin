@@ -4,7 +4,7 @@ import type { LinkInfo } from '../data/schema'
 
 export interface GetLinksRequest {
   search?: string
-  status?: string
+  statusIds?: string
   countryCodes?: string
   channelIds?: string
   startDate?: string

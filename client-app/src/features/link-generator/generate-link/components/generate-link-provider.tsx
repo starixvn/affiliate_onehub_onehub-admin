@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import useDialogState from '@/hooks/use-dialog-state'
+import { useLocation } from '@tanstack/react-router'
 import {
   useGetCampaigns,
   useGetCountries,
@@ -12,18 +12,10 @@ import {
   useGetTypes,
   useGetLandingPages,
 } from '../api/queries'
-import {
-  generateLinkFormSchema,
-  generateLinkDefaultValues,
-  type GenerateLinkFormValues,
-} from '../data/schema'
-import type {
-  CampaignInfo,
-  TargetCountry,
-  ComponentInfo,
-  LandingPageOption,
-  LinkGeneratedResult,
-} from '../types'
+import { generateLinkFormSchema, generateLinkDefaultValues, type GenerateLinkFormValues } from '../data/schema'
+import type { CampaignInfo, TargetCountry, ComponentInfo, LandingPageOption, LinkGeneratedResult } from '../types'
+import type { LinkInfo } from '../../link-management/data/schema'
+import useDialogState from '@/hooks/use-dialog-state'
 
 export type DialogType =
   | 'campaign'
@@ -63,6 +55,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
   const [generatedResult, setGeneratedResult] =
     React.useState<LinkGeneratedResult | null>(null)
+  const location = useLocation()
 
   const form = useForm<GenerateLinkFormValues>({
     resolver: zodResolver(generateLinkFormSchema),
@@ -129,6 +122,107 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     isErrorAgencies ||
     isErrorTypes ||
     isErrorLandingPages
+
+  const mapLinkInfoToFormValues = (linkInfo: LinkInfo): Partial<GenerateLinkFormValues> => {
+    const formValues: Partial<GenerateLinkFormValues> = {
+      linkName: linkInfo.linkName,
+      identifierCode: linkInfo.idCode,
+      note: linkInfo.note,
+    }
+
+    if (campaigns && linkInfo.campaignName) {
+      const campaign = campaigns.find(c => c.campaignName === linkInfo.campaignName)
+      if (campaign) {
+        formValues.campaign = String(campaign.campaignId)
+        formValues.campaignCode = campaign.campaignCode
+      }
+    }
+
+    if (countries && linkInfo.countryName) {
+      const country = countries.find(c => c.targetCountryName === linkInfo.countryName)
+      if (country) {
+        formValues.country = country.targetCountryCode
+        formValues.language = country.languageCode || ''
+        formValues.shortedLanguageCode = country.shortedLanguageCode || ''
+      }
+    }
+
+    if (groups && linkInfo.group) {
+      const group = groups.find(g => g.componentName === linkInfo.group)
+      if (group) {
+        formValues.group = String(group.componentId)
+        formValues.groupCode = group.componentCode
+      }
+    }
+
+    if (events && linkInfo.event) {
+      const event = events.find(e => e.componentName === linkInfo.event)
+      if (event) {
+        formValues.event = String(event.componentId)
+        formValues.eventCodes = event.componentCode
+      }
+    }
+
+    if (channels && linkInfo.channelName) {
+      const channel = channels.find(c => c.componentName === linkInfo.channelName)
+      if (channel) {
+        formValues.channel = String(channel.componentId)
+        formValues.channelCode = channel.componentCode
+      }
+    }
+
+    if (types && linkInfo.type) {
+      const type = types.find(t => t.componentName === linkInfo.type)
+      if (type) {
+        formValues.type = String(type.componentId)
+        formValues.typeCode = type.componentCode
+      }
+    }
+
+    if (agencies && linkInfo.agency) {
+      const agency = agencies.find(a => a.componentName === linkInfo.agency)
+      if (agency) {
+        formValues.agency = String(agency.componentId)
+        formValues.agencyCode = agency.componentCode
+      }
+    }
+
+    if (linkInfo.landingPage) {
+      formValues.landingPage = linkInfo.landingPage
+    }
+
+    if (linkInfo.shortLink) {
+      try {
+        const url = new URL(linkInfo.shortLink)
+        formValues.shortDomain = url.origin
+        formValues.shortPath = url.pathname.substring(1)
+      } catch (error) {
+        const parts = linkInfo.shortLink.split('/')
+        if (parts.length >= 3) {
+          formValues.shortDomain = `${parts[0]}//${parts[2]}`
+          formValues.shortPath = parts.slice(3).join('/')
+        }
+      }
+    }
+
+    if (linkInfo.domainName) {
+      formValues.domainName = linkInfo.domainName
+      formValues.domainReservedNote = `Reserved for ${linkInfo.linkName}`
+    }
+
+    return formValues
+  }
+
+  React.useEffect(() => {
+    const state = location.state as { duplicateLink?: LinkInfo } | null
+    if (state?.duplicateLink && !isLoading) {
+      const formValues = mapLinkInfoToFormValues(state.duplicateLink)
+      form.reset({
+        ...generateLinkDefaultValues,
+        ...formValues,
+      })
+    }
+  }, [location.state, form, isLoading, campaigns, countries, events, groups, channels, agencies, types])
 
   const contextValue = React.useMemo(
     () => ({

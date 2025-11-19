@@ -8,7 +8,7 @@ export const statuses: StatusOption<string>[] = [
   },
   {
     label: 'Inactive',
-    value: '0',
+    value: '2',
     color: 'gray',
   },
 ]

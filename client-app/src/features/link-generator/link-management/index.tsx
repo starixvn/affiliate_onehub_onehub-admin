@@ -3,12 +3,26 @@ import { useTranslation } from 'react-i18next'
 import { Main } from '@/components/layout/main'
 import { LinksPrimaryButtons } from './components/link-primary-buttons'
 import { LinksProvider, useLinks } from './components/link-provider'
-import { LinkStatusFilters } from './components/link-status-filters'
 import { LinkDialogs } from './components/dialog/link-dialog'
 import { LinkTable } from './components/table/link-table'
 import { LinkSummaryCards } from './components/link-summary-cards'
 
 const route = getRouteApi('/iframe/link-generator/link-management/')
+
+const getDefaultStartDate = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    return `${year}-${month}-01`
+}
+
+const getDefaultEndDate = () => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+}
 
 function LinkManagementContent() {
     const { t } = useTranslation('link-management')
@@ -16,15 +30,13 @@ function LinkManagementContent() {
     const navigate = route.useNavigate()
     const { links, totalCount, pageIndex, pageSize, isLoading } = useLinks()
 
-    const selectedStatus =
-        search.status !== undefined ? String(search.status) : '0,1'
-
     const summaryParams = {
         search: search.search as string | undefined,
+        statusIds: (search.statusIds as string | undefined) ?? '1',
         countryCodes: search.countryCodes as string | undefined,
         channelIds: search.channelIds as string | undefined,
-        startDate: search.startDate as string | undefined,
-        endDate: search.endDate as string | undefined,
+        startDate: (search.startDate as string | undefined) ?? getDefaultStartDate(),
+        endDate: (search.endDate as string | undefined) ?? getDefaultEndDate(),
     }
 
     if (isLoading) {
@@ -57,18 +69,6 @@ function LinkManagementContent() {
                 <LinksPrimaryButtons />
             </div>
             <LinkSummaryCards params={summaryParams} />
-            <LinkStatusFilters
-                selectedStatus={selectedStatus}
-                onStatusChange={(status) => {
-                    navigate({
-                        search: {
-                            ...search,
-                            status,
-                            pageIndex: 1,
-                        },
-                    })
-                }}
-            />
             <LinkTable
                 data={links}
                 totalCount={totalCount}
@@ -86,11 +86,11 @@ export function LinkManagement() {
 
     const params = {
         search: search.search as string | undefined,
-        status: (search.status as string | undefined) ?? '0,1',
+        statusIds: (search.statusIds as string | undefined) ?? '1',
         countryCodes: search.countryCodes as string | undefined,
         channelIds: search.channelIds as string | undefined,
-        startDate: search.startDate as string | undefined,
-        endDate: search.endDate as string | undefined,
+        startDate: (search.startDate as string | undefined) ?? getDefaultStartDate(),
+        endDate: (search.endDate as string | undefined) ?? getDefaultEndDate(),
         pageIndex: search.pageIndex ? Number(search.pageIndex) : 1,
         pageSize: search.pageSize ? Number(search.pageSize) : 10,
     }

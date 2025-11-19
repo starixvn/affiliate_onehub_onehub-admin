@@ -10,11 +10,27 @@ public class LinkInfo
 
     public string ShortLink { get; set; } = string.Empty;
 
+    public string FullLink { get; set; } = string.Empty;
+
+    public string Event { get; set; } = string.Empty;
+
+    public string LandingPage { get; set; } = string.Empty;
+
+    public string Group { get; set; } = string.Empty;
+
     public string CampaignName { get; set; } = string.Empty;
+
+    public string ChannelName { get; set; } = string.Empty;
 
     public string CountryName { get; set; } = string.Empty;
 
-    public string ChannelName { get; set; } = string.Empty;
+    public string Agency { get; set; } = string.Empty;
+
+    public string Language { get; set; } = string.Empty;
+
+    public string Type { get; set; } = string.Empty;
+
+    public string Note { get; set; } = string.Empty;
 
     public string IDCode { get; set; } = string.Empty;
 
@@ -23,6 +39,8 @@ public class LinkInfo
     public int Click { get; set; }
 
     public int Registration { get; set; }
+
+    public int Bonus { get; set; }
 
     public int Ftd { get; set; }
 

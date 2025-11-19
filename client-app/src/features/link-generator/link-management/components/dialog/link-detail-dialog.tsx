@@ -1,4 +1,7 @@
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Copy, Check } from 'lucide-react'
+import { toast } from 'sonner'
 import {
     Dialog,
     DialogContent,
@@ -7,103 +10,144 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 import { useLinks } from '../link-provider'
 
 export function LinkDetailDialog() {
     const { t } = useTranslation('link-management')
     const { open, setOpen, currentRow } = useLinks()
+    const [copied, setCopied] = useState(false)
 
     if (!currentRow) return null
 
+    const handleCopyShortLink = async () => {
+        try {
+            await navigator.clipboard.writeText(currentRow.shortLink)
+            setCopied(true)
+            toast.success('Short link copied to clipboard')
+            setTimeout(() => setCopied(false), 2000)
+        } catch {
+            toast.error('Failed to copy link')
+        }
+    }
+
     return (
         <Dialog open={open === 'detail'} onOpenChange={() => setOpen(null)}>
-            <DialogContent className='max-w-2xl max-h-[80vh] overflow-y-auto'>
+            <DialogContent className='max-w-3xl max-h-[80vh] overflow-y-auto'>
                 <DialogHeader>
-                    <DialogTitle>{t('dialogs.detail.title')}</DialogTitle>
+                    <DialogTitle>{currentRow.linkName}</DialogTitle>
                     <DialogDescription>
                         {t('dialogs.detail.description')}
                     </DialogDescription>
                 </DialogHeader>
-                <div className='grid gap-4 py-4'>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.linkName')}:
+                <div className='grid grid-cols-2 gap-6 py-4'>
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('table.columns.idCode')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.linkName}</div>
+                        <div className='text-sm'>{currentRow.idCode || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.shortLink')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.event')}
                         </Label>
-                        <div className='col-span-3 break-all'>{currentRow.shortLink}</div>
+                        <div className='text-sm'>{currentRow.event || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.domainName')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.landingPage')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.domainName}</div>
+                        <div className='text-sm'>{currentRow.landingPage || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.campaignName')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.group')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.campaignName}</div>
+                        <div className='text-sm'>{currentRow.group || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.countryName')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('table.columns.campaignName')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.countryName}</div>
+                        <div className='text-sm'>{currentRow.campaignName}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.channelName')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('table.columns.channelName')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.channelName}</div>
+                        <div className='text-sm'>{currentRow.channelName}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.idCode')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('table.columns.countryName')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.idCode}</div>
+                        <div className='text-sm'>{currentRow.countryName}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.createdDate')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.agency')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.createdDate}</div>
+                        <div className='text-sm'>{currentRow.agency || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.click')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.language')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.click}</div>
+                        <div className='text-sm'>{currentRow.language || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.registration')}:
+
+                    <div className='space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.type')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.registration}</div>
+                        <div className='text-sm'>{currentRow.type || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.ftd')}:
+
+                    <div className='col-span-2 space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.note')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.ftd}</div>
+                        <div className='text-sm'>{currentRow.note || '-'}</div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.avgFtdAmount')}:
+
+                    <div className='col-span-2 space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.fullUrl')}
                         </Label>
-                        <div className='col-span-3'>
-                            ${currentRow.avgFtdAmount.toFixed(2)}
+                        <div className='rounded-md bg-muted px-3 py-2 text-sm break-all select-none'>
+                            {currentRow.fullLink || '-'}
                         </div>
                     </div>
-                    <div className='grid grid-cols-4 items-center gap-4'>
-                        <Label className='text-right font-semibold'>
-                            {t('table.columns.status')}:
+
+                    <div className='col-span-2 space-y-2'>
+                        <Label className='text-sm text-muted-foreground'>
+                            {t('dialogs.detail.shortUrl')}
                         </Label>
-                        <div className='col-span-3'>{currentRow.statusName}</div>
+                        <div className='flex items-center gap-2'>
+                            <div className='flex-1 rounded-md bg-muted px-3 py-2 text-sm break-all'>
+                                {currentRow.shortLink}
+                            </div>
+                            <Button
+                                variant='outline'
+                                size='icon'
+                                onClick={handleCopyShortLink}
+                                className='shrink-0'
+                            >
+                                {copied ? (
+                                    <Check className='h-4 w-4 text-green-500' />
+                                ) : (
+                                    <Copy className='h-4 w-4' />
+                                )}
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </DialogContent>

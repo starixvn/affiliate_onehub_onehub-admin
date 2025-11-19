@@ -35,7 +35,7 @@ export function LinkSummaryCards({ params }: LinkSummaryCardsProps) {
         },
         {
             title: t('summary.avgFtdAmount'),
-            value: `$${(data?.avgFtdAmount ?? 0).toFixed(2)}`,
+            value: (data?.avgFtdAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
             icon: TrendingUp,
         },
     ]
@@ -45,15 +45,15 @@ export function LinkSummaryCards({ params }: LinkSummaryCardsProps) {
             {cards.map((card, index) => {
                 const Icon = card.icon
                 return (
-                    <Card key={index}>
-                        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                    <Card key={index} className='py-2'>
+                        <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-0'>
                             <CardTitle className='text-sm font-medium'>
                                 {card.title}
                             </CardTitle>
                             <Icon className='h-4 w-4 text-muted-foreground' />
                         </CardHeader>
-                        <CardContent>
-                            <div className='text-2xl font-bold'>
+                        <CardContent className='pb-0'>
+                            <div className='text-lg font-bold'>
                                 {isLoading ? '...' : card.value}
                             </div>
                         </CardContent>

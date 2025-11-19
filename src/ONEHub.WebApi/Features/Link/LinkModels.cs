@@ -4,7 +4,7 @@ namespace ONEHub.WebApi.Features.Link;
 
 public record GetLinkListRequest(
     string? Search,
-    string? Status,
+    string? StatusIds,
     string? CountryCodes,
     string? ChannelIds,
     DateTime? StartDate,

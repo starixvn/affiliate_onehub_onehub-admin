@@ -26,8 +26,8 @@ export const formatLinksForExcel = (
             : t('excel.allLinks')
         titleParts.push(searchPart)
 
-        if (params?.status) {
-            const statusOption = statuses.find((s) => s.value === String(params.status))
+        if (params?.statusIds) {
+            const statusOption = statuses.find((s) => s.value === String(params.statusIds))
             const statusPart = statusOption
                 ? `${t('excel.statusPrefix')}: ${statusOption.label}`
                 : t('excel.allStatus')
@@ -102,6 +102,12 @@ export const formatLinksForExcel = (
             {
                 field: 'registration',
                 header: t('table.columns.registration'),
+                width: 15,
+                style: { alignment: 'center' },
+            },
+            {
+                field: 'bonus',
+                header: t('table.columns.bonusUser'),
                 width: 15,
                 style: { alignment: 'center' },
             },

@@ -9,6 +9,8 @@ export const linkKeys = {
   summaries: () => [...linkKeys.all, 'summary'] as const,
   summary: (params?: GetLinkSummaryRequest) =>
     [...linkKeys.summaries(), params] as const,
+  countries: () => [...linkKeys.all, 'countries'] as const,
+  channels: () => [...linkKeys.all, 'channels'] as const,
 }
 
 export function useGetLinks(params?: GetLinksRequest) {
@@ -23,6 +25,22 @@ export function useGetLinkSummary(params?: GetLinkSummaryRequest) {
   return useQuery({
     queryKey: linkKeys.summary(params),
     queryFn: () => linkApi.getSummary(params),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetCountries() {
+  return useQuery({
+    queryKey: linkKeys.countries(),
+    queryFn: () => linkApi.getCountries(),
+    select: (data) => data.data,
+  })
+}
+
+export function useGetChannels() {
+  return useQuery({
+    queryKey: linkKeys.channels(),
+    queryFn: () => linkApi.getChannels(),
     select: (data) => data.data,
   })
 }
