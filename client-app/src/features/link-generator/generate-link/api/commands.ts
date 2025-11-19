@@ -1,14 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { linkGeneratorApi } from './client'
-import type { GenerateLinkRequest, InsertLinkRequest } from '../types'
+import type { InsertLinkRequest } from '../types'
 import { linkGeneratorKeys } from './queries'
-
-export function useGenerateLink() {
-  return useMutation({
-    mutationFn: (data: GenerateLinkRequest) => linkGeneratorApi.generateLink(data),
-  })
-}
 
 export function useInsertLink() {
   return useMutation({

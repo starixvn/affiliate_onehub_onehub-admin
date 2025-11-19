@@ -41,6 +41,7 @@
   },
   "buttons": {
     "generateLink": "生成链接",
+    "generating": "生成中...",
     "goToLinkManagement": "前往链接管理",
     "reset": "重置",
     "auto": "自动"

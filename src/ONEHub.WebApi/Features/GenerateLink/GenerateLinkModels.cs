@@ -20,7 +20,6 @@ public record InsertLinkRequest(
     [Required] string AgencyCode,
     [Required] int TypeId,
     [Required] string TypeCode,
-    [Required] string LandingPage,
     [Required] int PageType,
     [Required] string PageCode,
     [Required] string DomainName,

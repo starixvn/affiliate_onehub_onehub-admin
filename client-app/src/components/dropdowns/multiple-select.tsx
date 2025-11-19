@@ -36,15 +36,34 @@ interface MultipleSelectProps {
 }
 
 function isSelectOption(item: unknown): item is SelectOption {
-  return typeof item === 'object' && item !== null && !isSelectGroup(item) && !isNestedSelectGroup(item)
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    !('groupLabel' in item) &&
+    !('options' in item) &&
+    !('groups' in item)
+  )
 }
 
 function isSelectGroup(item: unknown): item is SelectGroup {
-  return (item as SelectGroup).groupLabel !== undefined && (item as SelectGroup).options !== undefined && !(item as NestedSelectGroup).groups
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'groupLabel' in item &&
+    'options' in item &&
+    Array.isArray((item as SelectGroup).options) &&
+    !('groups' in item)
+  )
 }
 
 function isNestedSelectGroup(item: unknown): item is NestedSelectGroup {
-  return (item as NestedSelectGroup).groupLabel !== undefined && (item as NestedSelectGroup).groups !== undefined
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'groupLabel' in item &&
+    'groups' in item &&
+    Array.isArray((item as NestedSelectGroup).groups)
+  )
 }
 
 function flattenOptions(options: SelectOption[] | SelectGroup[] | NestedSelectGroup[]): SelectOption[] {
@@ -86,6 +105,14 @@ export function MultipleSelect({
   className,
 }: MultipleSelectProps) {
   const [open, setOpen] = useState(false)
+  const [searchValue, setSearchValue] = useState('')
+
+  const handleOpenChange = (newOpen: boolean) => {
+    setOpen(newOpen)
+    if (!newOpen) {
+      setSearchValue('')
+    }
+  }
 
   const getLabel = (option: SelectOption): string => String(option[labelKey])
   const getValue = (option: SelectOption): string => String(option[valueKey])
@@ -138,13 +165,20 @@ export function MultipleSelect({
     return 'indeterminate'
   }
 
+  const matchesSearch = (option: SelectOption): boolean => {
+    if (!searchValue.trim()) return true
+    const search = searchValue.toLowerCase()
+    return getLabel(option).toLowerCase().includes(search)
+  }
+
   const renderOptions = () => {
     if (options.length === 0) return null
 
     const firstItem = options[0]
 
     if (isSelectOption(firstItem)) {
-      return (options as SelectOption[]).map((option) => (
+      const filteredOptions = (options as SelectOption[]).filter(matchesSearch)
+      return filteredOptions.map((option) => (
         <CommandItem
           key={getValue(option)}
           value={getLabel(option)}
@@ -160,140 +194,165 @@ export function MultipleSelect({
     }
 
     if (isSelectGroup(firstItem)) {
-      return (options as SelectGroup[]).map((group) => {
-        const checkboxState = getGroupCheckboxState(group.options)
+      return (options as SelectGroup[])
+        .map((group) => {
+          const filteredOptions = group.options.filter(matchesSearch)
+          if (filteredOptions.length === 0) return null
 
-        return (
-          <CommandGroup key={group.groupLabel}>
-            {enableGroupSelect && (
-              <div
-                className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
-                onClick={() => handleToggleGroup(group.options)}
-              >
-                <Checkbox
-                  checked={checkboxState}
-                  className='mr-2'
-                />
-                <span className='text-muted-foreground text-xs font-medium'>
+          const checkboxState = getGroupCheckboxState(filteredOptions)
+
+          return (
+            <CommandGroup key={group.groupLabel}>
+              {enableGroupSelect && (
+                <button
+                  type='button'
+                  className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                  onClick={() => handleToggleGroup(filteredOptions)}
+                  aria-label={`Toggle all ${group.groupLabel}`}
+                >
+                  <Checkbox
+                    checked={checkboxState}
+                    className='mr-2'
+                  />
+                  <span className='text-muted-foreground text-xs font-medium'>
+                    {group.groupLabel}
+                  </span>
+                </button>
+              )}
+              {!enableGroupSelect && (
+                <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
                   {group.groupLabel}
-                </span>
-              </div>
-            )}
-            {!enableGroupSelect && (
-              <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
-                {group.groupLabel}
-              </div>
-            )}
-            {group.options.map((option) => (
-              <CommandItem
-                key={getValue(option)}
-                value={getLabel(option)}
-                onSelect={() => handleToggle(getValue(option))}
-              >
-                <Checkbox
-                  checked={value.includes(getValue(option))}
-                  className='mr-2'
-                />
-                {getLabel(option)}
-              </CommandItem>
-            ))}
-          </CommandGroup>
-        )
-      })
+                </div>
+              )}
+              {filteredOptions.map((option) => (
+                <CommandItem
+                  key={getValue(option)}
+                  value={getLabel(option)}
+                  onSelect={() => handleToggle(getValue(option))}
+                >
+                  <Checkbox
+                    checked={value.includes(getValue(option))}
+                    className='mr-2'
+                  />
+                  {getLabel(option)}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          )
+        })
+        .filter(Boolean)
     }
 
     if (isNestedSelectGroup(firstItem)) {
-      return (options as NestedSelectGroup[]).map((topGroup) => {
-        const allTopGroupOptions = [
-          ...(topGroup.options || []),
-          ...(topGroup.groups?.flatMap((g) => g.options) || []),
-        ]
-        const topCheckboxState = getGroupCheckboxState(allTopGroupOptions)
+      return (options as NestedSelectGroup[])
+        .map((topGroup) => {
+          const filteredTopOptions = (topGroup.options || []).filter(matchesSearch)
+          const filteredSubGroups = (topGroup.groups || [])
+            .map((g) => ({
+              ...g,
+              options: g.options.filter(matchesSearch),
+            }))
+            .filter((g) => g.options.length > 0)
 
-        return (
-          <CommandGroup key={topGroup.groupLabel}>
-            {enableGroupSelect && (
-              <div
-                className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
-                onClick={() => handleToggleGroup(allTopGroupOptions)}
-              >
-                <Checkbox
-                  checked={topCheckboxState}
-                  className='mr-2'
-                />
-                <span className='text-muted-foreground text-xs font-medium'>
+          if (filteredTopOptions.length === 0 && filteredSubGroups.length === 0) {
+            return null
+          }
+
+          const allTopGroupOptions = [
+            ...filteredTopOptions,
+            ...filteredSubGroups.flatMap((g) => g.options),
+          ]
+          const topCheckboxState = getGroupCheckboxState(allTopGroupOptions)
+
+          return (
+            <CommandGroup key={topGroup.groupLabel}>
+              {enableGroupSelect && (
+                <button
+                  type='button'
+                  className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                  onClick={() => handleToggleGroup(allTopGroupOptions)}
+                  aria-label={`Toggle all ${topGroup.groupLabel}`}
+                >
+                  <Checkbox
+                    checked={topCheckboxState}
+                    className='mr-2'
+                  />
+                  <span className='text-muted-foreground text-xs font-medium'>
+                    {topGroup.groupLabel}
+                  </span>
+                </button>
+              )}
+              {!enableGroupSelect && (
+                <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
                   {topGroup.groupLabel}
-                </span>
-              </div>
-            )}
-            {!enableGroupSelect && (
-              <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
-                {topGroup.groupLabel}
-              </div>
-            )}
-            {topGroup.options?.map((option) => (
-              <CommandItem
-                key={getValue(option)}
-                value={getLabel(option)}
-                onSelect={() => handleToggle(getValue(option))}
-              >
-                <Checkbox
-                  checked={value.includes(getValue(option))}
-                  className='mr-2'
-                />
-                {getLabel(option)}
-              </CommandItem>
-            ))}
-            {topGroup.groups?.map((group) => {
-              const subCheckboxState = getGroupCheckboxState(group.options)
-
-              return (
-                <div key={group.groupLabel} className='pl-2'>
-                  {enableGroupSelect && (
-                    <div
-                      className='flex items-center px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
-                      onClick={() => handleToggleGroup(group.options)}
-                    >
-                      <Checkbox
-                        checked={subCheckboxState}
-                        className='mr-2'
-                      />
-                      <span className='text-muted-foreground text-xs font-medium'>
-                        {group.groupLabel}
-                      </span>
-                    </div>
-                  )}
-                  {!enableGroupSelect && (
-                    <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
-                      {group.groupLabel}
-                    </div>
-                  )}
-                  {group.options.map((option) => (
-                    <CommandItem
-                      key={getValue(option)}
-                      value={getLabel(option)}
-                      onSelect={() => handleToggle(getValue(option))}
-                    >
-                      <Checkbox
-                        checked={value.includes(getValue(option))}
-                        className='mr-2'
-                      />
-                      {getLabel(option)}
-                    </CommandItem>
-                  ))}
                 </div>
-              )
-            })}
-          </CommandGroup>
-        )
-      })
+              )}
+              {filteredTopOptions.map((option) => (
+                <CommandItem
+                  key={getValue(option)}
+                  value={getLabel(option)}
+                  onSelect={() => handleToggle(getValue(option))}
+                >
+                  <Checkbox
+                    checked={value.includes(getValue(option))}
+                    className='mr-2'
+                  />
+                  {getLabel(option)}
+                </CommandItem>
+              ))}
+              {filteredSubGroups.map((group) => {
+                const subCheckboxState = getGroupCheckboxState(group.options)
+
+                return (
+                  <div key={group.groupLabel} className='pl-2'>
+                    {enableGroupSelect && (
+                      <button
+                        type='button'
+                        className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                        onClick={() => handleToggleGroup(group.options)}
+                        aria-label={`Toggle all ${group.groupLabel}`}
+                      >
+                        <Checkbox
+                          checked={subCheckboxState}
+                          className='mr-2'
+                        />
+                        <span className='text-muted-foreground text-xs font-medium'>
+                          {group.groupLabel}
+                        </span>
+                      </button>
+                    )}
+                    {!enableGroupSelect && (
+                      <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
+                        {group.groupLabel}
+                      </div>
+                    )}
+                    {group.options.map((option) => (
+                      <CommandItem
+                        key={getValue(option)}
+                        value={getLabel(option)}
+                        onSelect={() => handleToggle(getValue(option))}
+                      >
+                        <Checkbox
+                          checked={value.includes(getValue(option))}
+                          className='mr-2'
+                        />
+                        {getLabel(option)}
+                      </CommandItem>
+                    ))}
+                  </div>
+                )
+              })}
+            </CommandGroup>
+          )
+        })
+        .filter(Boolean)
     }
 
     return null
   }
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <Button
           variant='outline'
@@ -314,7 +373,11 @@ export function MultipleSelect({
       </PopoverTrigger>
       <PopoverContent className='w-[--radix-popover-trigger-width] p-0' side='bottom' align='start'>
         <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+          <CommandInput
+            placeholder={searchPlaceholder}
+            value={searchValue}
+            onValueChange={setSearchValue}
+          />
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             {renderOptions()}

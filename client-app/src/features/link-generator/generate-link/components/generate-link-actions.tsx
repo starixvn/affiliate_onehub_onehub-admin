@@ -31,14 +31,13 @@ export function GenerateLinkActions() {
       agencyCode: data.agencyCode,
       typeId: Number.parseInt(data.type, 10) || 0,
       typeCode: data.typeCode,
-      landingPage: data.landingPage || '',
       pageType: data.pageType,
       pageCode: data.pageCode || '',
       domainName: data.domainName,
       domainNote: data.domainReservedNote,
       shortDomain: data.shortDomain,
       shortPath: data.shortPath || '',
-      note: data.note || undefined,
+      note: data.note || '',
     }
 
     insertLinkMutation.mutate(request, {
@@ -68,17 +67,27 @@ export function GenerateLinkActions() {
         onClick={handleGenerateLink}
         className='w-full sm:w-auto'
         disabled={insertLinkMutation.isPending || !!generatedResult}
+        aria-label={insertLinkMutation.isPending ? t('buttons.generating') : t('buttons.generateLink')}
       >
         <Link className='h-4 w-4 sm:mr-2' />
         <span className='hidden sm:inline'>
-          {insertLinkMutation.isPending ? 'Generating...' : t('buttons.generateLink')}
+          {insertLinkMutation.isPending ? t('buttons.generating') : t('buttons.generateLink')}
         </span>
       </Button>
-      <Button onClick={handleGoToLinkManagement} className='w-full sm:w-auto'>
+      <Button
+        onClick={handleGoToLinkManagement}
+        className='w-full sm:w-auto'
+        aria-label={t('buttons.goToLinkManagement')}
+      >
         <SquareArrowOutUpRight className='h-4 w-4 sm:mr-2' />
         <span className='hidden sm:inline'>{t('buttons.goToLinkManagement')}</span>
       </Button>
-      <Button variant='outline' onClick={handleReset} className='w-full sm:w-auto'>
+      <Button
+        variant='outline'
+        onClick={handleReset}
+        className='w-full sm:w-auto'
+        aria-label={t('buttons.reset')}
+      >
         <RefreshCw className='h-4 w-4 sm:mr-2' />
         <span className='hidden sm:inline'>{t('buttons.reset')}</span>
       </Button>

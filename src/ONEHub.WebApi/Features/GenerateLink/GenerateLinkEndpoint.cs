@@ -47,7 +47,6 @@ public static class GenerateLinkEndpoint
             AgencyCode = request.AgencyCode,
             TypeId = request.TypeId,
             TypeCode = request.TypeCode,
-            LandingPage = request.LandingPage,
             PageType = request.PageType,
             PageCode = request.PageCode,
             DomainName = request.DomainName,

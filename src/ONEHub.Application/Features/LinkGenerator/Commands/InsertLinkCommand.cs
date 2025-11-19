@@ -3,6 +3,7 @@ using System.Security.Cryptography;
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
+using ONEHub.Domain.Enums;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
@@ -45,8 +46,6 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
     public int TypeId { get; set; }
 
     public string TypeCode { get; set; } = string.Empty;
-
-    public string LandingPage { get; set; } = string.Empty;
 
     public int PageType { get; set; }
 
@@ -231,15 +230,16 @@ public class InsertLinkCommandHandler(
 
     private static string BuildFullLink(InsertLinkCommand request, string identifierCode)
     {
-        var subdomain = request.PageType switch
+        var pageType = (PageType)request.PageType;
+        var subdomain = pageType switch
         {
-            1 => "www",
-            2 => "m",
-            3 => "landing",
+            PageType.Desktop => "www",
+            PageType.Mobile => "m",
+            PageType.Landing => "landing",
             _ => "www"
         };
 
-        var pathSegment = request.PageType == 3 ? "/p1" : "";
+        var pathSegment = pageType == PageType.Landing ? "/p1" : "";
 
         return $"https://{subdomain}.{request.DomainName}{pathSegment}/{Uri.EscapeDataString(request.ShortedLanguageCode)}/{Uri.EscapeDataString(request.PageCode)}" +
                $"?ln={Uri.EscapeDataString(request.LinkName)}" +

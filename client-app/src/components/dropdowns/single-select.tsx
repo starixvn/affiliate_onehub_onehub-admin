@@ -118,16 +118,16 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
     const optionValue = getValue(selectedOption)
 
     if (optionValue === value) {
-      setOpen(false)
+      handleOpenChange(false)
       return
     }
 
     onValueChange(optionValue, selectedOption)
-    setOpen(false)
+    handleOpenChange(false)
   }
 
   const handleCreateNew = () => {
-    setOpen(false)
+    handleOpenChange(false)
     onCreateNew?.()
   }
 
@@ -137,12 +137,15 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
       if (entries.length === 0) return null
 
       const filteredEntries = searchValue.trim()
-        ? entries.filter(([_groupLabel, groupOptions]) => {
-          return groupOptions.some(option =>
-            getLabel(option).toLowerCase().includes(searchValue.toLowerCase()) ||
-            getDisplayLabel(option).toLowerCase().includes(searchValue.toLowerCase())
-          )
-        })
+        ? entries
+          .map(([groupLabel, groupOptions]) => {
+            const filtered = groupOptions.filter(option =>
+              getLabel(option).toLowerCase().includes(searchValue.toLowerCase()) ||
+              getDisplayLabel(option).toLowerCase().includes(searchValue.toLowerCase())
+            )
+            return [groupLabel, filtered] as [string, T[]]
+          })
+          .filter(([_groupLabel, groupOptions]) => groupOptions.length > 0)
         : entries
 
       return filteredEntries.map(([groupLabel, groupOptions]) => {
@@ -158,6 +161,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
               <button
                 type="button"
                 onClick={() => toggleGroup(groupLabel)}
+                aria-expanded={isExpanded}
                 className="flex items-center text-muted-foreground text-xs font-medium hover:text-foreground cursor-pointer w-full text-left"
               >
                 <IconComponent className="mr-1 h-3 w-3" />

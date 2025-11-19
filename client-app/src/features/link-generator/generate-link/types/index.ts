@@ -108,7 +108,6 @@ export interface InsertLinkRequest {
   agencyCode: string
   typeId: number
   typeCode: string
-  landingPage: string
   pageType: number
   pageCode: string
   domainName: string

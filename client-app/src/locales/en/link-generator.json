@@ -40,6 +40,7 @@
   },
   "buttons": {
     "generateLink": "Generate Link",
+    "generating": "Generating...",
     "goToLinkManagement": "Go to Link Management",
     "reset": "Reset",
     "auto": "Auto"
