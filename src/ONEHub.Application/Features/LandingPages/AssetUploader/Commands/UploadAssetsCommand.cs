@@ -1,10 +1,11 @@
 using System.Net;
 using System.Text.Json;
+using Fanex.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -28,7 +29,7 @@ public class UploadAssetsCommandHandler(
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
-    ILogger<UploadAssetsCommandHandler> logger)
+    ILogger logger)
     : IRequestHandler<UploadAssetsCommand, Result>
 {
     public async Task<Result> Handle(
@@ -104,7 +105,7 @@ public class UploadAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, AssetUploaderError.UploadAssetsFailed.Message);
+            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result.Failure(AssetUploaderError.UploadAssetsFailed);
         }
     }
@@ -196,7 +197,7 @@ public class UploadAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, AssetUploaderError.UploadAssetsFailed.Message);
+            await logger.ErrorAsync(AssetUploaderError.UploadAssetsFailed.Message, ex);
             await fileService.CleanupUploadedFilesAsync(filePaths);
             return Result.Failure(AssetUploaderError.UploadAssetsFailed);
         }

@@ -7,7 +7,7 @@ using ONEHub.Domain.Settings;
 
 namespace ONEHub.Infrastructure.Services;
 
-public sealed class S3StorageService(IAmazonS3 s3Client, IOptions<AwsS3Settings> settings) : IStorageService
+public sealed class S3StorageService(IAmazonS3 s3Client, IOptions<AwsS3Setting> settings) : IStorageService
 {
     private readonly string _bucketName = settings.Value.BucketName;
 

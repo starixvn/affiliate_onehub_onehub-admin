@@ -12,9 +12,9 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.WebApi.Features.LandingPages;
 
-public static class BaseMediaEndpoint
+internal static class BaseMediaEndpoint
 {
-    public static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
+    internal static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
     {
         var query = new GetFiltersQuery();
 
@@ -22,7 +22,7 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
+    internal static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
         [FromBody] GetAssetListRequest request,
         IMediator mediator,
         string functionName)
@@ -49,7 +49,7 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
+    internal static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
         [FromBody] GetAssetDetailRequest request,
         IMediator mediator)
     {
@@ -68,7 +68,7 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
         [FromForm] UploadAssetsRequest request,
         IFormFileCollection files,
         IMediator mediator)
@@ -108,7 +108,7 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
         [FromForm] UpdateAssetRequest request,
         IFormFile? file,
         IMediator mediator)
@@ -134,7 +134,7 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
         [FromBody] UpdateAssetStatusRequest request,
         IMediator mediator)
     {
@@ -154,13 +154,13 @@ public static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    public static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
-        string mediaIds,
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
+        [FromBody] DeleteAssetRequest request,
         IMediator mediator)
     {
         var command = new DeleteAssetsCommand
         {
-            MediaIds = mediaIds
+            MediaIds =  request.MediaIds
         };
 
         var result = await mediator.Send(command);

@@ -1,7 +1,8 @@
+using Fanex.Logging;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
@@ -17,7 +18,7 @@ public class DeleteAssetsCommand : BaseNonResultCommand
 public class DeleteAssetsCommandHandler(
     IAssetUploaderRepository assetUploaderRepository,
     IFileService fileService,
-    ILogger<DeleteAssetsCommandHandler> logger)
+    ILogger logger)
     : IRequestHandler<DeleteAssetsCommand, Result>
 {
     public async Task<Result> Handle(
@@ -45,7 +46,7 @@ public class DeleteAssetsCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, AssetUploaderError.DeleteAssetsFailed.Message);
+            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result.Failure(AssetUploaderError.DeleteAssetsFailed);
         }
     }
@@ -85,7 +86,7 @@ public class DeleteAssetsCommandHandler(
             }
             catch (Exception ex)
             {
-                logger.LogWarning(ex, "Failed to delete file: {FilePath}", filePath);
+                await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             }
         }
     }

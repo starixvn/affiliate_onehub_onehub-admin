@@ -1,6 +1,7 @@
+using Fanex.Logging;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
@@ -17,7 +18,7 @@ public class ToggleAssetStatusCommand : BaseNonResultCommand
 
 public class ToggleAssetStatusCommandHandler(
     IAssetUploaderRepository assetUploaderRepository,
-    ILogger<ToggleAssetStatusCommandHandler> logger)
+    ILogger logger)
     : IRequestHandler<ToggleAssetStatusCommand, Result>
 {
     public async Task<Result> Handle(
@@ -40,7 +41,7 @@ public class ToggleAssetStatusCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, AssetUploaderError.ChangeAssetStatusFailed.Message);
+            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result.Failure(AssetUploaderError.ChangeAssetStatusFailed);
         }
     }

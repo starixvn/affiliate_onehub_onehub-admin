@@ -10,23 +10,24 @@ public class AwsS3ServiceInstaller : IServiceInstaller
 {
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
-        var s3Settings = configuration.GetSection("AwsS3").Get<AwsS3Settings>();
+        var s3Setting = configuration.GetSection(AwsS3Setting.SETTING_NAME).Get<AwsS3Setting>();
+        var proxySetting = configuration.GetSection(ProxySetting.SETTING_NAME).Get<ProxySetting>();
 
         var s3Config = new AmazonS3Config
         {
-            RegionEndpoint = RegionEndpoint.GetBySystemName(s3Settings!.Region)
+            RegionEndpoint = RegionEndpoint.GetBySystemName(s3Setting!.Region)
         };
 
-        if (s3Settings.IsUseProxy)
+        if (proxySetting!.IsUseProxy)
         {
-            s3Config.ProxyHost = s3Settings.ProxyHost;
-            s3Config.ProxyPort = s3Settings.ProxyPort;
+            s3Config.ProxyHost = proxySetting.ProxyHost;
+            s3Config.ProxyPort = proxySetting.ProxyPort;
         }
 
         services.AddSingleton<IAmazonS3>(_ =>
             new AmazonS3Client(
-                s3Settings.AccessKey,
-                s3Settings.SecretKey,
+                s3Setting.AccessKey,
+                s3Setting.SecretKey,
                 s3Config
             ));
         services.AddSingleton<IStorageService, S3StorageService>();

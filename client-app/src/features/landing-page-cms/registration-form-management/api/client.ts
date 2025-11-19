@@ -85,7 +85,8 @@ export const registrationFormManagementApi = {
   async deleteMedias(mediaIds: string): Promise<DeleteMediaResponse> {
     try {
       const response = await apiClient.delete<DeleteMediaResponse>(
-        `/registration-form/delete/${mediaIds}`
+        '/registration-form/delete',
+        { data: { mediaIds } }
       )
       return response.data
     } catch (error: unknown) {
@@ -110,8 +111,8 @@ export const registrationFormManagementApi = {
       formData.append('moduleId', data.moduleId.toString())
       formData.append('targetCountryCode', data.targetCountryCode)
       formData.append('languageCode', data.languageCode)
-      formData.append('inputFileName', data.inputFileName ?? '')
-      formData.append('inputMediaName', data.inputMediaName ?? '')
+      formData.append('inputFileName', data.inputFileName)
+      formData.append('inputMediaName', data.inputMediaName)
       if (data.file) formData.append('file', data.file)
 
       const response = await apiClient.post<UpdateMediaResponse>(

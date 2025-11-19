@@ -1,10 +1,11 @@
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Fanex.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
 
@@ -24,7 +25,7 @@ public class S3FileService : IFileService
     private readonly IConfiguration _configuration;
     private readonly IStorageService _storageService;
     private readonly IImageService _imageService;
-    private readonly ILogger<S3FileService> _logger;
+    private readonly ILogger _logger;
 
     private readonly string[] _allowedExtensions;
     private readonly long _maxFileSizeBytes;
@@ -35,7 +36,7 @@ public class S3FileService : IFileService
         IConfiguration configuration,
         IStorageService storageService,
         IImageService imageService,
-        ILogger<S3FileService> logger)
+        ILogger logger)
     {
         _configuration = configuration;
         _storageService = storageService;
@@ -205,7 +206,7 @@ public class S3FileService : IFileService
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Error checking if file exists: {Key}", key);
+                await _logger.CriticalAsync(LoggerUtils.GenerateMessage(ex));
             }
         }
 
@@ -308,7 +309,7 @@ public class S3FileService : IFileService
         var success = await _storageService.UploadFileAsync(file, filePath);
         if (!success)
         {
-            _logger.LogWarning("Failed to upload file to S3: {Key}", filePath);
+            await _logger.CriticalAsync($"Failed to upload file to S3: {filePath}");
         }
     }
 
@@ -317,7 +318,7 @@ public class S3FileService : IFileService
         var success = await _storageService.DeleteFileAsync(filePath);
         if (!success)
         {
-            _logger.LogWarning("Failed to delete file from S3: {Key}", filePath);
+            await _logger.CriticalAsync($"Failed to upload file to S3: {filePath}");
         }
     }
 
@@ -368,7 +369,7 @@ public class S3FileService : IFileService
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Failed to cleanup file: {Key}", key);
+                await _logger.CriticalAsync(LoggerUtils.GenerateMessage(ex));
             }
         }
     }

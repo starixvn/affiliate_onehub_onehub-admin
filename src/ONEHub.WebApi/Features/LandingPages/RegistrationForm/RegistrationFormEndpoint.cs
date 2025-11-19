@@ -9,7 +9,9 @@ public static class RegistrationFormEndpoint
 
     public static IEndpointRouteBuilder RegisterRegistrationFormEndpoint(this IEndpointRouteBuilder endpoints)
     {
-        var groupEndpoint = endpoints.MapGroup("/api/registration-form").RequireAuthorization();
+        var groupEndpoint = endpoints.MapGroup("/api/registration-form")
+            .RequireAuthorization()
+            .WithTags("RegistrationFormEndpoint");
 
         groupEndpoint.MapGet("/filters", BaseMediaEndpoint.GetFilters);
         groupEndpoint.MapPost("/list", (GetAssetListRequest request, IMediator mediator)
@@ -27,7 +29,7 @@ public static class RegistrationFormEndpoint
             .WithMetadata(new RequestFormLimitsAttribute { MultipartBodyLengthLimit = 100_000_000 })
             .DisableAntiforgery();
         groupEndpoint.MapPost("/status", BaseMediaEndpoint.UpdateAssetStatus);
-        groupEndpoint.MapDelete("/delete/{mediaIds}", BaseMediaEndpoint.DeleteAssets);
+        groupEndpoint.MapDelete("/delete", BaseMediaEndpoint.DeleteAssets);
 
         return groupEndpoint;
     }

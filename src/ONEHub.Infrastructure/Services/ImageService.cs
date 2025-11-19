@@ -1,11 +1,12 @@
-using Microsoft.Extensions.Logging;
+using Fanex.Logging;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
 using SixLabors.ImageSharp;
 
 namespace ONEHub.Infrastructure.Services;
-public class ImageService(ILogger<ImageService> logger) : IImageService
+public class ImageService(ILogger logger) : IImageService
 {
     private const string DEFAULT_DIMENSIONS = "0x0";
 
@@ -24,9 +25,9 @@ public class ImageService(ILogger<ImageService> logger) : IImageService
 
             return $"{info.Width}x{info.Height}";
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-            logger.LogWarning(ex, "Failed to extract image dimensions");
+            logger.Critical(LoggerUtils.GenerateMessage(ex));
             return DEFAULT_DIMENSIONS;
         }
     }
@@ -58,9 +59,9 @@ public class ImageService(ILogger<ImageService> logger) : IImageService
 
             return Result.Success();
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
-            logger.LogWarning(ex, "Failed to validate image dimensions");
+            logger.Critical(LoggerUtils.GenerateMessage(ex));
             return Result.Success();
         }
     }

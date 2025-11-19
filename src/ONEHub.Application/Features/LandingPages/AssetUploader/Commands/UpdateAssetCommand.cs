@@ -1,10 +1,11 @@
 using System.Net;
 using System.Text;
+using Fanex.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -25,7 +26,7 @@ public class UpdateAssetCommand : BaseNonResultCommand
 
     public string LanguageCode { get; set; } = string.Empty;
 
-    public string? InputFileName { get; set; } = string.Empty;
+    public string InputFileName { get; set; } = string.Empty;
 
     public string? InputMediaName { get; set; } = string.Empty;
 }
@@ -36,7 +37,7 @@ public class UpdateAssetCommandHandler(
     IFileService fileService,
     IImageService imageService,
     ILandingPageService landingPageService,
-    ILogger<UpdateAssetCommandHandler> logger)
+    ILogger logger)
     : IRequestHandler<UpdateAssetCommand, Result>
 {
     public async Task<Result> Handle(
@@ -79,7 +80,7 @@ public class UpdateAssetCommandHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, AssetUploaderError.UpdateAssetFailed.Message);
+            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result.Failure(AssetUploaderError.UpdateAssetFailed);
         }
     }

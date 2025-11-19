@@ -144,8 +144,8 @@ export interface UpdateMediaRequest {
   targetCountryCode: string
   languageCode: string
   file?: File
-  inputFileName?: string
-  inputMediaName?: string
+  inputFileName: string
+  inputMediaName: string
 }
 
 export interface UpdateMediaResponseData {
