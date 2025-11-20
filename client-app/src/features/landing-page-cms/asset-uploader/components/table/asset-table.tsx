@@ -12,6 +12,7 @@ import {
   type PaginationState,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -63,7 +64,18 @@ export function AssetTable({
   } = useAssetUploader()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:asset-uploader'
+        )
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
+    }
+  )
   const [rowSelection, setRowSelection] = useState({})
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
@@ -85,6 +97,13 @@ export function AssetTable({
       pageSize: nextState.pageSize,
     })
   }
+
+  useEffect(() => {
+    setLocalStorageItem(
+      'table-column-visibility:asset-uploader',
+      JSON.stringify(columnVisibility)
+    )
+  }, [columnVisibility])
 
   useEffect(() => {
     setRowSelection({})
@@ -360,9 +379,9 @@ export function AssetTable({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

@@ -12,6 +12,7 @@ import {
   type PaginationState,
 } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
+import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
 import {
   Table,
   TableBody,
@@ -55,7 +56,18 @@ export function RegisterFormTable() {
   } = useRegisterFormManagement()
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:registration-form-management'
+        )
+        return stored ? JSON.parse(stored) : {}
+      } catch {
+        return {}
+      }
+    }
+  )
   const [rowSelection, setRowSelection] = useState({})
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isStatusChangeDialogOpen, setIsStatusChangeDialogOpen] =
@@ -129,6 +141,13 @@ export function RegisterFormTable() {
 
   const tableRef = useRef(table)
   tableRef.current = table
+
+  useEffect(() => {
+    setLocalStorageItem(
+      'table-column-visibility:registration-form-management',
+      JSON.stringify(columnVisibility)
+    )
+  }, [columnVisibility])
 
   useEffect(() => {
     setRowSelection({})
@@ -298,9 +317,9 @@ export function RegisterFormTable() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>

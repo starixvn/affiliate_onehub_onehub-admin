@@ -75,26 +75,26 @@ export const useAssetColumns = (
     },
     {
       accessorKey: 'mediaName',
-      header: t('table.fileName'),
+      header: () => <div className='text-center'>{t('table.fileName')}</div>,
       meta: {
-        className: 'whitespace-normal',
+        className: 'max-w-[250px] whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] font-medium break-words'>
+        <div className='font-medium break-all overflow-hidden'>
           {row.getValue('mediaName')}
         </div>
       ),
     },
     {
       accessorKey: 'moduleId',
-      header: t('table.module'),
+      header: () => <div className='text-center'>{t('table.module')}</div>,
       meta: {
-        className: 'whitespace-normal',
+        className: 'max-w-[200px] whitespace-normal',
         displayName: t('table.module'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] break-words'>
+        <div className='break-all overflow-hidden'>
           {row.original.moduleName}
         </div>
       ),
@@ -168,7 +168,7 @@ export const useAssetColumns = (
       cell: ({ row }) => (
         <MediaStatusCell
           row={row}
-          onStatusChange={onStatusChange || (() => {})}
+          onStatusChange={onStatusChange || (() => { })}
         />
       ),
       filterFn: (row, id, value) => {
@@ -183,8 +183,8 @@ export const useAssetColumns = (
           <MediaRowActions
             row={row}
             translationKey={TRANSLATION_KEY}
-            onEdit={onEdit || (() => {})}
-            onDelete={onDelete || (() => {})}
+            onEdit={onEdit || (() => { })}
+            onDelete={onDelete || (() => { })}
           />
         </div>
       ),

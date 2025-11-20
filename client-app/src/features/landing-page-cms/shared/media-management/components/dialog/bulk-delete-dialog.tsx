@@ -54,8 +54,6 @@ export function MediaBulkDeleteDialog({
         if (response.errorCode === 0) {
           table.resetRowSelection()
           onOpenChange(false)
-        } else {
-          toast.error(t('toasts.deleteError'))
         }
       },
     })
@@ -82,9 +80,7 @@ export function MediaBulkDeleteDialog({
       })}
       desc={t('dialogs.deleteDescription')}
       confirmText={
-        deleteMutation.isPending
-          ? t('dialogs.deleting')
-          : t('dialogs.deleteAll')
+        deleteMutation.isPending ? t('dialogs.deleting') : t('buttons.ok')
       }
       destructive
       isLoading={deleteMutation.isPending}

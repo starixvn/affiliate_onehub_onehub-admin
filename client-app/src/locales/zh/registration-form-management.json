@@ -27,7 +27,8 @@
     "save": "保存",
     "add": "添加",
     "cancel": "取消",
-    "create": "创建"
+    "create": "创建",
+    "ok": "确定"
   },
   "table": {
     "selectAll": "全选",

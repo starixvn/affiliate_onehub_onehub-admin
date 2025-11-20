@@ -27,7 +27,8 @@
     "save": "Save",
     "add": "Add",
     "cancel": "Cancel",
-    "create": "Create"
+    "create": "Create",
+    "ok": "OK"
   },
   "table": {
     "selectAll": "Select all",

@@ -73,22 +73,22 @@ export const useRegisterFormColumns = (
     },
     {
       accessorKey: 'mediaName',
-      header: t('table.formName'),
+      header: () => <div className='text-center'>{t('table.formName')}</div>,
       meta: {
-        className: 'whitespace-normal',
+        className: 'max-w-[250px] whitespace-normal',
         displayName: t('table.formName'),
       },
       cell: ({ row }) => (
-        <div className='max-w-[200px] font-medium break-words'>
+        <div className='font-medium break-all overflow-hidden'>
           {row.getValue('mediaName')}
         </div>
       ),
     },
     {
       accessorKey: 'fileName',
-      header: t('table.fileName'),
+      header: () => <div className='text-center'>{t('table.fileName')}</div>,
       meta: {
-        className: 'whitespace-normal',
+        className: 'max-w-[250px] whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => {
@@ -98,7 +98,7 @@ export const useRegisterFormColumns = (
           ? fileNameStr.split('/').pop() || ''
           : fileNameStr
 
-        return <div className='max-w-[200px] break-words'>{displayName}</div>
+        return <div className='break-all overflow-hidden'>{displayName}</div>
       },
     },
     {
@@ -168,7 +168,7 @@ export const useRegisterFormColumns = (
       cell: ({ row }) => (
         <MediaStatusCell
           row={row}
-          onStatusChange={onStatusChange || (() => {})}
+          onStatusChange={onStatusChange || (() => { })}
         />
       ),
       filterFn: (row, id, value) => {
@@ -183,8 +183,8 @@ export const useRegisterFormColumns = (
           <MediaRowActions
             row={row}
             translationKey={TRANSLATION_KEY}
-            onEdit={onEdit || (() => {})}
-            onDelete={onDelete || (() => {})}
+            onEdit={onEdit || (() => { })}
+            onDelete={onDelete || (() => { })}
           />
         </div>
       ),

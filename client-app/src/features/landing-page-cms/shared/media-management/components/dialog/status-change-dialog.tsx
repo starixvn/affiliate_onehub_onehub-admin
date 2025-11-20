@@ -56,9 +56,7 @@ export function StatusChangeDialog({
       })}
       desc={t('dialogs.confirmStatusChangeDesc')}
       confirmText={
-        updateStatusMutation.isPending
-          ? t('dialogs.changing')
-          : t('dialogs.change')
+        updateStatusMutation.isPending ? t('dialogs.changing') : t('buttons.ok')
       }
       isLoading={updateStatusMutation.isPending}
     />

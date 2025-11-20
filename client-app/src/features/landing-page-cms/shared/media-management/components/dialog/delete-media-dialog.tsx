@@ -46,7 +46,7 @@ export function DeleteMediaDialog({
       title={t('dialogs.confirmDeleteSingle', { mediaName: media.mediaName })}
       desc={t('dialogs.deleteDescription')}
       confirmText={
-        deleteMutation.isPending ? t('dialogs.deleting') : t('dialogs.delete')
+        deleteMutation.isPending ? t('dialogs.deleting') : t('buttons.ok')
       }
       destructive
       handleConfirm={handleConfirm}

@@ -79,9 +79,7 @@ export function MediaBulkStatusChangeDialog({
       })}
       desc={t('dialogs.confirmStatusChangeBulkDesc')}
       confirmText={
-        updateStatusMutation.isPending
-          ? t('dialogs.changing')
-          : t('dialogs.changeAll')
+        updateStatusMutation.isPending ? t('dialogs.changing') : t('buttons.ok')
       }
       isLoading={updateStatusMutation.isPending}
     />
