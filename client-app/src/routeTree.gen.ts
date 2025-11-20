@@ -30,14 +30,14 @@ import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenti
 import { Route as IframeLinkGeneratorLinkManagementIndexRouteImport } from './routes/iframe/link-generator/link-management/index'
 import { Route as IframeLinkGeneratorGenerateLinkIndexRouteImport } from './routes/iframe/link-generator/generate-link/index'
 import { Route as IframeLinkGeneratorComponentManagementIndexRouteImport } from './routes/iframe/link-generator/component-management/index'
-import { Route as IframeLandingPageCmsRegisterFormManagementIndexRouteImport } from './routes/iframe/landing-page-cms/register-form-management/index'
+import { Route as IframeLandingPageCmsRegistrationFormManagementIndexRouteImport } from './routes/iframe/landing-page-cms/registration-form-management/index'
 import { Route as IframeLandingPageCmsPageManagementIndexRouteImport } from './routes/iframe/landing-page-cms/page-management/index'
 import { Route as IframeLandingPageCmsPageBuilderIndexRouteImport } from './routes/iframe/landing-page-cms/page-builder/index'
 import { Route as IframeLandingPageCmsAssetUploaderIndexRouteImport } from './routes/iframe/landing-page-cms/asset-uploader/index'
 import { Route as AuthenticatedLinkGeneratorLinkManagementIndexRouteImport } from './routes/_authenticated/link-generator/link-management/index'
 import { Route as AuthenticatedLinkGeneratorGenerateLinkIndexRouteImport } from './routes/_authenticated/link-generator/generate-link/index'
 import { Route as AuthenticatedLinkGeneratorComponentManagementIndexRouteImport } from './routes/_authenticated/link-generator/component-management/index'
-import { Route as AuthenticatedLandingPageCmsRegisterFormManagementIndexRouteImport } from './routes/_authenticated/landing-page-cms/register-form-management/index'
+import { Route as AuthenticatedLandingPageCmsRegistrationFormManagementIndexRouteImport } from './routes/_authenticated/landing-page-cms/registration-form-management/index'
 import { Route as AuthenticatedLandingPageCmsPageManagementIndexRouteImport } from './routes/_authenticated/landing-page-cms/page-management/index'
 import { Route as AuthenticatedLandingPageCmsPageBuilderIndexRouteImport } from './routes/_authenticated/landing-page-cms/page-builder/index'
 import { Route as AuthenticatedLandingPageCmsAssetUploaderIndexRouteImport } from './routes/_authenticated/landing-page-cms/asset-uploader/index'
@@ -156,10 +156,10 @@ const IframeLinkGeneratorComponentManagementIndexRoute =
     path: '/link-generator/component-management/',
     getParentRoute: () => IframeRouteRoute,
   } as any)
-const IframeLandingPageCmsRegisterFormManagementIndexRoute =
-  IframeLandingPageCmsRegisterFormManagementIndexRouteImport.update({
-    id: '/landing-page-cms/register-form-management/',
-    path: '/landing-page-cms/register-form-management/',
+const IframeLandingPageCmsRegistrationFormManagementIndexRoute =
+  IframeLandingPageCmsRegistrationFormManagementIndexRouteImport.update({
+    id: '/landing-page-cms/registration-form-management/',
+    path: '/landing-page-cms/registration-form-management/',
     getParentRoute: () => IframeRouteRoute,
   } as any)
 const IframeLandingPageCmsPageManagementIndexRoute =
@@ -198,10 +198,10 @@ const AuthenticatedLinkGeneratorComponentManagementIndexRoute =
     path: '/link-generator/component-management/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute =
-  AuthenticatedLandingPageCmsRegisterFormManagementIndexRouteImport.update({
-    id: '/landing-page-cms/register-form-management/',
-    path: '/landing-page-cms/register-form-management/',
+const AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute =
+  AuthenticatedLandingPageCmsRegistrationFormManagementIndexRouteImport.update({
+    id: '/landing-page-cms/registration-form-management/',
+    path: '/landing-page-cms/registration-form-management/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedLandingPageCmsPageManagementIndexRoute =
@@ -244,14 +244,14 @@ export interface FileRoutesByFullPath {
   '/landing-page-cms/asset-uploader': typeof AuthenticatedLandingPageCmsAssetUploaderIndexRoute
   '/landing-page-cms/page-builder': typeof AuthenticatedLandingPageCmsPageBuilderIndexRoute
   '/landing-page-cms/page-management': typeof AuthenticatedLandingPageCmsPageManagementIndexRoute
-  '/landing-page-cms/register-form-management': typeof AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute
+  '/landing-page-cms/registration-form-management': typeof AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute
   '/link-generator/component-management': typeof AuthenticatedLinkGeneratorComponentManagementIndexRoute
   '/link-generator/generate-link': typeof AuthenticatedLinkGeneratorGenerateLinkIndexRoute
   '/link-generator/link-management': typeof AuthenticatedLinkGeneratorLinkManagementIndexRoute
   '/iframe/landing-page-cms/asset-uploader': typeof IframeLandingPageCmsAssetUploaderIndexRoute
   '/iframe/landing-page-cms/page-builder': typeof IframeLandingPageCmsPageBuilderIndexRoute
   '/iframe/landing-page-cms/page-management': typeof IframeLandingPageCmsPageManagementIndexRoute
-  '/iframe/landing-page-cms/register-form-management': typeof IframeLandingPageCmsRegisterFormManagementIndexRoute
+  '/iframe/landing-page-cms/registration-form-management': typeof IframeLandingPageCmsRegistrationFormManagementIndexRoute
   '/iframe/link-generator/component-management': typeof IframeLinkGeneratorComponentManagementIndexRoute
   '/iframe/link-generator/generate-link': typeof IframeLinkGeneratorGenerateLinkIndexRoute
   '/iframe/link-generator/link-management': typeof IframeLinkGeneratorLinkManagementIndexRoute
@@ -277,14 +277,14 @@ export interface FileRoutesByTo {
   '/landing-page-cms/asset-uploader': typeof AuthenticatedLandingPageCmsAssetUploaderIndexRoute
   '/landing-page-cms/page-builder': typeof AuthenticatedLandingPageCmsPageBuilderIndexRoute
   '/landing-page-cms/page-management': typeof AuthenticatedLandingPageCmsPageManagementIndexRoute
-  '/landing-page-cms/register-form-management': typeof AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute
+  '/landing-page-cms/registration-form-management': typeof AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute
   '/link-generator/component-management': typeof AuthenticatedLinkGeneratorComponentManagementIndexRoute
   '/link-generator/generate-link': typeof AuthenticatedLinkGeneratorGenerateLinkIndexRoute
   '/link-generator/link-management': typeof AuthenticatedLinkGeneratorLinkManagementIndexRoute
   '/iframe/landing-page-cms/asset-uploader': typeof IframeLandingPageCmsAssetUploaderIndexRoute
   '/iframe/landing-page-cms/page-builder': typeof IframeLandingPageCmsPageBuilderIndexRoute
   '/iframe/landing-page-cms/page-management': typeof IframeLandingPageCmsPageManagementIndexRoute
-  '/iframe/landing-page-cms/register-form-management': typeof IframeLandingPageCmsRegisterFormManagementIndexRoute
+  '/iframe/landing-page-cms/registration-form-management': typeof IframeLandingPageCmsRegistrationFormManagementIndexRoute
   '/iframe/link-generator/component-management': typeof IframeLinkGeneratorComponentManagementIndexRoute
   '/iframe/link-generator/generate-link': typeof IframeLinkGeneratorGenerateLinkIndexRoute
   '/iframe/link-generator/link-management': typeof IframeLinkGeneratorLinkManagementIndexRoute
@@ -312,14 +312,14 @@ export interface FileRoutesById {
   '/_authenticated/landing-page-cms/asset-uploader/': typeof AuthenticatedLandingPageCmsAssetUploaderIndexRoute
   '/_authenticated/landing-page-cms/page-builder/': typeof AuthenticatedLandingPageCmsPageBuilderIndexRoute
   '/_authenticated/landing-page-cms/page-management/': typeof AuthenticatedLandingPageCmsPageManagementIndexRoute
-  '/_authenticated/landing-page-cms/register-form-management/': typeof AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute
+  '/_authenticated/landing-page-cms/registration-form-management/': typeof AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute
   '/_authenticated/link-generator/component-management/': typeof AuthenticatedLinkGeneratorComponentManagementIndexRoute
   '/_authenticated/link-generator/generate-link/': typeof AuthenticatedLinkGeneratorGenerateLinkIndexRoute
   '/_authenticated/link-generator/link-management/': typeof AuthenticatedLinkGeneratorLinkManagementIndexRoute
   '/iframe/landing-page-cms/asset-uploader/': typeof IframeLandingPageCmsAssetUploaderIndexRoute
   '/iframe/landing-page-cms/page-builder/': typeof IframeLandingPageCmsPageBuilderIndexRoute
   '/iframe/landing-page-cms/page-management/': typeof IframeLandingPageCmsPageManagementIndexRoute
-  '/iframe/landing-page-cms/register-form-management/': typeof IframeLandingPageCmsRegisterFormManagementIndexRoute
+  '/iframe/landing-page-cms/registration-form-management/': typeof IframeLandingPageCmsRegistrationFormManagementIndexRoute
   '/iframe/link-generator/component-management/': typeof IframeLinkGeneratorComponentManagementIndexRoute
   '/iframe/link-generator/generate-link/': typeof IframeLinkGeneratorGenerateLinkIndexRoute
   '/iframe/link-generator/link-management/': typeof IframeLinkGeneratorLinkManagementIndexRoute
@@ -347,14 +347,14 @@ export interface FileRouteTypes {
     | '/landing-page-cms/asset-uploader'
     | '/landing-page-cms/page-builder'
     | '/landing-page-cms/page-management'
-    | '/landing-page-cms/register-form-management'
+    | '/landing-page-cms/registration-form-management'
     | '/link-generator/component-management'
     | '/link-generator/generate-link'
     | '/link-generator/link-management'
     | '/iframe/landing-page-cms/asset-uploader'
     | '/iframe/landing-page-cms/page-builder'
     | '/iframe/landing-page-cms/page-management'
-    | '/iframe/landing-page-cms/register-form-management'
+    | '/iframe/landing-page-cms/registration-form-management'
     | '/iframe/link-generator/component-management'
     | '/iframe/link-generator/generate-link'
     | '/iframe/link-generator/link-management'
@@ -380,14 +380,14 @@ export interface FileRouteTypes {
     | '/landing-page-cms/asset-uploader'
     | '/landing-page-cms/page-builder'
     | '/landing-page-cms/page-management'
-    | '/landing-page-cms/register-form-management'
+    | '/landing-page-cms/registration-form-management'
     | '/link-generator/component-management'
     | '/link-generator/generate-link'
     | '/link-generator/link-management'
     | '/iframe/landing-page-cms/asset-uploader'
     | '/iframe/landing-page-cms/page-builder'
     | '/iframe/landing-page-cms/page-management'
-    | '/iframe/landing-page-cms/register-form-management'
+    | '/iframe/landing-page-cms/registration-form-management'
     | '/iframe/link-generator/component-management'
     | '/iframe/link-generator/generate-link'
     | '/iframe/link-generator/link-management'
@@ -414,14 +414,14 @@ export interface FileRouteTypes {
     | '/_authenticated/landing-page-cms/asset-uploader/'
     | '/_authenticated/landing-page-cms/page-builder/'
     | '/_authenticated/landing-page-cms/page-management/'
-    | '/_authenticated/landing-page-cms/register-form-management/'
+    | '/_authenticated/landing-page-cms/registration-form-management/'
     | '/_authenticated/link-generator/component-management/'
     | '/_authenticated/link-generator/generate-link/'
     | '/_authenticated/link-generator/link-management/'
     | '/iframe/landing-page-cms/asset-uploader/'
     | '/iframe/landing-page-cms/page-builder/'
     | '/iframe/landing-page-cms/page-management/'
-    | '/iframe/landing-page-cms/register-form-management/'
+    | '/iframe/landing-page-cms/registration-form-management/'
     | '/iframe/link-generator/component-management/'
     | '/iframe/link-generator/generate-link/'
     | '/iframe/link-generator/link-management/'
@@ -589,11 +589,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IframeLinkGeneratorComponentManagementIndexRouteImport
       parentRoute: typeof IframeRouteRoute
     }
-    '/iframe/landing-page-cms/register-form-management/': {
-      id: '/iframe/landing-page-cms/register-form-management/'
-      path: '/landing-page-cms/register-form-management'
-      fullPath: '/iframe/landing-page-cms/register-form-management'
-      preLoaderRoute: typeof IframeLandingPageCmsRegisterFormManagementIndexRouteImport
+    '/iframe/landing-page-cms/registration-form-management/': {
+      id: '/iframe/landing-page-cms/registration-form-management/'
+      path: '/landing-page-cms/registration-form-management'
+      fullPath: '/iframe/landing-page-cms/registration-form-management'
+      preLoaderRoute: typeof IframeLandingPageCmsRegistrationFormManagementIndexRouteImport
       parentRoute: typeof IframeRouteRoute
     }
     '/iframe/landing-page-cms/page-management/': {
@@ -638,11 +638,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLinkGeneratorComponentManagementIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/landing-page-cms/register-form-management/': {
-      id: '/_authenticated/landing-page-cms/register-form-management/'
-      path: '/landing-page-cms/register-form-management'
-      fullPath: '/landing-page-cms/register-form-management'
-      preLoaderRoute: typeof AuthenticatedLandingPageCmsRegisterFormManagementIndexRouteImport
+    '/_authenticated/landing-page-cms/registration-form-management/': {
+      id: '/_authenticated/landing-page-cms/registration-form-management/'
+      path: '/landing-page-cms/registration-form-management'
+      fullPath: '/landing-page-cms/registration-form-management'
+      preLoaderRoute: typeof AuthenticatedLandingPageCmsRegistrationFormManagementIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/landing-page-cms/page-management/': {
@@ -680,7 +680,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedLandingPageCmsAssetUploaderIndexRoute: typeof AuthenticatedLandingPageCmsAssetUploaderIndexRoute
   AuthenticatedLandingPageCmsPageBuilderIndexRoute: typeof AuthenticatedLandingPageCmsPageBuilderIndexRoute
   AuthenticatedLandingPageCmsPageManagementIndexRoute: typeof AuthenticatedLandingPageCmsPageManagementIndexRoute
-  AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute: typeof AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute
+  AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute: typeof AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute
   AuthenticatedLinkGeneratorComponentManagementIndexRoute: typeof AuthenticatedLinkGeneratorComponentManagementIndexRoute
   AuthenticatedLinkGeneratorGenerateLinkIndexRoute: typeof AuthenticatedLinkGeneratorGenerateLinkIndexRoute
   AuthenticatedLinkGeneratorLinkManagementIndexRoute: typeof AuthenticatedLinkGeneratorLinkManagementIndexRoute
@@ -701,8 +701,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedLandingPageCmsPageBuilderIndexRoute,
   AuthenticatedLandingPageCmsPageManagementIndexRoute:
     AuthenticatedLandingPageCmsPageManagementIndexRoute,
-  AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute:
-    AuthenticatedLandingPageCmsRegisterFormManagementIndexRoute,
+  AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute:
+    AuthenticatedLandingPageCmsRegistrationFormManagementIndexRoute,
   AuthenticatedLinkGeneratorComponentManagementIndexRoute:
     AuthenticatedLinkGeneratorComponentManagementIndexRoute,
   AuthenticatedLinkGeneratorGenerateLinkIndexRoute:
@@ -719,7 +719,7 @@ interface IframeRouteRouteChildren {
   IframeLandingPageCmsAssetUploaderIndexRoute: typeof IframeLandingPageCmsAssetUploaderIndexRoute
   IframeLandingPageCmsPageBuilderIndexRoute: typeof IframeLandingPageCmsPageBuilderIndexRoute
   IframeLandingPageCmsPageManagementIndexRoute: typeof IframeLandingPageCmsPageManagementIndexRoute
-  IframeLandingPageCmsRegisterFormManagementIndexRoute: typeof IframeLandingPageCmsRegisterFormManagementIndexRoute
+  IframeLandingPageCmsRegistrationFormManagementIndexRoute: typeof IframeLandingPageCmsRegistrationFormManagementIndexRoute
   IframeLinkGeneratorComponentManagementIndexRoute: typeof IframeLinkGeneratorComponentManagementIndexRoute
   IframeLinkGeneratorGenerateLinkIndexRoute: typeof IframeLinkGeneratorGenerateLinkIndexRoute
   IframeLinkGeneratorLinkManagementIndexRoute: typeof IframeLinkGeneratorLinkManagementIndexRoute
@@ -733,8 +733,8 @@ const IframeRouteRouteChildren: IframeRouteRouteChildren = {
     IframeLandingPageCmsPageBuilderIndexRoute,
   IframeLandingPageCmsPageManagementIndexRoute:
     IframeLandingPageCmsPageManagementIndexRoute,
-  IframeLandingPageCmsRegisterFormManagementIndexRoute:
-    IframeLandingPageCmsRegisterFormManagementIndexRoute,
+  IframeLandingPageCmsRegistrationFormManagementIndexRoute:
+    IframeLandingPageCmsRegistrationFormManagementIndexRoute,
   IframeLinkGeneratorComponentManagementIndexRoute:
     IframeLinkGeneratorComponentManagementIndexRoute,
   IframeLinkGeneratorGenerateLinkIndexRoute:

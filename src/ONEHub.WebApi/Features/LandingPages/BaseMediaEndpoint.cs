@@ -1,0 +1,170 @@
+using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using MiniValidation;
+using ONEHub.Application.Features.LandingPages.AssetUploader;
+using ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
+using ONEHub.Application.Features.LandingPages.AssetUploader.Queries;
+using ONEHub.Domain.Entities;
+using ONEHub.Domain.Errors;
+using ONEHub.Domain.Params;
+using ONEHub.Domain.Results;
+
+namespace ONEHub.WebApi.Features.LandingPages;
+
+internal static class BaseMediaEndpoint
+{
+    internal static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
+    {
+        var query = new GetFiltersQuery();
+
+        var result = await mediator.Send(query);
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
+        [FromBody] GetAssetListRequest request,
+        IMediator mediator,
+        string functionName)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var query = new GetAssetListQuery
+        {
+            MediaName = request.MediaName,
+            ModuleIds = request.ModuleIds,
+            TargetCountryCodes = request.TargetCountryCodes,
+            LanguageCodes = request.LanguageCodes,
+            Status = request.Status,
+            PageIndex = request.PageIndex,
+            PageSize = request.PageSize,
+            FunctionName = functionName
+        };
+
+        var result = await mediator.Send(query);
+
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
+        [FromBody] GetAssetDetailRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var query = new GetAssetDetailQuery
+        {
+            MediaId = request.MediaId
+        };
+
+        var result = await mediator.Send(query);
+
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
+        [FromForm] UploadAssetsRequest request,
+        IFormFileCollection files,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        if (files.Count == 0)
+        {
+            return TypedResults.Ok(Result.Failure(Error.SystemError with
+            {
+                Message = "No files uploaded"
+            }));
+        }
+
+        var moduleRows = request.ModuleRows
+            .Select((moduleId, index) => new ModuleRow
+            {
+                ModuleId = moduleId,
+                InputMediaNames = request.InputMediaNames?[index],
+                Files = files
+                    .Where(f => f.Name.Equals(moduleId.ToString(), StringComparison.OrdinalIgnoreCase))
+                    .ToList()
+            })
+            .ToList();
+
+        var command = new UploadAssetsCommand
+        {
+            ModuleRows = moduleRows,
+            TargetCountryCode = request.TargetCountryCode,
+            LanguageCode = request.LanguageCode
+        };
+
+        var result = await mediator.Send(command);
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
+        [FromForm] UpdateAssetRequest request,
+        IFormFile? file,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var command = new UpdateAssetCommand
+        {
+            File = file,
+            MediaId = request.MediaId,
+            ModuleId = request.ModuleId,
+            TargetCountryCode = request.TargetCountryCode,
+            LanguageCode = request.LanguageCode,
+            InputFileName = request.InputFileName,
+            InputMediaName = request.InputMediaName
+        };
+
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
+        [FromBody] UpdateAssetStatusRequest request,
+        IMediator mediator)
+    {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
+        var command = new ToggleAssetStatusCommand
+        {
+            MediaIds = request.MediaIds,
+            StatusId = request.StatusId
+        };
+
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+
+    internal static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
+        [FromBody] DeleteAssetRequest request,
+        IMediator mediator)
+    {
+        var command = new DeleteAssetsCommand
+        {
+            MediaIds =  request.MediaIds
+        };
+
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
+    }
+}

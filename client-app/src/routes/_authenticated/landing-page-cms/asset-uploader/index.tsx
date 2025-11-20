@@ -6,6 +6,6 @@ export const Route = createFileRoute(
 )({
   component: () => (
     <IframeContent iframePath='/iframe/landing-page-cms/asset-uploader' />
-    // <IframeContent iframePath='/portal/assetuploader' />
+    //<IframeContent iframePath='/portal/assetuploader' />
   ),
 })

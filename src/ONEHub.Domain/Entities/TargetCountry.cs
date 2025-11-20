@@ -14,4 +14,3 @@ public class TargetCountry
 
     public byte Status { get; set; }
 }
-

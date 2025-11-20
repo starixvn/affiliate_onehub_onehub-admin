@@ -1,0 +1,73 @@
+import {
+  createErrorMessages,
+  createInitialValidationState,
+  resetFileErrors,
+  validateField,
+  validateForm,
+  isFormValid,
+  validateFiles,
+  DEFAULT_FILE_UPLOAD_CONFIG,
+} from '@/features/landing-page-cms/shared'
+import { TRANSLATION_KEY } from './schema'
+import type {
+  AssetModuleWithFiles,
+  ValidationErrors,
+  TouchedFields,
+} from './schema'
+
+export { resetFileErrors }
+
+export const useErrorMessages = createErrorMessages(TRANSLATION_KEY)
+
+export const INITIAL_VALIDATION_STATE = createInitialValidationState('modules')
+
+export const validateAssetField = (
+  field: string,
+  value: string,
+  setErrors: (fn: (prev: ValidationErrors) => ValidationErrors) => void,
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  index?: number
+): boolean => {
+  return validateField(field, value, setErrors, errorMessages, 'modules', index)
+}
+
+export const validateAssetForm = (
+  country: string,
+  language: string,
+  moduleRows: AssetModuleWithFiles[],
+  setErrors: (errors: ValidationErrors) => void,
+  setTouched: (touched: TouchedFields) => void,
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  isEdit: boolean,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
+): boolean => {
+  return validateForm(
+    country,
+    language,
+    moduleRows,
+    setErrors,
+    setTouched,
+    errorMessages,
+    config,
+    'modules',
+    isEdit
+  )
+}
+
+export const isAssetFormValid = (
+  country: string,
+  language: string,
+  moduleRows: AssetModuleWithFiles[],
+  isEdit: boolean
+): boolean => {
+  return isFormValid(country, language, moduleRows, isEdit, 'modules')
+}
+
+export const validateAssetFiles = (
+  moduleRows: AssetModuleWithFiles[],
+  errorMessages: ReturnType<typeof useErrorMessages>,
+  config = DEFAULT_FILE_UPLOAD_CONFIG
+): ValidationErrors['files'] => {
+  const allFiles = moduleRows.flatMap((row) => row.files)
+  return validateFiles(allFiles, errorMessages, config, 'modules')
+}

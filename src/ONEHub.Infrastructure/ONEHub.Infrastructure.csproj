@@ -5,17 +5,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="MessagePack" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="SixLabors.ImageSharp" />
     <PackageReference Include="StackExchange.Redis" />
     <PackageReference Include="System.Data.SqlClient" />
     <PackageReference Include="Fanex.Logging.Sentry" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" />
-    <PackageReference Include="SkiaSharp" />
   </ItemGroup>
 
   <ItemGroup>

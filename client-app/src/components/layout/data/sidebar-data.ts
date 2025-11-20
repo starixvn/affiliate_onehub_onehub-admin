@@ -29,7 +29,7 @@ export const sidebarData: SidebarData = {
             },
             {
               titleKey: 'nav.registerFormManagement',
-              url: '/landing-page-cms/register-form-management',
+              url: '/landing-page-cms/registration-form-management',
             },
           ],
         },
