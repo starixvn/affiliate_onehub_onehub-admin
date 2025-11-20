@@ -25,44 +25,35 @@ public class ImageService(ILogger logger) : IImageService
 
             return $"{info.Width}x{info.Height}";
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             logger.Critical(LoggerUtils.GenerateMessage(ex));
             return DEFAULT_DIMENSIONS;
         }
     }
 
-
     public Result ValidateImageDimensions(Stream inputStream, int maxWidth, int maxHeight)
     {
-        try
+        var originalPosition = inputStream.CanSeek ? inputStream.Position : 0;
+        inputStream.Position = 0;
+
+        var info = Image.Identify(inputStream);
+        if (inputStream.CanSeek)
         {
-            var originalPosition = inputStream.CanSeek ? inputStream.Position : 0;
-            inputStream.Position = 0;
-
-            var info = Image.Identify(inputStream);
-            if (inputStream.CanSeek)
-            {
-                inputStream.Position = originalPosition;
-            }
-
-            var width = info.Width;
-            var height = info.Height;
-
-            if (width > maxWidth || height > maxHeight)
-            {
-                return Result.Failure(Error.SystemError with
-                {
-                    Message = $"Image dimensions ({width}x{height}) exceed maximum allowed size ({maxWidth}x{maxHeight})"
-                });
-            }
-
-            return Result.Success();
+            inputStream.Position = originalPosition;
         }
-        catch(Exception ex)
+
+        var width = info.Width;
+        var height = info.Height;
+
+        if (width > maxWidth || height > maxHeight)
         {
-            logger.Critical(LoggerUtils.GenerateMessage(ex));
-            return Result.Success();
+            return Result.Failure(Error.SystemError with
+            {
+                Message = $"Image dimensions ({width}x{height}) exceed maximum allowed size ({maxWidth}x{maxHeight})"
+            });
         }
+
+        return Result.Success();
     }
 }

@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client'
+import { apiClient, type IAxiosErrorData } from '@/lib/api/client'
 import type {
   DeleteMediaResponse,
   GetMediaListRequest,
@@ -56,11 +56,11 @@ export const assetUploaderApi = {
         }
       )
       return response.data
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as IAxiosErrorData
       return {
-        errorCode: error?.errorCode || 1,
-        errorMessage:
-          error?.message || error?.errorMessage || 'Create asset failed',
+        errorCode: err.errorCode || 1,
+        errorMessage: null,
         result: null,
       } as unknown as CreateMediaResponse
     }
@@ -73,14 +73,11 @@ export const assetUploaderApi = {
         { data: { mediaIds } }
       )
       return response.data
-    } catch (error: any) {
-      const isMultiple = Array.isArray(mediaIds) || mediaIds.includes(',')
+    } catch (error: unknown) {
+      const err = error as IAxiosErrorData
       return {
-        errorCode: error?.errorCode || 1,
-        errorMessage:
-          error?.message ||
-          error?.errorMessage ||
-          `Delete ${isMultiple ? 'assets' : 'asset'} failed`,
+        errorCode: err.errorCode || 1,
+        errorMessage: null,
         result: null,
       } as unknown as DeleteMediaResponse
     }
@@ -107,11 +104,11 @@ export const assetUploaderApi = {
         }
       )
       return response.data
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as IAxiosErrorData
       return {
-        errorCode: error?.errorCode || 1,
-        errorMessage:
-          error?.message || error?.errorMessage || 'Update asset failed',
+        errorCode: err.errorCode || 1,
+        errorMessage: null,
         result: null,
       } as unknown as UpdateMediaResponse
     }
@@ -127,13 +124,11 @@ export const assetUploaderApi = {
         { mediaIds: ids, statusId }
       )
       return response.data
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as IAxiosErrorData
       return {
-        errorCode: error?.errorCode || 1,
-        errorMessage:
-          error?.message ||
-          error?.errorMessage ||
-          'Update assets status failed',
+        errorCode: err.errorCode || 1,
+        errorMessage: null,
         result: null,
       } as unknown as UpdateMediaStatusResponse
     }

@@ -1,4 +1,4 @@
-import { apiClient } from '@/lib/api/client'
+import { apiClient, type IAxiosErrorData } from '@/lib/api/client'
 import type {
   DeleteMediaResponse,
   GetMediaListRequest,
@@ -68,15 +68,10 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode?: number
-        message?: string
-        errorMessage?: string
-      }
+      const err = error as IAxiosErrorData
       return {
         errorCode: err.errorCode || 1,
-        errorMessage:
-          err.message || err.errorMessage || 'Create register form failed',
+        errorMessage: null,
         result: null,
       } as unknown as CreateMediaResponse
     }
@@ -90,15 +85,10 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode?: number
-        message?: string
-        errorMessage?: string
-      }
+      const err = error as IAxiosErrorData
       return {
         errorCode: err.errorCode || 1,
-        errorMessage:
-          err.message || err.errorMessage || 'Delete registration forms failed',
+        errorMessage: null,
         result: null,
       } as unknown as DeleteMediaResponse
     }
@@ -126,15 +116,10 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode?: number
-        message?: string
-        errorMessage?: string
-      }
+      const err = error as IAxiosErrorData
       return {
         errorCode: err.errorCode || 1,
-        errorMessage:
-          err.message || err.errorMessage || 'Update registration form failed',
+        errorMessage: null,
         result: null,
       } as unknown as UpdateMediaResponse
     }
@@ -151,17 +136,10 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode?: number
-        message?: string
-        errorMessage?: string
-      }
+      const err = error as IAxiosErrorData
       return {
         errorCode: err.errorCode || 1,
-        errorMessage:
-          err.message ||
-          err.errorMessage ||
-          'Update registration forms status failed',
+        errorMessage: null,
         result: null,
       } as unknown as UpdateMediaStatusResponse
     }

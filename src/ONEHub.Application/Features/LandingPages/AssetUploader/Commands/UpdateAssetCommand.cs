@@ -1,11 +1,9 @@
 using System.Net;
 using System.Text;
-using Fanex.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
-using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -36,53 +34,44 @@ public class UpdateAssetCommandHandler(
     IStorageService storageService,
     IFileService fileService,
     IImageService imageService,
-    ILandingPageService landingPageService,
-    ILogger logger)
+    ILandingPageService landingPageService)
     : IRequestHandler<UpdateAssetCommand, Result>
 {
     public async Task<Result> Handle(
         UpdateAssetCommand request,
         CancellationToken cancellationToken)
     {
-        try
+        var oldAssetResult = await assetUploaderRepository.GetAssetDetailAsync(new AssetDetailParam
         {
-            var oldAssetResult = await assetUploaderRepository.GetAssetDetailAsync(new AssetDetailParam
-            {
-                MediaId = request.MediaId,
-                UserId = request.UserId
-            });
+            MediaId = request.MediaId,
+            UserId = request.UserId
+        });
 
-            var oldAssetInfo = oldAssetResult.Data;
-            if (oldAssetInfo == null)
-            {
-                return Result.Failure(Error.NoData);
-            }
-
-            var validationResult = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
-            if (validationResult.IsFailure)
-            {
-                return validationResult;
-            }
-
-            validationResult = fileService.ValidateInputFileNameForUpdate(request.InputFileName);
-            if (validationResult.IsFailure)
-            {
-                return validationResult;
-            }
-
-            validationResult = fileService.ValidateInputMediaNameForUpdate(request.InputMediaName);
-            if (validationResult.IsFailure)
-            {
-                return validationResult;
-            }
-
-            return await ProcessAssetUpdate(request, oldAssetInfo);
-        }
-        catch (Exception ex)
+        var oldAssetInfo = oldAssetResult.Data;
+        if (oldAssetInfo == null)
         {
-            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
-            return Result.Failure(AssetUploaderError.UpdateAssetFailed);
+            return Result.Failure(Error.NoData);
         }
+
+        var validationResult = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
+        if (validationResult.IsFailure)
+        {
+            return validationResult;
+        }
+
+        validationResult = fileService.ValidateInputFileNameForUpdate(request.InputFileName);
+        if (validationResult.IsFailure)
+        {
+            return validationResult;
+        }
+
+        validationResult = fileService.ValidateInputMediaNameForUpdate(request.InputMediaName);
+        if (validationResult.IsFailure)
+        {
+            return validationResult;
+        }
+
+        return await ProcessAssetUpdate(request, oldAssetInfo);
     }
 
     private async Task<Result> ProcessAssetUpdate(UpdateAssetCommand request, AssetDetail oldAssetInfo)

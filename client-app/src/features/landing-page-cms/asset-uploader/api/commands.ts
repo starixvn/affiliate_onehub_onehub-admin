@@ -50,7 +50,7 @@ export const useDeleteMedias = (onError?: (error: string) => void) => {
         queryClient.invalidateQueries({ queryKey: assetUploaderKeys.lists() })
         toast.success('Assets deleted successfully')
       } else {
-        const errorMessage = response.errorMessage || 'Failed to delete assets'
+        const errorMessage = response.errorMessage || 'Failed to delete asset'
         onError?.(errorMessage)
         if (!onError) {
           toast.error(errorMessage)

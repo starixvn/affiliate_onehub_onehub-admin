@@ -5,7 +5,6 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
-using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
@@ -36,78 +35,70 @@ public class UploadAssetsCommandHandler(
         UploadAssetsCommand request,
         CancellationToken cancellationToken)
     {
-        try
+        var modulesWithoutFilesValidation = ValidateModulesWithoutFiles(request.ModuleRows);
+        if (modulesWithoutFilesValidation.IsFailure)
         {
-            var modulesWithoutFilesValidation = ValidateModulesWithoutFiles(request.ModuleRows);
-            if (modulesWithoutFilesValidation.IsFailure)
-            {
-                return modulesWithoutFilesValidation;
-            }
+            return modulesWithoutFilesValidation;
+        }
 
-            var allFiles = new FormFileCollection();
+        var allFiles = new FormFileCollection();
 
-            allFiles.AddRange(request.ModuleRows!
-                .Where(row => row.Files.Any())
-                .SelectMany(row => row.Files));
+        allFiles.AddRange(request.ModuleRows!
+            .Where(row => row.Files.Any())
+            .SelectMany(row => row.Files));
 
-            var inputMediaNames = request.ModuleRows!
-                .Where(r => !string.IsNullOrWhiteSpace(r.InputMediaNames))
-                .SelectMany(r => r.InputMediaNames.Split('|', StringSplitOptions.RemoveEmptyEntries))
-                .ToArray();
-            var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
+        var inputMediaNames = request.ModuleRows!
+            .Where(r => !string.IsNullOrWhiteSpace(r.InputMediaNames))
+            .SelectMany(r => r.InputMediaNames.Split('|', StringSplitOptions.RemoveEmptyEntries))
+            .ToArray();
+        var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
 
-            var uploadValidation = fileService.ValidateUploadRequest(
-                allFiles,
-                string.Join("|", inputFileNames),
-                string.Join("|", inputMediaNames)
+        var uploadValidation = fileService.ValidateUploadRequest(
+            allFiles,
+            string.Join("|", inputFileNames),
+            string.Join("|", inputMediaNames)
+        );
+
+        if (uploadValidation.IsFailure)
+        {
+            return uploadValidation;
+        }
+
+        var fileNameValidation = ValidateInputNames(inputFileNames, inputMediaNames);
+        if (fileNameValidation.IsFailure)
+        {
+            return fileNameValidation;
+        }
+
+        var languageValidation = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
+        if (languageValidation.IsFailure)
+        {
+            return languageValidation;
+        }
+
+        foreach (var row in request.ModuleRows)
+        {
+            var folder = await landingPageService.GetAssetFolder(
+                row.ModuleId,
+                request.TargetCountryCode,
+                request.LanguageCode
             );
 
-            if (uploadValidation.IsFailure)
+            var folderCheck = await fileService.CheckMultipleFilesInFolderAsync(inputFileNames, folder);
+            if (folderCheck.IsFailure)
             {
-                return uploadValidation;
+                return folderCheck;
             }
-
-            var fileNameValidation = ValidateInputNames(inputFileNames, inputMediaNames);
-            if (fileNameValidation.IsFailure)
-            {
-                return fileNameValidation;
-            }
-
-            var languageValidation = await landingPageService.ValidateLanguageByTargetCountry(request.LanguageCode, request.TargetCountryCode);
-            if (languageValidation.IsFailure)
-            {
-                return languageValidation;
-            }
-
-            foreach (var row in request.ModuleRows)
-            {
-                var folder = await landingPageService.GetAssetFolder(
-                    row.ModuleId,
-                    request.TargetCountryCode,
-                    request.LanguageCode
-                );
-
-                var folderCheck = await fileService.CheckMultipleFilesInFolderAsync(inputFileNames, folder);
-                if (folderCheck.IsFailure)
-                {
-                    return folderCheck;
-                }
-                await ProcessAndUploadFiles(row.Files, folder);
-            }
-
-            return await SaveAssetsToDatabase(
-                request.ModuleRows,
-                request.TargetCountryCode,
-                request.LanguageCode,
-                request.UserId,
-                request.Ip,
-                request.Host);
+            await ProcessAndUploadFiles(row.Files, folder);
         }
-        catch (Exception ex)
-        {
-            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
-            return Result.Failure(AssetUploaderError.UploadAssetsFailed);
-        }
+
+        return await SaveAssetsToDatabase(
+            request.ModuleRows,
+            request.TargetCountryCode,
+            request.LanguageCode,
+            request.UserId,
+            request.Ip,
+            request.Host);
     }
 
     private Result ValidateModulesWithoutFiles(List<ModuleRow> moduleRows)

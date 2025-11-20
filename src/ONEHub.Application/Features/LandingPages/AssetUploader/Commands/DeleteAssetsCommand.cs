@@ -1,9 +1,6 @@
-using Fanex.Logging;
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
-using ONEHub.Application.Utils;
-using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
@@ -17,38 +14,29 @@ public class DeleteAssetsCommand : BaseNonResultCommand
 
 public class DeleteAssetsCommandHandler(
     IAssetUploaderRepository assetUploaderRepository,
-    IFileService fileService,
-    ILogger logger)
+    IFileService fileService)
     : IRequestHandler<DeleteAssetsCommand, Result>
 {
     public async Task<Result> Handle(
         DeleteAssetsCommand request,
         CancellationToken cancellationToken)
     {
-        try
+        var fileNameList = await GetAssetFileNameList(request.UserId, request.MediaIds);
+
+        var param = new DeleteAssetsParam
         {
-            var fileNameList = await GetAssetFileNameList(request.UserId, request.MediaIds);
+            MediaIds = request.MediaIds,
+            UserId = request.UserId,
+            Ip = request.Ip
+        };
 
-            var param = new DeleteAssetsParam
-            {
-                MediaIds = request.MediaIds,
-                UserId = request.UserId,
-                Ip = request.Ip
-            };
-
-            var result = await assetUploaderRepository.DeleteAssetsAsync(param);
-            if (result.IsSuccess)
-            {
-                await DeleteFilesAsync(fileNameList);
-            }
-
-            return result;
-        }
-        catch (Exception ex)
+        var result = await assetUploaderRepository.DeleteAssetsAsync(param);
+        if (result.IsSuccess)
         {
-            await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
-            return Result.Failure(AssetUploaderError.DeleteAssetsFailed);
+            await DeleteFilesAsync(fileNameList);
         }
+
+        return result;
     }
 
     private async Task<List<string>> GetAssetFileNameList(int userId, string mediaIds)
@@ -80,14 +68,7 @@ public class DeleteAssetsCommandHandler(
     {
         foreach (var filePath in fileList)
         {
-            try
-            {
-                await fileService.DeleteFileAsync(filePath);
-            }
-            catch (Exception ex)
-            {
-                await logger.ErrorAsync(LoggerUtils.GenerateMessage(ex));
-            }
+            await fileService.DeleteFileAsync(filePath);
         }
     }
 }

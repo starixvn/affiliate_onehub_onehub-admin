@@ -87,7 +87,7 @@ export function useAssetFormHandlers(props: UseAssetFormHandlersProps) {
 
   const validateFieldWrapper = (
     field: string,
-    value: any,
+    value: string,
     setErrors: React.Dispatch<React.SetStateAction<ValidationErrors>>,
     index?: number
   ): boolean => {

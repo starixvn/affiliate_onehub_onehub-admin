@@ -5,7 +5,6 @@ using Fanex.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using ONEHub.Application.Services;
-using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
 
@@ -125,7 +124,7 @@ public class S3FileService : IFileService
                 Message = message.ToString()
             });
         }
-        
+
         return Result.Success();
     }
 
@@ -197,16 +196,9 @@ public class S3FileService : IFileService
         {
             var key = string.IsNullOrEmpty(folder) ? fileName : $"{folder}/{fileName}";
 
-            try
+            if (await _storageService.FileExistsAsync(key))
             {
-                if (await _storageService.FileExistsAsync(key))
-                {
-                    existingFiles.Add(fileName);
-                }
-            }
-            catch (Exception ex)
-            {
-                await _logger.CriticalAsync(LoggerUtils.GenerateMessage(ex));
+                existingFiles.Add(fileName);
             }
         }
 
@@ -363,14 +355,7 @@ public class S3FileService : IFileService
     {
         foreach (var key in filePaths)
         {
-            try
-            {
-                await DeleteFileAsync(key);
-            }
-            catch (Exception ex)
-            {
-                await _logger.CriticalAsync(LoggerUtils.GenerateMessage(ex));
-            }
+            await DeleteFileAsync(key);
         }
     }
 }
