@@ -11,5 +11,9 @@ public class AwsS3Setting
     public string Region { get; set; } = string.Empty;
 
     public string BucketName { get; set; } = string.Empty;
+
+    public string RoleArn { get; set; } = string.Empty;
+
+    public int RoleSessionDurationSeconds { get; set; } = 3600;
 }
 
