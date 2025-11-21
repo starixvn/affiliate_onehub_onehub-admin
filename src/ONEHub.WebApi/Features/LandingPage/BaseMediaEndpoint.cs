@@ -2,19 +2,50 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
-using ONEHub.Application.Features.LandingPages.AssetUploader;
-using ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
-using ONEHub.Application.Features.LandingPages.AssetUploader.Queries;
+using ONEHub.Application.Features.LandingPages.BaseMedia.Commands;
+using ONEHub.Application.Features.LandingPages.BaseMedia.Queries;
 using ONEHub.Domain.Entities;
-using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.WebApi.Features.LandingPages;
+namespace ONEHub.WebApi.Features.LandingPage;
 
 internal static class BaseMediaEndpoint
 {
-    internal static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
+    internal static RouteGroupBuilder RegisterMediaEndpoints(
+        IEndpointRouteBuilder endpoints,
+        string routePrefix,
+        string tagName,
+        string functionName)
+    {
+        const int MaxRequestSize = ONEHub.Domain.Constants.LandingPages.FileUpload.MaxRequestSizeBytes;
+        
+        var groupEndpoint = endpoints.MapGroup(routePrefix)
+            .RequireAuthorization()
+            .WithTags(tagName);
+
+        groupEndpoint.MapGet("/filters", GetFilters);
+        groupEndpoint.MapPost("/list", (GetAssetListRequest request, IMediator mediator)
+            => GetList(request, mediator, functionName));
+        groupEndpoint.MapPost("/detail", GetDetail);
+        groupEndpoint.MapPost("/upload", UploadAssets)
+            .Accepts<IFormFileCollection>("multipart/form-data")
+            .WithMetadata(new RequestSizeLimitAttribute(MaxRequestSize))
+            .WithMetadata(new RequestFormLimitsAttribute { MultipartBodyLengthLimit = MaxRequestSize })
+            .DisableAntiforgery();
+
+        groupEndpoint.MapPost("/update", UpdateAsset)
+            .Accepts<IFormFile>("multipart/form-data")
+            .WithMetadata(new RequestSizeLimitAttribute(MaxRequestSize))
+            .WithMetadata(new RequestFormLimitsAttribute { MultipartBodyLengthLimit = MaxRequestSize })
+            .DisableAntiforgery();
+        groupEndpoint.MapPost("/status", UpdateAssetStatus);
+        groupEndpoint.MapDelete("/delete", DeleteAssets);
+
+        return groupEndpoint;
+    }
+
+    private static async Task<Ok<Result<FiltersResponse>>> GetFilters(IMediator mediator)
     {
         var query = new GetFiltersQuery();
 
@@ -22,7 +53,7 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
+    private static async Task<Results<Ok<Result<PagingData<AssetDetail>>>, ValidationProblem>> GetList(
         [FromBody] GetAssetListRequest request,
         IMediator mediator,
         string functionName)
@@ -49,7 +80,7 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
+    private static async Task<Results<Ok<Result<AssetDetail>>, ValidationProblem>> GetDetail(
         [FromBody] GetAssetDetailRequest request,
         IMediator mediator)
     {
@@ -68,7 +99,7 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
+    private static async Task<Results<Ok<Result>, ValidationProblem>> UploadAssets(
         [FromForm] UploadAssetsRequest request,
         IFormFileCollection files,
         IMediator mediator)
@@ -78,19 +109,29 @@ internal static class BaseMediaEndpoint
             return TypedResults.ValidationProblem(errors);
         }
 
+        if (request.ModuleRows.Count == 0)
+        {
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]>
+            {
+                ["moduleRows"] = ["At least one module is required."]
+            });
+        }
+
         if (files.Count == 0)
         {
-            return TypedResults.Ok(Result.Failure(Error.SystemError with
+            return TypedResults.ValidationProblem(new Dictionary<string, string[]>
             {
-                Message = "No files uploaded"
-            }));
+                ["files"] = ["No files uploaded"]
+            });
         }
 
         var moduleRows = request.ModuleRows
             .Select((moduleId, index) => new ModuleRow
             {
                 ModuleId = moduleId,
-                InputMediaNames = request.InputMediaNames?[index],
+                InputMediaNames = request.InputMediaNames != null && index < request.InputMediaNames.Count
+                    ? request.InputMediaNames[index]
+                    : null,
                 Files = files
                     .Where(f => f.Name.Equals(moduleId.ToString(), StringComparison.OrdinalIgnoreCase))
                     .ToList()
@@ -108,7 +149,7 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
+    private static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAsset(
         [FromForm] UpdateAssetRequest request,
         IFormFile? file,
         IMediator mediator)
@@ -134,7 +175,7 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
+    private static async Task<Results<Ok<Result>, ValidationProblem>> UpdateAssetStatus(
         [FromBody] UpdateAssetStatusRequest request,
         IMediator mediator)
     {
@@ -154,10 +195,15 @@ internal static class BaseMediaEndpoint
         return TypedResults.Ok(result);
     }
 
-    internal static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
+    private static async Task<Results<Ok<Result>, ValidationProblem>> DeleteAssets(
         [FromBody] DeleteAssetRequest request,
         IMediator mediator)
     {
+        if (!MiniValidator.TryValidate(request, out var errors))
+        {
+            return TypedResults.ValidationProblem(errors);
+        }
+
         var command = new DeleteAssetsCommand
         {
             MediaIds =  request.MediaIds

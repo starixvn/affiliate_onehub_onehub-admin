@@ -30,9 +30,7 @@ export const useMediaFilters = () => {
         modules: response?.modules ?? [],
         countries: response?.targetCountries ?? [],
         languages: response?.languages ?? [],
-        mediaStatus: (response?.statusInfos ?? []).filter(
-          (status) => status.statusId !== 0
-        ),
+        mediaStatus: response?.statusInfos ?? [],
         landingPageUrl: response?.landingPageUrl ?? '',
         bannerRootUrl: response?.bannerRootUrl ?? '',
         maximumFiles: response?.maximumFiles ?? 50,

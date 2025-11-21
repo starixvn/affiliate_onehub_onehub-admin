@@ -6,7 +6,7 @@ using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.Application.Features.LandingPages.AssetUploader;
+namespace ONEHub.Application.Features.LandingPages.BaseMedia.Queries;
 
 public class GetFiltersQuery : BaseQuery<FiltersResponse>;
 
@@ -30,24 +30,21 @@ public class GetFiltersHandler(
     {
         var appSettings = configuration.GetSection("AppSettings");
         var bannerRootUrl = appSettings["BannerRootUrl"] ?? string.Empty;
-        var maxFiles = int.TryParse(appSettings["MaximumFiles"], out var mf) ? mf : 50;
-        var maxFileSize = int.TryParse(appSettings["MaxFileSize"], out var mfs) ? mfs : 3;
-        var allowedExtensions = (appSettings["AllowedImageExtensions"]?.Split(',')
-                                 ?? [".jpg", ".jpeg", ".png", ".gif", ".webp"])
-            .Select(e => e.Trim())
-            .ToArray();
+
+        const int maxFiles = ONEHub.Domain.Constants.LandingPages.FileUpload.MaximumFiles;
+        const int maxFileSize = ONEHub.Domain.Constants.LandingPages.FileUpload.MaxFileSizeMegabytes;
+        var allowedExtensions = ONEHub.Domain.Constants.LandingPages.FileExtensions.AllImageExtensions;
 
         var targetCountriesTask = systemRepository.GetTargetCountryAsync();
         var languagesTask = systemRepository.GetTargetCountryAsync(false);
         var modulesTask = landingPageRepository.GetModuleAsync();
-        var statusTask = landingPageRepository.GetStatusAsync();
 
-        await Task.WhenAll(targetCountriesTask, languagesTask, modulesTask, statusTask);
+        await Task.WhenAll(targetCountriesTask, languagesTask, modulesTask);
 
         var targetCountries = targetCountriesTask.Result.Data.OrderBy(x => x.TargetCountryName);
         var languages = languagesTask.Result.Data.OrderBy(x => x.LanguageName);
         var modules = modulesTask.Result.Data.OrderBy(x => x.ModuleName);
-        var statuses = statusTask.Result.Data!;
+        var statuses = ONEHub.Domain.Constants.LandingPages.AssetStatusList;
 
         var response = new FiltersResponse(
             bannerRootUrl,

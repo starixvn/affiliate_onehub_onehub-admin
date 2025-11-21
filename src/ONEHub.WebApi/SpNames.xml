@@ -30,12 +30,12 @@
         <Setting Key="OH_LinkGenerator_Ins" SpName="OH_LinkGenerator_Ins" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
     <Function Name="Language">
-        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" >
+        <Setting Key="OH_TargetCountry_Sel" SpName="OH_TargetCountry_Sel" DbName="DBOH.ONEHub.wsv_oh" >
             <Mapping DataField="MarketId" ObjectProperty="LanguageCode" />
             <Mapping DataField="MarketName" ObjectProperty="LanguageName" />
             <Mapping DataField="ShortedCode" ObjectProperty="ShortedLanguageCode" />
         </Setting>
-        <Setting Key="OH_Market_Sel" SpName="OH_Market_Sel_UAT1" DbName="DBOH.ONEHub.wsv_oh" >
+        <Setting Key="OH_Market_Sel" SpName="OH_Market_Sel" DbName="DBOH.ONEHub.wsv_oh" >
             <Mapping DataField="MarketId" ObjectProperty="LanguageCode" />
             <Mapping DataField="MarketName" ObjectProperty="LanguageName" />
             <Mapping DataField="ShortedCode" ObjectProperty="ShortedLanguageCode" />
@@ -43,13 +43,12 @@
     </Function>
     <Function Name="LandingPages">
         <Setting Key="OH_LandingPage_Sel" SpName="OH_LandingPage_Sel" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_AssetUploader_ManageSel" SpName="OH_AssetUploader_ManageSel_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_AssetUploader_Ins" SpName="OH_AssetUploader_Ins_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_AssetUploader_Upd" SpName="OH_AssetUploader_Upd_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_AssetUploader_Del" SpName="OH_AssetUploader_Del_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_AssetUploader_Status_Upd" SpName="OH_AssetUploader_Status_Upd_UAT1" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_AssetUploader_ManageSel" SpName="OH_AssetUploader_ManageSel" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_AssetUploader_Ins" SpName="OH_AssetUploader_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_AssetUploader_Upd" SpName="OH_AssetUploader_Upd" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_AssetUploader_Del" SpName="OH_AssetUploader_Del" DbName="DBOH.ONEHub.wsv_oh" />
+        <Setting Key="OH_AssetUploader_Status_Upd" SpName="OH_AssetUploader_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Module_Sel" SpName="OH_Module_Sel" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_LandingPage_Status_Sel" SpName="OH_LandingPage_Status_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
 </Functions>
 

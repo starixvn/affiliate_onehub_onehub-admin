@@ -1,10 +1,9 @@
-using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 using Fanex.Logging;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using ONEHub.Application.Services;
+using ONEHub.Domain.Constants;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
 
@@ -21,48 +20,32 @@ public class S3FileService : IFileService
     private const string FILE_NAME_CAN_NOT_CONTAIN = "File name cannot contain special characters: \\ / : * ? \" < > # % & +";
     private const string MAX_LENGTH_FILE_NAME_MESSAGE = "The maximum length of file name is 200.";
 
-    private readonly IConfiguration _configuration;
     private readonly IStorageService _storageService;
     private readonly IImageService _imageService;
     private readonly ILogger _logger;
 
-    private readonly string[] _allowedExtensions;
-    private readonly long _maxFileSizeBytes;
-    private readonly int _maxImageWidth;
-    private readonly int _maxImageHeight;
-
     public S3FileService(
-        IConfiguration configuration,
         IStorageService storageService,
         IImageService imageService,
         ILogger logger)
     {
-        _configuration = configuration;
         _storageService = storageService;
         _imageService = imageService;
         _logger = logger;
-
-        _allowedExtensions = _configuration["AppSettings:AllowedImageExtensions"]!.Split(',');
-
-        var maxFileSizeMb = int.Parse(_configuration["AppSettings:MaxFileSize"]!, CultureInfo.InvariantCulture);
-        _maxFileSizeBytes = maxFileSizeMb * 1024 * 1024;
-
-        _maxImageWidth = int.Parse(_configuration["AppSettings:MaxImageWidth"]!, CultureInfo.InvariantCulture);
-        _maxImageHeight = int.Parse(_configuration["AppSettings:MaxImageHeight"]!, CultureInfo.InvariantCulture);
     }
 
     public Result ValidateFile(string fileName, long contentLength, Stream inputStream)
     {
-        if (contentLength > _maxFileSizeBytes)
+        if (contentLength > LandingPages.FileUpload.MaxFileSizeBytes)
         {
             return Result.Failure(Error.SystemError with
             {
-                Message = string.Format(FILE_SIZE_EXCEEDED_MESSAGE, _maxFileSizeBytes / (1024 * 1024))
+                Message = string.Format(FILE_SIZE_EXCEEDED_MESSAGE, LandingPages.FileUpload.MaxFileSizeBytes / (1024 * 1024))
             });
         }
 
         var extension = Path.GetExtension(fileName).ToLowerInvariant();
-        if (!_allowedExtensions.Contains(extension))
+        if (!LandingPages.FileExtensions.AllImageExtensions.Contains(extension))
         {
             return Result.Failure(Error.SystemError with
             {
@@ -70,7 +53,7 @@ public class S3FileService : IFileService
             });
         }
 
-        var validationResult = _imageService.ValidateImageDimensions(inputStream, _maxImageWidth, _maxImageHeight);
+        var validationResult = _imageService.ValidateImageDimensions(inputStream, LandingPages.FileUpload.MaxImageWidth, LandingPages.FileUpload.MaxImageHeight);
         if (!validationResult.IsSuccess)
         {
             return validationResult;
@@ -89,12 +72,11 @@ public class S3FileService : IFileService
             });
         }
 
-        var maxFiles = int.Parse(_configuration["AppSettings:MaximumFiles"] ?? "50", CultureInfo.InvariantCulture);
-        if (files.Count > maxFiles)
+        if (files.Count > LandingPages.FileUpload.MaximumFiles)
         {
             return Result.Failure(Error.SystemError with
             {
-                Message = $"Maximum {maxFiles} files allowed"
+                Message = $"Maximum {LandingPages.FileUpload.MaximumFiles} files allowed"
             });
         }
 
@@ -167,7 +149,7 @@ public class S3FileService : IFileService
         }
 
         var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
-        if (type == "File" && !_allowedExtensions.Contains(extension))
+        if (type == "File" && !LandingPages.FileExtensions.AllImageExtensions.Contains(extension))
         {
             message.Append($"{type} Name {index + 1} has invalid file type. Only image files are allowed.<br />");
         }
@@ -251,7 +233,7 @@ public class S3FileService : IFileService
         }
 
         var extension = Path.GetExtension(inputFileName).ToLowerInvariant();
-        if (!_allowedExtensions.Contains(extension))
+        if (!LandingPages.FileExtensions.AllImageExtensions.Contains(extension))
         {
             return Result.Failure(Error.SystemError with
             {

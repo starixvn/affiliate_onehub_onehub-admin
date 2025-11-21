@@ -11,9 +11,9 @@ using ONEHub.WebApi.Features.Component;
 using ONEHub.WebApi.Features.Domain;
 using ONEHub.WebApi.Features.GenerateLink;
 using ONEHub.WebApi.Features.LandingPage;
+using ONEHub.WebApi.Features.LandingPage.AssetUploader;
+using ONEHub.WebApi.Features.LandingPage.RegistrationForm;
 using ONEHub.WebApi.Features.Settings;
-using ONEHub.WebApi.Features.LandingPages.AssetUploader;
-using ONEHub.WebApi.Features.LandingPages.RegistrationForm;
 using Serilog;
 using Serilog.Events;
 

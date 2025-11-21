@@ -5,7 +5,7 @@ using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.Application.Features.LandingPages.AssetUploader.Queries;
+namespace ONEHub.Application.Features.LandingPages.BaseMedia.Queries;
 
 public class GetAssetListQuery : PagingQuery<AssetDetail>
 {

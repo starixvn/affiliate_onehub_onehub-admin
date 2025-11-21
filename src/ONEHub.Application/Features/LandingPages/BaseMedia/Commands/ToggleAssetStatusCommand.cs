@@ -4,7 +4,7 @@ using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
+namespace ONEHub.Application.Features.LandingPages.BaseMedia.Commands;
 
 public class ToggleAssetStatusCommand : BaseNonResultCommand
 {
