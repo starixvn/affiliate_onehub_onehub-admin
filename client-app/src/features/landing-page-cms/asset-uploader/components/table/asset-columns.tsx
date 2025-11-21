@@ -77,7 +77,7 @@ export const useAssetColumns = (
       accessorKey: 'mediaName',
       header: () => <div className='text-center'>{t('table.fileName')}</div>,
       meta: {
-        className: 'max-w-[250px] whitespace-normal',
+        className: 'min-w-[150px] max-w-[250px] whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
@@ -90,7 +90,7 @@ export const useAssetColumns = (
       accessorKey: 'moduleId',
       header: () => <div className='text-center'>{t('table.module')}</div>,
       meta: {
-        className: 'max-w-[200px] whitespace-normal',
+        className: 'min-w-[120px] max-w-[200px] whitespace-normal',
         displayName: t('table.module'),
       },
       cell: ({ row }) => (
@@ -138,7 +138,7 @@ export const useAssetColumns = (
         <div className='text-center'>{t('table.previewAsset')}</div>
       ),
       meta: {
-        className: '',
+        className: 'min-w-[120px]',
         displayName: t('table.previewAsset'),
       },
       cell: ({ row }) => {

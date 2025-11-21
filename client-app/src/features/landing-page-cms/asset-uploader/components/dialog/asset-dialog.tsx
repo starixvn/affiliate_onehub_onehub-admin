@@ -142,13 +142,14 @@ export function AssetDialog({ open, onOpenChange, item }: AssetDialogProps) {
 
   useEffect(() => {
     if (
-      ((errors.files && Object.keys(errors.files).length > 0) ||
-        backendError) &&
+      ((errors.files && Object.keys(errors.files).length > 0)
+        || errors.modulesWithoutFiles
+        || backendError) &&
       scrollContainerRef.current
     ) {
       scrollContainerRef.current.scrollTo({ top: 0, behavior: 'smooth' })
     }
-  }, [errors.files, backendError])
+  }, [errors.files, errors.modulesWithoutFiles, backendError])
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

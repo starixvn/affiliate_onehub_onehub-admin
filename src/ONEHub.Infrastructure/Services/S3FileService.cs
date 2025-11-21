@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using Fanex.Logging;
 using Microsoft.AspNetCore.Http;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Constants;
@@ -9,7 +8,11 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Infrastructure.Services;
 
-public class S3FileService : IFileService
+public class S3FileService(
+    IStorageService storageService,
+    IImageService imageService,
+    ILogProvider logger)
+    : IFileService
 {
     private const int MAX_LENGTH = 200;
     private const string RESTRICTED_MULTI_INPUT_FILE_NAMES_PATTERN = "[\\\\/:*?\"<>#%&+]";
@@ -19,20 +22,6 @@ public class S3FileService : IFileService
     private const string FILE_SIZE_EXCEEDED_MESSAGE = "File size exceeds maximum limit of {0}MB.";
     private const string FILE_NAME_CAN_NOT_CONTAIN = "File name cannot contain special characters: \\ / : * ? \" < > # % & +";
     private const string MAX_LENGTH_FILE_NAME_MESSAGE = "The maximum length of file name is 200.";
-
-    private readonly IStorageService _storageService;
-    private readonly IImageService _imageService;
-    private readonly ILogger _logger;
-
-    public S3FileService(
-        IStorageService storageService,
-        IImageService imageService,
-        ILogger logger)
-    {
-        _storageService = storageService;
-        _imageService = imageService;
-        _logger = logger;
-    }
 
     public Result ValidateFile(string fileName, long contentLength, Stream inputStream)
     {
@@ -53,7 +42,7 @@ public class S3FileService : IFileService
             });
         }
 
-        var validationResult = _imageService.ValidateImageDimensions(inputStream, LandingPages.FileUpload.MaxImageWidth, LandingPages.FileUpload.MaxImageHeight);
+        var validationResult = imageService.ValidateImageDimensions(inputStream, LandingPages.FileUpload.MaxImageWidth, LandingPages.FileUpload.MaxImageHeight);
         if (!validationResult.IsSuccess)
         {
             return validationResult;
@@ -178,7 +167,7 @@ public class S3FileService : IFileService
         {
             var key = string.IsNullOrEmpty(folder) ? fileName : $"{folder}/{fileName}";
 
-            if (await _storageService.FileExistsAsync(key))
+            if (await storageService.FileExistsAsync(key))
             {
                 existingFiles.Add(fileName);
             }
@@ -280,19 +269,19 @@ public class S3FileService : IFileService
 
     public async Task UploadFileAsync(IFormFile file, string filePath)
     {
-        var success = await _storageService.UploadFileAsync(file, filePath);
+        var success = await storageService.UploadFileAsync(file, filePath);
         if (!success)
         {
-            await _logger.CriticalAsync($"Failed to upload file to S3: {filePath}");
+            await logger.SentryInfoAsync($"Failed to upload file to S3: {filePath}");
         }
     }
 
     public async Task DeleteFileAsync(string filePath)
     {
-        var success = await _storageService.DeleteFileAsync(filePath);
+        var success = await storageService.DeleteFileAsync(filePath);
         if (!success)
         {
-            await _logger.CriticalAsync($"Failed to upload file to S3: {filePath}");
+            await logger.SentryInfoAsync($"Failed to delete file from S3: {filePath}");
         }
     }
 

@@ -1,4 +1,4 @@
-import { apiClient, type IAxiosErrorData } from '@/lib/api/client'
+import { apiClient } from '@/lib/api/client'
 import type {
   DeleteMediaResponse,
   GetMediaListRequest,
@@ -68,10 +68,14 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
+      const err = error as {
+        errorCode: number,
+        message: string,
+        errorMessage: string
+      }
       return {
         errorCode: err.errorCode || 1,
-        errorMessage: null,
+        errorMessage: err.message || err.errorMessage,
         result: null,
       } as unknown as CreateMediaResponse
     }
@@ -85,10 +89,14 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
+      const err = error as {
+        errorCode: number,
+        message: string,
+        errorMessage: string
+      }
       return {
         errorCode: err.errorCode || 1,
-        errorMessage: null,
+        errorMessage: err.message || err.errorMessage,
         result: null,
       } as unknown as DeleteMediaResponse
     }
@@ -116,10 +124,14 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
+      const err = error as {
+        errorCode: number,
+        message: string,
+        errorMessage: string
+      }
       return {
         errorCode: err.errorCode || 1,
-        errorMessage: null,
+        errorMessage: err.message || err.errorMessage,
         result: null,
       } as unknown as UpdateMediaResponse
     }
@@ -136,10 +148,14 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
+      const err = error as {
+        errorCode: number,
+        message: string,
+        errorMessage: string
+      }
       return {
         errorCode: err.errorCode || 1,
-        errorMessage: null,
+        errorMessage: err.message || err.errorMessage,
         result: null,
       } as unknown as UpdateMediaStatusResponse
     }

@@ -75,7 +75,7 @@ export const useRegisterFormColumns = (
       accessorKey: 'mediaName',
       header: () => <div className='text-center'>{t('table.formName')}</div>,
       meta: {
-        className: 'max-w-[250px] whitespace-normal',
+        className: 'min-w-[150px] max-w-[250px] whitespace-normal',
         displayName: t('table.formName'),
       },
       cell: ({ row }) => (
@@ -88,7 +88,7 @@ export const useRegisterFormColumns = (
       accessorKey: 'fileName',
       header: () => <div className='text-center'>{t('table.fileName')}</div>,
       meta: {
-        className: 'max-w-[250px] whitespace-normal',
+        className: 'min-w-[150px] max-w-[250px] whitespace-normal',
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => {
@@ -138,7 +138,7 @@ export const useRegisterFormColumns = (
       accessorKey: 'preview',
       header: () => <div className='text-center'>{t('table.previewForm')}</div>,
       meta: {
-        className: '',
+        className: 'min-w-[120px]',
         displayName: t('table.previewForm'),
       },
       cell: ({ row }) => {

@@ -94,8 +94,11 @@ export function AssetUploaderProvider({
       ? modules.map((_) => _.moduleId.toString()).join(',')
       : normalizedParams.moduleIds,
   }
-  const { data, isLoading, isError } = useGetMediaList(
-    mediaFilters?.isLoading === false
+
+  const isFiltersLoading = mediaFilters.isLoading
+
+  const { data, isLoading: isListLoading, isError } = useGetMediaList(
+    !isFiltersLoading
       ? (params as GetMediaListRequest)
       : undefined
   )
@@ -114,7 +117,7 @@ export function AssetUploaderProvider({
         totalCount: data?.totalItem ?? 0,
         pageIndex: data?.pageIndex ?? 1,
         pageSize: data?.pageSize ?? 10,
-        isLoading,
+        isLoading: isFiltersLoading || isListLoading,
         isError,
 
         modules,

@@ -109,11 +109,6 @@ export function useFileHandlers(props: UseFileHandlersProps) {
               })
               return merged
             })
-
-            const moduleProps = props as ModuleFileHandlersProps
-            if (groupIndex === 0) {
-              moduleProps.setFileName(uploadedFiles[0].name)
-            }
           } else {
             const formProps = props as FormFileHandlersProps
             updateFilesInForm((existing) => {
