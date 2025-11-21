@@ -11,7 +11,7 @@ using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.Application.Features.LandingPages.AssetUploader.Commands;
+namespace ONEHub.Application.Features.LandingPages.BaseMedia.Commands;
 
 public class UploadAssetsCommand : BaseNonResultCommand
 {
@@ -49,7 +49,7 @@ public class UploadAssetsCommandHandler(
 
         var inputMediaNames = request.ModuleRows!
             .Where(r => !string.IsNullOrWhiteSpace(r.InputMediaNames))
-            .SelectMany(r => r.InputMediaNames.Split('|', StringSplitOptions.RemoveEmptyEntries))
+            .SelectMany(r => r.InputMediaNames?.Split('|', StringSplitOptions.RemoveEmptyEntries) ?? [])
             .ToArray();
         var inputFileNames = fileService.PrepareInputFileNames(allFiles, string.Empty);
 
@@ -108,7 +108,7 @@ public class UploadAssetsCommandHandler(
         for (var index = 0; index < moduleRows.Count; index++)
         {
             var moduleRow = moduleRows[index];
-            if (moduleRow.Files == null || !moduleRow.Files.Any())
+            if (!moduleRow.Files.Any())
             {
                 emptyModuleIndexes.Add(index);
             }

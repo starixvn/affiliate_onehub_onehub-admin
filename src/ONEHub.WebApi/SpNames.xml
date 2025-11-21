@@ -49,7 +49,6 @@
         <Setting Key="OH_AssetUploader_Del" SpName="OH_AssetUploader_Del" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_AssetUploader_Status_Upd" SpName="OH_AssetUploader_Status_Upd" DbName="DBOH.ONEHub.wsv_oh" />
         <Setting Key="OH_Module_Sel" SpName="OH_Module_Sel" DbName="DBOH.ONEHub.wsv_oh" />
-        <Setting Key="OH_LandingPage_Status_Sel" SpName="OH_LandingPage_Status_Sel" DbName="DBOH.ONEHub.wsv_oh" />
     </Function>
 </Functions>
 

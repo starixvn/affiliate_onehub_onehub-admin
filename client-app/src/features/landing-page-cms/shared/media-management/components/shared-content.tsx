@@ -5,12 +5,12 @@ export interface SharedContentProps<TDetail> {
   translationKey: string
   PrimaryButtons: React.ReactNode
   Table:
-    | React.ComponentType<{
-        data: TDetail[]
-        bannerRootUrl?: string
-        totalCount: number
-      }>
-    | (() => React.ReactElement)
+  | React.ComponentType<{
+    data: TDetail[]
+    bannerRootUrl?: string
+    totalCount: number
+  }>
+  | (() => React.ReactElement)
   items: TDetail[]
   bannerRootUrl?: string
   totalCount: number
@@ -36,11 +36,22 @@ export function SharedContent<TDetail>({
         <h2 className='text-2xl font-bold tracking-tight'>{t('page.title')}</h2>
         <p className='text-muted-foreground'>{t('page.description')}</p>
       </div>
-      {!isLoading && PrimaryButtons}
+      {items.length > 0 && PrimaryButtons}
     </div>
   )
 
-  if (isLoading) {
+  if (isError) {
+    return (
+      <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
+        {Header}
+        <div className='flex h-24 items-center justify-center'>
+          <div className='text-destructive'>{t('page.failedToLoad')}</div>
+        </div>
+      </Main>
+    )
+  }
+
+  if (isLoading || items.length === 0) {
     return (
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         {Header}
@@ -56,11 +67,7 @@ export function SharedContent<TDetail>({
       {Header}
 
       <div className='flex flex-1 flex-col gap-4'>
-        {isError ? (
-          <div className='flex h-24 items-center justify-center'>
-            <div className='text-destructive'>{t('page.failedToLoad')}</div>
-          </div>
-        ) : typeof Table === 'function' ? (
+        {typeof Table === 'function' ? (
           <Table
             data={items}
             bannerRootUrl={bannerRootUrl}
