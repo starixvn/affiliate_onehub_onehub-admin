@@ -140,6 +140,16 @@ export const getPageColumns = (
     enableSorting: false,
   },
   {
+    accessorKey: 'countryCode',
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(String(row.getValue(id)))
+    },
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
     accessorKey: 'countryName',
     header: ({ column }) => (
       <DataTableColumnHeader
@@ -155,6 +165,16 @@ export const getPageColumns = (
       className: '',
     },
     enableSorting: false,
+  },
+  {
+    accessorKey: 'languageCode',
+    header: () => null,
+    cell: () => null,
+    filterFn: (row, id, value) => {
+      return value.includes(String(row.getValue(id)))
+    },
+    enableSorting: false,
+    enableHiding: false,
   },
   {
     accessorKey: 'languageName',

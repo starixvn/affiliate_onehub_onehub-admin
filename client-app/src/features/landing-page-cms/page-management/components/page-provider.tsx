@@ -80,30 +80,62 @@ export function LandingPagesProvider({
     }
   }
 
+
+  const memoizedDefaultFromDate = React.useMemo(() => {
+    const date = defaultFromDate ?? new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    date.setHours(0, 0, 0, 0)
+    return date
+  }, [defaultFromDate])
+
+  const memoizedDefaultToDate = React.useMemo(() => {
+    const date = defaultToDate ?? new Date()
+    date.setHours(0, 0, 0, 0)
+    return date
+  }, [defaultToDate])
+
+  const contextValue = React.useMemo(() => ({
+    open,
+    setOpen,
+    currentRow,
+    setCurrentRow,
+    landingPages: data?.items ?? [],
+    totalCount: data?.totalItem ?? 0,
+    pageIndex: data?.pageIndex ?? 1,
+    pageSize: data?.pageSize ?? 10,
+    isLoading,
+    isError,
+    exportLandingPages,
+    countries,
+    languages,
+    pageStatus,
+    landingPageUrl,
+    today: today as Date,
+    defaultFromDate: memoizedDefaultFromDate as Date,
+    defaultToDate: memoizedDefaultToDate as Date,
+    navigate,
+    search,
+  }), [
+    open,
+    setOpen,
+    currentRow,
+    setCurrentRow,
+    data,
+    isLoading,
+    isError,
+    countries,
+    languages,
+    pageStatus,
+    landingPageUrl,
+    today,
+    memoizedDefaultFromDate,
+    memoizedDefaultToDate,
+    navigate,
+    search
+  ])
+
   return (
     <LandingPagesContext
-      value={{
-        open,
-        setOpen,
-        currentRow,
-        setCurrentRow,
-        landingPages: data?.items ?? [],
-        totalCount: data?.totalItem ?? 0,
-        pageIndex: data?.pageIndex ?? 1,
-        pageSize: data?.pageSize ?? 10,
-        isLoading,
-        isError,
-        exportLandingPages,
-        countries,
-        languages,
-        pageStatus,
-        landingPageUrl,
-        today: today as Date,
-        defaultFromDate: defaultFromDate as Date,
-        defaultToDate: defaultToDate as Date,
-        navigate,
-        search,
-      }}
+      value={contextValue}
     >
       {children}
     </LandingPagesContext>

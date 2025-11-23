@@ -5,7 +5,7 @@ import { format } from 'date-fns'
 import { Main } from '@/components/layout/main'
 import { PagesPrimaryButtons } from './components/page-primary-buttons'
 import { LandingPagesProvider, useLandingPages } from './components/page-provider'
-import { PageStatusFilters } from './components/page-status-filters'
+import { PageStatusDashboard } from './components/page-status-dashboard'
 import { PageDialogs } from './components/dialog/page-dialog'
 import { PageTable } from './components/table/page-table'
 import { usePageFilters } from './api/queries'
@@ -50,7 +50,7 @@ function PageManagementContent() {
         </div>
         <PagesPrimaryButtons />
       </div>
-      <PageStatusFilters selectedStatus={search.status as string | null} />
+      <PageStatusDashboard />
       <PageTable
         data={landingPages}
         totalCount={totalCount}

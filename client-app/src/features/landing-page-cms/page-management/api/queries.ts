@@ -31,38 +31,45 @@ export const usePageFilters = () => {
   const query = useQuery({
     queryKey: landingPageKeys.filters(),
     queryFn: () => landingPageApi.getPageFilters(),
-    select: (data) => {
-      const response = data.data
-      const today = response?.today ? new Date(response.today) : new Date()
-      const minDate = new Date('2024-12-31')
-
-      let defaultFromDate = response?.defaultFromDate
-        ? new Date(response.defaultFromDate)
-        : new Date(today.getFullYear(), today.getMonth(), 1)
-
-      if (defaultFromDate < minDate) {
-        defaultFromDate = minDate
-      }
-
-      const defaultToDate = response?.defaultToDate
-        ? new Date(response.defaultToDate)
-        : today
-
-      return {
-        countries: response?.targetCountries ?? [],
-        languages: response?.languages ?? [],
-        pageStatus: response?.statusInfos.filter((status: PageStatus) => status.statusId !== undefined) ?? [],
-        landingPageUrl: response?.landingPageUrl ?? '',
-        today,
-        defaultFromDate,
-        defaultToDate,
-      }
-    },
+    select: selectPageFilters,
   })
 
   return {
     ...query.data,
     isLoading: query.isLoading,
     error: query.error,
+  }
+}
+
+const selectPageFilters = (data: any) => {
+  const response = data.data
+  const today = response?.today ? new Date(response.today) : new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const minDate = new Date('2024-12-31')
+  minDate.setHours(0, 0, 0, 0)
+
+  let defaultFromDate = response?.defaultFromDate
+    ? new Date(response.defaultFromDate)
+    : new Date(today.getFullYear(), today.getMonth(), 1)
+  defaultFromDate.setHours(0, 0, 0, 0)
+
+  if (defaultFromDate < minDate) {
+    defaultFromDate = minDate
+  }
+
+  const defaultToDate = response?.defaultToDate
+    ? new Date(response.defaultToDate)
+    : today
+  defaultToDate.setHours(0, 0, 0, 0)
+
+  return {
+    countries: response?.targetCountries ?? [],
+    languages: response?.languages ?? [],
+    pageStatus: response?.statusInfos.filter((status: PageStatus) => status.statusId !== undefined) ?? [],
+    landingPageUrl: response?.landingPageUrl ?? '',
+    today,
+    defaultFromDate,
+    defaultToDate,
   }
 }

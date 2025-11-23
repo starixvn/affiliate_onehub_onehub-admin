@@ -286,18 +286,6 @@ export function PageTable({
       const column = table.getColumn(filter.columnId)
       column?.setFilterValue(filter.defaultValue)
     })
-    navigate({
-      search: {
-        ...search,
-        search: undefined,
-        status: DEFAULT_STATUS,
-        countryCode: undefined,
-        languageCode: undefined,
-        fromDate: defaultFromDate ? format(defaultFromDate, 'yyyy-MM-dd') : undefined,
-        toDate: defaultToDate ? format(defaultToDate, 'yyyy-MM-dd') : undefined,
-        pageIndex: 1,
-      },
-    })
   }
 
   const handleClearSearch = () => {
@@ -306,6 +294,9 @@ export function PageTable({
 
   const hasChangedFilters = useMemo(() => {
     const searchDiffers = searchValue !== ''
+
+    const fromDateDiffers = fromDate?.setHours(0, 0, 0, 0) !== defaultFromDate?.setHours(0, 0, 0, 0)
+    const toDateDiffers = toDate?.setHours(0, 0, 0, 0) !== defaultToDate?.setHours(0, 0, 0, 0)
 
     const filterDiffers = filters.some((filter) => {
       const currentValue = columnFilters.find(f => f.id === filter.columnId)?.value
@@ -342,8 +333,8 @@ export function PageTable({
       }
     })
 
-    return searchDiffers || filterDiffers
-  }, [searchValue, filters, columnFilters])
+    return searchDiffers || filterDiffers || fromDateDiffers || toDateDiffers
+  }, [searchValue, filters, columnFilters, fromDate, toDate, defaultFromDate, defaultToDate])
 
   return (
     <div className={cn('max-sm:has-[div[role="toolbar"]]:mb-16', 'flex flex-1 flex-col gap-4')}>

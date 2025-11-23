@@ -15,9 +15,7 @@ public class GetLandingPageListCriteria : PagingCriteria
 
     public DateTime? ToDate { get; set; }
 
-    public string? PageName { get; set; }
-
-    public string? CampaignName { get; set; }
+    public string? Search { get; set; }
 
     public bool? IsExportExcel { get; set; }
 
