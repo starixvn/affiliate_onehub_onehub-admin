@@ -32,7 +32,6 @@ public static class AuthEndpoints
     private static async Task<Results<Ok<Result<LoginResponse>>, ValidationProblem, UnauthorizedHttpResult>> Login(
         [FromBody] LoginRequest request,
         IHttpContextAccessor contextAccessor,
-        IOptions<JwtSetting> jwtOptions,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -63,7 +62,6 @@ public static class AuthEndpoints
     private static async Task<Results<Ok<Result<RefreshTokenResponse>>, ValidationProblem, UnauthorizedHttpResult>> Refresh(
         IHttpContextAccessor contextAccessor,
         ICurrentUserService currentUserService,
-        IOptions<JwtSetting> jwtOptions,
         IMediator mediator)
     {
         var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
@@ -114,7 +112,6 @@ public static class AuthEndpoints
 
     private static async Task<Results<Ok<Result<SsoResponse>>, UnauthorizedHttpResult>> Sso(
         IHttpContextAccessor contextAccessor,
-        IOptions<JwtSetting> jwtOptions,
         IMediator mediator)
     {
         var externalAccessToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.EXTERNAL_ACCESS_TOKEN);
@@ -146,6 +143,4 @@ public static class AuthEndpoints
 
         return TypedResults.Ok(result);
     }
-
-
 }
