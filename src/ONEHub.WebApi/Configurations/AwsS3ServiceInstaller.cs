@@ -1,3 +1,4 @@
+using System.Net;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
@@ -5,7 +6,7 @@ using Amazon.SecurityToken;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Services;
-using System.Net;
+using ONEHub.WebApi.HostedServices;
 
 namespace ONEHub.WebApi.Configurations;
 
@@ -20,15 +21,16 @@ public class AwsS3ServiceInstaller : IServiceInstaller
         {
             var s3Config = CreateS3Config(s3Setting!, proxySetting!);
             var credentials = CreateAwsCredentials(s3Setting, proxySetting);
-            
-            // Pre-warm credentials: Force AssumeRole to happen NOW during startup
-            // instead of lazy-loading on first request (which causes 20+ second delay)
+
             _ = credentials.GetCredentials();
-            
+
             return new AmazonS3Client(credentials, s3Config);
         });
 
         services.AddSingleton<IStorageService, S3StorageService>();
+
+        // Force warm-up immediately after service registration
+        services.AddHostedService<S3WarmupService>();
     }
 
     private static AmazonS3Config CreateS3Config(AwsS3Setting s3Setting, ProxySetting proxySetting)
@@ -39,7 +41,7 @@ public class AwsS3ServiceInstaller : IServiceInstaller
         };
 
         ConfigureProxy(config, proxySetting);
-        
+
         return config;
     }
 
@@ -79,15 +81,14 @@ public class AwsS3ServiceInstaller : IServiceInstaller
         var assumeRoleOptions = new AssumeRoleAWSCredentialsOptions
         {
             DurationSeconds = s3Setting.RoleSessionDurationSeconds,
-            ProxySettings = proxySetting.IsUseProxy 
+            ProxySettings = proxySetting.IsUseProxy
                 ? new WebProxy(proxySetting.ProxyHost, proxySetting.ProxyPort)
                 : null
         };
 
-        // AWS SDK automatically refreshes credentials ~5 minutes before expiration
         return new AssumeRoleAWSCredentials(
-            baseCredentials, 
-            s3Setting.RoleArn, 
+            baseCredentials,
+            s3Setting.RoleArn,
             "ONEHubAdminSession",
             assumeRoleOptions);
     }
