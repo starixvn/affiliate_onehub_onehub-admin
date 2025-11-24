@@ -6,7 +6,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Component.Commands;
 
-public class CreateComponentCommand : BaseNonResultCommand
+public class CreateComponentCommand : BaseCommand<ComponentCreatedResponse>
 {
     public int CategoryId { get; set; }
 
@@ -19,11 +19,13 @@ public class CreateComponentCommand : BaseNonResultCommand
     public int? DeviceId { get; set; }
 }
 
+public record ComponentCreatedResponse(int ComponentId);
+
 public class CreateComponentHandler(
     IComponentRepository componentRepository)
-    : IRequestHandler<CreateComponentCommand, Result>
+    : IRequestHandler<CreateComponentCommand, Result<ComponentCreatedResponse>>
 {
-    public async Task<Result> Handle(CreateComponentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<ComponentCreatedResponse>> Handle(CreateComponentCommand request, CancellationToken cancellationToken)
     {
         var param = new CreateComponentParam
         {
@@ -39,6 +41,11 @@ public class CreateComponentHandler(
 
         var createResult = await componentRepository.CreateComponentAsync(param);
 
-        return createResult;
+        if (createResult.IsFailure || createResult.Data is null)
+        {
+            return Result<ComponentCreatedResponse>.Failure(createResult.Error);
+        }
+
+        return Result<ComponentCreatedResponse>.Success(new ComponentCreatedResponse(createResult.Data.ComponentId));
     }
 }

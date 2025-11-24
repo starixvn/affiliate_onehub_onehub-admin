@@ -431,11 +431,7 @@ export function GenerateLinkForm() {
                       <Info className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 cursor-help' />
                     </TooltipTrigger>
                     <TooltipContent side='top'>
-                      <p>
-                        Customized the last part of your short link. Use 5-20
-                        characters, including lowercase letters, numbers,
-                        hyphens, and dots.
-                      </p>
+                      <p>{t('form.shortLinkValueTooltip')}</p>
                     </TooltipContent>
                   </Tooltip>
                   <Input

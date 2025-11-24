@@ -90,22 +90,6 @@ export const generateLinkDefaultValues: GenerateLinkFormValues = {
   note: '',
 }
 
-export type ComponentType = 'event' | 'group' | 'channel' | 'agency' | 'type'
-
-export const COMPONENT_CONFIG: Record<
-  ComponentType,
-  {
-    label: string
-    categoryId: number
-  }
-> = {
-  event: { label: 'Event', categoryId: 1 },
-  group: { label: 'Group', categoryId: 2 },
-  channel: { label: 'Channel', categoryId: 3 },
-  agency: { label: 'Agency', categoryId: 4 },
-  type: { label: 'Type', categoryId: 5 },
-}
-
 export const componentCreateFormSchema = z.object({
   componentName: z.string().trim().min(1, 'Name is required'),
   componentCode: z.string(),
