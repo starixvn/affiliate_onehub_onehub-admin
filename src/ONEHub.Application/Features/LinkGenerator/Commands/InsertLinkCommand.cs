@@ -242,14 +242,14 @@ public class InsertLinkCommandHandler(
         var pathSegment = pageType == PageType.Landing ? "/p1" : "";
 
         return $"https://{subdomain}.{request.DomainName}{pathSegment}/{Uri.EscapeDataString(request.ShortedLanguageCode)}/{Uri.EscapeDataString(request.PageCode)}" +
-               $"?ln={Uri.EscapeDataString(request.LinkName)}" +
-               $"&ic={Uri.EscapeDataString(identifierCode)}" +
-               $"&cmp={Uri.EscapeDataString(request.CampaignCode)}" +
-               $"&cty={Uri.EscapeDataString(request.CountryCode)}" +
+               $"?idCode={Uri.EscapeDataString(identifierCode)}" +
+               $"&ln={Uri.EscapeDataString(request.LinkName)}" +
+               $"&cp={Uri.EscapeDataString(request.CampaignCode)}" +
+               $"&ct={Uri.EscapeDataString(request.CountryCode)}" +
                $"&ev={Uri.EscapeDataString(request.EventCodes)}" +
-               $"&grp={Uri.EscapeDataString(request.GroupCode)}" +
-               $"&chn={Uri.EscapeDataString(request.ChannelCode)}" +
+               $"&gr={Uri.EscapeDataString(request.GroupCode)}" +
+               $"&cn={Uri.EscapeDataString(request.ChannelCode)}" +
                $"&ag={Uri.EscapeDataString(request.AgencyCode)}" +
-               $"&type={Uri.EscapeDataString(request.TypeCode)}";
+               $"&tp={Uri.EscapeDataString(request.TypeCode)}";
     }
 }
