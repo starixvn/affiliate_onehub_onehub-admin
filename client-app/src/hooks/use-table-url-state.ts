@@ -113,7 +113,8 @@ export function useTableUrlState(
   const pagination: PaginationState = useMemo(() => {
     const rawPageIndex = (search as SearchRecord)[pageKey]
     const rawPageSize = (search as SearchRecord)[pageSizeKey]
-    const pageIndexNum = typeof rawPageIndex === 'number' ? rawPageIndex : defaultPageIndex
+    const pageIndexNum =
+      typeof rawPageIndex === 'number' ? rawPageIndex : defaultPageIndex
     const pageSizeNum =
       typeof rawPageSize === 'number' ? rawPageSize : defaultPageSize
     return { pageIndex: Math.max(0, pageIndexNum - 1), pageSize: pageSizeNum }
@@ -126,7 +127,8 @@ export function useTableUrlState(
     navigate({
       search: (prev) => ({
         ...(prev as SearchRecord),
-        [pageKey]: nextPageIndex <= defaultPageIndex ? undefined : nextPageIndex,
+        [pageKey]:
+          nextPageIndex <= defaultPageIndex ? undefined : nextPageIndex,
         [pageSizeKey]:
           nextPageSize === defaultPageSize ? undefined : nextPageSize,
       }),
@@ -195,7 +197,8 @@ export function useTableUrlState(
     opts: { resetTo?: 'first' | 'last' } = { resetTo: 'first' }
   ) => {
     const currentPageIndex = (search as SearchRecord)[pageKey]
-    const pageIndexNum = typeof currentPageIndex === 'number' ? currentPageIndex : defaultPageIndex
+    const pageIndexNum =
+      typeof currentPageIndex === 'number' ? currentPageIndex : defaultPageIndex
     if (pageCount > 0 && pageIndexNum > pageCount) {
       navigate({
         replace: true,

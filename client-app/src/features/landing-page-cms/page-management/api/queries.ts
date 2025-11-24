@@ -1,5 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
-import type { GetLandingPagesRequest, GetPageManagementDashboardRequest, PageStatus } from '../types'
+import type {
+  GetLandingPagesRequest,
+  GetPageManagementDashboardRequest,
+  PageStatus,
+} from '../types'
 import { landingPageApi } from './client'
 
 export const landingPageKeys = {
@@ -44,7 +48,13 @@ export const usePageFilters = () => {
 const selectPageFilters = (data: any) => {
   const response = data.data
 
-  const minDate = response?.minDate ? new Date(response.minDate) : new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())
+  const minDate = response?.minDate
+    ? new Date(response.minDate)
+    : new Date(
+        new Date().getFullYear() - 2,
+        new Date().getMonth(),
+        new Date().getDate()
+      )
   minDate.setHours(0, 0, 0, 0)
 
   const maxDate = response?.maxDate ? new Date(response.maxDate) : new Date()
@@ -67,7 +77,10 @@ const selectPageFilters = (data: any) => {
   return {
     countries: response?.targetCountries ?? [],
     languages: response?.languages ?? [],
-    pageStatus: response?.statusInfos.filter((status: PageStatus) => status.statusId !== undefined) ?? [],
+    pageStatus:
+      response?.statusInfos.filter(
+        (status: PageStatus) => status.statusId !== undefined
+      ) ?? [],
     landingPageUrl: response?.landingPageUrl ?? '',
     minDate,
     maxDate,

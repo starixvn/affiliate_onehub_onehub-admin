@@ -1,8 +1,8 @@
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import { getRouteApi } from '@tanstack/react-router'
 import { type Row } from '@tanstack/react-table'
 import { Pencil, Copy, Trash2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { getRouteApi } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -13,8 +13,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { type LandingPage } from '../../data/schema'
-import { useLandingPages } from '../page-provider'
 import { savePageManagementFilters } from '../../utils/filter-storage'
+import { useLandingPages } from '../page-provider'
 
 const route = getRouteApi('/iframe/landing-page-cms/page-management/')
 
@@ -82,4 +82,3 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
     </DropdownMenu>
   )
 }
-

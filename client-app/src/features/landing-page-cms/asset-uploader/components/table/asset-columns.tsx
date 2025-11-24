@@ -81,7 +81,7 @@ export const useAssetColumns = (
         displayName: t('table.fileName'),
       },
       cell: ({ row }) => (
-        <div className='font-medium break-all overflow-hidden'>
+        <div className='overflow-hidden font-medium break-all'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -94,7 +94,7 @@ export const useAssetColumns = (
         displayName: t('table.module'),
       },
       cell: ({ row }) => (
-        <div className='break-all overflow-hidden'>
+        <div className='overflow-hidden break-all'>
           {row.original.moduleName}
         </div>
       ),
@@ -168,7 +168,7 @@ export const useAssetColumns = (
       cell: ({ row }) => (
         <MediaStatusCell
           row={row}
-          onStatusChange={onStatusChange || (() => { })}
+          onStatusChange={onStatusChange || (() => {})}
         />
       ),
       filterFn: (row, id, value) => {
@@ -183,8 +183,8 @@ export const useAssetColumns = (
           <MediaRowActions
             row={row}
             translationKey={TRANSLATION_KEY}
-            onEdit={onEdit || (() => { })}
-            onDelete={onDelete || (() => { })}
+            onEdit={onEdit || (() => {})}
+            onDelete={onDelete || (() => {})}
           />
         </div>
       ),

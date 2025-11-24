@@ -3,8 +3,8 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios'
-import { tokenService } from '@/lib/auth/token-service'
 import type { IAxiosResponse } from '@/lib/api/types'
+import { tokenService } from '@/lib/auth/token-service'
 
 export interface IAxiosErrorData extends Error {
   status?: number
@@ -68,7 +68,12 @@ apiClient.interceptors.response.use(
     const isRefreshEndpoint = originalRequest.url?.includes('/auth/refresh')
     const isSsoEndpoint = originalRequest.url?.includes('/auth/sso')
 
-    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshEndpoint && !isSsoEndpoint) {
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isRefreshEndpoint &&
+      !isSsoEndpoint
+    ) {
       if (isRefreshing) {
         return new Promise((resolve) => {
           subscribeTokenRefresh((token: string) => {

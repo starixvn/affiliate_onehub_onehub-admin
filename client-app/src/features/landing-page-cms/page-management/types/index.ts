@@ -15,7 +15,8 @@ export interface GetLandingPagesRequest {
 
 export type GetLandingPagesResponseData = IPaginatedResponse<LandingPage>
 
-export type GetLandingPagesResponse = IAxiosResponse<GetLandingPagesResponseData>
+export type GetLandingPagesResponse =
+  IAxiosResponse<GetLandingPagesResponseData>
 
 export interface GetLandingPageSummaryResponseData {
   total: number

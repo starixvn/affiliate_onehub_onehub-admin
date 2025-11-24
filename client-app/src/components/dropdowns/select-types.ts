@@ -14,4 +14,3 @@ export interface NestedSelectGroup {
 }
 
 export type SelectOptions = SelectOption[] | SelectGroup[] | NestedSelectGroup[]
-

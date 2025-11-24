@@ -111,13 +111,23 @@
       "warningMessage": "请谨慎操作，此操作无法回滚。",
       "confirm": "删除"
     },
+    "statusChange": {
+      "title": "更改页面状态",
+      "message": "您确定要更改状态吗",
+      "from": "从",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "bulkStatusChange": {
+      "title": "批量更改页面状态",
+      "message": "您确定要将 {{count}} 个页面的状态更改为",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
     "multiDelete": {
       "title_other": "删除 {{count}} 个活动",
       "message": "您确定要删除选中的活动吗？",
       "description": "此操作无法撤销。这将永久删除选中的活动及所有相关数据。",
-      "confirmLabel": "输入 \"{{word}}\" 以确认：",
-      "confirmPlaceholder": "输入 \"{{word}}\" 以确认。",
-      "confirmWord": "DELETE",
       "warning": "警告！",
       "warningMessage": "请谨慎操作，此操作无法回滚。",
       "confirm": "删除"
@@ -125,8 +135,7 @@
     "multiDeleteToast": {
       "deleting": "正在删除活动...",
       "deleted_other": "已删除 {{count}} 个活动",
-      "deleteFailed": "删除活动失败",
-      "confirmRequired": "请输入 \"{{word}}\" 以确认。"
+      "deleteFailed": "删除活动失败"
     }
   }
 }

@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api/client'
+import type { IAxiosResponse } from '@/lib/api/types'
 import type {
   TargetCountry,
   CampaignInfo,
@@ -8,7 +9,6 @@ import type {
   InsertLinkRequest,
   InsertLinkResponse,
 } from '../types'
-import type { IAxiosResponse } from '@/lib/api/types'
 
 type InsertComponentRequest = {
   componentName: string
@@ -19,9 +19,8 @@ type InsertComponentRequest = {
 
 export const linkGeneratorApi = {
   async getCampaigns(): Promise<IAxiosResponse<CampaignInfo[]>> {
-    const response = await apiClient.get<IAxiosResponse<CampaignInfo[]>>(
-      '/campaign/dropdown'
-    )
+    const response =
+      await apiClient.get<IAxiosResponse<CampaignInfo[]>>('/campaign/dropdown')
     return response.data
   },
 
@@ -32,7 +31,9 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async getLanguages(countryCode: string): Promise<IAxiosResponse<TargetCountry[]>> {
+  async getLanguages(
+    countryCode: string
+  ): Promise<IAxiosResponse<TargetCountry[]>> {
     const response = await apiClient.get<IAxiosResponse<TargetCountry[]>>(
       '/settings/languages',
       { params: { countryCode } }
@@ -40,7 +41,9 @@ export const linkGeneratorApi = {
     return response.data
   },
 
-  async getComponentsByCategory(categoryId: number): Promise<IAxiosResponse<ComponentInfo[]>> {
+  async getComponentsByCategory(
+    categoryId: number
+  ): Promise<IAxiosResponse<ComponentInfo[]>> {
     const response = await apiClient.get<IAxiosResponse<ComponentInfo[]>>(
       '/component/category',
       { params: { categoryId } }
@@ -68,14 +71,19 @@ export const linkGeneratorApi = {
     return this.getComponentsByCategory(5)
   },
 
-  async getLandingPages(): Promise<IAxiosResponse<Record<string, LandingPageOption[]>>> {
-    const response = await apiClient.get<IAxiosResponse<Record<string, LandingPageOption[]>>>(
-      '/landing-page/options'
-    )
+  async getLandingPages(): Promise<
+    IAxiosResponse<Record<string, LandingPageOption[]>>
+  > {
+    const response = await apiClient.get<
+      IAxiosResponse<Record<string, LandingPageOption[]>>
+    >('/landing-page/options')
     return response.data
   },
 
-  async getDomains(countryCode: string, domainType: number): Promise<IAxiosResponse<DomainInfo[]>> {
+  async getDomains(
+    countryCode: string,
+    domainType: number
+  ): Promise<IAxiosResponse<DomainInfo[]>> {
     const response = await apiClient.get<IAxiosResponse<DomainInfo[]>>(
       '/domain',
       { params: { countryCode, domainType } }
@@ -84,10 +92,7 @@ export const linkGeneratorApi = {
   },
 
   async insertComponent(data: InsertComponentRequest): Promise<IAxiosResponse> {
-    const response = await apiClient.post<IAxiosResponse>(
-      '/component',
-      data
-    )
+    const response = await apiClient.post<IAxiosResponse>('/component', data)
     return response.data
   },
 
@@ -104,11 +109,7 @@ export const linkGeneratorApi = {
     description?: string
     statusId?: number
   }): Promise<IAxiosResponse> {
-    const response = await apiClient.post<IAxiosResponse>(
-      '/campaign',
-      data
-    )
+    const response = await apiClient.post<IAxiosResponse>('/campaign', data)
     return response.data
   },
 }
-

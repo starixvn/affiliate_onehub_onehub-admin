@@ -43,7 +43,9 @@ export const getCampaignColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => <div className='text-center'>{row.getValue('rowIdx')}</div>,
+    cell: ({ row }) => (
+      <div className='text-center'>{row.getValue('rowIdx')}</div>
+    ),
     meta: {
       className: cn('sticky start-11 z-10 w-12 min-w-12 border-e'),
       displayName: t('table.columns.no'),

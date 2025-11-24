@@ -10,8 +10,8 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { DataTableBulkActions as BulkActionsToolbar } from '@/components/data-table'
-import { useUpdateBatchLandingPageStatus } from '../../api/commands'
 import { type LandingPage } from '../../data/schema'
+import { useLandingPages } from '../page-provider'
 
 type PageBulkActionsProps = {
   table: Table<LandingPage>
@@ -24,7 +24,7 @@ export function PageBulkActions({
 }: PageBulkActionsProps) {
   const { t } = useTranslation('page-management')
   const selectedRows = table.getFilteredSelectedRowModel().rows
-  const updateBatchStatusMutation = useUpdateBatchLandingPageStatus()
+  const { setPendingBulkStatusChange, setOpen } = useLandingPages()
 
   const { activeCount, inactiveCount, draftCount } = useMemo(() => {
     return {
@@ -47,23 +47,15 @@ export function PageBulkActions({
       return
     }
 
-    const pageIds = affectedPages
-      .map((row) => row.original.pageId)
-      .join(',')
+    const pageIds = affectedPages.map((row) => row.original.pageId).join(',')
 
-    updateBatchStatusMutation.mutate(
-      {
-        pageIds,
-        statusId: status,
-      },
-      {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            table.resetRowSelection()
-          }
-        },
-      }
-    )
+    setPendingBulkStatusChange({
+      pageIds,
+      statusId: status,
+      affectedCount: affectedPages.length,
+      onSuccess: () => table.resetRowSelection(),
+    })
+    setOpen('bulkStatusChange')
   }
 
   return (
@@ -162,4 +154,3 @@ export function PageBulkActions({
     </BulkActionsToolbar>
   )
 }
-

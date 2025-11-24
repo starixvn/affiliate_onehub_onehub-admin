@@ -64,7 +64,8 @@ export function MediaBulkActions({
         </TooltipTrigger>
         <TooltipContent>
           <p>
-            {t('bulkActions.changeToActive')}: {activeCount} {entityName}{activeCount !== 1 ? 's' : ''}
+            {t('bulkActions.changeToActive')}: {activeCount} {entityName}
+            {activeCount !== 1 ? 's' : ''}
           </p>
         </TooltipContent>
       </Tooltip>
@@ -86,7 +87,8 @@ export function MediaBulkActions({
         </TooltipTrigger>
         <TooltipContent>
           <p>
-            {t('bulkActions.changeToInactive')}: {inactiveCount} {entityName}{inactiveCount !== 1 ? 's' : ''}
+            {t('bulkActions.changeToInactive')}: {inactiveCount} {entityName}
+            {inactiveCount !== 1 ? 's' : ''}
           </p>
         </TooltipContent>
       </Tooltip>

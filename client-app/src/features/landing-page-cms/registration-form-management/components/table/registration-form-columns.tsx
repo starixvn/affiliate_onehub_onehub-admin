@@ -79,7 +79,7 @@ export const useRegisterFormColumns = (
         displayName: t('table.formName'),
       },
       cell: ({ row }) => (
-        <div className='font-medium break-all overflow-hidden'>
+        <div className='overflow-hidden font-medium break-all'>
           {row.getValue('mediaName')}
         </div>
       ),
@@ -98,7 +98,7 @@ export const useRegisterFormColumns = (
           ? fileNameStr.split('/').pop() || ''
           : fileNameStr
 
-        return <div className='break-all overflow-hidden'>{displayName}</div>
+        return <div className='overflow-hidden break-all'>{displayName}</div>
       },
     },
     {
@@ -168,7 +168,7 @@ export const useRegisterFormColumns = (
       cell: ({ row }) => (
         <MediaStatusCell
           row={row}
-          onStatusChange={onStatusChange || (() => { })}
+          onStatusChange={onStatusChange || (() => {})}
         />
       ),
       filterFn: (row, id, value) => {
@@ -183,8 +183,8 @@ export const useRegisterFormColumns = (
           <MediaRowActions
             row={row}
             translationKey={TRANSLATION_KEY}
-            onEdit={onEdit || (() => { })}
-            onDelete={onDelete || (() => { })}
+            onEdit={onEdit || (() => {})}
+            onDelete={onDelete || (() => {})}
           />
         </div>
       ),

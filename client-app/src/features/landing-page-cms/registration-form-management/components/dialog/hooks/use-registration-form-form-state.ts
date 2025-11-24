@@ -6,9 +6,7 @@ import type {
 } from '../../../data/schema'
 import { INITIAL_VALIDATION_STATE } from '../../../data/validation'
 
-export function useRegisterFormFormState(
-  item?: RegisterFormDetail | null
-) {
+export function useRegisterFormFormState(item?: RegisterFormDetail | null) {
   const [languageOptions, setLanguageOptions] = useState<
     Array<{ value: string; label: string }>
   >([])

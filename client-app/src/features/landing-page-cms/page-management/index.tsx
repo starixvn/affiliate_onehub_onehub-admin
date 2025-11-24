@@ -1,14 +1,17 @@
 import { useEffect, useRef } from 'react'
+import { format } from 'date-fns'
 import { getRouteApi } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { format } from 'date-fns'
 import { Main } from '@/components/layout/main'
-import { PagesPrimaryButtons } from './components/page-primary-buttons'
-import { LandingPagesProvider, useLandingPages } from './components/page-provider'
-import { PageStatusDashboard } from './components/page-status-dashboard'
-import { PageDialogs } from './components/dialog/page-dialog'
-import { PageTable } from './components/table/page-table'
 import { usePageFilters } from './api/queries'
+import { PageDialogs } from './components/dialog/page-dialog'
+import { PagesPrimaryButtons } from './components/page-primary-buttons'
+import {
+  LandingPagesProvider,
+  useLandingPages,
+} from './components/page-provider'
+import { PageStatusDashboard } from './components/page-status-dashboard'
+import { PageTable } from './components/table/page-table'
 import { loadPageManagementFilters } from './utils/filter-storage'
 
 const route = getRouteApi('/iframe/landing-page-cms/page-management/')
@@ -18,8 +21,14 @@ function PageManagementContent() {
   const { t } = useTranslation('page-management')
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { landingPages, totalCount, pageIndex, pageSize, isLoading, landingPageUrl } =
-    useLandingPages()
+  const {
+    landingPages,
+    totalCount,
+    pageIndex,
+    pageSize,
+    isLoading,
+    landingPageUrl,
+  } = useLandingPages()
 
   if (isLoading) {
     return (
@@ -67,7 +76,11 @@ function PageManagementContent() {
 export function PageManagement() {
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { defaultFromDate, defaultToDate, isLoading: isLoadingFilters } = usePageFilters()
+  const {
+    defaultFromDate,
+    defaultToDate,
+    isLoading: isLoadingFilters,
+  } = usePageFilters()
   const hasInitialized = useRef(false)
 
   useEffect(() => {
@@ -118,14 +131,17 @@ export function PageManagement() {
     }
   }, [isLoadingFilters, defaultFromDate, defaultToDate])
 
-  const hasRequiredParams = search.status && (search.fromDate && search.toDate || search.preset)
+  const hasRequiredParams =
+    search.status && ((search.fromDate && search.toDate) || search.preset)
 
   if (isLoadingFilters || !hasRequiredParams) {
     return (
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Page Management</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>
+              Page Management
+            </h2>
             <p className='text-muted-foreground'>Loading...</p>
           </div>
         </div>
@@ -151,4 +167,3 @@ export function PageManagement() {
     </LandingPagesProvider>
   )
 }
-

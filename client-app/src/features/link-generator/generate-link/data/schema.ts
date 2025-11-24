@@ -1,8 +1,23 @@
 import { z } from 'zod'
 
 export const generateLinkFormSchema = z.object({
-  linkName: z.string().trim().min(1, 'Link name is required').max(200, 'Link name must be at most 200 characters'),
-  identifierCode: z.union([z.string().trim().regex(/^[a-zA-Z0-9]*$/, 'Identifier code must contain only letters and numbers'), z.literal('')]).optional(),
+  linkName: z
+    .string()
+    .trim()
+    .min(1, 'Link name is required')
+    .max(200, 'Link name must be at most 200 characters'),
+  identifierCode: z
+    .union([
+      z
+        .string()
+        .trim()
+        .regex(
+          /^[a-zA-Z0-9]*$/,
+          'Identifier code must contain only letters and numbers'
+        ),
+      z.literal(''),
+    ])
+    .optional(),
   campaign: z.string().min(1, 'Campaign is required'),
   campaignCode: z.string(),
   country: z.string().min(1, 'Country is required'),
@@ -13,9 +28,26 @@ export const generateLinkFormSchema = z.object({
   event: z.string().min(1, 'Event is required'),
   eventCodes: z.string(),
   domainName: z.string().min(1, 'Domain name is required'),
-  domainReservedNote: z.string().trim().min(1, 'Domain reserved note is required').max(200, 'Domain reserved note must be at most 200 characters'),
+  domainReservedNote: z
+    .string()
+    .trim()
+    .min(1, 'Domain reserved note is required')
+    .max(200, 'Domain reserved note must be at most 200 characters'),
   shortDomain: z.string().min(1, 'Short domain is required'),
-  shortPath: z.union([z.string().trim().min(5, 'Short path must be at least 5 characters').max(20, 'Short path must be at most 20 characters').regex(/^[a-z0-9\-.]*$/, 'Short path must contain only lowercase letters, numbers, hyphens, and dots'), z.literal('')]).optional(),
+  shortPath: z
+    .union([
+      z
+        .string()
+        .trim()
+        .min(5, 'Short path must be at least 5 characters')
+        .max(20, 'Short path must be at most 20 characters')
+        .regex(
+          /^[a-z0-9\-.]*$/,
+          'Short path must contain only lowercase letters, numbers, hyphens, and dots'
+        ),
+      z.literal(''),
+    ])
+    .optional(),
   channel: z.string().min(1, 'Channel is required'),
   channelCode: z.string(),
   type: z.string().min(1, 'Type is required'),
@@ -81,4 +113,3 @@ export const componentCreateFormSchema = z.object({
 })
 
 export type ComponentCreateForm = z.infer<typeof componentCreateFormSchema>
-

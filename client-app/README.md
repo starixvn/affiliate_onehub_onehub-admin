@@ -133,9 +133,10 @@ server: {
 ```
 
 **Usage in code:**
+
 ```typescript
 // Automatically proxied to https://localhost:7137/api/auth/login
-await axios.post('/api/auth/login', { userName, password });
+await axios.post('/api/auth/login', { userName, password })
 ```
 
 ### Environment Variables
@@ -153,8 +154,9 @@ VITE_APP_NAME=ONEHub Admin
 ```
 
 Access in code:
+
 ```typescript
-const appName = import.meta.env.VITE_APP_NAME;
+const appName = import.meta.env.VITE_APP_NAME
 ```
 
 ---
@@ -177,11 +179,12 @@ src/routes/
 ```
 
 **Type-safe navigation:**
-```typescript
-import { useNavigate } from '@tanstack/react-router';
 
-const navigate = useNavigate();
-navigate({ to: '/dashboard' });
+```typescript
+import { useNavigate } from '@tanstack/react-router'
+
+const navigate = useNavigate()
+navigate({ to: '/dashboard' })
 ```
 
 ### Data Fetching (TanStack Query)
@@ -189,12 +192,12 @@ navigate({ to: '/dashboard' });
 Server state management with caching:
 
 ```typescript
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
 
 const { data, isLoading } = useQuery({
   queryKey: ['affiliates'],
-  queryFn: () => axios.get('/api/affiliates').then(res => res.data),
-});
+  queryFn: () => axios.get('/api/affiliates').then((res) => res.data),
+})
 ```
 
 ### State Management (Zustand)
@@ -203,16 +206,16 @@ Lightweight client state:
 
 ```typescript
 // stores/useAuthStore.ts
-import { create } from 'zustand';
+import { create } from 'zustand'
 
 export const useAuthStore = create((set) => ({
   user: null,
   setUser: (user) => set({ user }),
   logout: () => set({ user: null }),
-}));
+}))
 
 // Usage
-const { user, setUser } = useAuthStore();
+const { user, setUser } = useAuthStore()
 ```
 
 ### Styling (TailwindCSS v4)
@@ -220,8 +223,8 @@ const { user, setUser } = useAuthStore();
 Utility-first CSS with Vite plugin:
 
 ```tsx
-<div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-gray-800">
-  <h1 className="text-2xl font-bold">Dashboard</h1>
+<div className='flex items-center justify-between bg-white px-4 py-2 dark:bg-gray-800'>
+  <h1 className='text-2xl font-bold'>Dashboard</h1>
 </div>
 ```
 
@@ -230,15 +233,16 @@ Utility-first CSS with Vite plugin:
 Accessible, customizable components:
 
 ```tsx
-import { Button } from '@/components/ui/button';
-import { Dialog } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button'
+import { Dialog } from '@/components/ui/dialog'
 
-<Button variant="outline" size="lg">
+;<Button variant='outline' size='lg'>
   Click me
 </Button>
 ```
 
 **Add new components:**
+
 ```bash
 cd apps/web
 npx shadcn@latest add button
@@ -258,6 +262,7 @@ const { t } = useTranslation();
 ```
 
 Translations in `src/locales/`:
+
 ```
 locales/
 ├── en/
@@ -365,7 +370,7 @@ TanStack Router automatically splits routes:
 
 ```typescript
 // Each route is lazy-loaded
-const DashboardRoute = lazy(() => import('./routes/dashboard'));
+const DashboardRoute = lazy(() => import('./routes/dashboard'))
 ```
 
 ### Bundle Analysis
@@ -389,31 +394,31 @@ Tokens are managed by the backend via HttpOnly cookies.
 For manual header-based auth:
 
 ```typescript
-import axios from 'axios';
+import axios from 'axios'
 
 // Add token to all requests
 axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('accessToken')
   if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`
   }
-  return config;
-});
+  return config
+})
 ```
 
 ### Protected Routes
 
 ```typescript
 // routes/dashboard/_layout.tsx
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/dashboard/_layout')({
   beforeLoad: ({ context }) => {
     if (!context.auth.isAuthenticated) {
-      throw redirect({ to: '/login' });
+      throw redirect({ to: '/login' })
     }
   },
-});
+})
 ```
 
 ---
@@ -421,22 +426,28 @@ export const Route = createFileRoute('/dashboard/_layout')({
 ## 🐛 Troubleshooting
 
 ### Issue: "Cannot connect to API"
+
 **Solution:** Ensure backend is running on https://localhost:7137
 
 ### Issue: "Vite proxy error"
+
 **Solution:** Check `vite.config.ts` proxy configuration
 
 ### Issue: "Module not found"
+
 **Solution:** Run `pnpm install` in root directory
 
 ### Issue: "Type errors in IDE"
+
 **Solution:**
+
 ```bash
 cd apps/web
 pnpm exec tsc --noEmit
 ```
 
 ### Issue: "Route not generating"
+
 **Solution:** TanStack Router auto-generates routes. Restart dev server.
 
 ---

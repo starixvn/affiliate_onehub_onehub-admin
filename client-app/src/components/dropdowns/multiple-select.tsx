@@ -17,7 +17,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import type { SelectOption, SelectGroup, NestedSelectGroup } from './select-types'
+import type {
+  SelectOption,
+  SelectGroup,
+  NestedSelectGroup,
+} from './select-types'
 
 interface MultipleSelectProps {
   value: string[]
@@ -66,7 +70,9 @@ function isNestedSelectGroup(item: unknown): item is NestedSelectGroup {
   )
 }
 
-function flattenOptions(options: SelectOption[] | SelectGroup[] | NestedSelectGroup[]): SelectOption[] {
+function flattenOptions(
+  options: SelectOption[] | SelectGroup[] | NestedSelectGroup[]
+): SelectOption[] {
   const result: SelectOption[] = []
 
   for (const item of options) {
@@ -156,7 +162,9 @@ export function MultipleSelect({
     onCreateNew?.()
   }
 
-  const getGroupCheckboxState = (groupOptions: SelectOption[]): boolean | 'indeterminate' => {
+  const getGroupCheckboxState = (
+    groupOptions: SelectOption[]
+  ): boolean | 'indeterminate' => {
     const groupValues = groupOptions.map((opt) => getValue(opt))
     const selectedCount = groupValues.filter((v) => value.includes(v)).length
 
@@ -206,14 +214,11 @@ export function MultipleSelect({
               {enableGroupSelect && (
                 <button
                   type='button'
-                  className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                  className='hover:bg-accent flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5'
                   onClick={() => handleToggleGroup(filteredOptions)}
                   aria-label={`Toggle all ${group.groupLabel}`}
                 >
-                  <Checkbox
-                    checked={checkboxState}
-                    className='mr-2'
-                  />
+                  <Checkbox checked={checkboxState} className='mr-2' />
                   <span className='text-muted-foreground text-xs font-medium'>
                     {group.groupLabel}
                   </span>
@@ -246,7 +251,9 @@ export function MultipleSelect({
     if (isNestedSelectGroup(firstItem)) {
       return (options as NestedSelectGroup[])
         .map((topGroup) => {
-          const filteredTopOptions = (topGroup.options || []).filter(matchesSearch)
+          const filteredTopOptions = (topGroup.options || []).filter(
+            matchesSearch
+          )
           const filteredSubGroups = (topGroup.groups || [])
             .map((g) => ({
               ...g,
@@ -254,7 +261,10 @@ export function MultipleSelect({
             }))
             .filter((g) => g.options.length > 0)
 
-          if (filteredTopOptions.length === 0 && filteredSubGroups.length === 0) {
+          if (
+            filteredTopOptions.length === 0 &&
+            filteredSubGroups.length === 0
+          ) {
             return null
           }
 
@@ -269,14 +279,11 @@ export function MultipleSelect({
               {enableGroupSelect && (
                 <button
                   type='button'
-                  className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                  className='hover:bg-accent flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5'
                   onClick={() => handleToggleGroup(allTopGroupOptions)}
                   aria-label={`Toggle all ${topGroup.groupLabel}`}
                 >
-                  <Checkbox
-                    checked={topCheckboxState}
-                    className='mr-2'
-                  />
+                  <Checkbox checked={topCheckboxState} className='mr-2' />
                   <span className='text-muted-foreground text-xs font-medium'>
                     {topGroup.groupLabel}
                   </span>
@@ -308,14 +315,11 @@ export function MultipleSelect({
                     {enableGroupSelect && (
                       <button
                         type='button'
-                        className='flex items-center w-full px-2 py-1.5 cursor-pointer hover:bg-accent rounded-sm'
+                        className='hover:bg-accent flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5'
                         onClick={() => handleToggleGroup(group.options)}
                         aria-label={`Toggle all ${group.groupLabel}`}
                       >
-                        <Checkbox
-                          checked={subCheckboxState}
-                          className='mr-2'
-                        />
+                        <Checkbox checked={subCheckboxState} className='mr-2' />
                         <span className='text-muted-foreground text-xs font-medium'>
                           {group.groupLabel}
                         </span>
@@ -362,16 +366,23 @@ export function MultipleSelect({
           className={cn('w-full justify-between', className)}
         >
           {value.length > 0 && getSelectedLabel() ? (
-            <span className='truncate flex-1 text-left' title={getSelectedLabel() || undefined}>
+            <span
+              className='flex-1 truncate text-left'
+              title={getSelectedLabel() || undefined}
+            >
               {getSelectedLabel()}
             </span>
           ) : (
-            <span className='truncate flex-1 text-left'>{placeholder}</span>
+            <span className='flex-1 truncate text-left'>{placeholder}</span>
           )}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[--radix-popover-trigger-width] p-0' side='bottom' align='start'>
+      <PopoverContent
+        className='w-[--radix-popover-trigger-width] p-0'
+        side='bottom'
+        align='start'
+      >
         <Command>
           <CommandInput
             placeholder={searchPlaceholder}
@@ -386,7 +397,10 @@ export function MultipleSelect({
             <>
               <CommandSeparator />
               <CommandGroup>
-                <CommandItem onSelect={handleCreateNew} className='cursor-pointer'>
+                <CommandItem
+                  onSelect={handleCreateNew}
+                  className='cursor-pointer'
+                >
                   <Plus className='mr-2 h-4 w-4' />
                   {createNewLabel}
                 </CommandItem>
@@ -398,4 +412,3 @@ export function MultipleSelect({
     </Popover>
   )
 }
-

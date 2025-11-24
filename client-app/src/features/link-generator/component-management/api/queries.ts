@@ -1,20 +1,23 @@
 import { useQuery } from '@tanstack/react-query'
-import { componentApi } from './client'
 import { componentSchema } from '../data/schema'
 import type {
   ComponentCategorySummary,
   ComponentSummaryItem,
   GetComponentsRequest,
 } from '../types'
+import { componentApi } from './client'
 
 export const componentKeys = {
   all: ['component'] as const,
   summary: () => [...componentKeys.all, 'summary'] as const,
   lists: () => [...componentKeys.all, 'list'] as const,
-  list: (params?: GetComponentsRequest) => [...componentKeys.lists(), params] as const,
+  list: (params?: GetComponentsRequest) =>
+    [...componentKeys.lists(), params] as const,
 }
 
-function transformSummaryData(items: ComponentSummaryItem[]): ComponentCategorySummary {
+function transformSummaryData(
+  items: ComponentSummaryItem[]
+): ComponentCategorySummary {
   const defaultSummary = { total: 0, active: 0, inactive: 0 }
 
   const summaryMap: Record<number, keyof ComponentCategorySummary> = {
@@ -62,7 +65,9 @@ export function useGetComponents(params?: GetComponentsRequest) {
     queryKey: componentKeys.list(params),
     queryFn: () => componentApi.getComponents(params),
     select: (response) => {
-      const items = response.data.items.map((item) => componentSchema.parse(item))
+      const items = response.data.items.map((item) =>
+        componentSchema.parse(item)
+      )
       return {
         ...response.data,
         items,

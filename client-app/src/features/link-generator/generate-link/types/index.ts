@@ -124,4 +124,3 @@ export interface LinkGeneratedResult {
 }
 
 export type InsertLinkResponse = IAxiosResponse<LinkGeneratedResult>
-

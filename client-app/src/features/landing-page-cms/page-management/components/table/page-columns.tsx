@@ -3,11 +3,11 @@ import { type TFunction } from 'i18next'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { LongText } from '@/components/long-text'
 import { IframeHoverPreview } from '@/components/iframe-hover-preview'
+import { LongText } from '@/components/long-text'
 import { type LandingPage } from '../../data/schema'
-import { PageStatusCell } from './page-status-cell'
 import { DataTableRowActions } from './data-table-row-actions'
+import { PageStatusCell } from './page-status-cell'
 
 export const getPageColumns = (
   t: TFunction<'page-management', undefined>,
@@ -45,7 +45,9 @@ export const getPageColumns = (
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title={t('table.columns.no')} />
     ),
-    cell: ({ row }) => <div className='text-center'>{row.getValue('rowIdx')}</div>,
+    cell: ({ row }) => (
+      <div className='text-center'>{row.getValue('rowIdx')}</div>
+    ),
     meta: {
       className: cn('sticky start-11 z-10 w-12 min-w-12 border-e'),
       displayName: t('table.columns.no'),
@@ -56,7 +58,10 @@ export const getPageColumns = (
   {
     accessorKey: 'lpCode',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('table.columns.lpCode')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('table.columns.lpCode')}
+      />
     ),
     cell: ({ row }) => (
       <LongText className='max-w-48'>{row.getValue('lpCode')}</LongText>
@@ -70,12 +75,15 @@ export const getPageColumns = (
   {
     accessorKey: 'lpName',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('table.columns.lpName')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('table.columns.lpName')}
+      />
     ),
     cell: ({ row }) => {
       const lpName = row.getValue('lpName') as string
       const lpCode = row.getValue('lpCode') as string
-      const targetLanguageCode = row.original.targetLanguageCode ?? '';
+      const targetLanguageCode = row.original.targetLanguageCode ?? ''
       const statusId = row.original.statusId
       const isCanPreview = statusId !== 2
 
@@ -91,7 +99,7 @@ export const getPageColumns = (
             href={previewUrl}
             target='_blank'
             rel='noopener noreferrer'
-            className='text-blue-600 dark:text-blue-500 hover:underline'
+            className='text-blue-600 hover:underline dark:text-blue-500'
             onClick={(e) => e.stopPropagation()}
           >
             <LongText className='max-w-64'>{lpName}</LongText>

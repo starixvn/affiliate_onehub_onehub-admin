@@ -67,7 +67,9 @@ export const landingPageApi = {
     return response.data
   },
 
-  async deleteBatchLandingPages(data: DeleteBatchLandingPageRequest): Promise<DeleteLandingPageResponse> {
+  async deleteBatchLandingPages(
+    data: DeleteBatchLandingPageRequest
+  ): Promise<DeleteLandingPageResponse> {
     const response = await apiClient.delete<DeleteLandingPageResponse>(
       '/page-management/batch',
       { data }
@@ -78,11 +80,10 @@ export const landingPageApi = {
   async updateBatchLandingPageStatus(
     data: UpdateBatchLandingPageStatusRequest
   ): Promise<UpdateBatchLandingPageStatusResponse> {
-    const response =
-      await apiClient.put<UpdateBatchLandingPageStatusResponse>(
-        '/page-management/status/batch',
-        data
-      )
+    const response = await apiClient.put<UpdateBatchLandingPageStatusResponse>(
+      '/page-management/status/batch',
+      data
+    )
     return response.data
   },
 

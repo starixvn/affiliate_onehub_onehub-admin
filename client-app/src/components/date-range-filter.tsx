@@ -29,7 +29,10 @@ export function DateRangeFilter({
 }: DateRangeFilterProps) {
   const hasDateRange = from && to
 
-  const detectEntirePeriod = (currentFrom: Date | undefined, currentTo: Date | undefined): boolean => {
+  const detectEntirePeriod = (
+    currentFrom: Date | undefined,
+    currentTo: Date | undefined
+  ): boolean => {
     if (!currentFrom || !currentTo) return false
 
     const entirePeriodFrom = minDate || startOfDay(new Date('2025-01-01'))

@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
+import { createFileRoute } from '@tanstack/react-router'
 import { PageManagement } from '@/features/landing-page-cms/page-management'
 
 const searchSchema = z.object({
@@ -14,7 +14,9 @@ const searchSchema = z.object({
   preset: z.string().optional(),
 })
 
-export const Route = createFileRoute('/iframe/landing-page-cms/page-management/')({
+export const Route = createFileRoute(
+  '/iframe/landing-page-cms/page-management/'
+)({
   component: PageManagement,
   validateSearch: searchSchema,
 })

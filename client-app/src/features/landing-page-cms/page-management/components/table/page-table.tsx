@@ -1,4 +1,6 @@
 import { useState, useMemo, useEffect } from 'react'
+import { format } from 'date-fns'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import {
   type SortingState,
   type VisibilityState,
@@ -8,14 +10,18 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
-import { format } from 'date-fns'
 import { CalendarIcon, Search } from 'lucide-react'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { cn } from '@/lib/utils'
+import { useTranslation } from 'react-i18next'
 import { getLocalStorageItem, setLocalStorageItem } from '@/lib/local-storage'
+import { cn } from '@/lib/utils'
 import { type NavigateFn } from '@/hooks/use-table-url-state'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import {
   Table,
   TableBody,
@@ -24,19 +30,17 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Button } from '@/components/ui/button'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover'
-import { DataTablePagination, DataTableFacetedFilter, DataTableViewOptions } from '@/components/data-table'
+  DataTablePagination,
+  DataTableFacetedFilter,
+  DataTableViewOptions,
+} from '@/components/data-table'
 import { DateRangePicker } from '@/components/date-range-picker'
 import { type LandingPage } from '../../data/schema'
 import { PageMultiDeleteDialog } from '../dialog/page-multi-delete-dialog'
+import { useLandingPages } from '../page-provider'
 import { PageBulkActions } from './page-bulk-actions'
 import { getPageColumns } from './page-columns'
-import { useLandingPages } from '../page-provider'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -69,22 +73,40 @@ export function PageTable({
   landingPageUrl,
 }: DataTableProps) {
   const { t } = useTranslation('page-management')
-  const { countries, languages, pageStatus, minDate, maxDate, defaultFromDate, defaultToDate } = useLandingPages()
+  const {
+    countries,
+    languages,
+    pageStatus,
+    minDate,
+    maxDate,
+    defaultFromDate,
+    defaultToDate,
+  } = useLandingPages()
 
   const [rowSelection, setRowSelection] = useState({})
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
-    try {
-      const stored = getLocalStorageItem('table-column-visibility:page-management')
-      return stored ? JSON.parse(stored) : { countryCode: false, languageCode: false }
-    } catch {
-      return { countryCode: false, languageCode: false }
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
+    () => {
+      try {
+        const stored = getLocalStorageItem(
+          'table-column-visibility:page-management'
+        )
+        return stored
+          ? JSON.parse(stored)
+          : { countryCode: false, languageCode: false }
+      } catch {
+        return { countryCode: false, languageCode: false }
+      }
     }
-  })
+  )
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [datePopoverOpen, setDatePopoverOpen] = useState(false)
-  const [searchValue, setSearchValue] = useState((search.search as string) ?? '')
-  const [selectedPreset, setSelectedPreset] = useState<string | null>((search.preset as string) ?? null)
+  const [searchValue, setSearchValue] = useState(
+    (search.search as string) ?? ''
+  )
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(
+    (search.preset as string) ?? null
+  )
 
   const [fromDate, setFromDate] = useState<Date | undefined>(
     search.fromDate ? new Date(search.fromDate as string) : defaultFromDate
@@ -104,7 +126,10 @@ export function PageTable({
       filters.push({ id: 'status', value: undefined })
     }
 
-    if (searchParams.countryCode && typeof searchParams.countryCode === 'string') {
+    if (
+      searchParams.countryCode &&
+      typeof searchParams.countryCode === 'string'
+    ) {
       filters.push({
         id: 'countryCode',
         value: searchParams.countryCode.split(','),
@@ -113,7 +138,10 @@ export function PageTable({
       filters.push({ id: 'countryCode', value: undefined })
     }
 
-    if (searchParams.languageCode && typeof searchParams.languageCode === 'string') {
+    if (
+      searchParams.languageCode &&
+      typeof searchParams.languageCode === 'string'
+    ) {
       filters.push({
         id: 'languageCode',
         value: searchParams.languageCode.split(','),
@@ -139,7 +167,9 @@ export function PageTable({
   }, [search.status, search.countryCode, search.languageCode])
 
   useEffect(() => {
-    setFromDate(search.fromDate ? new Date(search.fromDate as string) : defaultFromDate)
+    setFromDate(
+      search.fromDate ? new Date(search.fromDate as string) : defaultFromDate
+    )
     setToDate(search.toDate ? new Date(search.toDate as string) : defaultToDate)
   }, [search.fromDate, search.toDate, defaultFromDate, defaultToDate])
 
@@ -152,10 +182,16 @@ export function PageTable({
   }, [search.preset])
 
   useEffect(() => {
-    setLocalStorageItem('table-column-visibility:page-management', JSON.stringify(columnVisibility))
+    setLocalStorageItem(
+      'table-column-visibility:page-management',
+      JSON.stringify(columnVisibility)
+    )
   }, [columnVisibility])
 
-  const columns = useMemo(() => getPageColumns(t, landingPageUrl), [t, landingPageUrl])
+  const columns = useMemo(
+    () => getPageColumns(t, landingPageUrl),
+    [t, landingPageUrl]
+  )
 
   const pageCount = Math.ceil(totalCount / pageSize)
 
@@ -175,8 +211,8 @@ export function PageTable({
     const filteredLanguages =
       countryFilter && countryFilter.length > 0
         ? languages.filter((lang) =>
-          countryFilter.includes(lang.targetCountryCode)
-        )
+            countryFilter.includes(lang.targetCountryCode)
+          )
         : languages
 
     return [
@@ -264,9 +300,13 @@ export function PageTable({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    const statusFilter = columnFilters.find(f => f.id === 'status')?.value as string[] | undefined
-    const countryFilter = columnFilters.find(f => f.id === 'countryCode')?.value as string[] | undefined
-    const languageFilter = columnFilters.find(f => f.id === 'languageCode')?.value as string[] | undefined
+    const statusFilter = columnFilters.find((f) => f.id === 'status')?.value as
+      | string[]
+      | undefined
+    const countryFilter = columnFilters.find((f) => f.id === 'countryCode')
+      ?.value as string[] | undefined
+    const languageFilter = columnFilters.find((f) => f.id === 'languageCode')
+      ?.value as string[] | undefined
 
     navigate({
       search: {
@@ -301,11 +341,15 @@ export function PageTable({
   const hasChangedFilters = useMemo(() => {
     const searchDiffers = searchValue !== ''
 
-    const fromDateDiffers = fromDate?.setHours(0, 0, 0, 0) !== defaultFromDate?.setHours(0, 0, 0, 0)
-    const toDateDiffers = toDate?.setHours(0, 0, 0, 0) !== defaultToDate?.setHours(0, 0, 0, 0)
+    const fromDateDiffers =
+      fromDate?.setHours(0, 0, 0, 0) !== defaultFromDate?.setHours(0, 0, 0, 0)
+    const toDateDiffers =
+      toDate?.setHours(0, 0, 0, 0) !== defaultToDate?.setHours(0, 0, 0, 0)
 
     const filterDiffers = filters.some((filter) => {
-      const currentValue = columnFilters.find(f => f.id === filter.columnId)?.value
+      const currentValue = columnFilters.find(
+        (f) => f.id === filter.columnId
+      )?.value
       const defaultValue = filter.defaultValue
 
       const normalizedCurrent =
@@ -340,16 +384,32 @@ export function PageTable({
     })
 
     return searchDiffers || filterDiffers || fromDateDiffers || toDateDiffers
-  }, [searchValue, filters, columnFilters, fromDate, toDate, defaultFromDate, defaultToDate])
+  }, [
+    searchValue,
+    filters,
+    columnFilters,
+    fromDate,
+    toDate,
+    defaultFromDate,
+    defaultToDate,
+  ])
 
   return (
-    <div className={cn('max-sm:has-[div[role="toolbar"]]:mb-16', 'flex flex-1 flex-col gap-4')}>
+    <div
+      className={cn(
+        'max-sm:has-[div[role="toolbar"]]:mb-16',
+        'flex flex-1 flex-col gap-4'
+      )}
+    >
       <div className='flex items-center justify-between'>
         <div className='flex flex-1 items-center'>
           <form onSubmit={handleSubmit} className='flex items-center gap-2'>
             <div className='relative'>
               <Input
-                placeholder={t('filters.searchPlaceholder', 'Search by campaign or landing page...')}
+                placeholder={t(
+                  'filters.searchPlaceholder',
+                  'Search by campaign or landing page...'
+                )}
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className='h-8 w-[250px] pe-8 lg:w-[350px]'
@@ -391,7 +451,9 @@ export function PageTable({
                   )}
                 >
                   <CalendarIcon className='mr-2 h-4 w-4' />
-                  <span className='font-medium'>{t('filters.createdDate', 'Created Date')}</span>
+                  <span className='font-medium'>
+                    {t('filters.createdDate', 'Created Date')}
+                  </span>
                   {selectedPreset === 'entirePeriod' ? (
                     <>
                       <span className='mx-2'>|</span>
@@ -400,12 +462,15 @@ export function PageTable({
                   ) : fromDate && toDate ? (
                     <>
                       <span className='mx-2'>|</span>
-                      {format(fromDate, 'MMM dd, yyyy')} - {format(toDate, 'MMM dd, yyyy')}
+                      {format(fromDate, 'MMM dd, yyyy')} -{' '}
+                      {format(toDate, 'MMM dd, yyyy')}
                     </>
                   ) : (
                     <>
                       <span className='mx-2'>|</span>
-                      <span>{t('filters.selectDateRange', 'Select date range')}</span>
+                      <span>
+                        {t('filters.selectDateRange', 'Select date range')}
+                      </span>
                     </>
                   )}
                 </Button>
@@ -421,7 +486,9 @@ export function PageTable({
                   }}
                   minDate={minDate}
                   maxDate={maxDate}
-                  disabledPresets={searchValue.trim() === '' ? ['entirePeriod'] : []}
+                  disabledPresets={
+                    searchValue.trim() === '' ? ['entirePeriod'] : []
+                  }
                 />
               </PopoverContent>
             </Popover>
@@ -462,9 +529,9 @@ export function PageTable({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}
@@ -520,4 +587,3 @@ export function PageTable({
     </div>
   )
 }
-

@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { landingPageApi } from './client'
-import { landingPageKeys } from './queries'
 import type {
   DeleteBatchLandingPageRequest,
   UpdateBatchLandingPageStatusRequest,
 } from '../types'
+import { landingPageApi } from './client'
+import { landingPageKeys } from './queries'
 
 export function useDeleteLandingPage() {
   const queryClient = useQueryClient()

@@ -38,10 +38,15 @@ export function ProfileDropdown() {
           <Button variant='ghost' className='relative h-8 w-8 rounded-full'>
             <Avatar className='h-8 w-8'>
               {userProfile?.avatar && (
-                <AvatarImage src={userProfile.avatar} alt={userProfile.userName} />
+                <AvatarImage
+                  src={userProfile.avatar}
+                  alt={userProfile.userName}
+                />
               )}
               <AvatarFallback>
-                {isLoading ? '...' : getUserInitials(userProfile?.userName || 'U')}
+                {isLoading
+                  ? '...'
+                  : getUserInitials(userProfile?.userName || 'U')}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -53,7 +58,9 @@ export function ProfileDropdown() {
                 {isLoading ? 'Loading...' : userProfile?.userName || 'User'}
               </p>
               <p className='text-muted-foreground text-xs leading-none'>
-                {isLoading ? '' : `${userProfile?.userName || 'user'}@starixsoft.com`}
+                {isLoading
+                  ? ''
+                  : `${userProfile?.userName || 'user'}@starixsoft.com`}
               </p>
             </div>
           </DropdownMenuLabel>

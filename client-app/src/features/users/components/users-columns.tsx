@@ -23,7 +23,9 @@ export const usersColumns: ColumnDef<User>[] = [
       />
     ),
     meta: {
-      className: cn('sticky md:table-cell start-0 z-20 rounded-tl-[inherit] w-11 min-w-11 border-e text-center'),
+      className: cn(
+        'sticky md:table-cell start-0 z-20 rounded-tl-[inherit] w-11 min-w-11 border-e text-center'
+      ),
     },
     cell: ({ row }) => (
       <Checkbox

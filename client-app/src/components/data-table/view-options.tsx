@@ -22,11 +22,7 @@ export function DataTableViewOptions<TData>({
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant='outline'
-          size='sm'
-          className='ms-auto flex h-8'
-        >
+        <Button variant='outline' size='sm' className='ms-auto flex h-8'>
           <MixerHorizontalIcon className='size-4' />
           {t('dataTable.view')}
         </Button>

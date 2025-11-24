@@ -35,7 +35,7 @@ export function LongText({
 
   if (!showTooltip) {
     return (
-      <div className={cn('whitespace-normal break-words', className)}>
+      <div className={cn('break-words whitespace-normal', className)}>
         {children}
       </div>
     )
@@ -58,8 +58,13 @@ export function LongText({
                 {children}
               </div>
             </TooltipTrigger>
-            <TooltipContent className="max-w-sm">
-              <p className={cn(contentClassName, 'whitespace-normal break-words')}>
+            <TooltipContent className='max-w-sm'>
+              <p
+                className={cn(
+                  contentClassName,
+                  'break-words whitespace-normal'
+                )}
+              >
                 {children}
               </p>
             </TooltipContent>
@@ -74,9 +79,7 @@ export function LongText({
             </div>
           </PopoverTrigger>
           <PopoverContent className={cn('max-w-sm', contentClassName)}>
-            <p className="whitespace-normal break-words">
-              {children}
-            </p>
+            <p className='break-words whitespace-normal'>{children}</p>
           </PopoverContent>
         </Popover>
       </div>

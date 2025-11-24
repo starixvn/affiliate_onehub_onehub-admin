@@ -1,14 +1,29 @@
 import { useState, useEffect } from 'react'
-import { startOfDay, endOfDay, subDays, startOfWeek, endOfWeek, startOfMonth, endOfMonth, subMonths, subWeeks, isSameDay } from 'date-fns'
+import {
+  startOfDay,
+  endOfDay,
+  subDays,
+  startOfWeek,
+  endOfWeek,
+  startOfMonth,
+  endOfMonth,
+  subMonths,
+  subWeeks,
+  isSameDay,
+} from 'date-fns'
 import { Check } from 'lucide-react'
 import { DateRange } from 'react-day-picker'
-import { Calendar } from '@/components/ui/calendar'
 import { cn } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
 
 type DateRangePickerProps = {
   from: Date | undefined
   to: Date | undefined
-  onSelect: (range: { from: Date | undefined; to: Date | undefined; preset?: string | null }) => void
+  onSelect: (range: {
+    from: Date | undefined
+    to: Date | undefined
+    preset?: string | null
+  }) => void
   minDate?: Date
   maxDate?: Date
   disabledPresets?: string[]
@@ -101,13 +116,24 @@ export function DateRangePicker({
       id: 'entirePeriod',
       label: 'Entire Period',
       getValue: () => ({
-        from: minDate || startOfDay(new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())),
+        from:
+          minDate ||
+          startOfDay(
+            new Date(
+              new Date().getFullYear() - 2,
+              new Date().getMonth(),
+              new Date().getDate()
+            )
+          ),
         to: maxDate || endOfDay(new Date()),
       }),
     },
   ]
 
-  const detectMatchingPreset = (currentFrom: Date | undefined, currentTo: Date | undefined): string | null => {
+  const detectMatchingPreset = (
+    currentFrom: Date | undefined,
+    currentTo: Date | undefined
+  ): string | null => {
     if (!currentFrom || !currentTo) return null
 
     for (const preset of presetOptions) {
@@ -161,13 +187,12 @@ export function DateRangePicker({
               className={cn(
                 'hover:bg-accent hover:text-accent-foreground relative flex w-full items-center justify-between rounded-md px-3 py-2 text-start text-sm transition-colors',
                 selectedPreset === preset.id && 'bg-accent',
-                isDisabled && 'cursor-not-allowed opacity-50 hover:bg-transparent'
+                isDisabled &&
+                  'cursor-not-allowed opacity-50 hover:bg-transparent'
               )}
             >
               <span>{preset.label}</span>
-              {selectedPreset === preset.id && (
-                <Check className='h-4 w-4' />
-              )}
+              {selectedPreset === preset.id && <Check className='h-4 w-4' />}
             </button>
           )
         })}
@@ -180,7 +205,15 @@ export function DateRangePicker({
           onSelect={handleDateSelect}
           disabled={(date: Date) => {
             const max = maxDate || endOfDay(new Date())
-            const min = minDate || startOfDay(new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate()))
+            const min =
+              minDate ||
+              startOfDay(
+                new Date(
+                  new Date().getFullYear() - 2,
+                  new Date().getMonth(),
+                  new Date().getDate()
+                )
+              )
             return date > max || date < min
           }}
         />

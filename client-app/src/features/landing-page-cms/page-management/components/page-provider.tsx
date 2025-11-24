@@ -1,23 +1,47 @@
 import React, { useState } from 'react'
+import { getRouteApi } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
-import { getRouteApi } from '@tanstack/react-router'
 import useDialogState from '@/hooks/use-dialog-state'
-import { useGetLandingPages, usePageFilters } from '../api/queries'
 import { landingPageApi } from '../api/client'
-import { formatLandingPagesForExcel } from './page-export-excel'
+import { useGetLandingPages, usePageFilters } from '../api/queries'
 import { type LandingPage } from '../data/schema'
-import type { GetLandingPagesRequest, Country, Language, PageStatus } from '../types'
+import type {
+  GetLandingPagesRequest,
+  Country,
+  Language,
+  PageStatus,
+} from '../types'
+import { formatLandingPagesForExcel } from './page-export-excel'
 
 const route = getRouteApi('/iframe/landing-page-cms/page-management/')
 
-type LandingPagesDialogType = 'create' | 'update' | 'delete' | 'duplicate'
+type LandingPagesDialogType =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'duplicate'
+  | 'statusChange'
+  | 'bulkStatusChange'
+
+type PendingBulkStatusChange = {
+  pageIds: string
+  statusId: number
+  affectedCount: number
+  onSuccess?: () => void
+}
 
 type LandingPagesContextType = {
   open: LandingPagesDialogType | null
   setOpen: (str: LandingPagesDialogType | null) => void
   currentRow: LandingPage | null
   setCurrentRow: React.Dispatch<React.SetStateAction<LandingPage | null>>
+  newStatusId: number | null
+  setNewStatusId: React.Dispatch<React.SetStateAction<number | null>>
+  pendingBulkStatusChange: PendingBulkStatusChange | null
+  setPendingBulkStatusChange: React.Dispatch<
+    React.SetStateAction<PendingBulkStatusChange | null>
+  >
   landingPages: LandingPage[]
   totalCount: number
   pageIndex: number
@@ -53,6 +77,9 @@ export function LandingPagesProvider({
   const { t } = useTranslation('page-management')
   const [open, setOpen] = useDialogState<LandingPagesDialogType>(null)
   const [currentRow, setCurrentRow] = useState<LandingPage | null>(null)
+  const [newStatusId, setNewStatusId] = useState<number | null>(null)
+  const [pendingBulkStatusChange, setPendingBulkStatusChange] =
+    useState<PendingBulkStatusChange | null>(null)
 
   const navigate = route.useNavigate()
   const search = route.useSearch()
@@ -62,9 +89,17 @@ export function LandingPagesProvider({
     languages = [],
     pageStatus = [],
     landingPageUrl = '',
-    minDate = new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate()),
+    minDate = new Date(
+      new Date().getFullYear() - 2,
+      new Date().getMonth(),
+      new Date().getDate()
+    ),
     maxDate = new Date(),
-    defaultFromDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    defaultFromDate = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    ),
     defaultToDate = new Date(),
   } = usePageFilters() ?? {}
 
@@ -82,9 +117,14 @@ export function LandingPagesProvider({
     }
   }
 
-
   const memoizedMinDate = React.useMemo(() => {
-    const date = minDate ?? new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())
+    const date =
+      minDate ??
+      new Date(
+        new Date().getFullYear() - 2,
+        new Date().getMonth(),
+        new Date().getDate()
+      )
     date.setHours(0, 0, 0, 0)
     return date
   }, [minDate])
@@ -96,7 +136,9 @@ export function LandingPagesProvider({
   }, [maxDate])
 
   const memoizedDefaultFromDate = React.useMemo(() => {
-    const date = defaultFromDate ?? new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    const date =
+      defaultFromDate ??
+      new Date(new Date().getFullYear(), new Date().getMonth(), 1)
     date.setHours(0, 0, 0, 0)
     return date
   }, [defaultFromDate])
@@ -107,54 +149,61 @@ export function LandingPagesProvider({
     return date
   }, [defaultToDate])
 
-  const contextValue = React.useMemo(() => ({
-    open,
-    setOpen,
-    currentRow,
-    setCurrentRow,
-    landingPages: data?.items ?? [],
-    totalCount: data?.totalItem ?? 0,
-    pageIndex: data?.pageIndex ?? 1,
-    pageSize: data?.pageSize ?? 10,
-    isLoading,
-    isError,
-    exportLandingPages,
-    countries,
-    languages,
-    pageStatus,
-    landingPageUrl,
-    minDate: memoizedMinDate as Date,
-    maxDate: memoizedMaxDate as Date,
-    defaultFromDate: memoizedDefaultFromDate as Date,
-    defaultToDate: memoizedDefaultToDate as Date,
-    navigate,
-    search,
-  }), [
-    open,
-    setOpen,
-    currentRow,
-    setCurrentRow,
-    data,
-    isLoading,
-    isError,
-    countries,
-    languages,
-    pageStatus,
-    landingPageUrl,
-    memoizedMinDate,
-    memoizedMaxDate,
-    memoizedDefaultFromDate,
-    memoizedDefaultToDate,
-    navigate,
-    search
-  ])
+  const contextValue = React.useMemo(
+    () => ({
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+      newStatusId,
+      setNewStatusId,
+      pendingBulkStatusChange,
+      setPendingBulkStatusChange,
+      landingPages: data?.items ?? [],
+      totalCount: data?.totalItem ?? 0,
+      pageIndex: data?.pageIndex ?? 1,
+      pageSize: data?.pageSize ?? 10,
+      isLoading,
+      isError,
+      exportLandingPages,
+      countries,
+      languages,
+      pageStatus,
+      landingPageUrl,
+      minDate: memoizedMinDate as Date,
+      maxDate: memoizedMaxDate as Date,
+      defaultFromDate: memoizedDefaultFromDate as Date,
+      defaultToDate: memoizedDefaultToDate as Date,
+      navigate,
+      search,
+    }),
+    [
+      open,
+      setOpen,
+      currentRow,
+      setCurrentRow,
+      newStatusId,
+      setNewStatusId,
+      pendingBulkStatusChange,
+      setPendingBulkStatusChange,
+      data,
+      isLoading,
+      isError,
+      countries,
+      languages,
+      pageStatus,
+      landingPageUrl,
+      memoizedMinDate,
+      memoizedMaxDate,
+      memoizedDefaultFromDate,
+      memoizedDefaultToDate,
+      navigate,
+      search,
+    ]
+  )
 
   return (
-    <LandingPagesContext
-      value={contextValue}
-    >
-      {children}
-    </LandingPagesContext>
+    <LandingPagesContext value={contextValue}>{children}</LandingPagesContext>
   )
 }
 
@@ -162,9 +211,10 @@ export const useLandingPages = () => {
   const landingPagesContext = React.useContext(LandingPagesContext)
 
   if (!landingPagesContext) {
-    throw new Error('useLandingPages has to be used within <LandingPagesContext>')
+    throw new Error(
+      'useLandingPages has to be used within <LandingPagesContext>'
+    )
   }
 
   return landingPagesContext
 }
-

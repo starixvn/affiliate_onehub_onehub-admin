@@ -1,15 +1,25 @@
 import { useEffect, useState } from 'react'
 import { Controller, useWatch } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 import { Info } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from '@/components/ui/tooltip'
 import { SingleSelect, MultipleSelect } from '@/components/dropdowns'
-import { useGenerateLink, type DialogType } from './generate-link-provider'
 import { useGetDomains, useGetLanguages } from '../api/queries'
-import type { CampaignInfo, DomainInfo, LandingPageOption, ComponentInfo, TargetCountry } from '../types'
+import type {
+  CampaignInfo,
+  DomainInfo,
+  LandingPageOption,
+  ComponentInfo,
+  TargetCountry,
+} from '../types'
 import { FormFieldError } from './form-field-error'
+import { useGenerateLink, type DialogType } from './generate-link-provider'
 
 function getAvailableDomainsText(count: number): string {
   return `${count} available ${count > 1 ? 'domains' : 'domain'}`
@@ -17,24 +27,45 @@ function getAvailableDomainsText(count: number): string {
 
 export function GenerateLinkForm() {
   const { t } = useTranslation('link-generator')
-  const { form, campaigns, countries, events, groups, channels, agencies, types, landingPages, setDialogOpen, generatedResult } = useGenerateLink()
-  const { register, control, formState: { errors } } = form
+  const {
+    form,
+    campaigns,
+    countries,
+    events,
+    groups,
+    channels,
+    agencies,
+    types,
+    landingPages,
+    setDialogOpen,
+    generatedResult,
+  } = useGenerateLink()
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = form
   const isDisabled = !!generatedResult
 
   const selectedCountryCode = useWatch({ control, name: 'country' })
   const selectedEventIds = useWatch({ control, name: 'event' })
 
-  const [selectedLandingPage, setSelectedLandingPage] = useState<LandingPageOption | null>(null)
+  const [selectedLandingPage, setSelectedLandingPage] =
+    useState<LandingPageOption | null>(null)
 
   const { data: languages } = useGetLanguages(selectedCountryCode || '')
 
   useEffect(() => {
     if (selectedEventIds && events) {
       const eventIdArray = selectedEventIds.split(',').filter(Boolean)
-      const eventCodesList = eventIdArray.map(id => {
-        const event = events.find((e: ComponentInfo) => e.componentId === parseInt(id))
-        return event?.componentCode || ''
-      }).filter(Boolean)
+      const eventCodesList = eventIdArray
+        .map((id) => {
+          const event = events.find(
+            (e: ComponentInfo) => e.componentId === parseInt(id)
+          )
+          return event?.componentCode || ''
+        })
+        .filter(Boolean)
       form.setValue('eventCodes', eventCodesList.join(','))
     } else {
       form.setValue('eventCodes', '')
@@ -43,7 +74,10 @@ export function GenerateLinkForm() {
 
   useEffect(() => {
     if (selectedLandingPage && selectedLandingPage.marketId) {
-      const language = languages?.find((lang: TargetCountry) => lang.languageCode === selectedLandingPage.marketId)
+      const language = languages?.find(
+        (lang: TargetCountry) =>
+          lang.languageCode === selectedLandingPage.marketId
+      )
       if (language) {
         form.setValue('language', language.languageCode || '')
         form.setValue('shortedLanguageCode', language.shortedLanguageCode || '')
@@ -63,7 +97,10 @@ export function GenerateLinkForm() {
         const firstLanguage = languages[0]
         if (firstLanguage) {
           form.setValue('language', firstLanguage.languageCode || '')
-          form.setValue('shortedLanguageCode', firstLanguage.shortedLanguageCode || '')
+          form.setValue(
+            'shortedLanguageCode',
+            firstLanguage.shortedLanguageCode || ''
+          )
         }
       }
     }
@@ -72,14 +109,23 @@ export function GenerateLinkForm() {
   const domainTypePrimary = selectedLandingPage?.pageType === 3 ? 0 : 1
   const domainTypeShortLink = 2
 
-  const { data: domains } = useGetDomains(selectedCountryCode || '', domainTypePrimary)
-  const { data: domainsForShortLink } = useGetDomains(selectedCountryCode || '', domainTypeShortLink)
+  const { data: domains } = useGetDomains(
+    selectedCountryCode || '',
+    domainTypePrimary
+  )
+  const { data: domainsForShortLink } = useGetDomains(
+    selectedCountryCode || '',
+    domainTypeShortLink
+  )
 
   const handleCreateNew = (type: DialogType) => {
     setDialogOpen(type)
   }
 
-  const handleLandingPageChange = (_value: string, option?: LandingPageOption | null) => {
+  const handleLandingPageChange = (
+    _value: string,
+    option?: LandingPageOption | null
+  ) => {
     setSelectedLandingPage(option || null)
 
     if (option) {
@@ -103,7 +149,10 @@ export function GenerateLinkForm() {
     }
   }
 
-  const handleCampaignChange = (_value: string, option?: CampaignInfo | null) => {
+  const handleCampaignChange = (
+    _value: string,
+    option?: CampaignInfo | null
+  ) => {
     if (option?.campaignCode) {
       form.setValue('campaignCode', option.campaignCode)
     }
@@ -115,13 +164,19 @@ export function GenerateLinkForm() {
     }
   }
 
-  const handleChannelChange = (_value: string, option?: ComponentInfo | null) => {
+  const handleChannelChange = (
+    _value: string,
+    option?: ComponentInfo | null
+  ) => {
     if (option?.componentCode) {
       form.setValue('channelCode', option.componentCode)
     }
   }
 
-  const handleAgencyChange = (_value: string, option?: ComponentInfo | null) => {
+  const handleAgencyChange = (
+    _value: string,
+    option?: ComponentInfo | null
+  ) => {
     if (option?.componentCode) {
       form.setValue('agencyCode', option.componentCode)
     }
@@ -136,15 +191,23 @@ export function GenerateLinkForm() {
   return (
     <div className='space-y-4'>
       <div className='space-y-2'>
-        <h2 className='text-lg font-semibold tracking-tight'>Generate New Tracking Link</h2>
-        <p className='text-xs text-muted-foreground'>Create a trackable link with custom parameters for campaign attribution</p>
+        <h2 className='text-lg font-semibold tracking-tight'>
+          Generate New Tracking Link
+        </h2>
+        <p className='text-muted-foreground text-xs'>
+          Create a trackable link with custom parameters for campaign
+          attribution
+        </p>
       </div>
 
-      <div className='border rounded-lg p-2 sm:p-4'>
+      <div className='rounded-lg border p-2 sm:p-4'>
         <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
           <div className='space-y-1.5'>
             <Label htmlFor='linkName' className='text-sm'>
-              {t('form.linkName')} <span className='text-destructive'>{t('form.requiredField')}</span>
+              {t('form.linkName')}{' '}
+              <span className='text-destructive'>
+                {t('form.requiredField')}
+              </span>
             </Label>
             <Input
               id='linkName'
@@ -157,7 +220,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='identifierCode' className='text-sm'>{t('form.identifierCode')}</Label>
+            <Label htmlFor='identifierCode' className='text-sm'>
+              {t('form.identifierCode')}
+            </Label>
             <Input
               id='identifierCode'
               placeholder={t('form.identifierCodePlaceholder')}
@@ -171,9 +236,11 @@ export function GenerateLinkForm() {
       </div>
 
       <div className='grid gap-2 sm:gap-4 md:grid-cols-2'>
-        <div className='border rounded-lg p-4 space-y-2.5'>
+        <div className='space-y-2.5 rounded-lg border p-4'>
           <div className='space-y-1.5'>
-            <Label htmlFor='landingPage' className='text-sm'>{t('form.landingPage')}</Label>
+            <Label htmlFor='landingPage' className='text-sm'>
+              {t('form.landingPage')}
+            </Label>
             <Controller
               name='landingPage'
               control={control}
@@ -197,7 +264,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='campaign' className='text-sm'>{t('form.campaign')}</Label>
+            <Label htmlFor='campaign' className='text-sm'>
+              {t('form.campaign')}
+            </Label>
             <Controller
               name='campaign'
               control={control}
@@ -226,7 +295,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='country' className='text-sm'>{t('form.country')}</Label>
+            <Label htmlFor='country' className='text-sm'>
+              {t('form.country')}
+            </Label>
             <Controller
               name='country'
               control={control}
@@ -251,7 +322,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='language' className='text-sm'>{t('form.language')}</Label>
+            <Label htmlFor='language' className='text-sm'>
+              {t('form.language')}
+            </Label>
             <Controller
               name='shortedLanguageCode'
               control={control}
@@ -282,9 +355,12 @@ export function GenerateLinkForm() {
 
           <div className='space-y-1.5'>
             <Label htmlFor='domainName' className='text-sm'>
-              {t('form.domainName')} <span className='text-green-600 text-xs'>({getAvailableDomainsText(domains?.length || 0)})</span>
+              {t('form.domainName')}{' '}
+              <span className='text-xs text-green-600'>
+                ({getAvailableDomainsText(domains?.length || 0)})
+              </span>
             </Label>
-            <div className='flex flex-col sm:flex-row gap-2'>
+            <div className='flex flex-col gap-2 sm:flex-row'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
                   name='domainName'
@@ -318,14 +394,21 @@ export function GenerateLinkForm() {
                 />
               </div>
             </div>
-            <FormFieldError message={errors.domainName?.message || errors.domainReservedNote?.message} />
+            <FormFieldError
+              message={
+                errors.domainName?.message || errors.domainReservedNote?.message
+              }
+            />
           </div>
 
           <div className='space-y-1.5'>
             <Label htmlFor='shortDomain' className='text-sm'>
-              {t('form.shortLinkName')} <span className='text-green-600 text-xs'>({getAvailableDomainsText(domainsForShortLink?.length || 0)})</span>
+              {t('form.shortLinkName')}{' '}
+              <span className='text-xs text-green-600'>
+                ({getAvailableDomainsText(domainsForShortLink?.length || 0)})
+              </span>
             </Label>
-            <div className='flex flex-col sm:flex-row gap-1'>
+            <div className='flex flex-col gap-1 sm:flex-row'>
               <div className='w-full sm:w-80 sm:flex-shrink-0'>
                 <Controller
                   name='shortDomain'
@@ -348,35 +431,45 @@ export function GenerateLinkForm() {
                   )}
                 />
               </div>
-              <div className='flex items-center gap-1 flex-1'>
-                <span className='text-muted-foreground hidden sm:inline'>/</span>
+              <div className='flex flex-1 items-center gap-1'>
+                <span className='text-muted-foreground hidden sm:inline'>
+                  /
+                </span>
                 <div className='relative flex-1'>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Info className='absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground cursor-help' />
+                      <Info className='text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 cursor-help' />
                     </TooltipTrigger>
                     <TooltipContent side='top'>
-                      <p>Customized the last part of your short link. Use 5-20 characters, including lowercase letters, numbers, hyphens, and dots.</p>
+                      <p>
+                        Customized the last part of your short link. Use 5-20
+                        characters, including lowercase letters, numbers,
+                        hyphens, and dots.
+                      </p>
                     </TooltipContent>
                   </Tooltip>
                   <Input
                     id='custom-short-link'
                     placeholder={t('form.shortLinkValuePlaceholder')}
                     {...register('shortPath')}
-                    className='flex-1 min-w-0 pl-9'
+                    className='min-w-0 flex-1 pl-9'
                     disabled={isDisabled}
                     maxLength={20}
                   />
                 </div>
               </div>
             </div>
-            <FormFieldError message={errors.shortDomain?.message || errors.shortPath?.message} />
+            <FormFieldError
+              message={errors.shortDomain?.message || errors.shortPath?.message}
+            />
           </div>
         </div>
 
-        <div className='border rounded-lg p-4 space-y-2.5'>
+        <div className='space-y-2.5 rounded-lg border p-4'>
           <div className='space-y-1.5'>
-            <Label htmlFor='event' className='text-sm'>{t('form.event')}</Label>
+            <Label htmlFor='event' className='text-sm'>
+              {t('form.event')}
+            </Label>
             <Controller
               name='event'
               control={control}
@@ -399,7 +492,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='group' className='text-sm'>{t('form.group')}</Label>
+            <Label htmlFor='group' className='text-sm'>
+              {t('form.group')}
+            </Label>
             <Controller
               name='group'
               control={control}
@@ -424,7 +519,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='channel' className='text-sm'>{t('form.channel')}</Label>
+            <Label htmlFor='channel' className='text-sm'>
+              {t('form.channel')}
+            </Label>
             <Controller
               name='channel'
               control={control}
@@ -449,7 +546,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='agency' className='text-sm'>{t('form.agency')}</Label>
+            <Label htmlFor='agency' className='text-sm'>
+              {t('form.agency')}
+            </Label>
             <Controller
               name='agency'
               control={control}
@@ -474,7 +573,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='type' className='text-sm'>{t('form.type')}</Label>
+            <Label htmlFor='type' className='text-sm'>
+              {t('form.type')}
+            </Label>
             <Controller
               name='type'
               control={control}
@@ -499,7 +600,9 @@ export function GenerateLinkForm() {
           </div>
 
           <div className='space-y-1.5'>
-            <Label htmlFor='note' className='text-sm'>{t('form.note')}</Label>
+            <Label htmlFor='note' className='text-sm'>
+              {t('form.note')}
+            </Label>
             <Input
               id='note'
               placeholder={t('form.notePlaceholder')}
@@ -514,4 +617,3 @@ export function GenerateLinkForm() {
     </div>
   )
 }
-

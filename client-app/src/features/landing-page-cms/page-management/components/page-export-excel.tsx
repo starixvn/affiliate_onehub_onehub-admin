@@ -116,7 +116,8 @@ export const formatLandingPagesForExcel = (
       {
         field: (row: LandingPage) => {
           const date = row.modifiedDate
-          const isValidDate = date && date !== '01/01/0001' && date !== '01/01/1970'
+          const isValidDate =
+            date && date !== '01/01/0001' && date !== '01/01/1970'
           return isValidDate ? date : '-'
         },
         header: t('table.columns.modifiedDate'),
@@ -168,4 +169,3 @@ export const formatLandingPagesForExcel = (
     fileName: `landing_pages_${new Date().toISOString().split('T')[0]}`,
   })
 }
-

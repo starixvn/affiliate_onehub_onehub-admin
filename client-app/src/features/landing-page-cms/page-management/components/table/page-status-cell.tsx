@@ -1,17 +1,16 @@
 import { type Row } from '@tanstack/react-table'
 import { StatusSelect } from '@/components/ui/status-select'
-import { useUpdateBatchLandingPageStatus } from '../../api/commands'
 import { statuses } from '../../data/data'
 import { type LandingPage } from '../../data/schema'
+import { useLandingPages } from '../page-provider'
 
 export function PageStatusCell({ row }: { row: Row<LandingPage> }) {
-  const updateMutation = useUpdateBatchLandingPageStatus()
+  const { setCurrentRow, setNewStatusId, setOpen } = useLandingPages()
 
   const handleStatusChange = (newStatus: string) => {
-    updateMutation.mutate({
-      pageIds: row.original.pageId.toString(),
-      statusId: Number(newStatus),
-    })
+    setCurrentRow(row.original)
+    setNewStatusId(Number(newStatus))
+    setOpen('statusChange')
   }
 
   return (
@@ -19,9 +18,7 @@ export function PageStatusCell({ row }: { row: Row<LandingPage> }) {
       value={String(row.original.statusId)}
       onValueChange={handleStatusChange}
       options={statuses}
-      disabled={updateMutation.isPending}
       size='sm'
     />
   )
 }
-

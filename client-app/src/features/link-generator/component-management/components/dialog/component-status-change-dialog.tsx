@@ -23,7 +23,9 @@ export function ComponentStatusChangeDialog({
   const { t } = useTranslation('component-management')
   const updateBatchStatusMutation = useUpdateBatchComponentStatus()
 
-  const currentStatus = status.find((s) => s.value === String(currentRow.statusId))
+  const currentStatus = status.find(
+    (s) => s.value === String(currentRow.statusId)
+  )
   const newStatus = status.find((s) => s.value === String(newStatusId))
 
   const handleConfirm = () => {
@@ -38,7 +40,7 @@ export function ComponentStatusChangeDialog({
             onOpenChange(false)
           }
         },
-      },
+      }
     )
   }
 
@@ -61,8 +63,9 @@ export function ComponentStatusChangeDialog({
             <span className='font-bold'>{currentRow.componentName}</span>?
           </p>
           <p className='text-sm'>
-            {t('dialog.statusChange.from')} <span className='font-semibold'>{currentStatus?.label}</span>{' '}
-            → <span className='font-semibold'>{newStatus?.label}</span>
+            {t('dialog.statusChange.from')}{' '}
+            <span className='font-semibold'>{currentStatus?.label}</span> →{' '}
+            <span className='font-semibold'>{newStatus?.label}</span>
           </p>
         </div>
       }

@@ -1,10 +1,10 @@
-import { Download, Plus } from 'lucide-react'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import { getRouteApi } from '@tanstack/react-router'
+import { Download, Plus } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { useLandingPages } from './page-provider'
 import { savePageManagementFilters } from '../utils/filter-storage'
+import { useLandingPages } from './page-provider'
 
 const route = getRouteApi('/iframe/landing-page-cms/page-management/')
 
@@ -47,4 +47,3 @@ export function PagesPrimaryButtons() {
     </div>
   )
 }
-

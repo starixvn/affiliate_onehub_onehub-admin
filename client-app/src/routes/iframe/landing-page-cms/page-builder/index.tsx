@@ -1,5 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
+import { createFileRoute } from '@tanstack/react-router'
 import { PageBuilder } from '@/features/landing-page-cms/page-builder'
 
 const searchSchema = z.object({

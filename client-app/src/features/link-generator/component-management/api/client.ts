@@ -15,17 +15,27 @@ import type {
 
 class ComponentApi {
   async getSummary(): Promise<GetComponentSummaryResponse> {
-    const response = await apiClient.get<GetComponentSummaryResponse>('/component/summary')
+    const response =
+      await apiClient.get<GetComponentSummaryResponse>('/component/summary')
     return response.data
   }
 
-  async getComponents(params?: GetComponentsRequest): Promise<GetComponentsResponse> {
-    const response = await apiClient.get<GetComponentsResponse>('/component', { params })
+  async getComponents(
+    params?: GetComponentsRequest
+  ): Promise<GetComponentsResponse> {
+    const response = await apiClient.get<GetComponentsResponse>('/component', {
+      params,
+    })
     return response.data
   }
 
-  async exportComponents(params?: GetComponentsRequest): Promise<GetComponentsResponse> {
-    const response = await apiClient.get<GetComponentsResponse>('/component/export', { params })
+  async exportComponents(
+    params?: GetComponentsRequest
+  ): Promise<GetComponentsResponse> {
+    const response = await apiClient.get<GetComponentsResponse>(
+      '/component/export',
+      { params }
+    )
     return response.data
   }
 
@@ -50,7 +60,9 @@ class ComponentApi {
     return response.data
   }
 
-  async deleteComponents(request: DeleteBatchComponentRequest): Promise<DeleteComponentResponse> {
+  async deleteComponents(
+    request: DeleteBatchComponentRequest
+  ): Promise<DeleteComponentResponse> {
     const response = await apiClient.delete<DeleteComponentResponse>(
       '/component/batch',
       { data: request }

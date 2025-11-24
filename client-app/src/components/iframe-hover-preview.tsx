@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect, type ReactNode } from 'react'
-import { createPortal } from 'react-dom'
 import { Loader2 } from 'lucide-react'
+import { createPortal } from 'react-dom'
 import { cn } from '@/lib/utils'
 
 interface IframeHoverPreviewProps {
@@ -190,7 +190,7 @@ export function IframeHoverPreview({
         ref={triggerRef}
         className={cn(
           'transition-colors',
-          src && !disabled && 'cursor-pointer hover:bg-primary/5',
+          src && !disabled && 'hover:bg-primary/5 cursor-pointer',
           className
         )}
         onMouseEnter={handleMouseEnter}
@@ -199,72 +199,73 @@ export function IframeHoverPreview({
         {children}
       </div>
 
-      {showPreview && src && !disabled && createPortal(
-        <>
-          <div
-            className='pointer-events-none fixed inset-0'
-            style={{ zIndex: 9999 }}
-          />
-          <div
-            ref={previewRef}
-            className='bg-background pointer-events-auto fixed overflow-hidden rounded-lg border-2 shadow-lg will-change-transform'
-            style={{
-              left: `${previewPosition.x}px`,
-              top: `${previewPosition.y}px`,
-              zIndex: 10000,
-              padding: '8px',
-              width: `${iframeDimensions.width + 16}px`,
-              height: `${iframeDimensions.height + 16}px`,
-              maxWidth: `${window.innerWidth - 40}px`,
-              maxHeight: `${window.innerHeight - 40}px`,
-              boxSizing: 'border-box',
-              transform: 'translateZ(0)',
-            }}
-          >
+      {showPreview &&
+        src &&
+        !disabled &&
+        createPortal(
+          <>
             <div
-              className='bg-muted relative h-full w-full overflow-hidden rounded border'
+              className='pointer-events-none fixed inset-0'
+              style={{ zIndex: 9999 }}
+            />
+            <div
+              ref={previewRef}
+              className='bg-background pointer-events-auto fixed overflow-hidden rounded-lg border-2 shadow-lg will-change-transform'
+              style={{
+                left: `${previewPosition.x}px`,
+                top: `${previewPosition.y}px`,
+                zIndex: 10000,
+                padding: '8px',
+                width: `${iframeDimensions.width + 16}px`,
+                height: `${iframeDimensions.height + 16}px`,
+                maxWidth: `${window.innerWidth - 40}px`,
+                maxHeight: `${window.innerHeight - 40}px`,
+                boxSizing: 'border-box',
+                transform: 'translateZ(0)',
+              }}
             >
-              <iframe
-                ref={iframeRef}
-                src={src}
-                title='Landing Page Preview'
-                className={cn(
-                  'absolute left-0 top-0 h-full w-full border-none',
-                  iframeLoaded ? 'block' : 'hidden'
+              <div className='bg-muted relative h-full w-full overflow-hidden rounded border'>
+                <iframe
+                  ref={iframeRef}
+                  src={src}
+                  title='Landing Page Preview'
+                  className={cn(
+                    'absolute top-0 left-0 h-full w-full border-none',
+                    iframeLoaded ? 'block' : 'hidden'
+                  )}
+                  onLoad={handleIframeLoad}
+                  onError={handleIframeError}
+                  scrolling='no'
+                />
+
+                {!iframeLoaded && !iframeBlocked && (
+                  <div className='absolute inset-0 flex items-center justify-center'>
+                    <div className='text-center'>
+                      <Loader2 className='text-primary mx-auto h-6 w-6 animate-spin' />
+                      <div className='text-muted-foreground mt-2 text-xs'>
+                        Loading preview...
+                      </div>
+                    </div>
+                  </div>
                 )}
-                onLoad={handleIframeLoad}
-                onError={handleIframeError}
-                scrolling='no'
-              />
 
-              {!iframeLoaded && !iframeBlocked && (
-                <div className='absolute inset-0 flex items-center justify-center'>
-                  <div className='text-center'>
-                    <Loader2 className='text-primary mx-auto h-6 w-6 animate-spin' />
-                    <div className='text-muted-foreground mt-2 text-xs'>
-                      Loading preview...
+                {iframeBlocked && (
+                  <div className='absolute inset-0 flex items-center justify-center'>
+                    <div className='text-center'>
+                      <div className='text-destructive text-sm font-medium'>
+                        Unable to load preview
+                      </div>
+                      <div className='text-muted-foreground mt-1 text-xs'>
+                        This page cannot be displayed in iframe
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-
-              {iframeBlocked && (
-                <div className='absolute inset-0 flex items-center justify-center'>
-                  <div className='text-center'>
-                    <div className='text-destructive text-sm font-medium'>
-                      Unable to load preview
-                    </div>
-                    <div className='text-muted-foreground mt-1 text-xs'>
-                      This page cannot be displayed in iframe
-                    </div>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-        </>,
-        document.body
-      )}
+          </>,
+          document.body
+        )}
     </>
   )
 }
