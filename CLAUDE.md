@@ -1051,9 +1051,57 @@ JWT-based with cookie support. Access/refresh token pattern.
 
 3. **Missing CORS configuration** - In development, Vite proxy handles this. In production, ensure backend CORS is configured if needed.
 
+## OpenSpec - Spec-Driven Development
+
+This project uses OpenSpec for spec-driven development. Changes to capabilities or requirements should follow the OpenSpec workflow.
+
+### OpenSpec CLI Installation
+
+Install the OpenSpec CLI globally:
+
+```bash
+npm install -g openspec-cli
+```
+
+### Essential OpenSpec Commands
+
+```bash
+# View active changes and specifications
+openspec list                          # List active changes
+openspec list --specs                  # List all specifications
+openspec show [change-id|spec-id]      # Display change or spec details
+
+# Validation
+openspec validate [change-id] --strict # Validate a change with strict checks
+openspec validate                      # Bulk validation mode (interactive)
+
+# Archive after deployment
+openspec archive <change-id> [--yes|-y]
+```
+
+### OpenSpec Workflow
+
+1. **Proposal Stage** - Create change proposal with specs
+   - Create `openspec/changes/<change-id>/proposal.md`
+   - Add spec deltas in `openspec/changes/<change-id>/specs/<capability>/spec.md`
+   - Run `openspec validate <change-id> --strict`
+
+2. **Implementation Stage** - Follow tasks.md checklist
+   - Read proposal.md and design.md (if exists)
+   - Implement tasks sequentially
+   - Update tasks.md to mark completed items
+
+3. **Archive Stage** - After deployment
+   - Run `openspec archive <change-id> --yes`
+   - Updates `openspec/specs/` with merged changes
+   - Moves change to `openspec/changes/archive/`
+
+**Documentation:** See [openspec/AGENTS.md](openspec/AGENTS.md) for detailed instructions.
+
 ## Additional Resources
 
 - [client-app/CLAUDE.md](client-app/CLAUDE.md) - Detailed frontend documentation
 - [README.md](README.md) - Project overview and setup
+- [openspec/AGENTS.md](openspec/AGENTS.md) - OpenSpec workflow guide
 - `.cursor/rules/commit.mdc` - Commit message rules
 - `.cursor/rules/common.mdc` - Common development rules

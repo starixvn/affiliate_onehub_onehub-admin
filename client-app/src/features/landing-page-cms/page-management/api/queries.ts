@@ -19,10 +19,10 @@ export function useGetLandingPages(params?: GetLandingPagesRequest) {
   })
 }
 
-export function useGetLandingPageSummary(params?: GetPageManagementDashboardRequest) {
+export function useGetLandingPageSummary() {
   return useQuery({
-    queryKey: [...landingPageKeys.summary(), params],
-    queryFn: () => landingPageApi.getSummary(params),
+    queryKey: landingPageKeys.summary(),
+    queryFn: () => landingPageApi.getSummary(),
     select: (data) => data.data,
   })
 }
@@ -43,15 +43,16 @@ export const usePageFilters = () => {
 
 const selectPageFilters = (data: any) => {
   const response = data.data
-  const today = response?.today ? new Date(response.today) : new Date()
-  today.setHours(0, 0, 0, 0)
 
-  const minDate = new Date('2024-12-31')
+  const minDate = response?.minDate ? new Date(response.minDate) : new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())
   minDate.setHours(0, 0, 0, 0)
+
+  const maxDate = response?.maxDate ? new Date(response.maxDate) : new Date()
+  maxDate.setHours(0, 0, 0, 0)
 
   let defaultFromDate = response?.defaultFromDate
     ? new Date(response.defaultFromDate)
-    : new Date(today.getFullYear(), today.getMonth(), 1)
+    : new Date(maxDate.getFullYear(), maxDate.getMonth(), 1)
   defaultFromDate.setHours(0, 0, 0, 0)
 
   if (defaultFromDate < minDate) {
@@ -60,7 +61,7 @@ const selectPageFilters = (data: any) => {
 
   const defaultToDate = response?.defaultToDate
     ? new Date(response.defaultToDate)
-    : today
+    : maxDate
   defaultToDate.setHours(0, 0, 0, 0)
 
   return {
@@ -68,7 +69,8 @@ const selectPageFilters = (data: any) => {
     languages: response?.languages ?? [],
     pageStatus: response?.statusInfos.filter((status: PageStatus) => status.statusId !== undefined) ?? [],
     landingPageUrl: response?.landingPageUrl ?? '',
-    today,
+    minDate,
+    maxDate,
     defaultFromDate,
     defaultToDate,
   }

@@ -101,7 +101,7 @@ export function DateRangePicker({
       id: 'entirePeriod',
       label: 'Entire Period',
       getValue: () => ({
-        from: minDate || startOfDay(new Date('2024-12-31')),
+        from: minDate || startOfDay(new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())),
         to: maxDate || endOfDay(new Date()),
       }),
     },
@@ -180,7 +180,7 @@ export function DateRangePicker({
           onSelect={handleDateSelect}
           disabled={(date: Date) => {
             const max = maxDate || endOfDay(new Date())
-            const min = minDate || startOfDay(new Date('2025-01-01'))
+            const min = minDate || startOfDay(new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate()))
             return date > max || date < min
           }}
         />

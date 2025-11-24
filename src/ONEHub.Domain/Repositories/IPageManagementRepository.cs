@@ -6,7 +6,7 @@ namespace ONEHub.Domain.Repositories;
 
 public interface IPageManagementRepository
 {
-    public Task<Result<PageManagementDashboard>> GetPageManagementDashboardAsync(PageManagementDashboardParam param);
+    public Task<Result<PageManagementDashboard>> GetPageManagementDashboardAsync();
 
     public Task<Result<PagingData<LandingPage>>> GetLandingPageListAsync(LandingPageListParam param);
 

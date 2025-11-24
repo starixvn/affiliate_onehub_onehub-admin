@@ -12,7 +12,8 @@ public class GetPageManagementFiltersQuery : BaseQuery<PageManagementFiltersResp
 
 public record PageManagementFiltersResponse(
     string LandingPageUrl,
-    DateTime Today,
+    DateTime MinDate,
+    DateTime MaxDate,
     DateTime DefaultFromDate,
     DateTime DefaultToDate,
     IEnumerable<TargetCountry> TargetCountries,
@@ -30,6 +31,7 @@ public class GetPageManagementFiltersHandler(
         var landingPageUrl = configuration["AppSettings:LandingPageUrl"] ?? string.Empty;
         var today = DateTimeOffset.Now.Date;
         var firstDayOfMonth = new DateTimeOffset(today.Year, today.Month, 1, 0, 0, 0, TimeSpan.Zero);
+        var minDate = today.AddYears(-2);
 
         var targetCountries = await systemRepository.GetTargetCountryAsync();
         var languages = await systemRepository.GetTargetCountryAsync(false);
@@ -38,6 +40,7 @@ public class GetPageManagementFiltersHandler(
         return Result<PageManagementFiltersResponse>.Success(
             new PageManagementFiltersResponse(
                 landingPageUrl,
+                minDate,
                 today,
                 firstDayOfMonth.DateTime,
                 today,

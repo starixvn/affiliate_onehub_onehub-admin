@@ -88,6 +88,14 @@ After deployment, create separate PR to:
 
 ## Quick Start
 
+### CLI Installation
+
+OpenSpec CLI is installed globally via npm:
+
+```bash
+npm install -g openspec-cli
+```
+
 ### CLI Commands
 
 ```bash

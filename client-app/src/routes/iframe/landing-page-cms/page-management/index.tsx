@@ -11,6 +11,7 @@ const searchSchema = z.object({
   toDate: z.string().optional(),
   countryCode: z.string().optional(),
   languageCode: z.string().optional(),
+  preset: z.string().optional(),
 })
 
 export const Route = createFileRoute('/iframe/landing-page-cms/page-management/')({

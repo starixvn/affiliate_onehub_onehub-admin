@@ -2,17 +2,6 @@ namespace ONEHub.Domain.Params;
 
 public class PageManagementDashboardParam : BaseParam
 {
-    public string? Search { get; set; }
-
-    public string? StatusIds { get; set; }
-
-    public string? TargetCountryCodes { get; set; }
-
-    public string? LanguageCodes { get; set; }
-
-    public DateTime? FromDate { get; set; }
-
-    public DateTime? ToDate { get; set; }
 }
 
 public class LandingPageListParam : PagingParam

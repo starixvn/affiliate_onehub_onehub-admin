@@ -37,14 +37,9 @@ export const landingPageApi = {
     return response.data
   },
 
-  async getSummary(
-    params?: GetPageManagementDashboardRequest
-  ): Promise<GetLandingPageSummaryResponse> {
+  async getSummary(): Promise<GetLandingPageSummaryResponse> {
     const response = await apiClient.get<GetLandingPageSummaryResponse>(
-      '/page-management/summary',
-      {
-        params,
-      }
+      '/page-management/summary'
     )
     return response.data
   },

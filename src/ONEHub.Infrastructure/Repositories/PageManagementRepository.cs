@@ -11,18 +11,9 @@ namespace ONEHub.Infrastructure.Repositories;
 public class PageManagementRepository(IDynamicRepository dynamicRepository)
     : BaseRepository(dynamicRepository), IPageManagementRepository
 {
-    public async Task<Result<PageManagementDashboard>> GetPageManagementDashboardAsync(PageManagementDashboardParam param)
+    public async Task<Result<PageManagementDashboard>> GetPageManagementDashboardAsync()
     {
-        var criteria = new GetPageManagementDashboardCriteria
-        {
-            PageName = param.Search,
-            CampaignName = param.Search,
-            StatusIds = param.StatusIds,
-            TargetCountryCodes = param.TargetCountryCodes,
-            LanguageCodes = param.LanguageCodes,
-            FromDate = param.FromDate,
-            ToDate = param.ToDate
-        };
+        var criteria = new GetPageManagementDashboardCriteria();
 
         return await GetDataAsync<PageManagementDashboard>(criteria);
     }

@@ -68,7 +68,7 @@ export function PageTable({
   landingPageUrl,
 }: DataTableProps) {
   const { t } = useTranslation('page-management')
-  const { countries, languages, pageStatus, defaultFromDate, defaultToDate } = useLandingPages()
+  const { countries, languages, pageStatus, minDate, maxDate, defaultFromDate, defaultToDate } = useLandingPages()
 
   const [rowSelection, setRowSelection] = useState({})
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(() => {
@@ -83,7 +83,7 @@ export function PageTable({
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [datePopoverOpen, setDatePopoverOpen] = useState(false)
   const [searchValue, setSearchValue] = useState((search.search as string) ?? '')
-  const [selectedPreset, setSelectedPreset] = useState<string | null>(null)
+  const [selectedPreset, setSelectedPreset] = useState<string | null>((search.preset as string) ?? null)
 
   const [fromDate, setFromDate] = useState<Date | undefined>(
     search.fromDate ? new Date(search.fromDate as string) : defaultFromDate
@@ -145,6 +145,10 @@ export function PageTable({
   useEffect(() => {
     setSearchValue((search.search as string) ?? '')
   }, [search.search])
+
+  useEffect(() => {
+    setSelectedPreset((search.preset as string) ?? null)
+  }, [search.preset])
 
   useEffect(() => {
     setLocalStorageItem('table-column-visibility:page-management', JSON.stringify(columnVisibility))
@@ -272,6 +276,7 @@ export function PageTable({
         languageCode: languageFilter?.join(',') || undefined,
         fromDate: fromDate ? format(fromDate, 'yyyy-MM-dd') : undefined,
         toDate: toDate ? format(toDate, 'yyyy-MM-dd') : undefined,
+        preset: selectedPreset || undefined,
         pageIndex: 1,
       },
     })
@@ -413,8 +418,8 @@ export function PageTable({
                     setToDate(to)
                     setSelectedPreset(preset ?? null)
                   }}
-                  minDate={defaultFromDate}
-                  maxDate={defaultToDate}
+                  minDate={minDate}
+                  maxDate={maxDate}
                   disabledPresets={searchValue.trim() === '' ? ['entirePeriod'] : []}
                 />
               </PopoverContent>

@@ -33,24 +33,9 @@ public static class PageManagementEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<PageManagementDashboardResponse>>, ValidationProblem>> Summary(
-        [AsParameters] GetPageManagementDashboardRequest request,
-        IMediator mediator)
+    private static async Task<Ok<Result<PageManagementDashboardResponse>>> Summary(IMediator mediator)
     {
-        if (!MiniValidator.TryValidate(request, out var errors))
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        var query = new GetPageManagementDashboardQuery
-        {
-            Search = request.Search,
-            StatusIds = request.StatusIds,
-            CountryCodes = request.CountryCodes,
-            LanguageCodes = request.LanguageCodes,
-            FromDate = request.FromDate,
-            ToDate = request.ToDate
-        };
+        var query = new GetPageManagementDashboardQuery();
 
         var result = await mediator.Send(query);
 

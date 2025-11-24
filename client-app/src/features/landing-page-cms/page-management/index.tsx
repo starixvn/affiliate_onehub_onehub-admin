@@ -75,7 +75,7 @@ export function PageManagement() {
     if (hasInitialized.current) return
 
     const savedFilters = loadPageManagementFilters()
-    
+
     if (savedFilters && Object.keys(savedFilters).length > 0) {
       hasInitialized.current = true
       navigate({
@@ -87,15 +87,16 @@ export function PageManagement() {
 
     const needsStatus = !search.status
     const needsDates = !search.fromDate || !search.toDate
+    const hasPreset = !!search.preset
 
-    if (needsStatus || needsDates) {
+    if (needsStatus || (needsDates && !hasPreset)) {
       const updates: Record<string, string> = {}
 
       if (needsStatus) {
         updates.status = DEFAULT_STATUS
       }
 
-      if (needsDates) {
+      if (needsDates && !hasPreset) {
         if (!search.fromDate) {
           updates.fromDate = format(defaultFromDate, 'yyyy-MM-dd')
         }
@@ -117,7 +118,9 @@ export function PageManagement() {
     }
   }, [isLoadingFilters, defaultFromDate, defaultToDate])
 
-  if (isLoadingFilters || !search.status || !search.fromDate || !search.toDate) {
+  const hasRequiredParams = search.status && (search.fromDate && search.toDate || search.preset)
+
+  if (isLoadingFilters || !hasRequiredParams) {
     return (
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>

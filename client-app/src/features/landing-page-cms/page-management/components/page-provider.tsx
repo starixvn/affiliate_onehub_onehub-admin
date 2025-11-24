@@ -29,7 +29,8 @@ type LandingPagesContextType = {
   languages: Language[]
   pageStatus: PageStatus[]
   landingPageUrl: string
-  today: Date
+  minDate: Date
+  maxDate: Date
   defaultFromDate: Date
   defaultToDate: Date
   navigate: ReturnType<typeof route.useNavigate>
@@ -61,7 +62,8 @@ export function LandingPagesProvider({
     languages = [],
     pageStatus = [],
     landingPageUrl = '',
-    today = new Date(),
+    minDate = new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate()),
+    maxDate = new Date(),
     defaultFromDate = new Date(new Date().getFullYear(), new Date().getMonth(), 1),
     defaultToDate = new Date(),
   } = usePageFilters() ?? {}
@@ -80,6 +82,18 @@ export function LandingPagesProvider({
     }
   }
 
+
+  const memoizedMinDate = React.useMemo(() => {
+    const date = minDate ?? new Date(new Date().getFullYear() - 2, new Date().getMonth(), new Date().getDate())
+    date.setHours(0, 0, 0, 0)
+    return date
+  }, [minDate])
+
+  const memoizedMaxDate = React.useMemo(() => {
+    const date = maxDate ?? new Date()
+    date.setHours(0, 0, 0, 0)
+    return date
+  }, [maxDate])
 
   const memoizedDefaultFromDate = React.useMemo(() => {
     const date = defaultFromDate ?? new Date(new Date().getFullYear(), new Date().getMonth(), 1)
@@ -109,7 +123,8 @@ export function LandingPagesProvider({
     languages,
     pageStatus,
     landingPageUrl,
-    today: today as Date,
+    minDate: memoizedMinDate as Date,
+    maxDate: memoizedMaxDate as Date,
     defaultFromDate: memoizedDefaultFromDate as Date,
     defaultToDate: memoizedDefaultToDate as Date,
     navigate,
@@ -126,7 +141,8 @@ export function LandingPagesProvider({
     languages,
     pageStatus,
     landingPageUrl,
-    today,
+    memoizedMinDate,
+    memoizedMaxDate,
     memoizedDefaultFromDate,
     memoizedDefaultToDate,
     navigate,

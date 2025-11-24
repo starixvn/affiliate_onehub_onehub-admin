@@ -2,14 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ONEHub.WebApi.Features.PageManagement;
 
-public record GetPageManagementDashboardRequest(
-    string? Search,
-    string? StatusIds,
-    string? CountryCodes,
-    string? LanguageCodes,
-    [Required] DateTime FromDate,
-    [Required] DateTime ToDate
-);
+public record GetPageManagementDashboardRequest();
 
 public record GetLandingPageListRequest(
     string? Search,

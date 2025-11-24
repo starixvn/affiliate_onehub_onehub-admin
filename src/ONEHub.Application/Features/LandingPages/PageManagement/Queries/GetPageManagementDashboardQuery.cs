@@ -9,17 +9,6 @@ namespace ONEHub.Application.Features.LandingPages.PageManagement.Queries;
 
 public class GetPageManagementDashboardQuery : BaseQuery<PageManagementDashboardResponse>
 {
-    public string? Search { get; set; }
-
-    public string? StatusIds { get; set; }
-
-    public string? CountryCodes { get; set; }
-
-    public string? LanguageCodes { get; set; }
-
-    public DateTime? FromDate { get; set; }
-
-    public DateTime? ToDate { get; set; }
 }
 
 public record PageManagementDashboardResponse(int Total, int Draft, int Active, int Inactive);
@@ -29,16 +18,7 @@ public class GetPageManagementDashboardHandler(IPageManagementRepository pageMan
 {
     public async Task<Result<PageManagementDashboardResponse>> Handle(GetPageManagementDashboardQuery request, CancellationToken cancellationToken)
     {
-        var param = new PageManagementDashboardParam
-        {
-            Search = request.Search,
-            StatusIds = request.StatusIds,
-            TargetCountryCodes = request.CountryCodes,
-            LanguageCodes = request.LanguageCodes,
-            FromDate = request.FromDate,
-            ToDate = request.ToDate
-        };
-        var pageManagementDashboardResult = await pageManagementRepository.GetPageManagementDashboardAsync(param);
+        var pageManagementDashboardResult = await pageManagementRepository.GetPageManagementDashboardAsync();
 
         if (pageManagementDashboardResult.IsFailure)
         {

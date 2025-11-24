@@ -24,14 +24,7 @@ export interface GetLandingPageSummaryResponseData {
   inactive: number
 }
 
-export interface GetPageManagementDashboardRequest {
-  search?: string
-  statusIds?: string
-  countryCodes?: string
-  languageCodes?: string
-  fromDate?: string
-  toDate?: string
-}
+export interface GetPageManagementDashboardRequest {}
 
 export type GetLandingPageSummaryResponse =
   IAxiosResponse<GetLandingPageSummaryResponseData>
