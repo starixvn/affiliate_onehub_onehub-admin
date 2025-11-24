@@ -190,17 +190,7 @@ export function GenerateLinkForm() {
 
   return (
     <div className='space-y-4'>
-      <div className='space-y-2'>
-        <h2 className='text-lg font-semibold tracking-tight'>
-          Generate New Tracking Link
-        </h2>
-        <p className='text-muted-foreground text-xs'>
-          Create a trackable link with custom parameters for campaign
-          attribution
-        </p>
-      </div>
-
-      <div className='rounded-lg border p-2 sm:p-4'>
+      <div className='border rounded-lg p-4'>
         <div className='grid gap-4 sm:gap-6 md:grid-cols-2'>
           <div className='space-y-1.5'>
             <Label htmlFor='linkName' className='text-sm'>

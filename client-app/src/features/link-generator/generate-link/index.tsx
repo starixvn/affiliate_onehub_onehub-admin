@@ -43,7 +43,7 @@ function GenerateLinkContent() {
           </p>
         </div>
       </div>
-      <div className='bg-card rounded-lg border p-4 sm:p-6'>
+      <div className='rounded-lg bg-card'>
         <GenerateLinkForm />
       </div>
       <GenerateLinkActions />
