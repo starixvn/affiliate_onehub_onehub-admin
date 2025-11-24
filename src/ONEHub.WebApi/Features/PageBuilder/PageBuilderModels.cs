@@ -2,39 +2,31 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ONEHub.WebApi.Features.PageBuilder;
 
-public record GetLandingPageDetailRequest(
-    int PageId,
-    bool IsClone);
-
-public record GetMediaSourceRequest(
-    [Required] int ModuleId,
-    [Required] string TargetCountryCode,
-    [Required] string LanguageCode);
-
-public record ModuleComponentRequest(
-    [Required] int ModuleId,
-    [Required] int MediaId,
-    string ExtraInfo,
-    [Required] int OrderId
-    );
-
 public record CreateLandingPageRequest(
-    [Required] string LpName,
-    [Required] string LpCode,
+    [Required][MaxLength(100)] string PageCode,
+    [Required] string PageName,
     [Required] int CampaignId,
     [Required] string TargetCountryCode,
     [Required] string LanguageCode,
-    [Required] int StatusId,
     [Required] bool IsPreview,
-    [Required] IEnumerable<ModuleComponentRequest> ModuleComponentsSetting
-    );
+    [Required] int StatusId
+);
 
 public record UpdateLandingPageRequest(
-    [Required] int PageId,
-    [Required] string LpName,
+    [Required][MaxLength(100)] string PageCode,
+    [Required] string PageName,
     [Required] int CampaignId,
     [Required] string TargetCountryCode,
     [Required] string LanguageCode,
-    [Required] int StatusId,
-    [Required] IEnumerable<ModuleComponentRequest> ModuleComponentsSetting
-    );
+    [Required] bool IsPreview,
+    [Required] int StatusId
+);
+
+public record GetPageBuilderDetailRequest(
+    [Required] int PageId
+);
+
+public record GetMediaRequest(
+    [Required] int ModuleId,
+    string TargetCountryCode,
+    string LanguageCode);

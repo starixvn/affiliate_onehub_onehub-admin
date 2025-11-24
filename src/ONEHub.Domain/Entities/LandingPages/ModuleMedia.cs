@@ -9,6 +9,8 @@ public class ModuleMedia
 
 public class MediaItem
 {
+    public int MediaId { get; set; }
+
     public string MediaName { get; set; } = string.Empty;
 
     public string FileName { get; set; } = string.Empty;

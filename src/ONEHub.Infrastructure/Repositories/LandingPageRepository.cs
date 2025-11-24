@@ -28,7 +28,7 @@ public class LandingPageRepository(IDynamicRepository dynamicRepository)
 
     public async Task<Result<IEnumerable<StatusInfo>>> GetStatusAsync()
     {
-        var criteria = new GetStatusCriteria();
+        var criteria = new GetLandingPageStatusCriteria();
         var result = await FetchDataAsync<StatusInfo>(criteria);
 
         return result;

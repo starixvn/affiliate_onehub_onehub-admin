@@ -11,6 +11,7 @@ using ONEHub.WebApi.Features.Component;
 using ONEHub.WebApi.Features.Domain;
 using ONEHub.WebApi.Features.GenerateLink;
 using ONEHub.WebApi.Features.LandingPage;
+using ONEHub.WebApi.Features.PageBuilder;
 using ONEHub.WebApi.Features.LandingPage.AssetUploader;
 using ONEHub.WebApi.Features.LandingPage.RegistrationForm;
 using ONEHub.WebApi.Features.PageBuilder;
@@ -233,6 +234,7 @@ public static class WebApplicationSetup
         app.RegisterComponentEndpoints();
         app.RegisterDomainEndpoints();
         app.RegisterGenerateLinkEndpoints();
+        app.RegisterPageBuilderEndpoints();
         app.RegisterLandingPageEndpoints();
         app.RegisterPageBuilderEndpoints();
         app.RegisterPageManagementEndpoints();

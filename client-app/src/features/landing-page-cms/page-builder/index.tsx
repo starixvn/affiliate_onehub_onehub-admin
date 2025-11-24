@@ -1,19 +1,17 @@
-import { Button } from '@/components/ui/button'
+import { useTranslation } from 'react-i18next'
 import { Main } from '@/components/layout/main'
+import { PageBuilderForm } from './components/page-builder-form'
 
 export function PageBuilder() {
+  const { t } = useTranslation('page-builder')
   return (
     <Main>
       <div className='mb-2 flex items-center justify-between space-y-2'>
-        <h1 className='text-2xl font-bold tracking-tight'>Page Builder</h1>
-        <div className='flex items-center space-x-2'>
-          <Button>Build New Page</Button>
-        </div>
+        <h1 className='text-2xl font-bold tracking-tight'>{t('page.title')}</h1>
       </div>
-      <div className='space-y-4'>
-        <p className='text-muted-foreground'>
-          Create and design landing pages with the page builder.
-        </p>
+
+      <div className='rounded-lg border bg-card p-4 sm:p-6'>
+        <PageBuilderForm />
       </div>
     </Main>
   )
