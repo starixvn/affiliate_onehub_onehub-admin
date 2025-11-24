@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using ONEHub.Domain.Entities;
 
 namespace ONEHub.WebApi.Features.PageBuilder;
 
@@ -9,7 +10,9 @@ public record CreateLandingPageRequest(
     [Required] string TargetCountryCode,
     [Required] string LanguageCode,
     [Required] bool IsPreview,
-    [Required] int StatusId
+    [Required] int StatusId,
+    int PageId,
+    IEnumerable<ModuleComponentItem> ModuleComponentSettings
 );
 
 public record UpdateLandingPageRequest(
@@ -23,7 +26,9 @@ public record UpdateLandingPageRequest(
 );
 
 public record GetPageBuilderDetailRequest(
-    [Required] int PageId
+    [Required] int PageId,
+    string? PageCode,
+    bool IsPreview
 );
 
 public record GetMediaRequest(

@@ -16,4 +16,6 @@ public class MediaItem
     public string FileName { get; set; } = string.Empty;
 
     public string Dimension { get; set; } = string.Empty;
+
+    public int ModuleId { get; set; }
 }

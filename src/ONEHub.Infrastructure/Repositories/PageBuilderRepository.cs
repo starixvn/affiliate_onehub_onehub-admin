@@ -35,6 +35,7 @@ public class PageBuilderRepository(IDynamicRepository dynamicRepository)
         };
 
         var result = await ExecuteCommandAsync(command);
+        param.PageId = command.PageId;
         return result;
     }
 
@@ -59,7 +60,7 @@ public class PageBuilderRepository(IDynamicRepository dynamicRepository)
         return result;
     }
 
-    public async Task<Result<MediaItem>> GetMediaByModuleAsync(GetMediaParam param)
+    public async Task<Result<IEnumerable<MediaItem>>> GetMediaByModuleAsync(GetMediaParam param)
     {
         var criteria = new GetMediaCriteria
         {
@@ -68,7 +69,7 @@ public class PageBuilderRepository(IDynamicRepository dynamicRepository)
             MarketId = param.LanguageCode
         };
 
-        return await GetDataAsync<MediaItem>(criteria);
+        return await FetchDataAsync<MediaItem>(criteria);
     }
 
     public async Task<Result<IEnumerable<StatusInfo>>> GetLandingPageStatusAsync()
@@ -79,11 +80,13 @@ public class PageBuilderRepository(IDynamicRepository dynamicRepository)
         return result;
     }
 
-    public async Task<Result<PageBuilderDetail>> GetPageBuilderDetailAsync(int pageId)
+    public async Task<Result<PageBuilderDetail>> GetPageBuilderDetailAsync(GetPageBuilderParam param)
     {
         var criteria = new GetPageBuilderDetailCriteria
         {
-            PageId = pageId
+            PageId = param.PageId,
+            PageCode = param.PageCode,
+            IsPreview = param.IsPreview
         };
         var result = await dynamicRepository.FetchMultipleAsync<PageBuilderDetail, ModuleComponentItem>(criteria);
         var pageDetail = result.Item1.FirstOrDefault();
