@@ -143,11 +143,13 @@ export const getPageColumns = (
     accessorKey: 'countryCode',
     header: () => null,
     cell: () => null,
+    meta: {
+      hideFromToggle: true,
+    },
     filterFn: (row, id, value) => {
       return value.includes(String(row.getValue(id)))
     },
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'countryName',
@@ -170,11 +172,13 @@ export const getPageColumns = (
     accessorKey: 'languageCode',
     header: () => null,
     cell: () => null,
+    meta: {
+      hideFromToggle: true,
+    },
     filterFn: (row, id, value) => {
       return value.includes(String(row.getValue(id)))
     },
     enableSorting: false,
-    enableHiding: false,
   },
   {
     accessorKey: 'languageName',
