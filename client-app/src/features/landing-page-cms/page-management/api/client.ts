@@ -9,7 +9,6 @@ import type {
   DeleteLandingPageResponse,
   UpdateBatchLandingPageStatusRequest,
   UpdateBatchLandingPageStatusResponse,
-  GetPageManagementDashboardRequest,
 } from '../types'
 
 export const landingPageApi = {

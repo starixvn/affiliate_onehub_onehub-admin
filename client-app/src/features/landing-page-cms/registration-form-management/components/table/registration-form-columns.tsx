@@ -10,7 +10,7 @@ import { TRANSLATION_KEY, type RegisterFormDetail } from '../../data/schema'
 
 declare module '@tanstack/react-table' {
   interface ColumnMeta<TData, TValue> {
-    className: string
+    className?: string
     displayName?: string
   }
 }

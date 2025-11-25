@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import type {
   GetLandingPagesRequest,
-  GetPageManagementDashboardRequest,
   PageStatus,
   GetPageFiltersResponse,
 } from '../types'

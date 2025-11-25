@@ -71,6 +71,8 @@ export interface GetPageFiltersData {
   statusInfos: Array<PageStatus>
   landingPageUrl: string
   today: Date
+  minDate?: Date
+  maxDate?: Date
   defaultFromDate: Date
   defaultToDate: Date
 }

@@ -23,7 +23,6 @@ export function IframeHoverPreview({
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [iframeBlocked, setIframeBlocked] = useState(false)
   const [isTriggerHovered, setIsTriggerHovered] = useState(false)
-  const [isPreviewHovered, setIsPreviewHovered] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -137,7 +136,6 @@ export function IframeHoverPreview({
 
     closeTimeoutRef.current = setTimeout(() => {
       setShowPreview(false)
-      setIsPreviewHovered(false)
     }, 100)
   }, [])
 
@@ -146,12 +144,9 @@ export function IframeHoverPreview({
       clearTimeout(closeTimeoutRef.current)
       closeTimeoutRef.current = null
     }
-    setIsPreviewHovered(true)
   }, [])
 
   const handlePreviewMouseLeave = useCallback(() => {
-    setIsPreviewHovered(false)
-
     closeTimeoutRef.current = setTimeout(() => {
       if (!isTriggerHovered) {
         setShowPreview(false)
