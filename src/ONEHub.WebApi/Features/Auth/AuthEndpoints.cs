@@ -52,8 +52,8 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_REFRESH_TOKEN, result.Data.RefreshToken);
 
         return TypedResults.Ok(result);
     }
@@ -64,7 +64,7 @@ public static class AuthEndpoints
         ICurrentUserService currentUserService,
         IMediator mediator)
     {
-        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
+        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_REFRESH_TOKEN);
         var userId = currentUserService.GetUserIdFromExpiredToken();
 
         if (userId <= 0)
@@ -85,7 +85,7 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_ACCESS_TOKEN, result.Data.AccessToken);
 
         return TypedResults.Ok(result);
     }
@@ -95,17 +95,17 @@ public static class AuthEndpoints
         ICurrentUserService currentUserService,
         ICacheProvider cacheProvider)
     {
-        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
+        var refreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_REFRESH_TOKEN);
         var userId = currentUserService.GetUserId();
 
         if (userId > 0 && !string.IsNullOrEmpty(refreshToken))
         {
-            var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{userId}:{refreshToken}";
+            var cacheKey = $"{CacheKeys.INTERNAL_REFRESH_TOKEN}:{userId}:{refreshToken}";
             await cacheProvider.RemoveFromCacheAsync(cacheKey);
         }
 
-        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN);
-        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN);
+        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_ACCESS_TOKEN);
+        HttpContextUtils.ClearCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_REFRESH_TOKEN);
 
         return TypedResults.Ok(Result.Success());
     }
@@ -114,11 +114,13 @@ public static class AuthEndpoints
         IHttpContextAccessor contextAccessor,
         IMediator mediator)
     {
-        var externalAccessToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.EXTERNAL_ACCESS_TOKEN);
+        var externalAuthToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.EXTERNAL_AUTH_TOKEN);
+        var externalRefreshToken = HttpContextUtils.GetCookie(contextAccessor.HttpContext, CookieKeys.EXTERNAL_REFRESH_TOKEN);
 
         var command = new SsoCommand
         {
-            ExternalAccessToken = externalAccessToken
+            ExternalAccessToken = externalAuthToken,
+            ExternalRefreshToken = string.IsNullOrEmpty(externalRefreshToken) ? null : externalRefreshToken
         };
 
         var result = await mediator.Send(command);
@@ -128,8 +130,8 @@ public static class AuthEndpoints
             return TypedResults.Unauthorized();
         }
 
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.ACCESS_TOKEN, result.Data.AccessToken);
-        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.REFRESH_TOKEN, result.Data.RefreshToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_ACCESS_TOKEN, result.Data.AccessToken);
+        HttpContextUtils.SetCookie(contextAccessor.HttpContext, CookieKeys.INTERNAL_REFRESH_TOKEN, result.Data.RefreshToken);
 
         return TypedResults.Ok(result);
     }

@@ -43,7 +43,7 @@ public class LoginHandler(
         var accessToken = jwtTokenService.GenerateAccessToken(loginResult.Data);
         var refreshToken = jwtTokenService.GenerateRefreshToken();
 
-        var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{loginResult.Data.UserId}:{refreshToken}";
+        var cacheKey = $"{CacheKeys.INTERNAL_REFRESH_TOKEN}:{loginResult.Data.UserId}:{refreshToken}";
         var expirationTimeSpan = TimeSpan.FromDays(jwtSetting.Value.RefreshTokenExpirationDays);
         await cacheProvider.SetValueToCacheAsync(cacheKey, refreshToken, expirationTimeSpan);
 
