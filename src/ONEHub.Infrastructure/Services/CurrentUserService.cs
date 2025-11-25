@@ -48,7 +48,7 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
     {
         var httpContext = httpContextAccessor.HttpContext;
 
-        var accessToken = HttpContextUtils.GetCookie(httpContext, CookieKeys.ACCESS_TOKEN);
+        var accessToken = HttpContextUtils.GetCookie(httpContext, CookieKeys.INTERNAL_ACCESS_TOKEN);
         if (string.IsNullOrEmpty(accessToken))
         {
             return -1;

@@ -22,8 +22,8 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { useCreateCampaign } from '../../api/commands'
 import { status } from '@/features/campaign-management/data/data'
+import { useCreateCampaign } from '../../api/commands'
 
 const getFormSchema = (t: (key: string) => string) =>
   z.object({

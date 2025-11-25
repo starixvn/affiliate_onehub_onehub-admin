@@ -1,6 +1,6 @@
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -22,7 +22,12 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateComponent } from '../../api/commands'
 import { useGetStatusOptions } from '../../api/queries'
-import { COMPONENT_CONFIG, componentCreateFormSchema, type ComponentType, type ComponentCreateForm } from '../../data/schema'
+import {
+  COMPONENT_CONFIG,
+  componentCreateFormSchema,
+  type ComponentType,
+  type ComponentCreateForm,
+} from '../../data/schema'
 
 type ComponentCreateDialogProps = {
   componentType: ComponentType
@@ -111,8 +116,7 @@ export function ComponentCreateDialog({
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
                     <FormLabel className='col-span-2 text-end'>
-                      Name{' '}
-                      <span className='text-destructive'>*</span>
+                      Name <span className='text-destructive'>*</span>
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -150,7 +154,9 @@ export function ComponentCreateDialog({
                 name='statusId'
                 render={({ field }) => (
                   <FormItem className='grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1'>
-                    <FormLabel className='col-span-2 text-end'>Status</FormLabel>
+                    <FormLabel className='col-span-2 text-end'>
+                      Status
+                    </FormLabel>
                     <SelectDropdown
                       defaultValue={String(field.value)}
                       onValueChange={(value) => field.onChange(Number(value))}
@@ -193,4 +199,3 @@ export function ComponentCreateDialog({
     </Dialog>
   )
 }
-

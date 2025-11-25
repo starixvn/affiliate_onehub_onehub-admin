@@ -16,11 +16,21 @@ public class ExternalAuthService(
 {
     private readonly ExternalAuthSetting _externalAuthSetting = externalAuthSetting.Value;
 
-    public async Task<Result<User>> ValidateTokenAsync(string jwtToken)
+    public async Task<Result<User>> ValidateTokenAsync(string authToken, string? refreshToken = null)
     {
         try
         {
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwtToken);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                if (httpClient.DefaultRequestHeaders.Contains("X-Refresh-Token"))
+                {
+                    httpClient.DefaultRequestHeaders.Remove("X-Refresh-Token");
+                }
+                httpClient.DefaultRequestHeaders.Add("X-Refresh-Token", refreshToken);
+            }
+
             httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
 
             var response = await httpClient.PostAsync(_externalAuthSetting.ValidationApiUrl, null);
@@ -41,25 +51,29 @@ public class ExternalAuthService(
                 return Result<User>.Failure(AuthError.InvalidToken);
             }
 
+            if (validationResponse.Code != 0)
+            {
+                return Result<User>.Failure(AuthError.InvalidToken);
+            }
+
+            if (validationResponse.Result == null || !validationResponse.Result.IsValid)
+            {
+                return Result<User>.Failure(AuthError.InvalidToken);
+            }
+
+            var resultData = validationResponse.Result;
+
             var user = new User
             {
-                UserId = validationResponse.UserId,
-                UserName = validationResponse.UserName,
-                Roles = validationResponse.Roles,
-                Avatar = validationResponse.Avatar ?? string.Empty,
-                IsAdmin = validationResponse.IsAdmin,
-                PasswordHash = string.Empty
+                UserId = resultData.UserId,
+                UserName = resultData.Username,
+                Roles = resultData.Roles ?? string.Empty,
+                Avatar = resultData.Avatar ?? string.Empty,
+                IsAdmin = resultData.IsAdmin,
+                PasswordHash = resultData.HashPassword
             };
 
             return Result<User>.Success(user);
-        }
-        catch (HttpRequestException)
-        {
-            return Result<User>.Failure(AuthError.InvalidToken);
-        }
-        catch (TaskCanceledException)
-        {
-            return Result<User>.Failure(AuthError.InvalidToken);
         }
         catch (Exception)
         {
@@ -69,8 +83,18 @@ public class ExternalAuthService(
 }
 
 internal record ExternalValidationResponse(
+    int Code,
+    string Message,
+    ExternalValidationResult? Result);
+
+internal record ExternalValidationResult(
+    bool IsValid,
     int UserId,
-    string UserName,
-    string Roles,
+    string Username,
+    string Email,
+    bool IsAdmin,
+    string HashPassword,
+    string? Roles,
     string? Avatar,
-    bool IsAdmin);
+    DateTime ExpiresAt,
+    DateTime IssuedAt);

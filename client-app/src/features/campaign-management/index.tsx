@@ -13,7 +13,8 @@ function CampaignManagementContent() {
   const { t } = useTranslation('campaign-management')
   const search = route.useSearch()
   const navigate = route.useNavigate()
-  const { campaigns, totalCount, pageIndex, pageSize, isLoading } = useCampaigns()
+  const { campaigns, totalCount, pageIndex, pageSize, isLoading } =
+    useCampaigns()
 
   const selectedStatus =
     search.status !== undefined ? String(search.status) : '0,1,2,3'

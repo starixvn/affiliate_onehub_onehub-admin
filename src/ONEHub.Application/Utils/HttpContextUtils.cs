@@ -20,8 +20,10 @@ public static class HttpContextUtils
             HttpOnly = true,
             Secure = true,
             SameSite = SameSiteMode.Lax,
-            Path = "/"
+            Path = "/",
+            Expires = DateTimeOffset.UtcNow.AddDays(30)
         };
+        
         response.Cookies.Append(key, value, options);
     }
 

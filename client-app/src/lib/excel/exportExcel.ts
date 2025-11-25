@@ -71,8 +71,8 @@ const applyCellStyle = (cell: ExcelJS.Cell, style: CellStyle) => {
   }
 }
 
-export const exportToExcel = async <T,>(
-  config: ExcelExportConfig<T>,
+export const exportToExcel = async <T>(
+  config: ExcelExportConfig<T>
 ): Promise<void> => {
   const {
     title,

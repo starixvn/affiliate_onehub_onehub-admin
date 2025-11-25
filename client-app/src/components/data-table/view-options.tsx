@@ -22,11 +22,7 @@ export function DataTableViewOptions<TData>({
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant='outline'
-          size='sm'
-          className='ms-auto hidden h-8 lg:flex'
-        >
+        <Button variant='outline' size='sm' className='ms-auto flex h-8'>
           <MixerHorizontalIcon className='size-4' />
           {t('dataTable.view')}
         </Button>
@@ -38,7 +34,9 @@ export function DataTableViewOptions<TData>({
           .getAllColumns()
           .filter(
             (column) =>
-              typeof column.accessorFn !== 'undefined' && column.getCanHide()
+              typeof column.accessorFn !== 'undefined' &&
+              column.getCanHide() &&
+              !column.columnDef.meta?.hideFromToggle
           )
           .map((column) => {
             return (

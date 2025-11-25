@@ -1,5 +1,11 @@
 import { useState, useMemo, useEffect } from 'react'
-import { Check, ChevronsUpDown, Plus, ChevronDown, ChevronRight } from 'lucide-react'
+import {
+  Check,
+  ChevronsUpDown,
+  Plus,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import {
@@ -35,7 +41,9 @@ interface SingleSelectProps<T extends SelectOption = SelectOption> {
   hasToggleButton?: boolean
 }
 
-function isGroupedOptions<T extends SelectOption>(options: T[] | Record<string, T[]>): options is Record<string, T[]> {
+function isGroupedOptions<T extends SelectOption>(
+  options: T[] | Record<string, T[]>
+): options is Record<string, T[]> {
   return !Array.isArray(options)
 }
 
@@ -63,7 +71,9 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
       setSearchValue('')
     }
   }
-  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({})
+  const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>(
+    {}
+  )
   const [searchValue, setSearchValue] = useState('')
 
   const getLabel = (option: T): string => String(option[labelKey])
@@ -73,10 +83,13 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
 
   const initialExpandedGroups = useMemo(() => {
     if (!isGroupedOptions(options)) return {}
-    return Object.keys(options).reduce((acc, groupKey) => {
-      acc[groupKey] = defaultExpandAll
-      return acc
-    }, {} as Record<string, boolean>)
+    return Object.keys(options).reduce(
+      (acc, groupKey) => {
+        acc[groupKey] = defaultExpandAll
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
   }, [options, defaultExpandAll])
 
   useEffect(() => {
@@ -84,18 +97,23 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
   }, [initialExpandedGroups])
 
   const toggleGroup = (groupKey: string) => {
-    setExpandedGroups(prev => ({
+    setExpandedGroups((prev) => ({
       ...prev,
-      [groupKey]: !prev[groupKey]
+      [groupKey]: !prev[groupKey],
     }))
   }
 
   const toggleAllGroups = () => {
-    const allExpanded = Object.values(expandedGroups).every(expanded => expanded)
-    const newState = Object.keys(expandedGroups).reduce((acc, groupKey) => {
-      acc[groupKey] = !allExpanded
-      return acc
-    }, {} as Record<string, boolean>)
+    const allExpanded = Object.values(expandedGroups).every(
+      (expanded) => expanded
+    )
+    const newState = Object.keys(expandedGroups).reduce(
+      (acc, groupKey) => {
+        acc[groupKey] = !allExpanded
+        return acc
+      },
+      {} as Record<string, boolean>
+    )
     setExpandedGroups(newState)
   }
 
@@ -138,14 +156,19 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
 
       const filteredEntries = searchValue.trim()
         ? entries
-          .map(([groupLabel, groupOptions]) => {
-            const filtered = groupOptions.filter(option =>
-              getLabel(option).toLowerCase().includes(searchValue.toLowerCase()) ||
-              getDisplayLabel(option).toLowerCase().includes(searchValue.toLowerCase())
-            )
-            return [groupLabel, filtered] as [string, T[]]
-          })
-          .filter(([_groupLabel, groupOptions]) => groupOptions.length > 0)
+            .map(([groupLabel, groupOptions]) => {
+              const filtered = groupOptions.filter(
+                (option) =>
+                  getLabel(option)
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase()) ||
+                  getDisplayLabel(option)
+                    .toLowerCase()
+                    .includes(searchValue.toLowerCase())
+              )
+              return [groupLabel, filtered] as [string, T[]]
+            })
+            .filter(([_groupLabel, groupOptions]) => groupOptions.length > 0)
         : entries
 
       return filteredEntries.map(([groupLabel, groupOptions]) => {
@@ -159,12 +182,12 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
             key={groupLabel}
             heading={
               <button
-                type="button"
+                type='button'
                 onClick={() => toggleGroup(groupLabel)}
                 aria-expanded={isExpanded}
-                className="flex items-center text-muted-foreground text-xs font-medium hover:text-foreground cursor-pointer w-full text-left"
+                className='text-muted-foreground hover:text-foreground flex w-full cursor-pointer items-center text-left text-xs font-medium'
               >
-                <IconComponent className="mr-1 h-3 w-3" />
+                <IconComponent className='mr-1 h-3 w-3' />
                 {groupLabel}
               </button>
             }
@@ -174,7 +197,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
                 key={getValue(option)}
                 value={getLabel(option)}
                 onSelect={() => handleSelect(option)}
-                className={cn(!isExpanded && "hidden")}
+                className={cn(!isExpanded && 'hidden')}
               >
                 <Check
                   className={cn(
@@ -220,35 +243,51 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
           className={cn('w-full justify-between', className)}
         >
           {value && getSelectedLabel() ? (
-            <span className='truncate flex-1 text-left' title={getSelectedLabel() || undefined}>
+            <span
+              className='flex-1 truncate text-left'
+              title={getSelectedLabel() || undefined}
+            >
               {getSelectedLabel()}
             </span>
           ) : (
-            <span className='truncate flex-1 text-left'>{placeholder}</span>
+            <span className='flex-1 truncate text-left'>{placeholder}</span>
           )}
           <ChevronsUpDown className='ml-2 h-4 w-4 shrink-0 opacity-50' />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className='w-[--radix-popover-trigger-width] p-0' side='bottom' align='start'>
+      <PopoverContent
+        className='w-[--radix-popover-trigger-width] p-0'
+        side='bottom'
+        align='start'
+      >
         <Command>
           <CommandInput
             placeholder={searchPlaceholder}
             value={searchValue}
             onValueChange={setSearchValue}
           />
-          {hasToggleButton && isGroupedOptions(options) && Object.keys(options).length > 0 && !searchValue.trim() && (
-            <div className="px-2 py-1 border-b">
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                onClick={toggleAllGroups}
-                className="h-6 text-xs px-2"
-              >
-                {Object.values(expandedGroups).every(expanded => expanded) ? 'Collapse All' : 'Expand All'}
-              </Button>
-            </div>
-          )}
+          {hasToggleButton &&
+            isGroupedOptions(options) &&
+            Object.keys(options).length > 0 &&
+            !searchValue.trim() && (
+              <div className='border-b px-2 py-1'>
+                <Button
+                  type='button'
+                  variant='ghost'
+                  size='sm'
+                  onClick={toggleAllGroups}
+                  className='h-6 px-2 text-xs'
+                >
+                  {(isGroupedOptions(options) &&
+                    Object.keys(options).every(
+                      (groupKey) =>
+                        (expandedGroups[groupKey] ?? defaultExpandAll)
+                    ))
+                    ? 'Collapse All'
+                    : 'Expand All'}
+                </Button>
+              </div>
+            )}
           <CommandList>
             <CommandEmpty>No option found.</CommandEmpty>
             {renderOptions()}
@@ -257,7 +296,10 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
             <>
               <CommandSeparator />
               <CommandGroup>
-                <CommandItem onSelect={handleCreateNew} className='cursor-pointer'>
+                <CommandItem
+                  onSelect={handleCreateNew}
+                  className='cursor-pointer'
+                >
                   <Plus className='mr-2 h-4 w-4' />
                   {createNewLabel}
                 </CommandItem>
@@ -269,4 +311,3 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
     </Popover>
   )
 }
-

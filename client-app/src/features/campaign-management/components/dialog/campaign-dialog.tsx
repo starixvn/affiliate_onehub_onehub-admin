@@ -1,7 +1,7 @@
 import { useCampaigns } from '../campaign-provider'
 import { CampaignCreateDialog } from './campaign-create-dialog'
-import { CampaignUpdateDialog } from './campaign-update-dialog'
 import { CampaignDeleteDialog } from './campaign-delete-dialog'
+import { CampaignUpdateDialog } from './campaign-update-dialog'
 
 export function CampaignDialogs() {
   const { open, currentRow, setCurrentRow, setOpen } = useCampaigns()

@@ -5,9 +5,9 @@ import {
 } from '@/features/landing-page-cms/shared'
 import { useDeleteMedias, useUpdateMediaStatus } from '../../api/commands'
 import { TRANSLATION_KEY } from '../../data/schema'
+import type { AssetDetail } from '../../data/schema'
 import { useAssetUploader } from '../asset-uploader-provider'
 import { AssetDialog } from './asset-dialog'
-import type { AssetDetail } from '../../data/schema'
 
 function DeleteAssetDialog({
   open,

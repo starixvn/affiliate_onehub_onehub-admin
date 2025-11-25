@@ -5,12 +5,12 @@ export interface SharedContentProps<TDetail> {
   translationKey: string
   PrimaryButtons: React.ReactNode
   Table:
-  | React.ComponentType<{
-    data: TDetail[]
-    bannerRootUrl?: string
-    totalCount: number
-  }>
-  | (() => React.ReactElement)
+    | React.ComponentType<{
+        data: TDetail[]
+        bannerRootUrl?: string
+        totalCount: number
+      }>
+    | (() => React.ReactElement)
   items: TDetail[]
   bannerRootUrl?: string
   totalCount: number

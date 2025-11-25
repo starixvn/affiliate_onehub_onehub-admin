@@ -168,7 +168,9 @@ export function RegisterFormTable() {
       newFilterValue = ['1']
     }
 
-    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
+    const currentStr = currentFilterValue
+      ? [...currentFilterValue].sort().join(',')
+      : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       statusColumn.setFilterValue(newFilterValue)
@@ -190,7 +192,9 @@ export function RegisterFormTable() {
       newFilterValue = []
     }
 
-    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
+    const currentStr = currentFilterValue
+      ? [...currentFilterValue].sort().join(',')
+      : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       countryColumn.setFilterValue(newFilterValue)
@@ -212,7 +216,9 @@ export function RegisterFormTable() {
       newFilterValue = []
     }
 
-    const currentStr = currentFilterValue ? [...currentFilterValue].sort().join(',') : ''
+    const currentStr = currentFilterValue
+      ? [...currentFilterValue].sort().join(',')
+      : ''
     const newStr = newFilterValue.sort().join(',')
     if (currentStr !== newStr) {
       languageColumn.setFilterValue(newFilterValue)
@@ -317,9 +323,9 @@ export function RegisterFormTable() {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>

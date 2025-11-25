@@ -21,6 +21,10 @@ const filterCardVariants = cva('transition-all duration-200', {
       true: 'ring-1',
       false: '',
     },
+    disableHover: {
+      true: '',
+      false: '',
+    },
   },
   compoundVariants: [
     {
@@ -70,10 +74,47 @@ const filterCardVariants = cva('transition-all duration-200', {
       className:
         'bg-purple-50 dark:bg-purple-950/30 border-purple-500 ring-purple-500/20',
     },
+    {
+      variant: 'rainbow',
+      disableHover: true,
+      className:
+        'border-transparent bg-gradient-to-r from-red-500/10 via-purple-500/10 to-blue-500/10',
+    },
+    {
+      variant: 'success',
+      disableHover: true,
+      className: 'border-green-500/50',
+    },
+    {
+      variant: 'warning',
+      disableHover: true,
+      className: 'border-orange-500/50',
+    },
+    {
+      variant: 'info',
+      disableHover: true,
+      className: 'border-blue-500/50',
+    },
+    {
+      variant: 'danger',
+      disableHover: true,
+      className: 'border-red-500/50',
+    },
+    {
+      variant: 'secondary',
+      disableHover: true,
+      className: 'border-gray-500/50',
+    },
+    {
+      variant: 'purple',
+      disableHover: true,
+      className: 'border-purple-500/50',
+    },
   ],
   defaultVariants: {
     variant: 'default',
     selected: false,
+    disableHover: false,
   },
 })
 
@@ -125,6 +166,7 @@ interface FilterCardProps
   icon: LucideIcon
   selected?: boolean
   onClick?: () => void
+  disableHover?: boolean
 }
 
 function FilterCard({
@@ -134,6 +176,7 @@ function FilterCard({
   variant,
   selected,
   onClick,
+  disableHover,
   className,
   ...props
 }: FilterCardProps) {
@@ -141,8 +184,8 @@ function FilterCard({
     <Card
       className={cn(
         'gap-0.5 py-2',
-        filterCardVariants({ variant, selected }),
-        onClick && 'cursor-pointer hover:shadow-md',
+        filterCardVariants({ variant, selected, disableHover }),
+        onClick && !disableHover && 'cursor-pointer hover:shadow-md',
         className
       )}
       onClick={onClick}

@@ -1,6 +1,7 @@
 using Fanex.Data.Repository;
 
 namespace ONEHub.Infrastructure.Repositories.Criterias;
+
 public class TargetCountryCriteria(bool isDefault = true, string targetCountryCode = "") : CriteriaBase
 {
     private const string SP_NAME = "OH_TargetCountry_Sel";

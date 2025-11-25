@@ -9,8 +9,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { useAuthStore } from '@/stores/auth-store'
 import { tokenService } from '@/lib/auth/token-service'
-import { authApi } from '@/features/auth/api/client'
 import { getRedirectUrl } from '@/lib/iframe-utils'
+import { authApi } from '@/features/auth/api/client'
 import type { SignInRequest, AuthUser } from '@/features/auth/types'
 
 type AuthProviderProps = {

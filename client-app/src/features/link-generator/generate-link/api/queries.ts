@@ -5,11 +5,14 @@ export const linkGeneratorKeys = {
   all: ['link-generator'] as const,
   campaigns: () => [...linkGeneratorKeys.all, 'campaigns'] as const,
   countries: () => [...linkGeneratorKeys.all, 'countries'] as const,
-  languages: (countryCode: string) => [...linkGeneratorKeys.all, 'languages', countryCode] as const,
-  components: (categoryId: number) => [...linkGeneratorKeys.all, 'components', categoryId] as const,
+  languages: (countryCode: string) =>
+    [...linkGeneratorKeys.all, 'languages', countryCode] as const,
+  components: (categoryId: number) =>
+    [...linkGeneratorKeys.all, 'components', categoryId] as const,
   landingPages: () => [...linkGeneratorKeys.all, 'landing-pages'] as const,
   statusOptions: () => [...linkGeneratorKeys.all, 'status-options'] as const,
-  domains: (countryCode: string, domainType: number) => [...linkGeneratorKeys.all, 'domains', countryCode, domainType] as const,
+  domains: (countryCode: string, domainType: number) =>
+    [...linkGeneratorKeys.all, 'domains', countryCode, domainType] as const,
 }
 
 export function useGetCampaigns() {
@@ -109,4 +112,3 @@ export function useGetDomains(countryCode: string, domainType: number) {
     enabled: !!countryCode && domainType != null,
   })
 }
-

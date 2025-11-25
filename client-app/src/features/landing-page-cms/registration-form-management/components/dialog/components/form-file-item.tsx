@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label'
 import type {
   ValidationErrors,
   TouchedFields,
-  FormFile
+  FormFile,
 } from '../../../data/schema'
 import { TRANSLATION_KEY } from '../../../data/schema'
 

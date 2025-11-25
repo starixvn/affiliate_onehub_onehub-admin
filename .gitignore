@@ -50,5 +50,8 @@ node_modules/
 **/wwwroot/favicon.ico
 **/wwwroot/index.html
 
+# Claude Code
+.claude/settings.local.json
+
 
 

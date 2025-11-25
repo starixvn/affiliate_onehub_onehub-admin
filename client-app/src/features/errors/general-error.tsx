@@ -1,7 +1,7 @@
 import { useNavigate, useRouter } from '@tanstack/react-router'
+import { isInIframe } from '@/lib/iframe-utils'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
-import { isInIframe } from '@/lib/iframe-utils'
 
 type GeneralErrorProps = React.HTMLAttributes<HTMLDivElement> & {
   minimal?: boolean

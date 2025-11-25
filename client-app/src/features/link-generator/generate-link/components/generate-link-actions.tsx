@@ -1,10 +1,10 @@
-import { Link, SquareArrowOutUpRight, RefreshCw } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
+import { Link, SquareArrowOutUpRight, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
-import { useGenerateLink } from './generate-link-provider'
 import { useInsertLink } from '../api/commands'
 import type { InsertLinkRequest } from '../types'
+import { useGenerateLink } from './generate-link-provider'
 
 export function GenerateLinkActions() {
   const { t } = useTranslation('link-generator')
@@ -62,16 +62,22 @@ export function GenerateLinkActions() {
   }
 
   return (
-    <div className='flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2'>
+    <div className='flex flex-col flex-wrap items-stretch gap-2 sm:flex-row sm:items-center'>
       <Button
         onClick={handleGenerateLink}
         className='w-full sm:w-auto'
         disabled={insertLinkMutation.isPending || !!generatedResult}
-        aria-label={insertLinkMutation.isPending ? t('buttons.generating') : t('buttons.generateLink')}
+        aria-label={
+          insertLinkMutation.isPending
+            ? t('buttons.generating')
+            : t('buttons.generateLink')
+        }
       >
         <Link className='h-4 w-4 sm:mr-2' />
         <span className='hidden sm:inline'>
-          {insertLinkMutation.isPending ? t('buttons.generating') : t('buttons.generateLink')}
+          {insertLinkMutation.isPending
+            ? t('buttons.generating')
+            : t('buttons.generateLink')}
         </span>
       </Button>
       <Button
@@ -80,7 +86,9 @@ export function GenerateLinkActions() {
         aria-label={t('buttons.goToLinkManagement')}
       >
         <SquareArrowOutUpRight className='h-4 w-4 sm:mr-2' />
-        <span className='hidden sm:inline'>{t('buttons.goToLinkManagement')}</span>
+        <span className='hidden sm:inline'>
+          {t('buttons.goToLinkManagement')}
+        </span>
       </Button>
       <Button
         variant='outline'
@@ -94,4 +102,3 @@ export function GenerateLinkActions() {
     </div>
   )
 }
-

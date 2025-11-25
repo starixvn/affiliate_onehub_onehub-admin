@@ -24,7 +24,7 @@ public class RefreshTokenHandler(
 {
     public async Task<Result<RefreshTokenResponse>> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var cacheKey = $"{CacheKeys.REFRESH_TOKEN}:{request.UserId}:{request.RefreshToken}";
+        var cacheKey = $"{CacheKeys.INTERNAL_REFRESH_TOKEN}:{request.UserId}:{request.RefreshToken}";
         var cachedRefreshToken = await cacheProvider.GetValueFromCacheAsync<string>(cacheKey);
         if (cachedRefreshToken is null)
         {

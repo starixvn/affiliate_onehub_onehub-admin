@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
-import { linkGeneratorApi } from './client'
 import type { InsertLinkRequest } from '../types'
+import { linkGeneratorApi } from './client'
 import { linkGeneratorKeys } from './queries'
 
 export function useInsertLink() {
@@ -15,21 +15,26 @@ export function useInsertLink() {
       }
     },
     onError: (error: unknown) => {
-      let errorMessage = 'Failed to generate link';
-      const axiosError = error as { response?: { data?: { errors?: Record<string, string[]>; errorMessage?: string } }; message?: string };
+      let errorMessage = 'Failed to generate link'
+      const axiosError = error as {
+        response?: {
+          data?: { errors?: Record<string, string[]>; errorMessage?: string }
+        }
+        message?: string
+      }
       if (axiosError.response?.data?.errors) {
-        const validationErrors = axiosError.response.data.errors;
-        errorMessage = Object.values(validationErrors).flat().join('\n');
+        const validationErrors = axiosError.response.data.errors
+        errorMessage = Object.values(validationErrors).flat().join('\n')
       } else if (axiosError.response?.data?.errorMessage) {
-        errorMessage = axiosError.response.data.errorMessage;
+        errorMessage = axiosError.response.data.errorMessage
       } else if (axiosError.message) {
-        errorMessage = axiosError.message;
+        errorMessage = axiosError.message
       }
       toast.error(errorMessage, {
         style: {
           whiteSpace: 'pre-line',
         },
-      });
+      })
     },
   })
 }
@@ -43,13 +48,14 @@ type CreateComponentRequest = {
 
 export function useCreateComponent() {
   const queryClient = useQueryClient()
-  
+
   return useMutation({
-    mutationFn: (data: CreateComponentRequest) => linkGeneratorApi.insertComponent(data),
+    mutationFn: (data: CreateComponentRequest) =>
+      linkGeneratorApi.insertComponent(data),
     onSuccess: (response, variables) => {
       if (response.errorCode === 0) {
-        queryClient.invalidateQueries({ 
-          queryKey: linkGeneratorKeys.components(variables.categoryId) 
+        queryClient.invalidateQueries({
+          queryKey: linkGeneratorKeys.components(variables.categoryId),
         })
         toast.success('Component created successfully')
       } else {
@@ -86,4 +92,3 @@ export function useCreateCampaign() {
     },
   })
 }
-

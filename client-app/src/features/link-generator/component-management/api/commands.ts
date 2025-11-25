@@ -27,7 +27,8 @@ export function useCreateComponent() {
       toast.success(t('toast.createSuccess'))
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      const message =
+        error instanceof Error ? error.message : t('toast.unknownError')
       toast.error(message)
     },
   })
@@ -38,7 +39,13 @@ export function useUpdateComponent() {
   const { t } = useTranslation('component-management')
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: UpdateComponentRequest }) => {
+    mutationFn: async ({
+      id,
+      data,
+    }: {
+      id: number
+      data: UpdateComponentRequest
+    }) => {
       const response = await componentApi.updateComponent(id, data)
       if (response.errorCode !== 0) {
         throw new Error(response.errorMessage || 'Failed to update component')
@@ -51,7 +58,8 @@ export function useUpdateComponent() {
       toast.success(t('toast.updateSuccess'))
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      const message =
+        error instanceof Error ? error.message : t('toast.unknownError')
       toast.error(message)
     },
   })
@@ -63,7 +71,9 @@ export function useDeleteComponent() {
 
   return useMutation({
     mutationFn: async (id: number) => {
-      const response = await componentApi.deleteComponents({ componentIds: String(id) })
+      const response = await componentApi.deleteComponents({
+        componentIds: String(id),
+      })
       if (response.errorCode !== 0) {
         throw new Error(response.errorMessage || 'Failed to delete component')
       }
@@ -75,7 +85,8 @@ export function useDeleteComponent() {
       toast.success(t('toast.deleteSuccess'))
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      const message =
+        error instanceof Error ? error.message : t('toast.unknownError')
       toast.error(message)
     },
   })
@@ -87,7 +98,9 @@ export function useDeleteComponents() {
 
   return useMutation({
     mutationFn: async (ids: number[]) => {
-      const response = await componentApi.deleteComponents({ componentIds: ids.join(',') })
+      const response = await componentApi.deleteComponents({
+        componentIds: ids.join(','),
+      })
       if (response.errorCode !== 0) {
         throw new Error(response.errorMessage || 'Failed to delete components')
       }
@@ -99,7 +112,8 @@ export function useDeleteComponents() {
       toast.success(t('toast.deleteMultipleSuccess'))
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      const message =
+        error instanceof Error ? error.message : t('toast.unknownError')
       toast.error(message)
     },
   })
@@ -113,7 +127,9 @@ export function useUpdateBatchComponentStatus() {
     mutationFn: async (data: UpdateBatchComponentStatusRequest) => {
       const response = await componentApi.updateBatchComponentStatus(data)
       if (response.errorCode !== 0) {
-        throw new Error(response.errorMessage || 'Failed to update component statuses')
+        throw new Error(
+          response.errorMessage || 'Failed to update component statuses'
+        )
       }
       return response
     },
@@ -123,7 +139,8 @@ export function useUpdateBatchComponentStatus() {
       toast.success(t('toast.updateStatusSuccess'))
     },
     onError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : t('toast.unknownError')
+      const message =
+        error instanceof Error ? error.message : t('toast.unknownError')
       toast.error(message)
     },
   })

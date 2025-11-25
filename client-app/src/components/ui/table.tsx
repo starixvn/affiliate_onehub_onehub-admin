@@ -22,7 +22,10 @@ function TableHeader({ className, ...props }: React.ComponentProps<'thead'>) {
   return (
     <thead
       data-slot='table-header'
-      className={cn('bg-slate-100 dark:bg-slate-800 [&_tr]:border-b', className)}
+      className={cn(
+        'bg-slate-100 dark:bg-slate-800 [&_tr]:border-b',
+        className
+      )}
       {...props}
     />
   )
@@ -69,7 +72,7 @@ function TableHead({ className, ...props }: React.ComponentProps<'th'>) {
     <th
       data-slot='table-head'
       className={cn(
-        'bg-slate-100 dark:bg-slate-800 text-foreground h-10 px-2 text-start align-middle font-medium whitespace-nowrap border-e last:border-e-0 [&:has([role=checkbox])]:p-0 [&.sticky]:z-20',
+        'text-foreground h-10 border-e bg-slate-100 px-2 text-start align-middle font-medium whitespace-nowrap last:border-e-0 dark:bg-slate-800 [&.sticky]:z-20 [&:has([role=checkbox])]:p-0',
         ACTION_COLUMN_WIDTH,
         className
       )}
@@ -83,7 +86,7 @@ function TableCell({ className, ...props }: React.ComponentProps<'td'>) {
     <td
       data-slot='table-cell'
       className={cn(
-        'bg-background p-2 align-middle whitespace-nowrap border-e last:border-e-0 [&:has([role=checkbox])]:p-0',
+        'bg-background border-e p-2 align-middle whitespace-nowrap last:border-e-0 [&:has([role=checkbox])]:p-0',
         ACTION_COLUMN_WIDTH,
         className
       )}

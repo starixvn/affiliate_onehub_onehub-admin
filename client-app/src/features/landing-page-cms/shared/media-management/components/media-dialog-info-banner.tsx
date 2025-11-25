@@ -12,7 +12,7 @@ export function MediaDialogInfoBanner({
   const { t } = useTranslation(translationKey)
 
   return (
-    <div className='bg-card rounded-lg border border-border p-4'>
+    <div className='bg-card border-border rounded-lg border p-4'>
       <div className='text-card-foreground space-y-1 text-sm'>
         <p>{t('info.validTypes')}</p>
         <p>{t('info.fileSizeLimit')}</p>

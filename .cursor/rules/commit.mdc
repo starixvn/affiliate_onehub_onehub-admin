@@ -1,24 +1,44 @@
 ---
-description: 
+description: Create a git commit following Conventional Commits standard
 globs: 
 alwaysApply: true
 ---
-# Commit Message Generation Rules
+# Commit Workflow
 
-When generating commit messages, ALWAYS follow these strict rules based on our commitlint configuration:
+This workflow helps you create proper git commits following the Conventional Commits 1.0.0 standard and our project-specific commitlint configuration.
 
-## Format Requirements
+## Steps
 
-- Use format: `<type>(scope): Description`
-- Subject length: 10-72 characters
-- Subject case: Sentence case (first letter capitalized)
-- NO period at end of subject
-- Body line length: max 100 characters per line
+### 1. Check current git status
+```bash
+git status
+```
 
-## Required Types (use exactly these)
+Review what files have been changed and what's staged.
 
+### 2. Review the changes
+```bash
+git diff HEAD
+```
+
+Understand what code changes will be committed.
+
+### 3. Stage changes (if not already staged)
+```bash
+# Stage specific files
+git add <file1> <file2>
+
+# Or stage all changes
+git add .
+```
+
+### 4. Generate commit message following these rules
+
+**Format:** `<type>(scope): Description`
+
+**Required Types:**
 - `feat`: New feature
-- `fix`: Bug fix  
+- `fix`: Bug fix
 - `docs`: Documentation changes
 - `style`: Code style/formatting changes
 - `refactor`: Code refactoring
@@ -29,8 +49,7 @@ When generating commit messages, ALWAYS follow these strict rules based on our c
 - `chore`: Maintenance tasks
 - `revert`: Revert previous commit
 
-## Required Scopes (use these when applicable)
-
+**Scopes (when applicable):**
 - `client`: Client-related changes
 - `server`: Server-related changes
 - `script`: Script-related changes
@@ -39,43 +58,60 @@ When generating commit messages, ALWAYS follow these strict rules based on our c
 - `config`: Configuration changes
 - `deps`: Dependency updates
 
-## Examples of GOOD commit messages
+**Rules:**
+- Subject length: 10-72 characters
+- Subject case: Sentence case (first letter capitalized)
+- NO period at end of subject
+- Use parentheses `()` for scope, NEVER square brackets `[]`
+- Body line length: max 100 characters per line
+- **CRITICAL: DO NOT add "Generated with Claude Code" footer**
+- **CRITICAL: DO NOT add "Co-Authored-By: Claude" attribution**
 
-```
+**Examples:**
+```text
 feat(client): Add user authentication form
 fix(api): Resolve database connection timeout
 docs: Update installation instructions
-style(ui): Format button components consistently
 refactor(server): Simplify data validation logic
-perf(api): Optimize database query performance
-test(client): Add unit tests for auth service
-build(config): Update webpack configuration
-ci: Add automated testing workflow
 chore(deps): Update React to version 18
 ```
 
-## Examples of BAD commit messages
-
-```
-feat[client]: add auth (wrong brackets, wrong case, too short)
-Fix bug. (no type, has period, too short)
-FEAT(CLIENT): ADD USER AUTH FORM (wrong case)
-feat(client): add user authentication form that allows users to login and register with email and password validation and remember me functionality (too long - over 72 chars)
-```
-
-## Breaking Changes
-
-For breaking changes, add `!` after type/scope:
-```
+**Breaking Changes:**
+Add `!` after type/scope:
+```text
 feat(api)!: Redesign user authentication endpoints
 ```
 
-## When generating commits:
+### 5. Create the commit
+```bash
+git commit -m "type(scope): Description"
+```
 
-1. Analyze the code changes first
-2. Determine the most appropriate type
-3. Choose relevant scope if applicable
-4. Write clear, concise description
-5. Ensure it follows all format rules
-6. NEVER use square brackets `[]`
-7. ALWAYS use parentheses `()` for scope
+For commits with body:
+```bash
+git commit -m "type(scope): Description" -m "Additional details explaining what changed and why"
+```
+
+### 6. Verify the commit was created
+```bash
+git log -1 --pretty=format:"%H%n%an%n%ae%n%ad%n%s%n%b"
+```
+
+### 7. (Optional) Amend commit if needed
+```bash
+# Amend the last commit message
+git commit --amend
+
+# Amend and add more changes
+git add <file>
+git commit --amend --no-edit
+```
+
+## Notes
+
+- This workflow commits LOCALLY only, it does NOT push to remote
+- Always review your changes before committing
+- Keep commits focused on a single logical change
+- If you have multiple unrelated changes, create separate commits
+- **CRITICAL: DO NOT add any AI-generated footer, attribution, or "Generated with Claude Code" text to the commit message**
+- **CRITICAL: DO NOT add "Co-Authored-By: Claude" or any similar AI attribution to the commit message**

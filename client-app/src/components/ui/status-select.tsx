@@ -81,7 +81,7 @@ export function StatusSelect<T extends string | number>({
         </SelectValue>
       </SelectTrigger>
       <SelectContent className='w-full min-w-full'>
-        <div className='flex flex-col gap-1 w-full'>
+        <div className='flex w-full flex-col gap-1'>
           {options.map((option) => {
             const isCurrentValue = String(option.value) === String(value)
             return (
@@ -89,7 +89,10 @@ export function StatusSelect<T extends string | number>({
                 key={String(option.value)}
                 value={String(option.value)}
                 disabled={isCurrentValue}
-                className={cn('px-0 transition-colors w-full', colorVariants[option.color])}
+                className={cn(
+                  'w-full px-0 transition-colors',
+                  colorVariants[option.color]
+                )}
               >
                 <span className='w-full px-2'>{option.label}</span>
               </SelectItem>

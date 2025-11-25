@@ -23,7 +23,9 @@ export function CampaignStatusChangeDialog({
   const { t } = useTranslation('campaign-management')
   const updateMutation = useUpdateCampaign()
 
-  const currentStatus = status.find((s) => s.value === String(currentRow.statusId))
+  const currentStatus = status.find(
+    (s) => s.value === String(currentRow.statusId)
+  )
   const newStatus = status.find((s) => s.value === String(newStatusId))
 
   const handleConfirm = () => {
@@ -43,7 +45,7 @@ export function CampaignStatusChangeDialog({
             onOpenChange(false)
           }
         },
-      },
+      }
     )
   }
 
@@ -66,8 +68,9 @@ export function CampaignStatusChangeDialog({
             <span className='font-bold'>{currentRow.campaignName}</span>?
           </p>
           <p className='text-sm'>
-            {t('dialog.statusChange.from')} <span className='font-semibold'>{currentStatus?.label}</span>{' '}
-            → <span className='font-semibold'>{newStatus?.label}</span>
+            {t('dialog.statusChange.from')}{' '}
+            <span className='font-semibold'>{currentStatus?.label}</span> →{' '}
+            <span className='font-semibold'>{newStatus?.label}</span>
           </p>
         </div>
       }

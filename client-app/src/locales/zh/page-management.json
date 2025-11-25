@@ -1,0 +1,141 @@
+{
+  "entity_other": "活动",
+  "page": {
+    "title": "活动管理",
+    "description": "创建和管理营销活动，自动生成活动代码",
+    "loading": "加载活动中..."
+  },
+  "buttons": {
+    "export": "导出",
+    "create": "创建"
+  },
+  "statusFilters": {
+    "total": "全部活动",
+    "active": "活动中",
+    "draft": "草稿",
+    "paused": "已暂停",
+    "inactive": "已停用"
+  },
+  "filters": {
+    "searchPlaceholder": "按活动或着陆页搜索...",
+    "clear": "清除",
+    "country": "国家",
+    "language": "语言",
+    "status": "状态",
+    "createdDate": "创建日期",
+    "selectDateRange": "选择日期范围",
+    "entirePeriod": "整个周期",
+    "search": "搜索",
+    "reset": "重置"
+  },
+  "searchToolbar": {
+    "submit": "搜索"
+  },
+  "table": {
+    "search": "按名称、代码或描述搜索活动...",
+    "noResults": "未找到结果。",
+    "columns": {
+      "no": "#",
+      "select": "全选",
+      "selectRow": "选择行",
+      "code": "活动代码",
+      "name": "活动名称",
+      "description": "活动描述",
+      "createdDate": "创建日期",
+      "createdBy": "创建人",
+      "modifiedDate": "修改日期",
+      "modifiedBy": "修改人",
+      "status": "状态",
+      "actions": "打开菜单"
+    }
+  },
+  "rowActions": {
+    "edit": "编辑",
+    "delete": "删除"
+  },
+  "bulkActions": {
+    "changeToPaused": "更改为已暂停",
+    "changeToPausedCount": "更改为已暂停（影响 {{count}} 个）",
+    "changeToActive": "更改为活动中",
+    "changeToActiveCount": "更改为活动中（影响 {{count}} 个）",
+    "changeToInactive": "更改为已停用",
+    "changeToInactiveCount": "更改为已停用（影响 {{count}} 个）",
+    "changeToDraft": "更改为草稿",
+    "changeToDraftCount": "更改为草稿（影响 {{count}} 个）",
+    "deleteSelected": "删除所有选中的活动"
+  },
+  "bulkActionsToast": {
+    "updating": "正在更新活动为{{status}}...",
+    "updated_other": "已将 {{count}} 个活动更新为{{status}}",
+    "updateFailed": "更新活动失败",
+    "alreadyStatus": "所有选中的活动已经是{{status}}"
+  },
+  "excel": {
+    "titlePrefix": "活动管理",
+    "allCampaigns": "全部活动",
+    "searchPrefix": "活动名称",
+    "allStatus": "全部状态",
+    "statusPrefix": "状态",
+    "rowNumber": "#"
+  },
+  "dialog": {
+    "create": {
+      "title": "添加新活动",
+      "description": "在此创建新活动。完成后点击保存。"
+    },
+    "edit": {
+      "title": "编辑活动",
+      "description": "在此更新活动。完成后点击保存。"
+    },
+    "form": {
+      "code": "代码",
+      "codePlaceholder": "CAMP001",
+      "name": "名称",
+      "namePlaceholder": "夏季活动",
+      "nameRequired": "名称为必填项。",
+      "description": "描述",
+      "descriptionPlaceholder": "活动描述...",
+      "descriptionRequired": "描述为必填项。",
+      "status": "状态",
+      "statusPlaceholder": "选择状态",
+      "statusRequired": "状态为必填项。",
+      "statusWarning": "创建新着陆页时，仅可选择活动中的活动。",
+      "requiredField": "*"
+    },
+    "saveChanges": "保存更改",
+    "delete": {
+      "title": "删除活动",
+      "message": "您确定要删除",
+      "description": "此操作无法撤销。这将永久删除该活动及所有相关数据。",
+      "warning": "警告！",
+      "warningMessage": "请谨慎操作，此操作无法回滚。",
+      "confirm": "删除"
+    },
+    "statusChange": {
+      "title": "更改页面状态",
+      "message": "您确定要更改状态吗",
+      "from": "从",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "bulkStatusChange": {
+      "title": "批量更改页面状态",
+      "message": "您确定要将 {{count}} 个页面的状态更改为",
+      "confirm": "确认",
+      "cancel": "取消"
+    },
+    "multiDelete": {
+      "title_other": "删除 {{count}} 个活动",
+      "message": "您确定要删除选中的活动吗？",
+      "description": "此操作无法撤销。这将永久删除选中的活动及所有相关数据。",
+      "warning": "警告！",
+      "warningMessage": "请谨慎操作，此操作无法回滚。",
+      "confirm": "删除"
+    },
+    "multiDeleteToast": {
+      "deleting": "正在删除活动...",
+      "deleted_other": "已删除 {{count}} 个活动",
+      "deleteFailed": "删除活动失败"
+    }
+  }
+}

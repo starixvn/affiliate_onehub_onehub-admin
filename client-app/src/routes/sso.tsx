@@ -1,9 +1,9 @@
+import { useEffect, useRef, useState } from 'react'
 import { z } from 'zod'
 import { createFileRoute } from '@tanstack/react-router'
-import { authApi } from '@/features/auth/api/client'
-import { tokenService } from '@/lib/auth/token-service'
 import { useAuthStore } from '@/stores/auth-store'
-import { useEffect, useRef, useState } from 'react'
+import { tokenService } from '@/lib/auth/token-service'
+import { authApi } from '@/features/auth/api/client'
 
 const searchSchema = z.object({
   target: z.string().optional(),
@@ -40,11 +40,19 @@ function SsoPage() {
             })
           }
 
-          const targetPath = target ? `/iframe/${target}` : '/iframe/campaign-management'
+          if (!target) {
+            navigate({ to: '/404' })
+            return
+          }
+
+          const targetPath = `/iframe/${target}`
           navigate({ to: targetPath })
         } else {
           setError(response.errorMessage || 'SSO authentication failed')
-          redirectTimeoutRef.current = window.setTimeout(() => navigate({ to: '/401' }), 1500)
+          redirectTimeoutRef.current = window.setTimeout(
+            () => navigate({ to: '/401' }),
+            1500
+          )
         }
       } catch {
         navigate({ to: '/401' })
@@ -52,18 +60,20 @@ function SsoPage() {
     }
 
     handleSso()
-    return () => { if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current)}
+    return () => {
+      if (redirectTimeoutRef.current) clearTimeout(redirectTimeoutRef.current)
+    }
   }, [target, setAccessToken, setUser, navigate])
 
   if (error) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-semibold text-destructive">
+      <div className='flex min-h-screen items-center justify-center'>
+        <div className='text-center'>
+          <h1 className='text-destructive text-2xl font-semibold'>
             Authentication Failed
           </h1>
-          <p className="mt-2 text-muted-foreground">{error}</p>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className='text-muted-foreground mt-2'>{error}</p>
+          <p className='text-muted-foreground mt-1 text-sm'>
             Redirecting to error page...
           </p>
         </div>
@@ -72,10 +82,10 @@ function SsoPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <div className="mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-        <p className="text-muted-foreground">Authenticating...</p>
+    <div className='flex min-h-screen items-center justify-center'>
+      <div className='text-center'>
+        <div className='mb-4 inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]' />
+        <p className='text-muted-foreground'>Authenticating...</p>
       </div>
     </div>
   )

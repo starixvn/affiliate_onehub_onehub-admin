@@ -1,3 +1,22 @@
+<!-- OPENSPEC:START -->
+# OpenSpec Instructions
+
+These instructions are for AI assistants working in this project.
+
+Always open `@/openspec/AGENTS.md` when the request:
+- Mentions planning or proposals (words like proposal, spec, change, plan)
+- Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
+- Sounds ambiguous and you need the authoritative spec before coding
+
+Use `@/openspec/AGENTS.md` to learn:
+- How to create and apply change proposals
+- Spec format and conventions
+- Project structure and guidelines
+
+Keep this managed block so 'openspec update' can refresh the instructions.
+
+<!-- OPENSPEC:END -->
+
 # CLAUDE.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
@@ -7,6 +26,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ONEHub Admin is a **.NET 9 backend API** built with **Clean Architecture** for an affiliate admin system. Uses **CQRS via MediatR**, **Fanex.Data** for database access, **Redis** caching, **Minimal APIs**, and **Result pattern** for error handling.
 
 **Tech Stack:** .NET 9, ASP.NET Core Minimal APIs, MediatR, Fanex.Data, Redis, Serilog, JWT, SkiaSharp
+
+## Frontend Overview (client-app/)
+
+This is a **monorepo** containing both backend and frontend. The frontend is a React 19 SPA in the `client-app/` directory.
+
+**Tech Stack:** React 19, TypeScript, Vite 7, TanStack Router, TanStack Query, Zustand, Tailwind CSS v4, shadcn/ui
+
+**Package Manager:** pnpm (required - NOT npm or yarn)
+
+### Frontend Commands
+
+```bash
+# From client-app/ directory
+pnpm dev                # Dev server (http://localhost:5173)
+pnpm build              # Production build + copy to wwwroot
+pnpm lint               # ESLint
+pnpm format             # Prettier auto-format
+```
+
+**Detailed frontend documentation:** [client-app/CLAUDE.md](client-app/CLAUDE.md)
 
 ## Development Commands
 
@@ -34,6 +73,40 @@ dotnet test --collect:"XPlat Code Coverage"
 ```bash
 dotnet clean
 ```
+
+## Frontend-Backend Integration
+
+### Development Setup
+
+**Run both servers separately:**
+1. Start backend: `dotnet run --project src/ONEHub.WebApi/ONEHub.WebApi.csproj` (https://localhost:7137)
+2. Start frontend: `cd client-app && pnpm dev` (http://localhost:5173)
+3. Frontend dev server proxies `/api` requests to backend via Vite proxy
+
+**Access:**
+- Frontend: http://localhost:5173
+- Backend API: https://localhost:7137
+- Swagger: https://localhost:7137/swagger
+
+### Production Build
+
+**Build process:**
+```bash
+cd client-app
+pnpm build  # TypeScript check → Vite build → Copy to src/ONEHub.WebApi/wwwroot/
+```
+
+**Deployment:**
+- Frontend builds to `client-app/dist/`
+- Build script copies to `src/ONEHub.WebApi/wwwroot/`
+- Backend serves SPA via `UseStaticFiles()` + `MapFallbackToFile("/index.html")`
+- Single .NET application serves both API and frontend
+
+### Full-Stack Development Workflow
+
+1. **Backend**: Create MediatR Query/Command → Add Endpoint
+2. **Frontend**: Create feature module → API client → TanStack Query hooks → UI components
+3. **Integration**: Backend Result<T> structure → Frontend expects `{ errorCode, errorMessage, data }`
 
 ## Architecture - 4 Layers
 
@@ -329,6 +402,93 @@ public class CampaignResponse
 }
 ```
 
+## Frontend Architecture Patterns
+
+### Feature Module Pattern
+
+Each feature is self-contained in `client-app/src/features/{feature}/`:
+
+```
+features/{feature}/
+├── api/
+│   ├── client.ts        # API calls to backend
+│   ├── queries.ts       # useQuery hooks (read operations)
+│   └── commands.ts      # useMutation hooks (write operations)
+├── components/          # Feature-specific components
+├── data/                # Schemas, types, mock data
+├── types/               # TypeScript type definitions
+├── utils/               # Feature utilities
+└── index.tsx            # Main feature component
+```
+
+### TanStack Query Pattern
+
+**Queries (Read):**
+```typescript
+// features/campaign/api/queries.ts
+export const campaignKeys = {
+  all: ['campaigns'] as const,
+  lists: () => [...campaignKeys.all, 'list'] as const,
+  list: (params) => [...campaignKeys.lists(), params] as const,
+}
+
+export function useGetCampaigns(params?: GetCampaignsParams) {
+  return useQuery({
+    queryKey: campaignKeys.list(params),
+    queryFn: () => campaignApi.getCampaigns(params),
+    select: (data) => data.data,
+  })
+}
+```
+
+**Commands (Write):**
+```typescript
+// features/campaign/api/commands.ts
+export function useCreateCampaign() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: campaignApi.createCampaign,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: campaignKeys.lists() })
+    },
+  })
+}
+```
+
+### Routing with TanStack Router
+
+File-based routing in `client-app/src/routes/`:
+- `__root.tsx` - Root layout
+- `_authenticated/` - Protected routes layout with auth guard
+- `(auth)/` - Public auth routes (sign-in, etc.)
+
+**Protected routes:**
+```typescript
+export const Route = createFileRoute('/_authenticated')({
+  beforeLoad: async ({ location, context }) => {
+    if (!context.auth.isAuthenticated) {
+      throw redirect({ to: '/sign-in', search: { redirect: location.href } })
+    }
+  },
+})
+```
+
+### State Management
+
+- **Server state:** TanStack Query (API data, caching, refetching)
+- **Client state:** Zustand (`stores/auth-store.ts` for authentication)
+- **Feature state:** React Context providers (e.g., `page-provider.tsx`)
+
+### API Client (Axios)
+
+**Location:** `client-app/src/lib/api/client.ts`
+
+- Base URL: `/api` (proxied to backend in dev)
+- Request interceptor: Add Bearer token from cookies
+- Response interceptor: Handle 401 with automatic token refresh and retry queue
+- Business error handling: `errorCode !== 0` treated as error
+
 ## Step-by-Step: Creating a New Feature
 
 ### Example: Add "GetCampaignList" Query
@@ -608,6 +768,57 @@ private static async Task<Results<Ok<Result>, ValidationProblem>> Create(
 }
 ```
 
+### Example: Full-Stack Integration (Backend → Frontend)
+
+**Backend Endpoint returns Result<T>:**
+```csharp
+// WebApi/Features/Campaign/CampaignEndPoint.cs
+private static async Task<Results<Ok<Result<PagingData<CampaignResponse>>>, ValidationProblem>> GetList(
+    [AsParameters] GetCampaignListRequest request,
+    IMediator mediator)
+{
+    var query = new GetCampaignListQuery { /* ... */ };
+    var result = await mediator.Send(query);
+    return TypedResults.Ok(result); // Returns { errorCode, errorMessage, data }
+}
+```
+
+**Frontend API Client:**
+```typescript
+// features/campaign/api/client.ts
+export const campaignApi = {
+  getCampaigns: async (params?: GetCampaignsParams) => {
+    const { data } = await apiClient.get<ApiResponse<PagingData<Campaign>>>('/campaign', { params })
+    return data // { errorCode, errorMessage, data }
+  }
+}
+
+// features/campaign/api/queries.ts
+export function useGetCampaigns(params?: GetCampaignsParams) {
+  return useQuery({
+    queryKey: campaignKeys.list(params),
+    queryFn: () => campaignApi.getCampaigns(params),
+    select: (response) => response.data, // Extract data from Result<T>
+  })
+}
+
+// features/campaign/index.tsx
+export function CampaignList() {
+  const { data, isLoading, error } = useGetCampaigns({ pageIndex: 1, pageSize: 20 })
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error loading campaigns</div>
+
+  return <div>{data?.items.map(campaign => <div key={campaign.campaignId}>{campaign.campaignName}</div>)}</div>
+}
+```
+
+**Key Points:**
+- Backend returns `Result<T>` with `{ errorCode, errorMessage, data }`
+- Frontend axios client handles `errorCode !== 0` as errors
+- TanStack Query hooks extract `data` from Result structure
+- UI components receive clean typed data
+
 ## Configuration (appsettings.json)
 
 **Key Sections:**
@@ -722,6 +933,8 @@ Follow Conventional Commits format defined in `.cursor/rules/commit.mdc`:
 
 ## File Organization
 
+### Backend Structure
+
 ```
 src/
 ├── ONEHub.Domain/
@@ -751,7 +964,39 @@ src/
     │   ├── {Feature}EndPoint.cs (Minimal API)
     │   └── {Feature}Models.cs (Request/Response DTOs)
     ├── Configurations/{Feature}ServiceInstaller.cs
+    ├── wwwroot/ (Frontend build output)
     └── Program.cs
+```
+
+### Frontend Structure
+
+```
+client-app/src/
+├── features/{feature}/
+│   ├── api/
+│   │   ├── client.ts        # API calls
+│   │   ├── queries.ts       # useQuery hooks
+│   │   └── commands.ts      # useMutation hooks
+│   ├── components/          # Feature-specific components
+│   ├── data/                # Schemas, types, mock data
+│   ├── types/               # TypeScript types
+│   ├── utils/               # Feature utilities
+│   └── index.tsx            # Main component
+├── components/
+│   ├── ui/                  # shadcn/ui components (some RTL-modified)
+│   └── layout/              # Layout components
+├── lib/
+│   ├── api/client.ts        # Axios instance with interceptors
+│   ├── auth/                # Auth utilities
+│   └── utils.ts             # General utilities
+├── routes/
+│   ├── __root.tsx           # Root layout
+│   ├── _authenticated/      # Protected routes
+│   └── (auth)/              # Public auth routes
+├── stores/
+│   └── auth-store.ts        # Zustand auth store
+├── locales/                 # i18n translation files
+└── main.tsx                 # App entry point
 ```
 
 ## Authentication
@@ -770,6 +1015,8 @@ JWT-based with cookie support. Access/refresh token pattern.
 
 ## Common Pitfalls
 
+### Backend Pitfalls
+
 1. **Confusing Application Commands vs Infrastructure Commands** - Both have similar names but different purposes. Application Commands are MediatR requests, Infrastructure Commands are Fanex.Data database commands.
 
 2. **Forgetting to register repository** - Always add `services.AddSingleton<IXRepository, XRepository>()` in Infrastructure/DependencyInjection.cs
@@ -782,9 +1029,79 @@ JWT-based with cookie support. Access/refresh token pattern.
 
 6. **Putting UserId/Ip in Query/Command manually** - Extend BaseCommand for auto-injection.
 
+### Frontend Pitfalls
+
+1. **Using npm or yarn instead of pnpm** - ALWAYS use pnpm. The project uses pnpm lockfile and workspace features.
+
+2. **Modifying RTL-aware shadcn components** - Several UI components have been modified for RTL support. Check RTL behavior after changes.
+
+3. **Using useCallback/useMemo without justification** - Avoid premature optimization. Only use when documented performance issues exist.
+
+4. **Adding comments to self-documenting code** - Code should be clear without comments. Only add for extremely complex logic.
+
+5. **Forgetting to invalidate query cache after mutations** - Always invalidate relevant queries in `onSuccess` of mutations.
+
+6. **Not handling loading/error states** - TanStack Query provides `isLoading` and `error` states. Always handle them in UI.
+
+### Integration Pitfalls
+
+1. **Backend Result structure mismatch** - Backend must return `{ errorCode, errorMessage, data }` structure. Frontend axios client expects this format.
+
+2. **Not handling errorCode !== 0** - Frontend treats `errorCode !== 0` as error. Ensure backend sets proper error codes.
+
+3. **Missing CORS configuration** - In development, Vite proxy handles this. In production, ensure backend CORS is configured if needed.
+
+## OpenSpec - Spec-Driven Development
+
+This project uses OpenSpec for spec-driven development. Changes to capabilities or requirements should follow the OpenSpec workflow.
+
+### OpenSpec CLI Installation
+
+Install the OpenSpec CLI globally:
+
+```bash
+npm install -g openspec-cli
+```
+
+### Essential OpenSpec Commands
+
+```bash
+# View active changes and specifications
+openspec list                          # List active changes
+openspec list --specs                  # List all specifications
+openspec show [change-id|spec-id]      # Display change or spec details
+
+# Validation
+openspec validate [change-id] --strict # Validate a change with strict checks
+openspec validate                      # Bulk validation mode (interactive)
+
+# Archive after deployment
+openspec archive <change-id> [--yes|-y]
+```
+
+### OpenSpec Workflow
+
+1. **Proposal Stage** - Create change proposal with specs
+   - Create `openspec/changes/<change-id>/proposal.md`
+   - Add spec deltas in `openspec/changes/<change-id>/specs/<capability>/spec.md`
+   - Run `openspec validate <change-id> --strict`
+
+2. **Implementation Stage** - Follow tasks.md checklist
+   - Read proposal.md and design.md (if exists)
+   - Implement tasks sequentially
+   - Update tasks.md to mark completed items
+
+3. **Archive Stage** - After deployment
+   - Run `openspec archive <change-id> --yes`
+   - Updates `openspec/specs/` with merged changes
+   - Moves change to `openspec/changes/archive/`
+
+**Documentation:** See [openspec/AGENTS.md](openspec/AGENTS.md) for detailed instructions.
+
 ## Additional Resources
 
-- [ARCHITECTURE_RULES.md](ARCHITECTURE_RULES.md) - Detailed architecture patterns (note: describes ideal patterns, actual implementation is in Infrastructure layer)
+- [client-app/CLAUDE.md](client-app/CLAUDE.md) - Detailed frontend documentation
 - [README.md](README.md) - Project overview and setup
+- [openspec/AGENTS.md](openspec/AGENTS.md) - OpenSpec workflow guide
 - `.cursor/rules/commit.mdc` - Commit message rules
 - `.cursor/rules/common.mdc` - Common development rules

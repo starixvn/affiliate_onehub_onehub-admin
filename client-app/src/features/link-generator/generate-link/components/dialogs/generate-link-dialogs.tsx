@@ -1,11 +1,17 @@
-import { CampaignCreateDialog } from './campaign-create-dialog'
 import { useGenerateLink } from '../generate-link-provider'
+import { CampaignCreateDialog } from './campaign-create-dialog'
 import { ComponentCreateDialog } from './component-create-dialog'
 
 export function GenerateLinkDialogs() {
   const { dialogOpen, setDialogOpen } = useGenerateLink()
 
-  const componentTypes = ['group', 'channel', 'type', 'agency', 'event'] as const
+  const componentTypes = [
+    'group',
+    'channel',
+    'type',
+    'agency',
+    'event',
+  ] as const
 
   return (
     <>
@@ -25,4 +31,3 @@ export function GenerateLinkDialogs() {
     </>
   )
 }
-

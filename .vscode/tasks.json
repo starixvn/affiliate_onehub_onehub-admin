@@ -18,9 +18,22 @@
       }
     },
     {
+      "label": "_build-client",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "build"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/client-app"
+      },
+      "problemMatcher": [],
+      "group": "none",
+    },
+    {
       "label": "run",
-      "command": "dotnet",
       "type": "process",
+      "command": "dotnet",
       "args": [
         "run",
         "--launch-profile",
@@ -28,11 +41,51 @@
         "--project",
         "${workspaceFolder}/src/ONEHub.WebApi/ONEHub.WebApi.csproj"
       ],
+      "dependsOn": "_build-client",
       "problemMatcher": "$msCompile",
       "group": {
         "kind": "test",
         "isDefault": true
       }
+    },
+    {
+      "label": "_dev-client",
+      "type": "shell",
+      "command": "pnpm",
+      "args": [
+        "dev"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}/client-app"
+      },
+      "isBackground": true,
+      "problemMatcher": [],
+      "group": "none",
+    },
+    {
+      "label": "_watch-api",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "watch",
+        "run",
+        "--launch-profile",
+        "https",
+        "--project",
+        "${workspaceFolder}/src/ONEHub.WebApi/ONEHub.WebApi.csproj"
+      ],
+      "isBackground": true,
+      "problemMatcher": "$msCompile",
+      "group": "none",
+    },
+    {
+      "label": "dev",
+      "dependsOn": [
+        "_watch-api",
+        "_dev-client"
+      ],
+      "dependsOrder": "parallel",
+      "problemMatcher": []
     }
   ]
 }

@@ -285,7 +285,7 @@ export const validateFiles = <T extends FileItem>(
   files: T[],
   errorMessages: ErrorMessages,
   config: FileUploadConfig,
-  mode: ValidationMode,
+  mode: ValidationMode
 ): ValidationErrors['files'] => {
   const errors: ValidationErrors['files'] = {}
 
