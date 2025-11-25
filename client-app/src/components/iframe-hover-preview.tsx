@@ -34,7 +34,10 @@ export function IframeHoverPreview({
     const maxWidth = Math.min(maxPreviewSize.width, viewportWidth * 0.8)
     const maxHeight = Math.min(maxPreviewSize.height, viewportHeight * 0.8)
 
-    const aspectRatio = maxPreviewSize.width / maxPreviewSize.height
+    const aspectRatio =
+      maxPreviewSize.height > 0
+        ? maxPreviewSize.width / maxPreviewSize.height
+        : 1
 
     let width: number, height: number
 
@@ -58,6 +61,9 @@ export function IframeHoverPreview({
     const handleResize = () => {
       setIframeDimensions(calculateOptimalSize())
     }
+
+    // Initialize and also respond when `maxPreviewSize` changes
+    handleResize()
 
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
