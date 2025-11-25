@@ -22,9 +22,12 @@ export function IframeHoverPreview({
   const [previewPosition, setPreviewPosition] = useState({ x: 0, y: 0 })
   const [iframeLoaded, setIframeLoaded] = useState(false)
   const [iframeBlocked, setIframeBlocked] = useState(false)
+  const [isTriggerHovered, setIsTriggerHovered] = useState(false)
+  const [isPreviewHovered, setIsPreviewHovered] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const calculateOptimalSize = useCallback(() => {
     const viewportWidth = window.innerWidth
@@ -65,6 +68,12 @@ export function IframeHoverPreview({
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (!src || disabled) return
 
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current)
+        closeTimeoutRef.current = null
+      }
+
+      setIsTriggerHovered(true)
       setIframeLoaded(false)
       setIframeBlocked(false)
 
@@ -124,8 +133,31 @@ export function IframeHoverPreview({
   )
 
   const handleMouseLeave = useCallback(() => {
-    setShowPreview(false)
+    setIsTriggerHovered(false)
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowPreview(false)
+      setIsPreviewHovered(false)
+    }, 100)
   }, [])
+
+  const handlePreviewMouseEnter = useCallback(() => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current)
+      closeTimeoutRef.current = null
+    }
+    setIsPreviewHovered(true)
+  }, [])
+
+  const handlePreviewMouseLeave = useCallback(() => {
+    setIsPreviewHovered(false)
+
+    closeTimeoutRef.current = setTimeout(() => {
+      if (!isTriggerHovered) {
+        setShowPreview(false)
+      }
+    }, 100)
+  }, [isTriggerHovered])
 
   const handleIframeLoad = useCallback(() => {
     setIframeLoaded(true)
@@ -181,6 +213,9 @@ export function IframeHoverPreview({
       document.removeEventListener('wheel', preventScroll)
       document.removeEventListener('touchmove', preventScroll)
       document.body.style.overflowX = ''
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current)
+      }
     }
   }, [showPreview])
 
@@ -223,6 +258,8 @@ export function IframeHoverPreview({
                 boxSizing: 'border-box',
                 transform: 'translateZ(0)',
               }}
+              onMouseEnter={handlePreviewMouseEnter}
+              onMouseLeave={handlePreviewMouseLeave}
             >
               <div className='bg-muted relative h-full w-full overflow-hidden rounded border'>
                 <iframe
