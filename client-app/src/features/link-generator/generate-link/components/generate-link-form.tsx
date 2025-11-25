@@ -80,7 +80,7 @@ export function GenerateLinkForm() {
       )
       if (language) {
         form.setValue('language', language.languageCode || '')
-        form.setValue('shortedLanguageCode', language.shortedLanguageCode || '')
+        form.setValue('shortedLanguageCode', language.targetLanguageCode || '')
       } else {
         form.setValue('language', '')
         form.setValue('shortedLanguageCode', '')
@@ -99,19 +99,19 @@ export function GenerateLinkForm() {
           form.setValue('language', firstLanguage.languageCode || '')
           form.setValue(
             'shortedLanguageCode',
-            firstLanguage.shortedLanguageCode || ''
+            firstLanguage.targetLanguageCode || ''
           )
         }
       }
     }
   }, [languages, selectedCountryCode, form])
 
-  const domainTypePrimary = selectedLandingPage?.pageType === 3 ? 0 : 1
+  const domainTypeFullLink = selectedLandingPage?.pageType === 3 ? 0 : 1
   const domainTypeShortLink = 2
 
   const { data: domains } = useGetDomains(
     selectedCountryCode || '',
-    domainTypePrimary
+    domainTypeFullLink
   )
   const { data: domainsForShortLink } = useGetDomains(
     selectedCountryCode || '',
@@ -335,7 +335,7 @@ export function GenerateLinkForm() {
                     if (option) {
                       const lang = option as TargetCountry
                       form.setValue('language', lang.languageCode || '')
-                      field.onChange(lang.shortedLanguageCode || '')
+                      field.onChange(lang.targetLanguageCode || '')
                     } else {
                       field.onChange('')
                       form.setValue('language', '')
@@ -343,7 +343,7 @@ export function GenerateLinkForm() {
                   }}
                   options={languages || []}
                   labelKey='languageName'
-                  valueKey='shortedLanguageCode'
+                  valueKey='targetLanguageCode'
                   placeholder={t('form.languagePlaceholder')}
                   searchPlaceholder='Search language...'
                   disabled={isDisabled}

@@ -143,7 +143,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
       if (country) {
         formValues.country = country.targetCountryCode
         formValues.language = country.languageCode || ''
-        formValues.shortedLanguageCode = country.shortedLanguageCode || ''
+        formValues.shortedLanguageCode = country.targetLanguageCode || ''
       }
     }
 
