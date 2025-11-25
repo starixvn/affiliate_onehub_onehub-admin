@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using MiniValidation;
 using ONEHub.Application.Features.Auth.Commands;
 using ONEHub.Application.Features.Auth.Queries;
@@ -9,7 +8,6 @@ using ONEHub.Application.Services;
 using ONEHub.Application.Utils;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Results;
-using ONEHub.Domain.Settings;
 
 namespace ONEHub.WebApi.Features.Auth;
 

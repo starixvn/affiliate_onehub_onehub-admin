@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ONEHub.WebApi.Features.PageManagement;
 
-public record GetPageManagementDashboardRequest();
+public record GetPageManagementDashboardRequest;
 
 public record GetLandingPageListRequest(
     string? Search,

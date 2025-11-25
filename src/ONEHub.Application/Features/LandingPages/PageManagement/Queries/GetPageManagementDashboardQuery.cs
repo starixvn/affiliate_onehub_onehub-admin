@@ -1,7 +1,6 @@
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Errors;
-using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
