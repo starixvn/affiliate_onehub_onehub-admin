@@ -93,7 +93,7 @@ public static class CampaignEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> Create(
+    private static async Task<Results<Ok<Result<CampaignCreatedResponse>>, ValidationProblem>> Create(
         [FromBody] CreateCampaignRequest request,
         IMediator mediator)
     {

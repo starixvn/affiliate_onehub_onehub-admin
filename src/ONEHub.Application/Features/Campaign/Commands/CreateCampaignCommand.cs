@@ -6,7 +6,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.Campaign.Commands;
 
-public class CreateCampaignCommand : BaseNonResultCommand
+public class CreateCampaignCommand : BaseCommand<CampaignCreatedResponse>
 {
     public string CampaignName { get; set; } = string.Empty;
 
@@ -15,11 +15,13 @@ public class CreateCampaignCommand : BaseNonResultCommand
     public int StatusId { get; set; }
 }
 
+public record CampaignCreatedResponse(int CampaignId, string CampaignCode);
+
 public class CreateCampaignHandler(
     ICampaignRepository campaignRepository)
-    : IRequestHandler<CreateCampaignCommand, Result>
+    : IRequestHandler<CreateCampaignCommand, Result<CampaignCreatedResponse>>
 {
-    public async Task<Result> Handle(CreateCampaignCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CampaignCreatedResponse>> Handle(CreateCampaignCommand request, CancellationToken cancellationToken)
     {
         var param = new CreateCampaignParam
         {
@@ -33,6 +35,11 @@ public class CreateCampaignHandler(
 
         var createResult = await campaignRepository.CreateCampaignAsync(param);
 
-        return createResult;
+        if (createResult.IsFailure || createResult.Data is null)
+        {
+            return Result<CampaignCreatedResponse>.Failure(createResult.Error);
+        }
+
+        return Result<CampaignCreatedResponse>.Success(new CampaignCreatedResponse(createResult.Data.CampaignId, createResult.Data.CampaignCode));
     }
 }

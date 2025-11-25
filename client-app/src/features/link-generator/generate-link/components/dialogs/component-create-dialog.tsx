@@ -74,7 +74,7 @@ export function ComponentCreateDialog({
       },
       {
         onSuccess: (response) => {
-          if (response.errorCode === 0 && response.data && typeof response.data === 'object' && 'componentId' in response.data) {
+          if (values.statusId === 1 && response.errorCode === 0 && response.data && typeof response.data === 'object' && 'componentId' in response.data) {
             const componentData = response.data as { componentId: number }
             const component = {
               componentId: componentData.componentId,

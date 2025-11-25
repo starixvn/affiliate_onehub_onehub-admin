@@ -44,5 +44,5 @@ public class DeleteBatchCampaignParam : BaseParam
 public class GetCampaignInfoParam
 {
     public int? CampaignId { get; set; }
-    public string? StatusIds { get; set; }
+    public string StatusIds { get; set; } = string.Empty;
 }

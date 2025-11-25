@@ -1,5 +1,6 @@
 using Fanex.Data.Repository;
 using ONEHub.Domain.Entities;
+using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
@@ -31,7 +32,7 @@ public class CampaignRepository(IDynamicRepository dynamicRepository)
         return await FetchPagingDataAsync<Campaign>(criteria);
     }
 
-    public async Task<Result> CreateCampaignAsync(CreateCampaignParam param)
+    public async Task<Result<CampaignBase>> CreateCampaignAsync(CreateCampaignParam param)
     {
         var command = new CreateCampaignCommand
         {
@@ -44,7 +45,11 @@ public class CampaignRepository(IDynamicRepository dynamicRepository)
         };
         var result = await ExecuteCommandAsync(command);
 
-        return result;
+        if (result.IsFailure)
+        {
+            return Result<CampaignBase>.Failure(CampaignError.CreateCampaignFailed);
+        }
+        return Result<CampaignBase>.Success(new CampaignBase { CampaignId = command.CampaignId, CampaignCode = command.CampaignCode });
     }
 
     public async Task<Result> UpdateCampaignAsync(UpdateCampaignParam param)
