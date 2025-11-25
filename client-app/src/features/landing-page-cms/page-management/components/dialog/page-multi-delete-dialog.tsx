@@ -30,11 +30,9 @@ export function PageMultiDeleteDialog({
     deleteMutation.mutate(
       { pageIds },
       {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            table.resetRowSelection()
-            onOpenChange(false)
-          }
+        onSuccess: () => {
+          table.resetRowSelection()
+          onOpenChange(false)
         },
       }
     )

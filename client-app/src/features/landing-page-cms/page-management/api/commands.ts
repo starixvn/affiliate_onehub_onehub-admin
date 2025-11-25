@@ -17,8 +17,8 @@ export function useDeleteLandingPage() {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing page deleted successfully')
     },
-    onError: () => {
-      toast.error('Failed to delete landing page')
+    onError: (error: { message: string }) => {
+      toast.error(error.message || 'Failed to delete landing page')
     },
   })
 }
@@ -34,8 +34,8 @@ export function useDeleteBatchLandingPages() {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing pages deleted successfully')
     },
-    onError: () => {
-      toast.error('Failed to delete landing pages')
+    onError: (error: { message: string }) => {
+      toast.error(error.message || 'Failed to delete landing pages')
     },
   })
 }
@@ -51,8 +51,8 @@ export function useUpdateBatchLandingPageStatus() {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing page status updated successfully')
     },
-    onError: () => {
-      toast.error('Failed to update landing page status')
+    onError: (error: { message: string }) => {
+      toast.error(error.message || 'Failed to update landing page status')
     },
   })
 }

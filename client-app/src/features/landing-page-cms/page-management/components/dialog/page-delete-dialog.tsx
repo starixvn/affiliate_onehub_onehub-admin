@@ -23,10 +23,8 @@ export function PageDeleteDialog({
 
   const handleDelete = () => {
     deleteMutation.mutate(currentRow.pageId, {
-      onSuccess: (response) => {
-        if (response.errorCode === 0) {
-          onOpenChange(false)
-        }
+      onSuccess: () => {
+        onOpenChange(false)
       },
     })
   }

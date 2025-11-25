@@ -3,6 +3,7 @@ import type {
   GetLandingPagesRequest,
   GetPageManagementDashboardRequest,
   PageStatus,
+  GetPageFiltersResponse,
 } from '../types'
 import { landingPageApi } from './client'
 
@@ -39,13 +40,13 @@ export const usePageFilters = () => {
   })
 
   return {
-    ...query.data,
+    ...(query.data ?? {}),
     isLoading: query.isLoading,
     error: query.error,
   }
 }
 
-const selectPageFilters = (data: any) => {
+const selectPageFilters = (data: GetPageFiltersResponse) => {
   const response = data.data
 
   const minDate = response?.minDate
@@ -78,7 +79,7 @@ const selectPageFilters = (data: any) => {
     countries: response?.targetCountries ?? [],
     languages: response?.languages ?? [],
     pageStatus:
-      response?.statusInfos.filter(
+      response?.statusInfos?.filter(
         (status: PageStatus) => status.statusId !== undefined
       ) ?? [],
     landingPageUrl: response?.landingPageUrl ?? '',

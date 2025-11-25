@@ -35,11 +35,9 @@ export function PageBulkStatusChangeDialog({
         statusId: newStatusId,
       },
       {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            onOpenChange(false)
-            onSuccess?.()
-          }
+        onSuccess: () => {
+          onOpenChange(false)
+          onSuccess?.()
         },
       }
     )

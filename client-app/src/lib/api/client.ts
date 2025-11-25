@@ -48,7 +48,7 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse<IAxiosResponse>) => {
     const { data } = response
 
-    if (data?.errorCode && data.errorCode !== 0) {
+    if (data?.errorCode !== undefined && data.errorCode !== 0) {
       const error: IAxiosErrorData = new Error(data.errorMessage)
       error.message = data.errorMessage || 'An error occurred'
       error.status = response.status

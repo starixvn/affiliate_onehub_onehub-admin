@@ -278,7 +278,11 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
                   onClick={toggleAllGroups}
                   className='h-6 px-2 text-xs'
                 >
-                  {Object.values(expandedGroups).every((expanded) => expanded)
+                  {(isGroupedOptions(options) &&
+                    Object.keys(options).every(
+                      (groupKey) =>
+                        (expandedGroups[groupKey] ?? defaultExpandAll)
+                    ))
                     ? 'Collapse All'
                     : 'Expand All'}
                 </Button>

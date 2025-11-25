@@ -35,10 +35,8 @@ export function PageStatusChangeDialog({
         statusId: newStatusId,
       },
       {
-        onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            onOpenChange(false)
-          }
+        onSuccess: () => {
+          onOpenChange(false)
         },
       }
     )
