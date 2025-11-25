@@ -1,0 +1,118 @@
+---
+description: Create a git commit following Conventional Commits standard
+---
+
+# Commit Workflow
+
+This workflow helps you create proper git commits following the Conventional Commits 1.0.0 standard and our project-specific commitlint configuration.
+
+## Steps
+
+### 1. Check current git status
+```bash
+git status
+```
+
+Review what files have been changed and what's staged.
+
+### 2. Review the changes
+```bash
+git diff HEAD
+```
+
+Understand what code changes will be committed.
+
+### 3. Stage changes (if not already staged)
+```bash
+# Stage specific files
+git add <file1> <file2>
+
+# Or stage all changes
+git add .
+```
+
+### 4. Generate commit message following these rules
+
+**Format:** `<type>(scope): Description`
+
+**Required Types:**
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style/formatting changes
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding/updating tests
+- `build`: Build system changes
+- `ci`: CI/CD changes
+- `chore`: Maintenance tasks
+- `revert`: Revert previous commit
+
+**Scopes (when applicable):**
+- `client`: Client-related changes
+- `server`: Server-related changes
+- `script`: Script-related changes
+- `api`: API changes
+- `ui`: UI changes
+- `config`: Configuration changes
+- `deps`: Dependency updates
+
+**Rules:**
+- Subject length: 10-72 characters
+- Subject case: Sentence case (first letter capitalized)
+- NO period at end of subject
+- Use parentheses `()` for scope, NEVER square brackets `[]`
+- Body line length: max 100 characters per line
+- **CRITICAL: DO NOT add "Generated with Claude Code" footer**
+- **CRITICAL: DO NOT add "Co-Authored-By: Claude" attribution**
+
+**Examples:**
+```
+feat(client): Add user authentication form
+fix(api): Resolve database connection timeout
+docs: Update installation instructions
+refactor(server): Simplify data validation logic
+chore(deps): Update React to version 18
+```
+
+**Breaking Changes:**
+Add `!` after type/scope:
+```
+feat(api)!: Redesign user authentication endpoints
+```
+
+### 5. Create the commit
+// turbo
+```bash
+git commit -m "type(scope): Description"
+```
+
+For commits with body:
+```bash
+git commit -m "type(scope): Description" -m "Additional details explaining what changed and why"
+```
+
+### 6. Verify the commit was created
+// turbo
+```bash
+git log -1 --pretty=format:"%H%n%an%n%ae%n%ad%n%s%n%b"
+```
+
+### 7. (Optional) Amend commit if needed
+```bash
+# Amend the last commit message
+git commit --amend
+
+# Amend and add more changes
+git add <file>
+git commit --amend --no-edit
+```
+
+## Notes
+
+- This workflow commits LOCALLY only, it does NOT push to remote
+- Always review your changes before committing
+- Keep commits focused on a single logical change
+- If you have multiple unrelated changes, create separate commits
+- **CRITICAL: DO NOT add any AI-generated footer, attribution, or "Generated with Claude Code" text to the commit message**
+- **CRITICAL: DO NOT add "Co-Authored-By: Claude" or any similar AI attribution to the commit message**
