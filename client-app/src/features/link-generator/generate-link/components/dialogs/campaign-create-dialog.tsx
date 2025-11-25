@@ -70,9 +70,9 @@ export function CampaignCreateDialog({
             const campaign = response.data as { campaignId: number; campaignCode: string; }
             generateLinkForm.setValue('campaign', String(campaign.campaignId))
             generateLinkForm.setValue('campaignCode', campaign.campaignCode)
-            form.reset()
-            onOpenChange(false)
           }
+          form.reset()
+          onOpenChange(false)
         },
       }
     )

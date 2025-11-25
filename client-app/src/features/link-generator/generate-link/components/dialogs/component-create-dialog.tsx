@@ -116,9 +116,9 @@ export function ComponentCreateDialog({
                   break
               }
             }
-            form.reset()
-            onOpenChange(false)
           }
+          form.reset()
+          onOpenChange(false)
         },
       }
     )

@@ -109,14 +109,26 @@ export function GenerateLinkForm() {
   const domainTypeFullLink = selectedLandingPage?.pageType === 3 ? 0 : 1
   const domainTypeShortLink = 2
 
-  const { data: domains } = useGetDomains(
-    selectedCountryCode || '',
-    domainTypeFullLink
-  )
-  const { data: domainsForShortLink } = useGetDomains(
-    selectedCountryCode || '',
-    domainTypeShortLink
-  )
+  const { data: domains } = useGetDomains(selectedCountryCode || '', domainTypeFullLink)
+  const { data: domainsForShortLink } = useGetDomains(selectedCountryCode || '', domainTypeShortLink)
+
+  useEffect(() => {
+    if (domains && domains.length > 0) {
+      const firstDomain = domains[0]
+      if (firstDomain) {
+        form.setValue('domainName', firstDomain.domainName)
+      }
+    }
+  }, [domains, form])
+
+  useEffect(() => {
+    if (domainsForShortLink && domainsForShortLink.length > 0) {
+      const firstShortDomain = domainsForShortLink[0]
+      if (firstShortDomain) {
+        form.setValue('shortDomain', firstShortDomain.domainName)
+      }
+    }
+  }, [domainsForShortLink, form])
 
   const handleCreateNew = (type: DialogType) => {
     setDialogOpen(type)
