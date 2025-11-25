@@ -34,7 +34,7 @@ export function IframeHoverPreview({
     const maxWidth = Math.min(maxPreviewSize.width, viewportWidth * 0.8)
     const maxHeight = Math.min(maxPreviewSize.height, viewportHeight * 0.8)
 
-    const aspectRatio = 393 / 852
+    const aspectRatio = maxPreviewSize.width / maxPreviewSize.height
 
     let width: number, height: number
 
@@ -198,10 +198,9 @@ export function IframeHoverPreview({
     if (showPreview) {
       document.addEventListener('wheel', preventScroll, { passive: false })
       document.addEventListener('touchmove', preventScroll, { passive: false })
-      preventHorizontalScroll()
-    } else {
-      preventHorizontalScroll()
     }
+
+    preventHorizontalScroll()
 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
@@ -262,12 +261,11 @@ export function IframeHoverPreview({
                   src={src}
                   title='Landing Page Preview'
                   className={cn(
-                    'absolute top-0 left-0 h-full w-full border-none',
+                    'absolute top-0 left-0 h-full w-full border-none overflow-hidden',
                     iframeLoaded ? 'block' : 'hidden'
                   )}
                   onLoad={handleIframeLoad}
                   onError={handleIframeError}
-                  scrolling='no'
                 />
 
                 {!iframeLoaded && !iframeBlocked && (

@@ -67,7 +67,7 @@ git add .
 - **CRITICAL: DO NOT add "Co-Authored-By: Claude" attribution**
 
 **Examples:**
-```
+```text
 feat(client): Add user authentication form
 fix(api): Resolve database connection timeout
 docs: Update installation instructions
@@ -77,12 +77,11 @@ chore(deps): Update React to version 18
 
 **Breaking Changes:**
 Add `!` after type/scope:
-```
+```text
 feat(api)!: Redesign user authentication endpoints
 ```
 
 ### 5. Create the commit
-// turbo
 ```bash
 git commit -m "type(scope): Description"
 ```
@@ -93,7 +92,6 @@ git commit -m "type(scope): Description" -m "Additional details explaining what 
 ```
 
 ### 6. Verify the commit was created
-// turbo
 ```bash
 git log -1 --pretty=format:"%H%n%an%n%ae%n%ad%n%s%n%b"
 ```

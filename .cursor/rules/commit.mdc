@@ -68,7 +68,7 @@ git add .
 - **CRITICAL: DO NOT add "Co-Authored-By: Claude" attribution**
 
 **Examples:**
-```
+```text
 feat(client): Add user authentication form
 fix(api): Resolve database connection timeout
 docs: Update installation instructions
@@ -78,7 +78,7 @@ chore(deps): Update React to version 18
 
 **Breaking Changes:**
 Add `!` after type/scope:
-```
+```text
 feat(api)!: Redesign user authentication endpoints
 ```
 
