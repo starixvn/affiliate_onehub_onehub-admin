@@ -2,7 +2,7 @@ import type { IAxiosResponse } from '@/lib/api/types'
 import type { IPaginatedResponse } from '@/lib/types/common'
 import type { LinkInfo } from '../data/schema'
 
-export interface GetLinksRequest {
+export interface LinkManagementRequest {
   search?: string
   statusIds?: string
   countryCodes?: string
@@ -14,28 +14,23 @@ export interface GetLinksRequest {
   isExportExcel?: boolean
 }
 
-export type GetLinksResponseData = IPaginatedResponse<LinkInfo>
-
-export type GetLinksResponse = IAxiosResponse<GetLinksResponseData>
-
-export interface GetLinkSummaryRequest {
-  search?: string
-  countryCodes?: string
-  channelIds?: string
-  startDate?: string
-  endDate?: string
-}
-
-export interface GetLinkSummaryResponseData {
+export interface LinkDashboardResponse {
   totalLinks: number
-  uniqueClicks: number
+  totalClicks: number
   totalRegistrations: number
   totalFtds: number
-  avgFtdAmount: number
+  avgFtds: number
+  bonus: number
 }
 
-export type GetLinkSummaryResponse =
-  IAxiosResponse<GetLinkSummaryResponseData>
+export interface LinkManagementResponse {
+  dashboard: LinkDashboardResponse
+  links: IPaginatedResponse<LinkInfo>
+}
+
+export type LinkManagementApiResponse = IAxiosResponse<LinkManagementResponse>
+
+
 
 export interface UpdateLinkStatusRequest {
   linkId: number

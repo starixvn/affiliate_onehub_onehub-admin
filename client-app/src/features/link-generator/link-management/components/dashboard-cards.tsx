@@ -1,47 +1,47 @@
 import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Link2, MousePointerClick, UserPlus, DollarSign, TrendingUp } from 'lucide-react'
-import { useGetLinkSummary } from '../api/queries'
-import type { GetLinkSummaryRequest } from '../types'
+import { Link2, MousePointerClick, UserPlus, DollarSign, TrendingUp, Gift } from 'lucide-react'
+import { useLinks } from './link-provider'
 
-interface LinkSummaryCardsProps {
-    params?: GetLinkSummaryRequest
-}
-
-export function LinkSummaryCards({ params }: LinkSummaryCardsProps) {
+export function DashboardCards() {
     const { t } = useTranslation('link-management')
-    const { data, isLoading } = useGetLinkSummary(params)
+    const { dashboard, isLoading } = useLinks()
 
     const cards = [
         {
             title: t('summary.totalLinks'),
-            value: data?.totalLinks ?? 0,
+            value: dashboard?.totalLinks ?? 0,
             icon: Link2,
         },
         {
             title: t('summary.uniqueClicks'),
-            value: data?.uniqueClicks ?? 0,
+            value: dashboard?.totalClicks ?? 0,
             icon: MousePointerClick,
         },
         {
             title: t('summary.totalRegistrations'),
-            value: data?.totalRegistrations ?? 0,
+            value: dashboard?.totalRegistrations ?? 0,
             icon: UserPlus,
         },
         {
+            title: t('summary.totalBonusUsers'),
+            value: dashboard?.bonus ?? 0,
+            icon: Gift,
+        },
+        {
             title: t('summary.totalFtds'),
-            value: data?.totalFtds ?? 0,
+            value: dashboard?.totalFtds ?? 0,
             icon: DollarSign,
         },
         {
             title: t('summary.avgFtdAmount'),
-            value: (data?.avgFtdAmount ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            value: (dashboard?.avgFtds ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
             icon: TrendingUp,
         },
     ]
 
     return (
-        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5'>
+        <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-6'>
             {cards.map((card, index) => {
                 const Icon = card.icon
                 return (

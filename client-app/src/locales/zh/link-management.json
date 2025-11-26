@@ -21,7 +21,8 @@
     "uniqueClicks": "唯一点击数",
     "totalRegistrations": "总注册数",
     "totalFtds": "总首存数",
-    "avgFtdAmount": "平均首存金额"
+    "avgFtdAmount": "平均首存金额",
+    "totalBonusUsers": "总奖金用户数"
   },
   "table": {
     "search": "搜索链接...",

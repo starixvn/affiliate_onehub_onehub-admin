@@ -16,16 +16,15 @@ public static class LinkEndPoint
     {
         var groupEndpoint = endpoints.MapGroup("/api/link").RequireAuthorization();
 
-        groupEndpoint.MapGet("/summary", Summary);
-        groupEndpoint.MapGet("/", GetList);
+        groupEndpoint.MapGet("/", GetLinkManagement);
         groupEndpoint.MapGet("/export", ExportList);
         groupEndpoint.MapPut("/{id}/status", UpdateStatus);
 
         return groupEndpoint;
     }
 
-    private static async Task<Results<Ok<Result<LinkDashboardResponse>>, ValidationProblem>> Summary(
-        [AsParameters] GetLinkDashboardRequest request,
+    private static async Task<Results<Ok<Result<LinkManagement>>, ValidationProblem>> GetLinkManagement(
+        [AsParameters] GetLinkManagementRequest request,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -33,30 +32,7 @@ public static class LinkEndPoint
             return TypedResults.ValidationProblem(errors);
         }
 
-        var query = new GetLinkDashboardQuery
-        {
-            Search = request.Search,
-            CountryCodes = request.CountryCodes,
-            ChannelIds = request.ChannelIds,
-            StartDate = request.StartDate,
-            EndDate = request.EndDate
-        };
-
-        var result = await mediator.Send(query);
-
-        return TypedResults.Ok(result);
-    }
-
-    private static async Task<Results<Ok<Result<PagingData<LinkResponse>>>, ValidationProblem>> GetList(
-        [AsParameters] GetLinkListRequest request,
-        IMediator mediator)
-    {
-        if (!MiniValidator.TryValidate(request, out var errors))
-        {
-            return TypedResults.ValidationProblem(errors);
-        }
-
-        var query = new GetLinkListQuery
+        var query = new GetLinkManagementQuery
         {
             PageSize = request.PageSize,
             PageIndex = request.PageIndex,
@@ -73,8 +49,8 @@ public static class LinkEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<PagingData<LinkResponse>>>, ValidationProblem>> ExportList(
-        [AsParameters] GetLinkListRequest request,
+    private static async Task<Results<Ok<Result<LinkManagement>>, ValidationProblem>> ExportList(
+        [AsParameters] GetLinkManagementRequest request,
         IMediator mediator)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
@@ -82,7 +58,7 @@ public static class LinkEndPoint
             return TypedResults.ValidationProblem(errors);
         }
 
-        var query = new GetLinkListQuery
+        var query = new GetLinkManagementQuery
         {
             PageSize = int.MaxValue,
             PageIndex = 1,
@@ -126,4 +102,3 @@ public static class LinkEndPoint
         return TypedResults.Ok(result);
     }
 }
-

@@ -1,10 +1,8 @@
 import { apiClient } from '@/lib/api/client'
 import type { IAxiosResponse } from '@/lib/api/types'
 import type {
-  GetLinksRequest,
-  GetLinksResponse,
-  GetLinkSummaryRequest,
-  GetLinkSummaryResponse,
+  LinkManagementRequest,
+  LinkManagementApiResponse,
   UpdateLinkStatusRequest,
   UpdateLinkStatusResponse,
 } from '../types'
@@ -28,29 +26,17 @@ type ComponentInfo = {
 }
 
 export const linkApi = {
-  async getLinks(params?: GetLinksRequest): Promise<GetLinksResponse> {
-    const response = await apiClient.get<GetLinksResponse>('/link', {
+  async getLinkManagement(params?: LinkManagementRequest): Promise<LinkManagementApiResponse> {
+    const response = await apiClient.get<LinkManagementApiResponse>('/link', {
       params,
     })
     return response.data
   },
 
-  async exportLinks(params?: GetLinksRequest): Promise<GetLinksResponse> {
-    const response = await apiClient.get<GetLinksResponse>('/link/export', {
+  async exportLinks(params?: LinkManagementRequest): Promise<LinkManagementApiResponse> {
+    const response = await apiClient.get<LinkManagementApiResponse>('/link/export', {
       params,
     })
-    return response.data
-  },
-
-  async getSummary(
-    params?: GetLinkSummaryRequest
-  ): Promise<GetLinkSummaryResponse> {
-    const response = await apiClient.get<GetLinkSummaryResponse>(
-      '/link/summary',
-      {
-        params,
-      }
-    )
     return response.data
   },
 

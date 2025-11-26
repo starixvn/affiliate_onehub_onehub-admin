@@ -1,6 +1,6 @@
 namespace ONEHub.Domain.Params;
 
-public class LinkListParam : PagingParam
+public class LinkManagementParam : PagingParam
 {
     public string? Search { get; set; } = string.Empty;
 
@@ -15,19 +15,6 @@ public class LinkListParam : PagingParam
     public DateTime? EndDate { get; set; }
 
     public bool IsExportExcel { get; set; }
-}
-
-public class LinkDashboardParam
-{
-    public string? Search { get; set; } = string.Empty;
-
-    public string? CountryCodes { get; set; } = string.Empty;
-
-    public string? ChannelIds { get; set; } = string.Empty;
-
-    public DateTime? StartDate { get; set; }
-
-    public DateTime? EndDate { get; set; }
 }
 
 public class UpdateLinkParam : BaseParam

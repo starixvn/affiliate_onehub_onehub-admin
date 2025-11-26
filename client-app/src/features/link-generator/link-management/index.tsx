@@ -5,7 +5,7 @@ import { LinksPrimaryButtons } from './components/link-primary-buttons'
 import { LinksProvider, useLinks } from './components/link-provider'
 import { LinkDialogs } from './components/dialog/link-dialog'
 import { LinkTable } from './components/table/link-table'
-import { LinkSummaryCards } from './components/link-summary-cards'
+import { DashboardCards } from './components/dashboard-cards'
 
 const route = getRouteApi('/iframe/link-generator/link-management/')
 
@@ -29,15 +29,6 @@ function LinkManagementContent() {
     const search = route.useSearch()
     const navigate = route.useNavigate()
     const { links, totalCount, pageIndex, pageSize, isLoading } = useLinks()
-
-    const summaryParams = {
-        search: search.search as string | undefined,
-        statusIds: (search.statusIds as string | undefined) ?? '1',
-        countryCodes: search.countryCodes as string | undefined,
-        channelIds: search.channelIds as string | undefined,
-        startDate: (search.startDate as string | undefined) ?? getDefaultStartDate(),
-        endDate: (search.endDate as string | undefined) ?? getDefaultEndDate(),
-    }
 
     if (isLoading) {
         return (
@@ -68,7 +59,7 @@ function LinkManagementContent() {
                 </div>
                 <LinksPrimaryButtons />
             </div>
-            <LinkSummaryCards params={summaryParams} />
+            <DashboardCards />
             <LinkTable
                 data={links}
                 totalCount={totalCount}

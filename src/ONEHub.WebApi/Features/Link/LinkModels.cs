@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ONEHub.WebApi.Features.Link;
 
-public record GetLinkListRequest(
+public record GetLinkManagementRequest(
     string? Search,
     string? StatusIds,
     string? CountryCodes,
@@ -12,13 +12,6 @@ public record GetLinkListRequest(
     int PageIndex,
     int PageSize,
     bool IsExportExcel = false);
-
-public record GetLinkDashboardRequest(
-    string? Search,
-    string? CountryCodes,
-    string? ChannelIds,
-    DateTime? StartDate,
-    DateTime? EndDate);
 
 public record UpdateLinkStatusRequest(
     [Required] int LinkId,

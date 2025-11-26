@@ -1,30 +1,19 @@
 import { useQuery } from '@tanstack/react-query'
-import type { GetLinksRequest, GetLinkSummaryRequest } from '../types'
+import type { LinkManagementRequest } from '../types'
 import { linkApi } from './client'
 
 export const linkKeys = {
   all: ['links'] as const,
   lists: () => [...linkKeys.all, 'list'] as const,
-  list: (params?: GetLinksRequest) => [...linkKeys.lists(), params] as const,
-  summaries: () => [...linkKeys.all, 'summary'] as const,
-  summary: (params?: GetLinkSummaryRequest) =>
-    [...linkKeys.summaries(), params] as const,
+  list: (params?: LinkManagementRequest) => [...linkKeys.lists(), params] as const,
   countries: () => [...linkKeys.all, 'countries'] as const,
   channels: () => [...linkKeys.all, 'channels'] as const,
 }
 
-export function useGetLinks(params?: GetLinksRequest) {
+export function useGetLinkManagement(params?: LinkManagementRequest) {
   return useQuery({
     queryKey: linkKeys.list(params),
-    queryFn: () => linkApi.getLinks(params),
-    select: (data) => data.data,
-  })
-}
-
-export function useGetLinkSummary(params?: GetLinkSummaryRequest) {
-  return useQuery({
-    queryKey: linkKeys.summary(params),
-    queryFn: () => linkApi.getSummary(params),
+    queryFn: () => linkApi.getLinkManagement(params),
     select: (data) => data.data,
   })
 }
@@ -44,4 +33,3 @@ export function useGetChannels() {
     select: (data) => data.data,
   })
 }
-

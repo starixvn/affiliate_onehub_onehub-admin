@@ -2,12 +2,12 @@ import { type TFunction } from 'i18next'
 import { exportToExcel, EXCEL_STATUS_COLORS } from '@/lib/excel'
 import { statuses } from '../data/link'
 import type { LinkInfo } from '../data/schema'
-import type { GetLinksRequest } from '../types'
+import type { LinkManagementRequest } from '../types'
 
 export const formatLinksForExcel = (
     links: LinkInfo[],
     t: TFunction<'link-management', undefined>,
-    params?: GetLinksRequest
+    params?: LinkManagementRequest
 ) => {
     const getStatusColor = (statusId: number) => {
         const statusOption = statuses.find((s) => s.value === String(statusId))

@@ -11,35 +11,36 @@ namespace ONEHub.Infrastructure.Repositories;
 public class LinkRepository(IDynamicRepository dynamicRepository)
     : BaseRepository(dynamicRepository), ILinkRepository
 {
-    public async Task<Result<LinkDashboard>> GetLinkDashboardAsync(LinkDashboardParam param)
+    public async Task<Result<LinkManagement>> GetLinkManagementDataAsync(LinkManagementParam param)
     {
-        var criteria = new GetLinkDashboardCriteria
+        var criteria = new GetLinkManagementCriteria
         {
-            Search = param.Search,
-            CountryCodes = param.CountryCodes,
-            ChannelIds = param.ChannelIds,
-            StartDate = param.StartDate,
-            EndDate = param.EndDate
-        };
-        return await GetDataAsync<LinkDashboard>(criteria);
-    }
-
-    public async Task<Result<PagingData<LinkInfo>>> GetLinkListAsync(LinkListParam param)
-    {
-        var criteria = new GetLinkListCriteria
-        {
-            IsExportExcel = param.IsExportExcel,
-            PageSize = param.PageSize,
-            PageIndex = param.PageIndex,
             Search = param.Search,
             StatusIds = param.StatusIds,
             CountryCodes = param.CountryCodes,
             ChannelIds = param.ChannelIds,
             StartDate = param.StartDate,
-            EndDate = param.EndDate
+            EndDate = param.EndDate,
+            PageSize = param.PageSize,
+            PageIndex = param.PageIndex,
+            IsExportExcel = param.IsExportExcel
         };
 
-        return await FetchPagingDataAsync<LinkInfo>(criteria);
+        var (linkResult, dashboard) = await FetchMultipleDataAsync<LinkInfo, LinkDashboard>(criteria);
+
+        var pagingData = new PagingData<LinkInfo>
+        {
+            Items = [.. linkResult],
+            TotalItem = criteria.TotalItem,
+            PageSize = criteria.PageSize,
+            PageIndex = criteria.PageIndex
+        };
+
+        return Result<LinkManagement>.Success(new LinkManagement
+        {
+            Links = pagingData,
+            Dashboard = dashboard.FirstOrDefault()
+        });
     }
 
     public async Task<Result> UpdateLinkStatusAsync(UpdateLinkParam param)

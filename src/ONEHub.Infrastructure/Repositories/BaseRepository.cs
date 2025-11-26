@@ -62,4 +62,13 @@ public abstract class BaseRepository(IDynamicRepository dynamicRepository)
 
         return Result.Success();
     }
+
+    public virtual async Task<(IEnumerable<T1>, IEnumerable<T2>)> FetchMultipleDataAsync<T1, T2>(CriteriaBase criteria)
+        where T1 : class
+        where T2 : class
+    {
+        var (first, second) = await dynamicRepository.FetchMultipleAsync<T1, T2>(criteria);
+
+        return (first, second);
+    }
 }

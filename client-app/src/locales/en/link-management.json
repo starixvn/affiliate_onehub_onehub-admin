@@ -21,7 +21,8 @@
     "uniqueClicks": "Unique Clicks",
     "totalRegistrations": "Total Registrations",
     "totalFtds": "Total FTDs",
-    "avgFtdAmount": "Avg. FTD Amount"
+    "avgFtdAmount": "Avg. FTD Amount",
+    "totalBonusUsers": "Total Bonus Users"
   },
   "table": {
     "search": "Search links...",
