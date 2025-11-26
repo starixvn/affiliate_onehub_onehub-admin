@@ -34,7 +34,7 @@ public static class DependencyInjection
                 }
                 return handler;
             })
-            .AddPolicyHandler((serviceProvider, request) =>
+            .AddPolicyHandler((serviceProvider, _) =>
             {
                 var logger = serviceProvider.GetRequiredService<ILogger>();
                 return HttpPolicyExtensions
@@ -46,7 +46,7 @@ public static class DependencyInjection
                         retryCount: 3,
                         sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
                                                                 + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 1000)),
-                        onRetry: (outcome, timespan, retryCount, context) =>
+                        onRetry: (outcome, timespan, retryCount, _) =>
                         {
                             var reason = outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString() ?? "Unknown";
                             logger.Info($"ExternalAuth Polly Retry {retryCount} after {timespan.TotalSeconds:F1}s due to {reason}");
