@@ -8,6 +8,7 @@ import { useGetLandingPages, usePageFilters } from '../api/queries'
 import { type LandingPage } from '../data/schema'
 import type {
   GetLandingPagesRequest,
+  GetLandingPageSummaryResponseData,
   Country,
   Language,
   PageStatus,
@@ -43,6 +44,7 @@ type LandingPagesContextType = {
     React.SetStateAction<PendingBulkStatusChange | null>
   >
   landingPages: LandingPage[]
+  dashboard: GetLandingPageSummaryResponseData | undefined
   totalCount: number
   pageIndex: number
   pageSize: number
@@ -160,6 +162,7 @@ export function LandingPagesProvider({
       pendingBulkStatusChange,
       setPendingBulkStatusChange,
       landingPages: data?.items ?? [],
+      dashboard: data?.dashboard,
       totalCount: data?.totalItem ?? 0,
       pageIndex: data?.pageIndex ?? 1,
       pageSize: data?.pageSize ?? 10,

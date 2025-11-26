@@ -8,7 +8,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Application.Features.LandingPages.PageManagement.Queries;
 
-public class GetLandingPageListQuery : PagingQuery<LandingPageResponse>
+public class GetLandingPageListQuery : PagingQueryWithDashboard<LandingPageResponse, PageManagementDashboardResponse>
 {
     public string? Search { get; set; } = string.Empty;
 
@@ -48,10 +48,18 @@ public record LandingPageResponse(
     int Revenue,
     int RowIdx);
 
-public class GetLandingPageListHandler(IPageManagementRepository pageManagementRepository)
-    : IRequestHandler<GetLandingPageListQuery, Result<PagingData<LandingPageResponse>>>
+public class PageManagementDashboardResponse
 {
-    public async Task<Result<PagingData<LandingPageResponse>>> Handle(GetLandingPageListQuery request, CancellationToken cancellationToken)
+    public int Total { get; set; }
+    public int Draft { get; set; }
+    public int Active { get; set; }
+    public int Inactive { get; set; }
+}
+
+public class GetLandingPageListHandler(IPageManagementRepository pageManagementRepository)
+    : IRequestHandler<GetLandingPageListQuery, Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>>
+{
+    public async Task<Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>> Handle(GetLandingPageListQuery request, CancellationToken cancellationToken)
     {
         var param = new LandingPageListParam
         {
@@ -70,15 +78,15 @@ public class GetLandingPageListHandler(IPageManagementRepository pageManagementR
 
         if (landingPageListResult.IsFailure)
         {
-            return Result<PagingData<LandingPageResponse>>.Failure(landingPageListResult.Error);
+            return Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>.Failure(landingPageListResult.Error);
         }
 
         if (landingPageListResult.Data is null)
         {
-            return Result<PagingData<LandingPageResponse>>.Failure(Error.NoData);
+            return Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>.Failure(Error.NoData);
         }
 
-        var result = new PagingData<LandingPageResponse>
+        var result = new PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>
         {
             Items = [.. landingPageListResult.Data.Items.Select(landingPage => new LandingPageResponse(
                 landingPage.PageId,
@@ -105,9 +113,16 @@ public class GetLandingPageListHandler(IPageManagementRepository pageManagementR
             ))],
             TotalItem = landingPageListResult.Data.TotalItem,
             PageIndex = request.PageIndex,
-            PageSize = request.PageSize
+            PageSize = request.PageSize,
+            Dashboard = new PageManagementDashboardResponse
+            {
+                Total = landingPageListResult.Data.Dashboard.TotalPageBuilders,
+                Draft = landingPageListResult.Data.Dashboard.DraftPageBuilders,
+                Active = landingPageListResult.Data.Dashboard.ActivePageBuilders,
+                Inactive = landingPageListResult.Data.Dashboard.InactivePageBuilders
+            }
         };
 
-        return Result<PagingData<LandingPageResponse>>.Success(result);
+        return Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>.Success(result);
     }
 }

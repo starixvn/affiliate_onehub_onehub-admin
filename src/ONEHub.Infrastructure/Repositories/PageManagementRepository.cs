@@ -11,14 +11,7 @@ namespace ONEHub.Infrastructure.Repositories;
 public class PageManagementRepository(IDynamicRepository dynamicRepository)
     : BaseRepository(dynamicRepository), IPageManagementRepository
 {
-    public async Task<Result<PageManagementDashboard>> GetPageManagementDashboardAsync()
-    {
-        var criteria = new GetPageManagementDashboardCriteria();
-
-        return await GetDataAsync<PageManagementDashboard>(criteria);
-    }
-
-    public async Task<Result<PagingData<LandingPage>>> GetLandingPageListAsync(LandingPageListParam param)
+    public async Task<Result<PagingDataWithDashboard<LandingPage, PageManagementDashboard>>> GetLandingPageListAsync(LandingPageListParam param)
     {
         var criteria = new GetLandingPageListCriteria
         {
@@ -33,7 +26,7 @@ public class PageManagementRepository(IDynamicRepository dynamicRepository)
             ToDate = param.ToDate
         };
 
-        return await FetchPagingDataAsync<LandingPage>(criteria);
+        return await FetchPagingDataWithDashboardAsync<LandingPage, PageManagementDashboard>(criteria);
     }
 
     public async Task<Result> UpdateBatchLandingPageStatusAsync(UpdateBatchLandingPageStatusParam param)
