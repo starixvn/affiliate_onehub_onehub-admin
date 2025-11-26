@@ -1,6 +1,6 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { type TFunction } from 'i18next'
-import { Copy } from 'lucide-react'
+import { Copy, Info } from 'lucide-react'
 import { toast } from 'sonner'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
@@ -82,7 +82,7 @@ export const getLinkColumns = (
       header: ({ column }) => (
         <DataTableColumnHeader
           column={column}
-          title={t('table.columns.shortLink')}
+          title={t('table.columns.shortUrl')}
         />
       ),
       cell: ({ row }) => {
@@ -217,10 +217,22 @@ export const getLinkColumns = (
     {
       accessorKey: 'click',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.click')}
-        />
+        <div className='flex items-center justify-center gap-1'>
+          <DataTableColumnHeader
+            column={column}
+            title={t('table.columns.click')}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Update regularly every 5 minutes.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ),
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('click')}</div>
@@ -234,10 +246,22 @@ export const getLinkColumns = (
     {
       accessorKey: 'registration',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.registration')}
-        />
+        <div className='flex items-center justify-center gap-1'>
+          <DataTableColumnHeader
+            column={column}
+            title={t('table.columns.registration')}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Update regularly every 5 minutes.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ),
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('registration')}</div>
@@ -251,10 +275,22 @@ export const getLinkColumns = (
     {
       accessorKey: 'bonus',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.bonusUser')}
-        />
+        <div className='flex items-center justify-center gap-1'>
+          <DataTableColumnHeader
+            column={column}
+            title={t('table.columns.bonusUser')}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Update regularly every 45 minutes.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ),
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('bonus')}</div>
@@ -268,10 +304,22 @@ export const getLinkColumns = (
     {
       accessorKey: 'ftd',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.ftd')}
-        />
+        <div className='flex items-center justify-center gap-1'>
+          <DataTableColumnHeader
+            column={column}
+            title={t('table.columns.ftd')}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Update regularly every 11 minutes.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ),
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('ftd')}</div>
@@ -285,10 +333,22 @@ export const getLinkColumns = (
     {
       accessorKey: 'avgFtdAmount',
       header: ({ column }) => (
-        <DataTableColumnHeader
-          column={column}
-          title={t('table.columns.avgFtdAmount')}
-        />
+        <div className='flex items-center justify-center gap-1'>
+          <DataTableColumnHeader
+            column={column}
+            title={t('table.columns.avgFtdAmount')}
+          />
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Update regularly every 11 minutes.</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       ),
       cell: ({ row }) => {
         const amount = row.getValue('avgFtdAmount') as number

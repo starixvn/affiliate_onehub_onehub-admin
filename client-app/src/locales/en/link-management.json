@@ -31,7 +31,7 @@
       "select": "Select all",
       "selectRow": "Select row",
       "linkName": "Link Name",
-      "shortLink": "Short Link",
+      "shortUrl": "Short URL",
       "domainName": "Domain",
       "campaignName": "Campaign",
       "countryName": "Country",
