@@ -334,8 +334,22 @@ export function PageTable({
     })
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value
+    setSearchValue(newValue)
+
+    if (newValue.trim() === '' && selectedPreset === 'entirePeriod') {
+      setFromDate(defaultFromDate)
+      setToDate(defaultToDate)
+      setSelectedPreset(null)
+    }
+  }
+
   const handleClearSearch = () => {
     setSearchValue('')
+    setFromDate(defaultFromDate)
+    setToDate(defaultToDate)
+    setSelectedPreset(null)
   }
 
   const hasChangedFilters = useMemo(() => {
@@ -411,7 +425,7 @@ export function PageTable({
                   'Search by campaign or landing page...'
                 )}
                 value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
+                onChange={handleSearchChange}
                 className='h-8 w-[250px] pe-8 lg:w-[350px]'
               />
               {searchValue.length > 0 && (

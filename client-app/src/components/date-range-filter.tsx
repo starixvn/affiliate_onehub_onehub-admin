@@ -35,13 +35,15 @@ export function DateRangeFilter({
   ): boolean => {
     if (!currentFrom || !currentTo) return false
 
-    const entirePeriodFrom = minDate || startOfDay(
-      new Date(
-        new Date().getFullYear() - 2,
-        new Date().getMonth(),
-        new Date().getDate()
+    const entirePeriodFrom =
+      minDate ||
+      startOfDay(
+        new Date(
+          new Date().getFullYear() - 2,
+          new Date().getMonth(),
+          new Date().getDate()
+        )
       )
-    )
     const entirePeriodTo = maxDate || endOfDay(new Date())
 
     return (

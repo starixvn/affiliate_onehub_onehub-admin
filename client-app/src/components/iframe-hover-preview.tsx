@@ -267,7 +267,7 @@ export function IframeHoverPreview({
                   src={src}
                   title='Landing Page Preview'
                   className={cn(
-                    'absolute top-0 left-0 h-full w-full border-none overflow-hidden',
+                    'absolute top-0 left-0 h-full w-full overflow-hidden border-none',
                     iframeLoaded ? 'block' : 'hidden'
                   )}
                   onLoad={handleIframeLoad}
