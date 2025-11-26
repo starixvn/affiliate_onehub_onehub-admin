@@ -20,12 +20,12 @@ public class ExternalAuthService(
 
     public async Task<Result<User>> ValidateTokenAsync(string authToken)
     {
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-
-        httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
-
         var validationUrl = $"{_externalAuthSetting.Host}/api/auth/validate";
-        var response = await httpClient.PostAsync(validationUrl, null);
+        using var request = new HttpRequestMessage(HttpMethod.Post, validationUrl);
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds));
+        var response = await httpClient.SendAsync(request, cts.Token);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -91,16 +91,12 @@ public class ExternalAuthService(
 
     public async Task<Result<string>> RefreshTokenAsync(string refreshToken)
     {
-        if (httpClient.DefaultRequestHeaders.Contains("X-Refresh-Token"))
-        {
-            httpClient.DefaultRequestHeaders.Remove("X-Refresh-Token");
-        }
-        httpClient.DefaultRequestHeaders.Add("X-Refresh-Token", refreshToken);
-
-        httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
-
         var refreshUrl = $"{_externalAuthSetting.Host}/api/auth/refresh";
-        var response = await httpClient.PostAsync(refreshUrl, null);
+        using var request = new HttpRequestMessage(HttpMethod.Post, refreshUrl);
+        request.Headers.Add("X-Refresh-Token", refreshToken);
+
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds));
+        var response = await httpClient.SendAsync(request, cts.Token);
 
         if (!response.IsSuccessStatusCode)
         {

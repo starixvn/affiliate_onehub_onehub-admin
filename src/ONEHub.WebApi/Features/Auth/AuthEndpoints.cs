@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Fanex.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -15,7 +14,6 @@ namespace ONEHub.WebApi.Features.Auth;
 
 public static class AuthEndpoints
 {
-
     public static IEndpointRouteBuilder RegisterAuthEndpoints(this IEndpointRouteBuilder endpoints)
     {
         var groupEndpoint = endpoints.MapGroup("/api/auth").RequireAuthorization();
@@ -57,7 +55,6 @@ public static class AuthEndpoints
 
         return TypedResults.Ok(result);
     }
-
 
     private static async Task<Results<Ok<Result<RefreshTokenResponse>>, ValidationProblem, UnauthorizedHttpResult>> Refresh(
         IHttpContextAccessor contextAccessor,
@@ -123,8 +120,7 @@ public static class AuthEndpoints
             ExternalRefreshToken = externalRefreshToken
         };
 
-        // add logging for debugging SSO issues
-        await Logger.Log.InfoAsync(JsonSerializer.Serialize(command));
+        await Logger.Log.InfoAsync($"SSO attempt - HasAccessToken: {!string.IsNullOrEmpty(command.ExternalAccessToken)}, HasRefreshToken: {!string.IsNullOrEmpty(command.ExternalRefreshToken)}");
 
         var result = await mediator.Send(command);
 
