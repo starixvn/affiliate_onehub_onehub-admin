@@ -8,8 +8,10 @@ public static class AuthError
 
     public static readonly Error UserAlreadyExists = new(103, "User already exists.");
 
-    public static readonly Error InvalidToken = new(104, "Invalid or expired token.");
+    public static readonly Error InvalidToken = new(104, "Invalid token.");
 
     public static readonly Error Unauthorized = new(105, "Unauthorized access.");
+
+    public static readonly Error ExpiredToken = new(106, "Token has expired.");
 }
 

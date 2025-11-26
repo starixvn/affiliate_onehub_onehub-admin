@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Entities;
@@ -11,74 +12,137 @@ namespace ONEHub.Infrastructure.Services;
 
 public class ExternalAuthService(
     HttpClient httpClient,
-    IOptions<ExternalAuthSetting> externalAuthSetting)
+    IOptions<ExternalAuthSetting> externalAuthSetting,
+    ILogger<ExternalAuthService> logger)
     : IExternalAuthService
 {
     private readonly ExternalAuthSetting _externalAuthSetting = externalAuthSetting.Value;
 
-    public async Task<Result<User>> ValidateTokenAsync(string authToken, string? refreshToken = null)
+    public async Task<Result<User>> ValidateTokenAsync(string authToken)
     {
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
+
+        httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
+
+        var validationUrl = $"{_externalAuthSetting.Host}/api/auth/validate";
+        var response = await httpClient.PostAsync(validationUrl, null);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogWarning("External token validation failed with status code {StatusCode}", response.StatusCode);
+            return Result<User>.Failure(AuthError.InvalidToken);
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        ExternalValidationResponse? validationResponse;
+
         try
         {
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken);
-
-            if (!string.IsNullOrEmpty(refreshToken))
-            {
-                if (httpClient.DefaultRequestHeaders.Contains("X-Refresh-Token"))
-                {
-                    httpClient.DefaultRequestHeaders.Remove("X-Refresh-Token");
-                }
-                httpClient.DefaultRequestHeaders.Add("X-Refresh-Token", refreshToken);
-            }
-
-            httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
-
-            var response = await httpClient.PostAsync(_externalAuthSetting.ValidationApiUrl, null);
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return Result<User>.Failure(AuthError.InvalidToken);
-            }
-
-            var content = await response.Content.ReadAsStringAsync();
-            var validationResponse = JsonSerializer.Deserialize<ExternalValidationResponse>(content, new JsonSerializerOptions
+            validationResponse = JsonSerializer.Deserialize<ExternalValidationResponse>(content, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
-
-            if (validationResponse == null)
-            {
-                return Result<User>.Failure(AuthError.InvalidToken);
-            }
-
-            if (validationResponse.Code != 0)
-            {
-                return Result<User>.Failure(AuthError.InvalidToken);
-            }
-
-            if (validationResponse.Result == null || !validationResponse.Result.IsValid)
-            {
-                return Result<User>.Failure(AuthError.InvalidToken);
-            }
-
-            var resultData = validationResponse.Result;
-
-            var user = new User
-            {
-                UserId = resultData.UserId,
-                UserName = resultData.Username,
-                Roles = resultData.Roles ?? string.Empty,
-                Avatar = resultData.Avatar ?? string.Empty,
-                IsAdmin = resultData.IsAdmin,
-                PasswordHash = resultData.HashPassword
-            };
-
-            return Result<User>.Success(user);
         }
-        catch (Exception)
+        catch (JsonException ex)
         {
+            logger.LogError(ex, "Failed to deserialize external validation response: {Content}", content);
             return Result<User>.Failure(AuthError.InvalidToken);
         }
+
+        if (validationResponse == null)
+        {
+            logger.LogWarning("External validation response is null");
+            return Result<User>.Failure(AuthError.InvalidToken);
+        }
+
+        if (validationResponse.Code == 1004)
+        {
+            logger.LogWarning("External token expired (code 1004)");
+            return Result<User>.Failure(AuthError.ExpiredToken);
+        }
+
+        if (validationResponse.Code != 0)
+        {
+            logger.LogWarning("External validation failed with code {Code}: {Message}", validationResponse.Code, validationResponse.Message);
+            return Result<User>.Failure(AuthError.InvalidToken);
+        }
+
+        if (validationResponse.Result == null || !validationResponse.Result.IsValid)
+        {
+            logger.LogWarning("External validation result is invalid");
+            return Result<User>.Failure(AuthError.InvalidToken);
+        }
+
+        var resultData = validationResponse.Result;
+
+        var user = new User
+        {
+            UserId = resultData.UserId,
+            UserName = resultData.Username,
+            Roles = resultData.Roles ?? string.Empty,
+            Avatar = resultData.Avatar ?? string.Empty,
+            IsAdmin = resultData.IsAdmin,
+            PasswordHash = resultData.HashPassword
+        };
+
+        return Result<User>.Success(user);
+    }
+
+
+    public async Task<Result<string>> RefreshTokenAsync(string refreshToken)
+    {
+        if (httpClient.DefaultRequestHeaders.Contains("X-Refresh-Token"))
+        {
+            httpClient.DefaultRequestHeaders.Remove("X-Refresh-Token");
+        }
+        httpClient.DefaultRequestHeaders.Add("X-Refresh-Token", refreshToken);
+
+        httpClient.Timeout = TimeSpan.FromSeconds(_externalAuthSetting.TimeoutSeconds);
+
+        var refreshUrl = $"{_externalAuthSetting.Host}/api/auth/refresh";
+        var response = await httpClient.PostAsync(refreshUrl, null);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            logger.LogWarning("Token refresh request failed with status code {StatusCode}", response.StatusCode);
+            return Result<string>.Failure(AuthError.InvalidToken);
+        }
+
+        var content = await response.Content.ReadAsStringAsync();
+        ExternalRefreshResponse? refreshResponse;
+
+        try
+        {
+            refreshResponse = JsonSerializer.Deserialize<ExternalRefreshResponse>(content, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+        }
+        catch (JsonException ex)
+        {
+            logger.LogError(ex, "Failed to deserialize refresh response: {Content}", content);
+            return Result<string>.Failure(AuthError.InvalidToken);
+        }
+
+        if (refreshResponse == null)
+        {
+            logger.LogWarning("Refresh response is null");
+            return Result<string>.Failure(AuthError.InvalidToken);
+        }
+
+        if (refreshResponse.Code != 0)
+        {
+            logger.LogWarning("Token refresh failed with code {Code}: {Message}", refreshResponse.Code, refreshResponse.Message);
+            return Result<string>.Failure(AuthError.InvalidToken);
+        }
+
+        if (refreshResponse.Result == null || string.IsNullOrEmpty(refreshResponse.Result.AccessToken))
+        {
+            logger.LogWarning("Refresh result is invalid or missing access token");
+            return Result<string>.Failure(AuthError.InvalidToken);
+        }
+
+        return Result<string>.Success(refreshResponse.Result.AccessToken);
     }
 }
 
@@ -98,3 +162,12 @@ internal record ExternalValidationResult(
     string? Avatar,
     DateTime ExpiresAt,
     DateTime IssuedAt);
+
+internal record ExternalRefreshResponse(
+    int Code,
+    string Message,
+    ExternalRefreshResult? Result);
+
+internal record ExternalRefreshResult(
+    string AccessToken,
+    string RefreshToken);

@@ -36,13 +36,35 @@ public class SsoHandler(
             return Result<SsoResponse>.Failure(AuthError.InvalidToken);
         }
 
-        var validationResult = await externalAuthService.ValidateTokenAsync(
-            request.ExternalAccessToken,
-            request.ExternalRefreshToken);
+        var validationResult = await externalAuthService.ValidateTokenAsync(request.ExternalAccessToken);
 
         if (validationResult.IsFailure)
         {
-            return Result<SsoResponse>.Failure(validationResult.Error);
+            if (validationResult.Error.Code == AuthError.ExpiredToken.Code && !string.IsNullOrEmpty(request.ExternalRefreshToken))
+            {
+                logger.LogInformation("External token expired, attempting refresh");
+
+                var refreshResult = await externalAuthService.RefreshTokenAsync(request.ExternalRefreshToken);
+
+                if (refreshResult.IsFailure)
+                {
+                    logger.LogWarning("Token refresh failed: {ErrorMessage}", refreshResult.ErrorMessage);
+                    return Result<SsoResponse>.Failure(AuthError.InvalidToken);
+                }
+
+                logger.LogInformation("Token refresh succeeded, retrying validation with new token");
+
+                validationResult = await externalAuthService.ValidateTokenAsync(refreshResult.Data!);
+
+                if (validationResult.IsFailure)
+                {
+                    return Result<SsoResponse>.Failure(validationResult.Error);
+                }
+            }
+            else
+            {
+                return Result<SsoResponse>.Failure(validationResult.Error);
+            }
         }
 
         var user = validationResult.Data;

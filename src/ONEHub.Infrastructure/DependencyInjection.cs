@@ -9,6 +9,8 @@ using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Repositories;
 using ONEHub.Infrastructure.Services;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace ONEHub.Infrastructure;
 
@@ -31,6 +33,24 @@ public static class DependencyInjection
                     handler.UseProxy = true;
                 }
                 return handler;
+            })
+            .AddPolicyHandler((serviceProvider, request) =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger>();
+                return HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .OrResult(msg => msg.StatusCode is HttpStatusCode.InternalServerError
+                                   or HttpStatusCode.BadGateway
+                                   or HttpStatusCode.ServiceUnavailable)
+                    .WaitAndRetryAsync(
+                        retryCount: 3,
+                        sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                                                                + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 1000)),
+                        onRetry: (outcome, timespan, retryCount, context) =>
+                        {
+                            var reason = outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString() ?? "Unknown";
+                            logger.Info($"ExternalAuth Polly Retry {retryCount} after {timespan.TotalSeconds:F1}s due to {reason}");
+                        });
             });
 
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
