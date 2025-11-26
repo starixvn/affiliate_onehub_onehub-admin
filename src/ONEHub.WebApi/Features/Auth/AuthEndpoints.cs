@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Fanex.Logging;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -118,8 +120,11 @@ public static class AuthEndpoints
         var command = new SsoCommand
         {
             ExternalAccessToken = externalAuthToken,
-            ExternalRefreshToken = string.IsNullOrEmpty(externalRefreshToken) ? null : externalRefreshToken
+            ExternalRefreshToken = externalRefreshToken
         };
+
+        // add logging for debugging SSO issues
+        await Logger.Log.InfoAsync(JsonSerializer.Serialize(command));
 
         var result = await mediator.Send(command);
 
