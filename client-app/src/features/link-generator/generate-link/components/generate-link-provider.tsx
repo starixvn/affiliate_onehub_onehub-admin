@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useCallback, useEffect, useContext, useState } from 'react'
 import { useForm, type UseFormReturn } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useLocation } from '@tanstack/react-router'
@@ -54,7 +54,7 @@ type GenerateLinkProviderProps = {
 export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
   const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
   const [generatedResult, setGeneratedResult] =
-    React.useState<LinkGeneratedResult | null>(null)
+    useState<LinkGeneratedResult | null>(null)
   const location = useLocation()
 
   const form = useForm<GenerateLinkFormValues>({
@@ -123,7 +123,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     isErrorTypes ||
     isErrorLandingPages
 
-  const mapLinkInfoToFormValues = (linkInfo: LinkInfo): Partial<GenerateLinkFormValues> => {
+  const mapLinkInfoToFormValues = useCallback((linkInfo: LinkInfo): Partial<GenerateLinkFormValues> => {
     const formValues: Partial<GenerateLinkFormValues> = {
       linkName: linkInfo.linkName,
       identifierCode: linkInfo.idCode,
@@ -156,10 +156,12 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     }
 
     if (events && linkInfo.event) {
-      const event = events.find(e => e.componentName === linkInfo.event)
-      if (event) {
-        formValues.event = String(event.componentId)
-        formValues.eventCodes = event.componentCode
+      const eventNames = linkInfo.event.split(',').map(name => name.trim()).filter(Boolean)
+      const matchingEvents = events.filter(e => eventNames.includes(e.componentName))
+
+      if (matchingEvents.length > 0) {
+        formValues.event = matchingEvents.map(e => String(e.componentId)).join(',')
+        formValues.eventCodes = matchingEvents.map(e => e.componentCode).join(',')
       }
     }
 
@@ -196,7 +198,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
         const url = new URL(linkInfo.shortLink)
         formValues.shortDomain = url.origin
         formValues.shortPath = url.pathname.substring(1)
-      } catch (error) {
+      } catch (_error) {
         const parts = linkInfo.shortLink.split('/')
         if (parts.length >= 3) {
           formValues.shortDomain = `${parts[0]}//${parts[2]}`
@@ -211,9 +213,9 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
     }
 
     return formValues
-  }
+  }, [campaigns, countries, events, groups, channels, types, agencies])
 
-  React.useEffect(() => {
+  useEffect(() => {
     const state = location.state as { duplicateLink?: LinkInfo } | null
     if (state?.duplicateLink && !isLoading) {
       const formValues = mapLinkInfoToFormValues(state.duplicateLink)
@@ -222,9 +224,9 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
         ...formValues,
       })
     }
-  }, [location.state, form, isLoading, campaigns, countries, events, groups, channels, agencies, types])
+  }, [location.state, form, isLoading, campaigns, countries, events, groups, channels, agencies, types, mapLinkInfoToFormValues])
 
-  const contextValue = React.useMemo(
+  const contextValue = useMemo(
     () => ({
       form,
       campaigns,
@@ -267,7 +269,7 @@ export function GenerateLinkProvider({ children }: GenerateLinkProviderProps) {
 }
 
 export const useGenerateLink = () => {
-  const context = React.useContext(GenerateLinkContext)
+  const context = useContext(GenerateLinkContext)
 
   if (!context) {
     throw new Error(

@@ -25,8 +25,9 @@
     "totalBonusUsers": "Total Bonus Users"
   },
   "table": {
-    "search": "Search links...",
+    "search": "Search by name, domain, campaign, ID code...",
     "noResults": "No results found.",
+    "updateFrequency": "Update regularly every {{minutes}} minutes.",
     "columns": {
       "select": "Select all",
       "selectRow": "Select row",
@@ -38,7 +39,7 @@
       "channelName": "Channel",
       "idCode": "ID Code",
       "createdDate": "Created Date",
-      "click": "Unique Clicks",
+      "click": "Unique Click",
       "registration": "Registration",
       "bonusUser": "Bonus User",
       "ftd": "FTD",

@@ -217,22 +217,10 @@ export const getLinkColumns = (
     {
       accessorKey: 'click',
       header: ({ column }) => (
-        <div className='flex items-center justify-center gap-1'>
-          <DataTableColumnHeader
-            column={column}
-            title={t('table.columns.click')}
-          />
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Update regularly every 5 minutes.</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+        <DataTableColumnHeader
+          column={column}
+          title={t('table.columns.click')}
+        />
       ),
       cell: ({ row }) => (
         <div className='text-center'>{row.getValue('click')}</div>
@@ -257,7 +245,7 @@ export const getLinkColumns = (
                 <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Update regularly every 5 minutes.</p>
+                <p>{t('table.updateFrequency', { minutes: 5 })}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -286,7 +274,7 @@ export const getLinkColumns = (
                 <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Update regularly every 45 minutes.</p>
+                <p>{t('table.updateFrequency', { minutes: 45 })}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -315,7 +303,7 @@ export const getLinkColumns = (
                 <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Update regularly every 11 minutes.</p>
+                <p>{t('table.updateFrequency', { minutes: 11 })}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -331,7 +319,7 @@ export const getLinkColumns = (
       enableSorting: false,
     },
     {
-      accessorKey: 'avgFtdAmount',
+      accessorKey: 'avgFtd',
       header: ({ column }) => (
         <div className='flex items-center justify-center gap-1'>
           <DataTableColumnHeader
@@ -344,14 +332,14 @@ export const getLinkColumns = (
                 <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
               </TooltipTrigger>
               <TooltipContent>
-                <p>Update regularly every 11 minutes.</p>
+                <p>{t('table.updateFrequency', { minutes: 11 })}</p>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
       ),
       cell: ({ row }) => {
-        const amount = row.getValue('avgFtdAmount') as number
+        const amount = row.getValue('avgFtd') as number
         return <div className='text-center'>{amount.toFixed(2)}</div>
       },
       meta: {

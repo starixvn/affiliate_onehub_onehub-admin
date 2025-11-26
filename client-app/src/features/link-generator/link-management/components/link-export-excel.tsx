@@ -61,7 +61,7 @@ export const formatLinksForExcel = (
             },
             {
                 field: 'shortLink',
-                header: t('table.columns.shortLink'),
+                header: t('table.columns.shortUrl'),
                 width: 40,
             },
             {
@@ -118,7 +118,7 @@ export const formatLinksForExcel = (
                 style: { alignment: 'center' },
             },
             {
-                field: (row: LinkInfo) => row.avgFtdAmount.toFixed(2),
+                field: (row: LinkInfo) => row.avgFtd.toFixed(2),
                 header: t('table.columns.avgFtdAmount'),
                 width: 20,
                 style: { alignment: 'center' },

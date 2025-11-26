@@ -18,8 +18,8 @@ export interface LinkDashboardResponse {
   totalLinks: number
   totalClicks: number
   totalRegistrations: number
-  totalFtds: number
-  avgFtds: number
+  totalFTDs: number
+  avgFTDs: number
   bonus: number
 }
 

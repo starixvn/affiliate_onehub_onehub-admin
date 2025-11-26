@@ -30,12 +30,12 @@ export function DashboardCards() {
         },
         {
             title: t('summary.totalFtds'),
-            value: dashboard?.totalFtds ?? 0,
+            value: dashboard?.totalFTDs ?? 0,
             icon: DollarSign,
         },
         {
             title: t('summary.avgFtdAmount'),
-            value: (dashboard?.avgFtds ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+            value: (dashboard?.avgFTDs ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
             icon: TrendingUp,
         },
     ]

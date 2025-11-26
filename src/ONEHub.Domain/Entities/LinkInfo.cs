@@ -44,7 +44,7 @@ public class LinkInfo
 
     public int Ftd { get; set; }
 
-    public decimal AvgFtdAmount { get; set; }
+    public decimal AvgFtd { get; set; }
 
     public int StatusId { get; set; }
 

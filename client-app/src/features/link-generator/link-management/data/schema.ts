@@ -22,7 +22,7 @@ export const linkSchema = z.object({
   registration: z.number(),
   bonus: z.number(),
   ftd: z.number(),
-  avgFtdAmount: z.number(),
+  avgFtd: z.number(),
   statusId: z.number(),
   statusName: z.string(),
   rowIdx: z.number(),

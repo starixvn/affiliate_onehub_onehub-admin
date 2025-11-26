@@ -271,7 +271,7 @@ export function LinkTable({
         search: searchValue || undefined,
         countryCodes: countryFilter?.length ? countryFilter.join(',') : '',
         channelIds: channelFilter?.length ? channelFilter.join(',') : '',
-        status: statusFilter?.length ? statusFilter.join(',') : '',
+        statusIds: statusFilter?.length ? statusFilter.join(',') : '',
         startDate: formatDateToString(dateRange.from) || getDefaultStartDate(),
         endDate: formatDateToString(dateRange.to) || getDefaultEndDate(),
         pageIndex: 1,

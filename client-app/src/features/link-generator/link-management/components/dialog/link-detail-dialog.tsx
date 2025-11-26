@@ -128,18 +128,15 @@ export function LinkDetailDialog() {
                     </div>
 
                     <div className='col-span-2 space-y-2'>
-                        <Label className='text-sm text-muted-foreground'>
-                            {t('dialogs.detail.shortUrl')}
-                        </Label>
                         <div className='flex items-center gap-2'>
-                            <div className='flex-1 rounded-md bg-muted px-3 py-2 text-sm break-all'>
-                                {currentRow.shortLink}
-                            </div>
+                            <Label className='text-sm text-muted-foreground'>
+                                {t('dialogs.detail.shortUrl')}
+                            </Label>
                             <Button
-                                variant='outline'
+                                variant='ghost'
                                 size='icon'
                                 onClick={handleCopyShortLink}
-                                className='shrink-0'
+                                className='shrink-0 h-6 w-6'
                             >
                                 {copied ? (
                                     <Check className='h-4 w-4 text-green-500' />
@@ -147,6 +144,9 @@ export function LinkDetailDialog() {
                                     <Copy className='h-4 w-4' />
                                 )}
                             </Button>
+                        </div>
+                        <div className='rounded-md bg-muted px-3 py-2 text-sm break-all'>
+                            {currentRow.shortLink}
                         </div>
                     </div>
                 </div>
