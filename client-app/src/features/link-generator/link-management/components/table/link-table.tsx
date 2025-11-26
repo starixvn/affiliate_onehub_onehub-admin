@@ -36,7 +36,7 @@ import { useLinks } from '../link-provider'
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ColumnMeta<TData, TValue> {
-    className: string
+    className?: string
     displayName?: string
   }
 }
@@ -344,7 +344,7 @@ export function LinkTable({
     >
       <div className='flex items-center justify-between'>
         <div className='flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2'>
-          <form onSubmit={handleSubmit} className='flex items-center gap-2'>
+          <form onSubmit={handleSubmit} className='flex flex-wrap items-center gap-2'>
             <div className='relative'>
               <Input
                 placeholder={t('table.search')}
@@ -382,7 +382,6 @@ export function LinkTable({
               from={dateRange.from}
               to={dateRange.to}
               onSelect={(range) => setDateRange(range)}
-              className='h-8'
             />
             <Button type='submit' size='sm' className='h-8'>
               <Search className='me-2 h-4 w-4' />

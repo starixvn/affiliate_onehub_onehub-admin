@@ -8,7 +8,6 @@ import enRegistrationFormManagement from '@/locales/en/registration-form-managem
 import enLinkManagement from '@/locales/en/link-management.json'
 import zhAssetUploader from '@/locales/zh/asset-uploader.json'
 import zhCampaignManagement from '@/locales/zh/campaign-management.json'
-import zhCommon from '@/locales/zh/common.json'
 import zhComponentManagement from '@/locales/zh/component-management.json'
 import zhLinkGenerator from '@/locales/zh/link-generator.json'
 import zhPageManagement from '@/locales/zh/page-management.json'
