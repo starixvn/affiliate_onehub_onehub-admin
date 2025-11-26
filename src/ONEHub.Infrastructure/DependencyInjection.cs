@@ -22,7 +22,12 @@ public static class DependencyInjection
 
         services.Configure<ExternalAuthSetting>(configuration.GetSection(ExternalAuthSetting.SettingName));
 
-        services.AddHttpClient<IExternalAuthService, ExternalAuthService>()
+        services.AddHttpClient<IExternalAuthService, ExternalAuthService>((sp, client) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<ExternalAuthSetting>>().Value;
+                client.BaseAddress = new Uri(settings.Host);
+                client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds);
+            })
             .ConfigurePrimaryHttpMessageHandler(sp =>
             {
                 var settings = sp.GetRequiredService<IOptions<ExternalAuthSetting>>().Value;
