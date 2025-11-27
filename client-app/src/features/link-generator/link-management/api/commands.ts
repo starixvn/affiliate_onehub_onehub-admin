@@ -8,8 +8,8 @@ export function useUpdateLinkStatus() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ id, data }: { id: number; data: UpdateLinkStatusRequest }) =>
-      linkApi.updateLinkStatus(id, data),
+    mutationFn: (data: UpdateLinkStatusRequest) =>
+      linkApi.updateLinkStatus(data.linkId, data),
     onSuccess: (response) => {
       if (response.errorCode === 0) {
         queryClient.invalidateQueries({ queryKey: linkKeys.lists() })

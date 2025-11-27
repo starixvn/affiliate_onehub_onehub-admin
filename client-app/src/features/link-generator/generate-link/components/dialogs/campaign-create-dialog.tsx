@@ -74,9 +74,14 @@ export function CampaignCreateDialog({
             'campaignId' in response.data &&
             'campaignCode' in response.data
           ) {
-            const campaign = response.data as { campaignId: number; campaignCode: string }
-            generateLinkForm.setValue('campaign', String(campaign.campaignId))
-            generateLinkForm.setValue('campaignCode', campaign.campaignCode)
+            const data = response.data
+            if (
+              typeof data.campaignId === 'number' &&
+              typeof data.campaignCode === 'string'
+            ) {
+              generateLinkForm.setValue('campaign', String(data.campaignId))
+              generateLinkForm.setValue('campaignCode', data.campaignCode)
+            }
           }
           form.reset()
           onOpenChange(false)

@@ -25,7 +25,7 @@ import { getLinkColumns } from './link-columns'
 import { useLinks } from '../link-provider'
 import { useLinkTableFilters } from './use-link-table-filters'
 import { useLinkFilters } from './link-filters'
-import { getDefaultStartDate, getDefaultEndDate, parseDateString, formatDateToString } from '../../utils/date'
+import { getDefaultStartDate, getDefaultEndDate, parseDateString } from '../../utils/date'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

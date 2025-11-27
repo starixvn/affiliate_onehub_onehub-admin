@@ -5,27 +5,31 @@ import { useGetCountries, useGetChannels } from '../../api/queries'
 
 export const useLinkFilters = () => {
   const { t } = useTranslation('link-management')
-  const { data: countries } = useGetCountries()
-  const { data: channels } = useGetChannels()
+  const { data: countries, isLoading: countriesLoading } = useGetCountries()
+  const { data: channels, isLoading: channelsLoading } = useGetChannels()
 
   const filters = useMemo(
     () => [
       {
         columnId: 'filter_country',
         title: t('filters.country'),
-        options: (countries || []).map((country) => ({
-          label: country.targetCountryName,
-          value: country.targetCountryCode,
-        })),
+        options: countriesLoading
+          ? []
+          : (countries || []).map((country) => ({
+              label: country.targetCountryName,
+              value: country.targetCountryCode,
+            })),
         defaultValue: [],
       },
       {
         columnId: 'filter_channel',
         title: t('filters.channel'),
-        options: (channels || []).map((channel) => ({
-          label: channel.componentName,
-          value: String(channel.componentId),
-        })),
+        options: channelsLoading
+          ? []
+          : (channels || []).map((channel) => ({
+              label: channel.componentName,
+              value: String(channel.componentId),
+            })),
         defaultValue: [],
       },
       {
@@ -38,7 +42,7 @@ export const useLinkFilters = () => {
         defaultValue: ['1'],
       },
     ],
-    [t, countries, channels]
+    [t, countries, channels, countriesLoading, channelsLoading]
   )
 
   return filters

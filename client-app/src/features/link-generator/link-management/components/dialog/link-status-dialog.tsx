@@ -31,11 +31,8 @@ export function LinkStatusDialog({
     const handleConfirm = () => {
         updateLinkStatus.mutate(
             {
-                id: currentRow.linkId,
-                data: {
-                    linkId: currentRow.linkId,
-                    statusId: newStatusId,
-                },
+                linkId: currentRow.linkId,
+                statusId: newStatusId,
             },
             {
                 onSuccess: () => {
