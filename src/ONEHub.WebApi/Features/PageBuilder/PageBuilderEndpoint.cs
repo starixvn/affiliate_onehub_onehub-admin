@@ -8,7 +8,6 @@ using ONEHub.Application.Features.PageBuilder.Queries;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Entities.LandingPages;
 using ONEHub.Domain.Results;
-using ONEHub.WebApi.Features.GenerateLink;
 
 namespace ONEHub.WebApi.Features.PageBuilder;
 

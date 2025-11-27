@@ -236,7 +236,6 @@ public static class WebApplicationSetup
         app.RegisterGenerateLinkEndpoints();
         app.RegisterPageBuilderEndpoints();
         app.RegisterLandingPageEndpoints();
-        app.RegisterPageBuilderEndpoints();
         app.RegisterPageManagementEndpoints();
         app.RegisterSettingsEndpoints();
         app.RegisterAssetUploaderEndpoints();
