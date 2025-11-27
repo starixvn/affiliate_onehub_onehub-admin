@@ -53,9 +53,8 @@ public class LinkRepository(IDynamicRepository dynamicRepository)
             Ip = param.Ip,
             Host = param.Host
         };
-        var result = await ExecuteCommandAsync(command);
 
-        return result;
+        return await ExecuteCommandAsync(command);
     }
 }
 
