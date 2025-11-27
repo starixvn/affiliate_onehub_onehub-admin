@@ -318,3 +318,146 @@ detection: {
 **And** cookie persistence duration is consistent
 **And** user language preference persists for same duration regardless of which system wrote it
 
+### Requirement: Iframe message handlers MUST persist state changes to cookies to maintain synchronization
+
+When an iframe receives state change messages from a parent window, the message handler MUST persist the new state to the appropriate cookie in addition to updating React state. This ensures cookie-based persistence layers (like i18next's LanguageDetector) remain synchronized with the current UI state.
+
+#### Scenario: Language message handler updates both state and cookie
+
+```typescript
+// client-app/src/context/language-provider.tsx (lines 44-58)
+useEffect(() => {
+  if (!isInIframe()) return
+
+  const handleMessage = (event: MessageEvent) => {
+    if (!isValidIframeMessage(event, window.location.origin)) return
+
+    if (event.data.type === 'LANGUAGE_CHANGE') {
+      _setLanguage(event.data.language)
+      setCookie(LANGUAGE_COOKIE_NAME, event.data.language, LANGUAGE_COOKIE_MAX_AGE)
+      i18n.changeLanguage(event.data.language)
+    }
+  }
+
+  window.addEventListener('message', handleMessage)
+  return () => window.removeEventListener('message', handleMessage)
+}, [i18n])
+```
+
+**Given** parent window broadcasts language change from 'en' to 'zh'
+**When** iframe message handler receives `LANGUAGE_CHANGE` message
+**Then** iframe updates React state: `_setLanguage('zh')`
+**And** iframe updates cookie: `setCookie('locale', 'zh', LANGUAGE_COOKIE_MAX_AGE)`
+**And** iframe updates i18next: `i18n.changeLanguage('zh')`
+**And** all three sources of truth are synchronized
+
+#### Scenario: Theme message handler updates both state and cookie
+
+```typescript
+// client-app/src/context/theme-provider.tsx (lines 101-114)
+useEffect(() => {
+  if (!isInIframe()) return
+
+  const handleMessage = (event: MessageEvent) => {
+    if (!isValidIframeMessage(event, window.location.origin)) return
+
+    if (event.data.type === 'THEME_CHANGE') {
+      _setTheme(event.data.theme)
+      setCookie(storageKey, event.data.theme, THEME_COOKIE_MAX_AGE)
+    }
+  }
+
+  window.addEventListener('message', handleMessage)
+  return () => window.removeEventListener('message', handleMessage)
+}, [storageKey])
+```
+
+**Given** parent window broadcasts theme change from 'light' to 'dark'
+**When** iframe message handler receives `THEME_CHANGE` message
+**Then** iframe updates React state: `_setTheme('dark')`
+**And** iframe updates cookie: `setCookie(storageKey, 'dark', THEME_COOKIE_MAX_AGE)`
+**And** both state and cookie are synchronized
+
+#### Scenario: Multiple consecutive switches maintain synchronization
+
+```typescript
+// User workflow in parent window
+1. Switch language en → zh (first switch)
+2. Switch language zh → en (second switch)
+3. Switch language en → zh (third switch)
+```
+
+**Given** user performs multiple consecutive language switches via parent window
+**When** each switch broadcasts to iframe
+**Then** iframe message handler updates cookie on each switch
+**And** cookie value always matches current React state
+**And** i18next reads correct language from cookie
+**And** no desynchronization occurs on subsequent switches
+
+#### Scenario: Cookie persistence matches setLanguage/setTheme methods
+
+```typescript
+// Parent window setLanguage method (lines 34-42)
+const setLanguage = (language: Language) => {
+  _setLanguage(language)
+  setCookie(LANGUAGE_COOKIE_NAME, language, LANGUAGE_COOKIE_MAX_AGE)
+  i18n.changeLanguage(language)
+  // ...broadcast logic
+}
+
+// Iframe message handler MUST mirror this cookie persistence
+if (event.data.type === 'LANGUAGE_CHANGE') {
+  _setLanguage(event.data.language)
+  setCookie(LANGUAGE_COOKIE_NAME, event.data.language, LANGUAGE_COOKIE_MAX_AGE)  // Same pattern
+  i18n.changeLanguage(event.data.language)
+}
+```
+
+**Given** `setLanguage` method persists to cookie when called in parent
+**When** iframe receives language change message
+**Then** iframe message handler MUST use identical cookie persistence logic
+**And** cookie max-age MUST match (both use `LANGUAGE_COOKIE_MAX_AGE`)
+**And** cookie name MUST match (both use `LANGUAGE_COOKIE_NAME`)
+**And** consistency between parent and iframe cookie handling is maintained
+
+#### Scenario: i18next LanguageDetector reads from synchronized cookie
+
+```typescript
+// i18next configuration (lib/i18n.ts lines 59-64)
+detection: {
+  order: ['cookie', 'navigator'],  // Cookie is first priority
+  caches: ['cookie'],
+  cookieMinutes: 525600,
+  lookupCookie: 'locale',
+}
+```
+
+**Given** i18next is configured to read language from `locale` cookie
+**And** iframe receives language change message
+**When** message handler updates both state and cookie
+**Then** i18next's LanguageDetector reads correct language from cookie
+**And** no mismatch occurs between React state and i18next state
+**And** translations render correctly for new language
+
+#### Scenario: Cookie write is synchronous with state update
+
+```typescript
+// Message handler execution order
+const handleMessage = (event: MessageEvent) => {
+  if (!isValidIframeMessage(event, window.location.origin)) return
+
+  if (event.data.type === 'LANGUAGE_CHANGE') {
+    _setLanguage(event.data.language)           // 1. Update React state
+    setCookie(/* ... */)                         // 2. Update cookie (synchronous)
+    i18n.changeLanguage(event.data.language)    // 3. Update i18next
+  }
+}
+```
+
+**Given** iframe message handler receives state change message
+**When** handler executes
+**Then** React state update happens first
+**And** cookie write happens immediately after (synchronous operation)
+**And** i18next update happens last
+**And** no race conditions occur between state and cookie updates
+
