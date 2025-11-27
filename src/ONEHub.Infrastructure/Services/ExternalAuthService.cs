@@ -1,6 +1,8 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Fanex.Logging;
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
 using ONEHub.Domain.Results;
@@ -26,6 +28,7 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
             }
 
             var body = await response.Content.ReadFromJsonAsync<ExternalValidationResponse>();
+            await Logger.Log.InfoAsync($"Validate Token body Return: {body}");
 
             if (body?.Code == 1004)
             {
@@ -47,8 +50,9 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
                 PasswordHash = body.Result.PasswordHash
             });
         }
-        catch
+        catch(Exception ex)
         {
+            await Logger.Log.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result<User>.Failure(AuthError.InvalidToken);
         }
     }
@@ -70,6 +74,8 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
 
             var body = await response.Content.ReadFromJsonAsync<ExternalRefreshResponse>();
 
+            await Logger.Log.InfoAsync($"Refresh token body Return: {body}");
+
             // Combined invalid check: null body, null result, empty access token, or code != 0
             if (body is null || body.Code != 0 || body.Result is null || string.IsNullOrEmpty(body.Result.AccessToken))
             {
@@ -78,8 +84,9 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
 
             return Result<string>.Success(body.Result.AccessToken);
         }
-        catch
+        catch (Exception ex)
         {
+            await Logger.Log.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result<string>.Failure(AuthError.InvalidToken);
         }
     }

@@ -1,5 +1,5 @@
+using Fanex.Logging;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
@@ -25,7 +25,6 @@ public class SsoHandler(
     IJwtTokenService jwtTokenService,
     ICacheProvider cacheProvider,
     IAuthRepository authRepository,
-    ILogger<SsoHandler> logger,
     IOptions<JwtSetting> jwtSetting)
     : IRequestHandler<SsoCommand, Result<SsoResponse>>
 {
@@ -42,17 +41,17 @@ public class SsoHandler(
         {
             if (validationResult.Error.Code == AuthError.ExpiredToken.Code && !string.IsNullOrEmpty(request.ExternalRefreshToken))
             {
-                logger.LogInformation("External token expired, attempting refresh");
+                await Logger.Log.InfoAsync("External token expired, attempting refresh");
 
                 var refreshResult = await externalAuthService.RefreshTokenAsync(request.ExternalRefreshToken);
 
                 if (refreshResult.IsFailure)
                 {
-                    logger.LogWarning("Token refresh failed: {ErrorMessage}", refreshResult.ErrorMessage);
+                    await Logger.Log.InfoAsync("Token refresh failed: {ErrorMessage}", refreshResult.ErrorMessage);
                     return Result<SsoResponse>.Failure(AuthError.InvalidToken);
                 }
 
-                logger.LogInformation("Token refresh succeeded, retrying validation with new token");
+                await Logger.Log.InfoAsync("Token refresh succeeded, retrying validation with new token");
 
                 validationResult = await externalAuthService.ValidateTokenAsync(refreshResult.Data!);
 
@@ -91,7 +90,7 @@ public class SsoHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to sync user {UserId} to database during SSO login", user.UserId);
+            await Logger.Log.InfoAsync("Failed to sync user {UserId} to database during SSO login", ex, user.UserId);
         }
 
         var accessToken = jwtTokenService.GenerateAccessToken(user);

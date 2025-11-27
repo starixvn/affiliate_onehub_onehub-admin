@@ -25,6 +25,7 @@ public static class DependencyInjection
         services.AddHttpClient<IExternalAuthService, ExternalAuthService>((sp, client) =>
             {
                 var settings = sp.GetRequiredService<IOptions<ExternalAuthSetting>>().Value;
+                ArgumentNullException.ThrowIfNull(settings);
                 client.BaseAddress = new Uri(settings.Host);
                 client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds);
             })
