@@ -22,6 +22,7 @@ type LinksContextType = {
   dashboard: LinkDashboardResponse | null
   isLoading: boolean
   isError: boolean
+  error: Error | null
   exportLinks: () => Promise<void>
 }
 
@@ -40,7 +41,7 @@ export function LinksProvider({
   const [open, setOpen] = useDialogState<LinksDialogType>(null)
   const [currentRow, setCurrentRow] = useState<LinkInfo | null>(null)
 
-  const { data, isLoading, isError } = useGetLinkManagement(params)
+  const { data, isLoading, isError, error } = useGetLinkManagement(params)
 
   const exportLinks = async () => {
     try {
@@ -51,9 +52,9 @@ export function LinksProvider({
 
       const linksData = response.data.links?.items ?? []
       await formatLinksForExcel(linksData, t, params)
-      toast.success('Links exported successfully')
+      toast.success(t('export.success'))
     } catch (error) {
-      toast.error('Failed to export links')
+      toast.error(t('export.error'))
       throw error
     }
   }
@@ -75,6 +76,7 @@ export function LinksProvider({
         dashboard: dashboardData ?? null,
         isLoading,
         isError,
+        error,
         exportLinks,
       }}
     >

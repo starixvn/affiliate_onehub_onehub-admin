@@ -27,6 +27,8 @@
   "table": {
     "search": "搜索链接...",
     "noResults": "未找到结果。",
+    "copySuccess": "短链接已复制到剪贴板",
+    "copyError": "复制链接失败",
     "columns": {
       "select": "全选",
       "selectRow": "选择行",
@@ -83,6 +85,13 @@
     "statusPrefix": "状态",
     "allStatus": "所有状态",
     "rowNumber": "#"
+  },
+  "errors": {
+    "loadingFailed": "加载仪表板数据失败"
+  },
+  "export": {
+    "success": "链接导出成功",
+    "error": "导出链接失败"
   }
 }
 

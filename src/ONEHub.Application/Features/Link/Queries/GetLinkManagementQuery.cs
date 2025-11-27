@@ -28,33 +28,6 @@ public class GetLinkManagementQuery : BaseQuery<LinkManagement>
     public int PageSize { get; set; } = 20;
 }
 
-public record LinkResponse(
-    int LinkId,
-    string LinkName,
-    string DomainName,
-    string ShortLink,
-    string FullLink,
-    string Event,
-    string LandingPage,
-    string Group,
-    string CampaignName,
-    string ChannelName,
-    string CountryName,
-    string Agency,
-    string Language,
-    string Type,
-    string Note,
-    string IDCode,
-    string CreatedDate,
-    int Click,
-    int Registration,
-    int Bonus,
-    int Ftd,
-    decimal AvgFtdAmount,
-    int StatusId,
-    string StatusName,
-    int RowIdx);
-
 public class GetLinkManagementHandler(ILinkRepository linkRepository)
     : IRequestHandler<GetLinkManagementQuery, Result<LinkManagement>>
 {

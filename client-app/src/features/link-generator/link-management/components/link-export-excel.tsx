@@ -27,9 +27,12 @@ export const formatLinksForExcel = (
         titleParts.push(searchPart)
 
         if (params?.statusIds) {
-            const statusOption = statuses.find((s) => s.value === String(params.statusIds))
-            const statusPart = statusOption
-                ? `${t('excel.statusPrefix')}: ${statusOption.label}`
+            const statusIdArray = params.statusIds.split(',').filter(Boolean)
+            const statusLabels = statusIdArray
+                .map((id) => statuses.find((s) => s.value === id)?.label)
+                .filter(Boolean)
+            const statusPart = statusLabels.length > 0
+                ? `${t('excel.statusPrefix')}: ${statusLabels.join(', ')}`
                 : t('excel.allStatus')
             titleParts.push(statusPart)
         } else {
@@ -118,7 +121,7 @@ export const formatLinksForExcel = (
                 style: { alignment: 'center' },
             },
             {
-                field: (row: LinkInfo) => row.avgFtd.toFixed(2),
+                field: (row: LinkInfo) => (row.avgFtd ?? 0).toFixed(2),
                 header: t('table.columns.avgFtdAmount'),
                 width: 20,
                 style: { alignment: 'center' },

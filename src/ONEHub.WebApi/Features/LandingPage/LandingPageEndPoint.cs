@@ -1,6 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
-using ONEHub.Application.Features.LandingPage.Queries;
+using ONEHub.Application.Features.LinkGenerator.Queries;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Results;
 

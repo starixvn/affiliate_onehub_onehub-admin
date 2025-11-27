@@ -5,7 +5,7 @@ using ONEHub.Domain.Errors;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
 
-namespace ONEHub.Application.Features.LandingPage.Queries;
+namespace ONEHub.Application.Features.LinkGenerator.Queries;
 
 public class GetLandingPageOptionsQuery : BaseQuery<Dictionary<string, List<LandingPageOption>>>;
 

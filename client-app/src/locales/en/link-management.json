@@ -28,6 +28,8 @@
     "search": "Search by name, domain, campaign, ID code...",
     "noResults": "No results found.",
     "updateFrequency": "Update regularly every {{minutes}} minutes.",
+    "copySuccess": "Short link copied to clipboard",
+    "copyError": "Failed to copy link",
     "columns": {
       "select": "Select all",
       "selectRow": "Select row",
@@ -84,6 +86,13 @@
     "statusPrefix": "Status",
     "allStatus": "All Status",
     "rowNumber": "#"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load dashboard data"
+  },
+  "export": {
+    "success": "Links exported successfully",
+    "error": "Failed to export links"
   }
 }
 

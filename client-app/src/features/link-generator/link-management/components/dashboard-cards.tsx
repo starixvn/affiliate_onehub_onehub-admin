@@ -5,7 +5,11 @@ import { useLinks } from './link-provider'
 
 export function DashboardCards() {
     const { t } = useTranslation('link-management')
-    const { dashboard, isLoading } = useLinks()
+    const { dashboard, isLoading, error } = useLinks()
+
+    if (error) {
+        return <div className='text-destructive'>{t('errors.loadingFailed')}</div>
+    }
 
     const cards = [
         {

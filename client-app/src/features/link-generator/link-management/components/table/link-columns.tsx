@@ -2,6 +2,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { type TFunction } from 'i18next'
 import { Copy, Info } from 'lucide-react'
 import { toast } from 'sonner'
+import { format } from 'date-fns'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { LongText } from '@/components/long-text'
 import { Button } from '@/components/ui/button'
@@ -90,9 +91,9 @@ export const getLinkColumns = (
         const handleCopy = async () => {
           try {
             await navigator.clipboard.writeText(shortLink)
-            toast.success('Short link copied to clipboard')
+            toast.success(t('table.copySuccess'))
           } catch {
-            toast.error('Failed to copy link')
+            toast.error(t('table.copyError'))
           }
         }
 
@@ -122,7 +123,7 @@ export const getLinkColumns = (
         )
       },
       meta: {
-        displayName: t('table.columns.shortLink'),
+        displayName: t('table.columns.shortUrl'),
         className: '',
       },
       enableSorting: false,
@@ -205,9 +206,11 @@ export const getLinkColumns = (
           title={t('table.columns.createdDate')}
         />
       ),
-      cell: ({ row }) => (
-        <div className='text-nowrap'>{row.getValue('createdDate')}</div>
-      ),
+      cell: ({ row }) => {
+        const date = row.getValue('createdDate') as string
+        const formattedDate = date ? format(new Date(date), 'yyyy-MM-dd') : ''
+        return <div className='text-nowrap'>{formattedDate}</div>
+      },
       meta: {
         displayName: t('table.columns.createdDate'),
         className: '',
@@ -340,7 +343,7 @@ export const getLinkColumns = (
       ),
       cell: ({ row }) => {
         const amount = row.getValue('avgFtd') as number
-        return <div className='text-center'>{amount.toFixed(2)}</div>
+        return <div className='text-center'>{(amount ?? 0).toFixed(2)}</div>
       },
       meta: {
         displayName: t('table.columns.avgFtdAmount'),

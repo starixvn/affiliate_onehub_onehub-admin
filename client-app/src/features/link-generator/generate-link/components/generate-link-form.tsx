@@ -114,6 +114,8 @@ export function GenerateLinkForm() {
 
   useEffect(() => {
     if (domains && domains.length > 0) {
+      const currentDomain = form.getValues('domainName')
+      if (currentDomain) return
       const firstDomain = domains[0]
       if (firstDomain) {
         form.setValue('domainName', firstDomain.domainName)
@@ -123,6 +125,8 @@ export function GenerateLinkForm() {
 
   useEffect(() => {
     if (domainsForShortLink && domainsForShortLink.length > 0) {
+      const currentShortDomain = form.getValues('shortDomain')
+      if (currentShortDomain) return
       const firstShortDomain = domainsForShortLink[0]
       if (firstShortDomain) {
         form.setValue('shortDomain', firstShortDomain.domainName)

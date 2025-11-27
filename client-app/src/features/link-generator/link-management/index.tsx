@@ -76,14 +76,14 @@ export function LinkManagement() {
     const search = route.useSearch()
 
     const params = {
-        search: search.search as string | undefined,
-        statusIds: (search.statusIds as string | undefined) ?? '1',
-        countryCodes: search.countryCodes as string | undefined,
-        channelIds: search.channelIds as string | undefined,
-        startDate: (search.startDate as string | undefined) ?? getDefaultStartDate(),
-        endDate: (search.endDate as string | undefined) ?? getDefaultEndDate(),
-        pageIndex: search.pageIndex ? Number(search.pageIndex) : 1,
-        pageSize: search.pageSize ? Number(search.pageSize) : 10,
+        search: search.search ?? undefined,
+        statusIds: search.statusIds ?? '1',
+        countryCodes: search.countryCodes ?? undefined,
+        channelIds: search.channelIds ?? undefined,
+        startDate: search.startDate ?? getDefaultStartDate(),
+        endDate: search.endDate ?? getDefaultEndDate(),
+        pageIndex: search.pageIndex ?? 1,
+        pageSize: search.pageSize ?? 10,
     }
 
     return (

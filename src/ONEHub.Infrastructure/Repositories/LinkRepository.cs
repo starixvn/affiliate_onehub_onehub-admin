@@ -39,7 +39,7 @@ public class LinkRepository(IDynamicRepository dynamicRepository)
         return Result<LinkManagement>.Success(new LinkManagement
         {
             Links = pagingData,
-            Dashboard = dashboard.FirstOrDefault()
+            Dashboard = dashboard.FirstOrDefault() ?? new LinkDashboard()
         });
     }
 

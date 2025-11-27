@@ -22,7 +22,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { status } from '@/features/campaign-management/data/data'
+import { status, STATUS_IDS } from '../../data/data'
 import { useCreateCampaign } from '../../api/commands'
 import { useGenerateLink } from '../generate-link-provider'
 
@@ -66,8 +66,15 @@ export function CampaignCreateDialog({
       },
       {
         onSuccess: (response) => {
-          if (values.statusId === 1 && response.errorCode === 0 && response.data && typeof response.data === 'object' && 'campaignId' in response.data) {
-            const campaign = response.data as { campaignId: number; campaignCode: string; }
+          if (
+            values.statusId === STATUS_IDS.ACTIVE &&
+            response.errorCode === 0 &&
+            response.data &&
+            typeof response.data === 'object' &&
+            'campaignId' in response.data &&
+            'campaignCode' in response.data
+          ) {
+            const campaign = response.data as { campaignId: number; campaignCode: string }
             generateLinkForm.setValue('campaign', String(campaign.campaignId))
             generateLinkForm.setValue('campaignCode', campaign.campaignCode)
           }
