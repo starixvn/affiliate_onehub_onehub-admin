@@ -11,7 +11,6 @@ namespace ONEHub.Infrastructure.Services;
 
 public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
 {
-
     public async Task<Result<User>> ValidateTokenAsync(string authToken)
     {
         try
@@ -50,7 +49,7 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
                 PasswordHash = body.Result.PasswordHash
             });
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             await Logger.Log.ErrorAsync(LoggerUtils.GenerateMessage(ex));
             return Result<User>.Failure(AuthError.InvalidToken);
