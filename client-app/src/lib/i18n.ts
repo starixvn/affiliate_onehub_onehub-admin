@@ -60,6 +60,7 @@ i18n
       order: ['cookie', 'navigator'],
       caches: ['cookie'],
       cookieMinutes: 525600,
+      lookupCookie: 'locale',
     },
   })
 

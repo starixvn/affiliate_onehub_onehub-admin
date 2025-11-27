@@ -231,3 +231,90 @@ if (searchValue.trim() === '') {
 **And** if it was previously selected, it MUST be cleared
 **And** appropriate default date range MUST be shown instead
 
+### Requirement: Language state MUST be synchronized between LanguageProvider and i18next using a single shared cookie
+
+The application uses both a custom `LanguageProvider` and the `i18next` library for internationalization. To prevent language state desynchronization, both systems MUST read from and write to the same cookie.
+
+#### Scenario: i18next uses the same cookie name as LanguageProvider
+
+```typescript
+// client-app/src/lib/i18n.ts
+i18n
+  .use(LanguageDetector)
+  .use(initReactI18next)
+  .init({
+    // ...other config
+    detection: {
+      order: ['cookie', 'navigator'],
+      caches: ['cookie'],
+      cookieMinutes: 525600,
+      lookupCookie: 'locale',  // Must match LanguageProvider's LANGUAGE_COOKIE_NAME
+    },
+  })
+
+// client-app/src/context/language-provider.tsx
+const LANGUAGE_COOKIE_NAME = 'locale'  // Same as i18next lookupCookie
+```
+
+**Given** `LanguageProvider` uses cookie name `locale`
+**And** i18next detection config specifies `lookupCookie: 'locale'`
+**When** user switches language via `LanguageSwitch` component
+**Then** `LanguageProvider` writes new language to `locale` cookie
+**And** `i18next.changeLanguage()` also updates the `locale` cookie
+**And** both systems read from the same `locale` cookie on page load
+**And** no `i18next` cookie is created
+
+#### Scenario: Language persists correctly across page reloads
+
+```typescript
+// User workflow
+1. User selects Chinese language from dropdown
+2. Page reloads (hard refresh or navigation)
+3. Check language state
+```
+
+**Given** user has selected Chinese language (`zh`)
+**When** `LanguageProvider` initializes on page load
+**Then** `getCookie('locale')` returns `'zh'`
+**When** i18next initializes via LanguageDetector
+**Then** i18next reads from `locale` cookie and sets language to `'zh'`
+**And** both systems show Chinese translations
+**And** no language mismatch occurs
+
+#### Scenario: Subsequent language switches work consistently
+
+```typescript
+// User workflow
+1. User switches from English to Chinese
+2. User switches from Chinese back to English
+3. User switches from English to Chinese again
+```
+
+**Given** user performs multiple language switches
+**When** each switch occurs via `setLanguage()` in LanguageProvider
+**Then** cookie `locale` is updated with new language
+**And** `i18n.changeLanguage()` is called with new language
+**And** i18next internal state matches cookie value
+**And** all switches apply immediately without refresh
+**And** no desynchronization occurs between LanguageProvider state and i18next state
+
+#### Scenario: Cookie configuration matches between systems
+
+```typescript
+// LanguageProvider cookie settings
+const LANGUAGE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365  // 1 year
+
+// i18next cookie settings
+detection: {
+  cookieMinutes: 525600,  // 365 days = 1 year
+  lookupCookie: 'locale',
+}
+```
+
+**Given** both systems manage the same cookie
+**When** checking cookie expiration settings
+**Then** LanguageProvider uses 1 year max-age
+**And** i18next uses 525600 minutes (also 1 year)
+**And** cookie persistence duration is consistent
+**And** user language preference persists for same duration regardless of which system wrote it
+

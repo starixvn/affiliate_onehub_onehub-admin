@@ -290,3 +290,165 @@ The `AuthProvider` component MUST NOT attempt automatic token refresh when users
 
 **Implementation Note**: Update the `publicRoutes` array constant in `initializeAuth()` function.
 
+### Requirement: External authentication service must eliminate blanket exception handling
+
+The external authentication service MUST remove blanket try-catch blocks and rely on Polly for resilience, allowing specific errors to be handled appropriately and improving debuggability.
+
+#### Scenario: Polly handles transient failures instead of try-catch
+
+**Given** the external service experiences network timeout
+
+**When** calling `ValidateTokenAsync()`
+
+**Then**:
+- MUST allow Polly policy to catch and retry `TaskCanceledException`
+- MUST NOT wrap entire method in try-catch block
+- MUST allow transient exceptions to be handled by Polly middleware
+- MUST return `Result<User>.Failure(AuthError.InvalidToken)` only after Polly retries exhausted
+
+#### Scenario: JSON deserialization errors are handled specifically
+
+**Given** the external service returns malformed JSON response
+
+**When** parsing the validation or refresh response
+
+**Then**:
+- MUST catch `JsonException` specifically at deserialization point
+- MUST log the parsing error with response content for debugging
+- MUST return `Result<User>.Failure(AuthError.InvalidToken)`
+- MUST NOT use blanket `catch (Exception)` that masks root cause
+
+#### Scenario: Null response validation is explicit
+
+**Given** the external service returns null or invalid response structure
+
+**When** validating the parsed response
+
+**Then**:
+- MUST check for null response explicitly (not via exception catching)
+- MUST check for null result object explicitly
+- MUST check for invalid code values explicitly
+- MUST return appropriate failure result without throwing exceptions
+- MUST log specific validation failure reason for debugging
+
+#### Scenario: HTTP client exceptions bubble up to Polly
+
+**Given** the HTTP request fails with `HttpRequestException`
+
+**When** calling `ValidateTokenAsync()` or `RefreshTokenAsync()`
+
+**Then**:
+- MUST NOT catch `HttpRequestException` in method body
+- MUST allow exception to bubble up to Polly policy handler
+- MUST let Polly determine whether to retry based on exception type
+- MUST only handle business logic errors (invalid response structure, validation failures) in method
+
+### Requirement: External auth service must return complete user data including password hash
+
+The external authentication validation service MUST map all user data from the external API response to the internal User entity, including the password hash for future local authentication scenarios.
+
+#### Scenario: User entity includes password hash from external auth
+
+**Given** the external validation API returns successful response with user data
+
+**And** the response includes `hashPassword` field (bcrypt hash)
+
+**When** mapping external validation result to internal User entity
+
+**Then**:
+- MUST set `User.PasswordHash` to `resultData.HashPassword` value
+- MUST NOT set `User.PasswordHash` to empty string
+- MUST preserve the bcrypt hash exactly as received
+- MUST return User with complete data including UserId, UserName, Roles, Avatar, IsAdmin, PasswordHash
+
+**Implementation Note**: Update `ExternalAuthService.ValidateTokenAsync()` line 73 from `PasswordHash = string.Empty` to `PasswordHash = resultData.HashPassword`
+
+**Related**: This enables SSO user data persistence in subsequent requirement
+
+---
+
+### Requirement: SSO login must automatically sync user data to database
+
+The SSO authentication flow MUST persist validated user data to the local database, creating new users or updating existing users based on the external auth UserId. This ensures SSO users have persistent records for auditing, user management, and future feature support.
+
+#### Scenario: New SSO user is created in database
+
+**Given** a user authenticates via SSO with external tokens
+
+**And** external auth validation succeeds
+
+**And** the user does not exist in the local database (checked by UserId)
+
+**When** processing the SSO command
+
+**Then**:
+- MUST call `IAuthRepository.CreateUserAsync()` with user data from external auth
+- MUST map User entity to CreateUserParam with all fields (UserName, PasswordHash, IsAdmin, Roles, Avatar)
+- MUST pass UserId, Ip, Host from command context
+- MUST create user record in database via `OH_UserInfo_Ins` stored procedure
+- MUST continue with JWT token generation after user creation
+- MUST return SSO response with tokens even if user creation fails
+
+**Implementation Note**: Add `IAuthRepository` injection to `SsoHandler` and call `CreateUserAsync()` after `ValidateTokenAsync()` succeeds
+
+#### Scenario: Existing SSO user is updated in database
+
+**Given** a user authenticates via SSO with external tokens
+
+**And** external auth validation succeeds
+
+**And** the user already exists in the local database (same UserId)
+
+**When** processing the SSO command
+
+**Then**:
+- MUST call `IAuthRepository.CreateUserAsync()` with updated user data
+- MUST update UserName, PasswordHash, IsAdmin, Roles, Avatar fields
+- MUST let stored procedure handle update logic (upsert behavior)
+- MUST continue with JWT token generation after update
+- MUST return SSO response with tokens even if update fails
+
+**Implementation Note**: The `OH_UserInfo_Ins` stored procedure is assumed to handle both insert and update based on UserId presence
+
+#### Scenario: User sync failure does not block SSO login
+
+**Given** a user authenticates via SSO with external tokens
+
+**And** external auth validation succeeds
+
+**And** user data sync to database fails (e.g., database unavailable, SP error)
+
+**When** processing the SSO command
+
+**Then**:
+- MUST catch user sync exceptions
+- MUST log the sync error with appropriate details
+- MUST continue with JWT token generation despite sync failure
+- MUST return SSO response with tokens successfully
+- MUST NOT throw exception or return error result to user
+
+**Implementation Note**: Wrap `CreateUserAsync()` in try-catch, log errors, but always proceed with token generation for graceful degradation
+
+**Rationale**: SSO authentication should not fail due to database issues. User can authenticate and access the system even if persistence temporarily fails.
+
+#### Scenario: User data mapping includes all available fields
+
+**Given** the external auth service returns validated user data
+
+**When** mapping to CreateUserParam for database sync
+
+**Then**:
+- MUST map `UserId` from validated user
+- MUST map `UserName` from validated user
+- MUST map `PasswordHash` from validated user (bcrypt hash)
+- MUST map `IsAdmin` from validated user
+- MUST map `Roles` from validated user (string format)
+- MUST map `Avatar` from validated user
+- MUST map `Ip` from SSO command context (auto-injected via BaseCommand)
+- MUST map `Host` from SSO command context (auto-injected via BaseCommand)
+- MUST NOT map `Email` field (not supported by CreateUserParam and SP)
+
+**Implementation Note**: Build CreateUserParam with complete user data from validation result and command context
+
+---
+
