@@ -32,7 +32,6 @@ export function PageBuilderForm() {
   const { control } = form
   const isDisabled = isPreviewLoading || isIframeLoading
   const navigate = Route.useNavigate()
-  const isEditMode = !!pageId
 
   const selectedCountryCode = useWatch({ control, name: 'country' })
   const { data: languages } = useGetLanguages(selectedCountryCode || '')
@@ -53,7 +52,7 @@ export function PageBuilderForm() {
   }, [languages, selectedCountryCode, form])
 
   const performReset = () => {
-    if (isEditMode && pageId) {
+    if (pageId) {
       resetToInitialData()
     } else {
       form.reset(pageBuilderDefaultValues)
@@ -71,6 +70,7 @@ export function PageBuilderForm() {
           pageid: undefined,
           isPreview: undefined,
           IsPreview: undefined,
+          mode: undefined,
         },
         replace: true,
       })

@@ -61,6 +61,7 @@ export function SourceSelectField({
                 disabled={isDisabled}
                 title={sourceField.value || ''}
                 className={cn(
+                  'text-blue-600',
                   index === 0 ? 'bg-muted/50' : '',
                   isSourceMissing ? 'border-destructive focus-visible:border-destructive' : ''
                 )}
@@ -171,6 +172,18 @@ export function SourceSelectField({
                 index === 0 ? 'bg-muted/50' : '',
                 isSourceMissing ? 'border-destructive focus-visible:border-destructive' : ''
               )}
+              renderOptionLabel={(option: unknown) => {
+                const source = option as MediaSource
+                const imageUrl = getImageUrl(source.fileName)
+                return (
+                  <div className='flex items-center gap-2'>
+                    <span>{source.mediaName}</span>
+                    {imageUrl && (
+                      <ImageWithPreview imageUrl={imageUrl} alt={source.mediaName} />
+                    )}
+                  </div>
+                )
+              }}
             />
           )
         }}

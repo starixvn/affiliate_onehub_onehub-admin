@@ -43,9 +43,11 @@ const searchSchema = z.object({
     },
     z.boolean().optional()
   ),
+  mode: z.string().optional(),
 }).transform((data) => ({
   pageId: data.pageId ?? data.pageid,
   isPreview: data.isPreview ?? data.IsPreview ?? false,
+  mode: data.mode,
 }))
 
 export const Route = createFileRoute('/iframe/landing-page-cms/page-builder/')({

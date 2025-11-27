@@ -47,9 +47,10 @@ export function PageBuilder() {
   const search = Route.useSearch()
   const pageId = search.pageId
   const isPreview = search.isPreview ?? false
+  const mode = (search as { mode?: string }).mode
   
   return (
-    <PageBuilderProvider pageId={pageId} isPreview={isPreview}>
+    <PageBuilderProvider pageId={pageId} isPreview={isPreview} mode={mode}>
       <PageBuilderContent />
     </PageBuilderProvider>
   )

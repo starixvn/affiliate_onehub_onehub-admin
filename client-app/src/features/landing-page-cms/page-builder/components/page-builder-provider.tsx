@@ -34,6 +34,7 @@ type PageBuilderContextType = {
   previewError: string | null
   setPreviewError: (error: string | null) => void
   pageId: number | undefined
+  isCloneMode: boolean
   resetToInitialData: () => void
 }
 
@@ -43,9 +44,10 @@ type PageBuilderProviderProps = {
   children: React.ReactNode
   pageId?: number
   isPreview?: boolean
+  mode?: string
 }
 
-export function PageBuilderProvider({ children, pageId, isPreview = false }: PageBuilderProviderProps) {
+export function PageBuilderProvider({ children, pageId, isPreview = false, mode }: PageBuilderProviderProps) {
   const { t } = useTranslation('page-builder')
   const [dialogOpen, setDialogOpen] = useDialogState<DialogType>(null)
   const [generatedResult, setGeneratedResult] = React.useState<CreatePageBuilderResult | null>(null)
@@ -186,6 +188,8 @@ export function PageBuilderProvider({ children, pageId, isPreview = false }: Pag
     isErrorCampaigns ||
     isErrorCountries 
 
+  const isCloneMode = mode === 'clone'
+
   const resetToInitialData = React.useCallback(() => {
     if (pageId) {
       setIsDataLoaded(false)
@@ -213,6 +217,7 @@ export function PageBuilderProvider({ children, pageId, isPreview = false }: Pag
       previewError,
       setPreviewError,
       pageId,
+      isCloneMode,
       resetToInitialData,
     }),
     [
@@ -227,6 +232,7 @@ export function PageBuilderProvider({ children, pageId, isPreview = false }: Pag
       isIframeLoading,
       previewError,
       pageId,
+      isCloneMode,
       resetToInitialData,
       setDialogOpen,
       setGeneratedResult,

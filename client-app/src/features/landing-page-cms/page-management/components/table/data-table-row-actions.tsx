@@ -37,7 +37,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
   const handleDuplicate = () => {
     savePageManagementFilters(search)
     if (window.parent) {
-      window.parent.location.href = `/landing-page-cms/page-builder?mode=duplicate&pageId=${row.original.pageId}`
+      window.parent.location.href = `/landing-page-cms/page-builder?mode=clone&pageId=${row.original.pageId}`
     }
   }
 

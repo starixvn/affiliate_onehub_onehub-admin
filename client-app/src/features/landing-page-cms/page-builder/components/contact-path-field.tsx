@@ -35,6 +35,7 @@ export function ContactPathField({ index, form, isDisabled }: ContactPathFieldPr
               {...field}
               disabled={isDisabled}
               className={cn(
+                'text-blue-600',
                 errors.modules?.[index]?.contactPath ? 'border-destructive focus-visible:border-destructive' : ''
               )}
             />

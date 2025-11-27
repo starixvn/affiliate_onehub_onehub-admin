@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo, useEffect, type ReactNode } from 'react'
 import {
   Check,
   ChevronsUpDown,
@@ -37,6 +37,7 @@ interface SingleSelectProps<T extends SelectOption = SelectOption> {
   createNewLabel?: string
   className?: string
   formatOptionLabel?: (option: T) => string
+  renderOptionLabel?: (option: T) => ReactNode
   defaultExpandAll?: boolean
   hasToggleButton?: boolean
 }
@@ -60,6 +61,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
   createNewLabel = 'Create new...',
   className,
   formatOptionLabel,
+  renderOptionLabel,
   defaultExpandAll = true,
   hasToggleButton = true,
 }: SingleSelectProps<T>) {
@@ -80,6 +82,8 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
   const getValue = (option: T): string => String(option[valueKey])
   const getDisplayLabel = (option: T): string =>
     formatOptionLabel ? formatOptionLabel(option) : getLabel(option)
+  const getDisplayContent = (option: T): ReactNode =>
+    renderOptionLabel ? renderOptionLabel(option) : getDisplayLabel(option)
 
   const initialExpandedGroups = useMemo(() => {
     if (!isGroupedOptions(options)) return {}
@@ -205,7 +209,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
                     value === getValue(option) ? 'opacity-100' : 'opacity-0'
                   )}
                 />
-                {getDisplayLabel(option)}
+                {getDisplayContent(option)}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -227,7 +231,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
             value === getValue(option) ? 'opacity-100' : 'opacity-0'
           )}
         />
-        {getDisplayLabel(option)}
+        {getDisplayContent(option)}
       </CommandItem>
     ))
   }

@@ -43,6 +43,7 @@ const searchSchema = z.object({
     },
     z.boolean().optional()
   ),
+  mode: z.string().optional(),
 })
 
 export const Route = createFileRoute(
@@ -56,10 +57,22 @@ function PageBuilderWrapper() {
   const search = Route.useSearch()
   const pageId = search.pageId ?? search.pageid
   const isPreview = search.isPreview ?? search.IsPreview ?? false
+  const mode = (search as { mode?: string }).mode
 
-  const iframePath = pageId !== undefined
-    ? `/iframe/landing-page-cms/page-builder?pageId=${pageId}&isPreview=${isPreview}`
-    : '/iframe/landing-page-cms/page-builder'
+  const buildIframePath = () => {
+    const params = new URLSearchParams()
+    if (pageId !== undefined) {
+      params.set('pageId', String(pageId))
+    }
+    if (isPreview) {
+      params.set('isPreview', 'true')
+    }
+    if (mode) {
+      params.set('mode', mode)
+    }
+    const queryString = params.toString()
+    return `/iframe/landing-page-cms/page-builder${queryString ? `?${queryString}` : ''}`
+  }
 
-  return <IframeContent iframePath={iframePath} />
+  return <IframeContent iframePath={buildIframePath()} />
 }

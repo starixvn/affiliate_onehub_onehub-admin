@@ -25,7 +25,8 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   
   const createPageBuilderMutation = useCreatePageBuilder()
   const updatePageBuilderMutation = useUpdatePageBuilder()
-  const isEditMode = !!pageId
+  const { isCloneMode } = usePageBuilder()
+  const isEditMode = !!pageId && !isCloneMode
   const pageBuilderMutation = isEditMode ? updatePageBuilderMutation : createPageBuilderMutation
   const { isPreviewLoading } = usePageBuilder()
   const { data: modules } = useGetModules()
@@ -57,20 +58,22 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
             result.push({
               moduleId,
               mediaId: parsedMediaId,
-              extraInfo: '',
+              extraInfo: moduleId === 14 ? '/login' : '',
               orderId,
             })
           }
         })
       } else {
         let mediaId: number | null = null
-        if (moduleType !== 2 && moduleType !== 4 && module.sourceId) {
+        if (moduleType !== 4 && module.sourceId) {
           const parsedMediaId = Number.parseInt(module.sourceId, 10)
           mediaId = Number.isNaN(parsedMediaId) ? null : parsedMediaId
         }
 
         let extraInfo = ''
-        if (moduleType === 2) {
+        if (moduleId === 14) {
+          extraInfo = '/login'
+        } else if (moduleType === 2) {
           extraInfo = module.contactPath || ''
         } else if (moduleType === 4) {
           extraInfo = module.sourceId || ''
@@ -122,7 +125,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
         languageCode: data.language || '',
         isPreview: true,
         statusId: data.statusId || 0,
-        ...(isEditMode && pageId ? { pageId } : {}),
+        ...(isEditMode && pageId && !isCloneMode ? { pageId } : {}),
         moduleComponentSettings,
       }
 
@@ -186,7 +189,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
         languageCode: data.language || '',
         isPreview: false,
         statusId: data.statusId || 0,
-        ...(isEditMode && pageId ? { pageId } : {}),
+        ...(isEditMode && pageId && !isCloneMode ? { pageId } : {}),
         moduleComponentSettings,
       }
 
