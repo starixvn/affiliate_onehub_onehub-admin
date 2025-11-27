@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Functions SiteId="101" SiteName="ONEHub Worker">
+    <Functions Name="Generate Link">
+        <Setting Key="OH_Domain_Ins" SpName="OH_Domain_Ins" DbName="DBOH.ONEHub.wsv_oh" />
+    </Functions>
+</Functions>

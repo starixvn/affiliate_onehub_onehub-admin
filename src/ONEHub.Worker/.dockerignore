@@ -1,0 +1,67 @@
+# Build outputs
+bin/
+obj/
+apps/*/src/*/bin/
+apps/*/src/*/obj/
+tests/*/bin/
+tests/*/obj/
+dist/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.cursor/
+.claude/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Nx
+.nx/
+node_modules/
+.pnpm-store/
+pnpm-lock.yaml
+
+# Testing
+coverage/
+*.lcov
+tests/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Documentation
+*.md
+!README.md
+
+# Husky
+.husky/
+
+# Frontend (old/legacy)
+apps/api/src/ONEHub.WebApi/wwwroot/node_modules/
+apps/api/src/ONEHub.WebApi/wwwroot/source/
+apps/api/src/ONEHub.WebApi/wwwroot/config-utils/
+apps/api/src/ONEHub.WebApi/wwwroot/portal/
+apps/api/src/ONEHub.WebApi/wwwroot/vendors/
+apps/api/src/ONEHub.WebApi/wwwroot/package*.json
+apps/api/src/ONEHub.WebApi/wwwroot/.babelrc
+apps/api/src/ONEHub.WebApi/wwwroot/webpack*.js
+
+# Misc
+*.swp
+*.swo
+*~
