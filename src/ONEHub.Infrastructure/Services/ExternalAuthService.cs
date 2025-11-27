@@ -7,8 +7,7 @@ using ONEHub.Domain.Results;
 
 namespace ONEHub.Infrastructure.Services;
 
-public class ExternalAuthService(HttpClient httpClient)
-    : IExternalAuthService
+public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
 {
 
     public async Task<Result<User>> ValidateTokenAsync(string authToken)
@@ -45,7 +44,7 @@ public class ExternalAuthService(HttpClient httpClient)
                 Roles = body.Result.Roles ?? "",
                 Avatar = body.Result.Avatar ?? "",
                 IsAdmin = body.Result.IsAdmin,
-                PasswordHash = body.Result.HashPassword
+                PasswordHash = body.Result.PasswordHash
             });
         }
         catch
@@ -97,7 +96,7 @@ internal record ExternalValidationResult(
     string Username,
     string Email,
     bool IsAdmin,
-    string HashPassword,
+    string PasswordHash,
     string? Roles,
     string? Avatar,
     DateTime ExpiresAt,
