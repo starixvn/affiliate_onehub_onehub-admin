@@ -16,17 +16,21 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   const { 
     form, 
     pageId, 
+    internalPageId,
+    setInternalPageId,
     setGeneratedResult, 
     setIsPreviewLoading, 
     setIsIframeLoading, 
     setPreviewError,
-    setDialogOpen 
+    setDialogOpen
   } = usePageBuilder()
   
   const createPageBuilderMutation = useCreatePageBuilder()
   const updatePageBuilderMutation = useUpdatePageBuilder()
   const { isCloneMode } = usePageBuilder()
-  const isEditMode = !!pageId && !isCloneMode
+  // Use effectivePageId (internalPageId or pageId) to determine edit mode
+  const effectivePageId = internalPageId ?? pageId
+  const isEditMode = !!effectivePageId && !isCloneMode
   const pageBuilderMutation = isEditMode ? updatePageBuilderMutation : createPageBuilderMutation
   const { isPreviewLoading } = usePageBuilder()
   const { data: modules } = useGetModules()
@@ -125,7 +129,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
         languageCode: data.language || '',
         isPreview: true,
         statusId: data.statusId || 0,
-        ...(isEditMode && pageId && !isCloneMode ? { pageId } : {}),
+        ...(isEditMode && effectivePageId && !isCloneMode ? { pageId: effectivePageId } : {}),
         moduleComponentSettings,
       }
 
@@ -189,7 +193,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
         languageCode: data.language || '',
         isPreview: false,
         statusId: data.statusId || 0,
-        ...(isEditMode && pageId && !isCloneMode ? { pageId } : {}),
+        ...(isEditMode && effectivePageId && !isCloneMode ? { pageId: effectivePageId } : {}),
         moduleComponentSettings,
       }
 
@@ -200,6 +204,20 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
             setIsPreviewLoading(false)
             setIsIframeLoading(true)
             setPreviewError(null)
+            
+            if (!isEditMode && result.pageId) {
+              setInternalPageId(result.pageId)
+              
+              const currentUrl = new URL(window.location.href)
+              currentUrl.searchParams.set('pageId', String(result.pageId))
+              currentUrl.searchParams.delete('mode')
+              currentUrl.searchParams.delete('pageid')
+              currentUrl.searchParams.delete('isPreview')
+              currentUrl.searchParams.delete('IsPreview')
+              
+              // Use replaceState to update URL without triggering React Router navigation
+              window.history.replaceState({}, '', currentUrl.toString())
+            }
           } else {
             setIsPreviewLoading(false)
             setIsIframeLoading(false)

@@ -78,7 +78,16 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
           <Input
             id='pageCode'
             placeholder={t('form.pageCodePlaceholder')}
-            {...register('pageCode')}
+            {...register('pageCode', {
+              onChange: (e) => {
+                const value = e.target.value
+                const pageCodePattern = /^[a-zA-Z0-9-_]+$/
+                if (value && !pageCodePattern.test(value)) {
+                  e.target.value = value.replace(/[^a-zA-Z0-9-_]/g, '')
+                  form.setValue('pageCode', e.target.value)
+                }
+              },
+            })}
             maxLength={20}
             disabled={isDisabled}
             className={cn(errors.pageCode ? 'border-destructive focus-visible:border-destructive' : '')}
