@@ -1,39 +1,38 @@
 import { BarChart3, Play, FileText, Ban } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { FilterCard } from '@/components/ui/filter-card'
-import { useGetLandingPageSummary } from '../api/queries'
+import { useLandingPages } from './page-provider'
 
 export function PageStatusDashboard() {
   const { t } = useTranslation('page-management')
-
-  const { data } = useGetLandingPageSummary()
+  const { dashboard } = useLandingPages()
 
   return (
     <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
       <FilterCard
         title={t('statusFilters.total')}
-        count={data?.total ?? 0}
+        count={dashboard?.total ?? 0}
         icon={BarChart3}
         variant='rainbow'
         disableHover
       />
       <FilterCard
         title={t('statusFilters.active')}
-        count={data?.active ?? 0}
+        count={dashboard?.active ?? 0}
         icon={Play}
         variant='success'
         disableHover
       />
       <FilterCard
         title={t('statusFilters.draft')}
-        count={data?.draft ?? 0}
+        count={dashboard?.draft ?? 0}
         icon={FileText}
         variant='warning'
         disableHover
       />
       <FilterCard
         title={t('statusFilters.inactive')}
-        count={data?.inactive ?? 0}
+        count={dashboard?.inactive ?? 0}
         icon={Ban}
         variant='secondary'
         disableHover

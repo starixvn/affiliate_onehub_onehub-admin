@@ -3,7 +3,6 @@ import type {
   GetLandingPagesRequest,
   GetLandingPagesResponse,
   GetLandingPageResponse,
-  GetLandingPageSummaryResponse,
   GetPageFiltersResponse,
   DeleteBatchLandingPageRequest,
   DeleteLandingPageResponse,
@@ -32,13 +31,6 @@ export const landingPageApi = {
       {
         params,
       }
-    )
-    return response.data
-  },
-
-  async getSummary(): Promise<GetLandingPageSummaryResponse> {
-    const response = await apiClient.get<GetLandingPageSummaryResponse>(
-      '/page-management/summary'
     )
     return response.data
   },

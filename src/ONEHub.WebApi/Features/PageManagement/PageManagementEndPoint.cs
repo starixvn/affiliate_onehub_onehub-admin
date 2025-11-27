@@ -16,7 +16,6 @@ public static class PageManagementEndPoint
         var groupEndpoint = endpoints.MapGroup("/api/page-management").RequireAuthorization();
 
         groupEndpoint.MapGet("/filters", GetFilters);
-        groupEndpoint.MapGet("/summary", Summary);
         groupEndpoint.MapGet("/", GetList);
         groupEndpoint.MapGet("/export", ExportList);
         groupEndpoint.MapPut("/status/batch", UpdateBatchStatus);
@@ -33,16 +32,7 @@ public static class PageManagementEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Ok<Result<PageManagementDashboardResponse>>> Summary(IMediator mediator)
-    {
-        var query = new GetPageManagementDashboardQuery();
-
-        var result = await mediator.Send(query);
-
-        return TypedResults.Ok(result);
-    }
-
-    private static async Task<Results<Ok<Result<PagingData<LandingPageResponse>>>, ValidationProblem>> GetList(
+    private static async Task<Results<Ok<Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>>, ValidationProblem>> GetList(
         [AsParameters] GetLandingPageListRequest request,
         IMediator mediator)
     {
@@ -68,7 +58,7 @@ public static class PageManagementEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result<PagingData<LandingPageResponse>>>, ValidationProblem>> ExportList(
+    private static async Task<Results<Ok<Result<PagingDataWithDashboard<LandingPageResponse, PageManagementDashboardResponse>>>, ValidationProblem>> ExportList(
         [AsParameters] GetLandingPageListRequest request,
         IMediator mediator)
     {

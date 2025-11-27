@@ -188,10 +188,8 @@ public static class WebApplicationSetup
     {
         app.UseSerilogRequestLogging(options =>
         {
-            // ✅ Custom message template — includes elapsed time
             options.MessageTemplate = "HTTP {RequestMethod} {RequestPath}{QueryString} responded {StatusCode} in {Elapsed:0.0000} ms from {RemoteIpAddress} UA:{UserAgent}";
 
-            // ✅ Enrich log context with useful request info
             options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
             {
                 diagnosticContext.Set("RequestMethod", httpContext.Request.Method);
@@ -200,21 +198,22 @@ public static class WebApplicationSetup
                 diagnosticContext.Set("StatusCode", httpContext.Response.StatusCode);
                 diagnosticContext.Set("RemoteIpAddress", httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty);
                 diagnosticContext.Set("UserAgent", httpContext.Request.Headers["User-Agent"].ToString());
-
-                // Optionally add forwarded header or extra headers
                 diagnosticContext.Set("X-Forwarded-For", httpContext.Request.Headers["x-forwarded-for"].ToString());
                 diagnosticContext.Set("SecChUa", httpContext.Request.Headers["sec-ch-ua"].ToString());
             };
 
-            // ✅ Control log level by response time or errors
-            options.GetLevel = (_, elapsed, ex) =>
+            options.GetLevel = (httpContext, elapsed, ex) =>
             {
+                if (httpContext.Request.Path.StartsWithSegments("/ping"))
+                {
+                    return LogEventLevel.Verbose;
+                }
+
                 if (ex != null)
                 {
                     return LogEventLevel.Error;
                 }
 
-                // Mark slow requests as warnings (e.g., > 2 seconds)
                 if (elapsed > 2000)
                 {
                     return LogEventLevel.Warning;

@@ -10,3 +10,12 @@ public abstract class PagingQuery<TResponse> : BaseQuery<PagingData<TResponse>> 
     public string SortDirection { get; set; } = "ASC";
 }
 
+public abstract class PagingQueryWithDashboard<TResponse, TDashboard> : BaseQuery<PagingDataWithDashboard<TResponse, TDashboard>>
+    where TDashboard : new()
+{
+    public int PageIndex { get; set; } = 1;
+    public int PageSize { get; set; } = 20;
+    public string SortBy { get; set; } = string.Empty;
+    public string SortDirection { get; set; } = "ASC";
+}
+

@@ -9,6 +9,8 @@ using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Repositories;
 using ONEHub.Infrastructure.Services;
+using Polly;
+using Polly.Extensions.Http;
 
 namespace ONEHub.Infrastructure;
 
@@ -20,7 +22,13 @@ public static class DependencyInjection
 
         services.Configure<ExternalAuthSetting>(configuration.GetSection(ExternalAuthSetting.SettingName));
 
-        services.AddHttpClient<IExternalAuthService, ExternalAuthService>()
+        services.AddHttpClient<IExternalAuthService, ExternalAuthService>((sp, client) =>
+            {
+                var settings = sp.GetRequiredService<IOptions<ExternalAuthSetting>>().Value;
+                ArgumentNullException.ThrowIfNull(settings);
+                client.BaseAddress = new Uri(settings.Host);
+                client.Timeout = TimeSpan.FromSeconds(settings.TimeoutSeconds);
+            })
             .ConfigurePrimaryHttpMessageHandler(sp =>
             {
                 var settings = sp.GetRequiredService<IOptions<ExternalAuthSetting>>().Value;
@@ -31,6 +39,24 @@ public static class DependencyInjection
                     handler.UseProxy = true;
                 }
                 return handler;
+            })
+            .AddPolicyHandler((serviceProvider, _) =>
+            {
+                var logger = serviceProvider.GetRequiredService<ILogger>();
+                return HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .OrResult(msg => msg.StatusCode is HttpStatusCode.InternalServerError
+                                   or HttpStatusCode.BadGateway
+                                   or HttpStatusCode.ServiceUnavailable)
+                    .WaitAndRetryAsync(
+                        retryCount: 3,
+                        sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
+                                                                + TimeSpan.FromMilliseconds(Random.Shared.Next(0, 1000)),
+                        onRetry: (outcome, timespan, retryCount, _) =>
+                        {
+                            var reason = outcome.Exception?.Message ?? outcome.Result?.StatusCode.ToString() ?? "Unknown";
+                            logger.Info($"ExternalAuth Polly Retry {retryCount} after {timespan.TotalSeconds:F1}s due to {reason}");
+                        });
             });
 
         services.AddSingleton<IJwtTokenService, JwtTokenService>();

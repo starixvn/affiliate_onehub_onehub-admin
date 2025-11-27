@@ -8,10 +8,6 @@ public class CreateUserCommand : BaseCommand
 
     public bool IsAdmin { get; set; }
 
-    public string Roles { get; set; } = string.Empty;
-
-    public string Avatar { get; set; } = string.Empty;
-
     public override string GetSettingKey() => "OH_UserInfo_Ins";
 
     public override bool IsValid() => !string.IsNullOrWhiteSpace(UserName) && !string.IsNullOrWhiteSpace(PasswordHash);

@@ -127,25 +127,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
         setIsLoading(false)
       } else {
+        const currentPath = window.location.pathname
+        const publicRoutes = ['/sign-in', '/forgot-password', '/sso']
+        const isPublicRoute = publicRoutes.some((route) =>
+          currentPath.startsWith(route)
+        )
+
+        if (isPublicRoute) {
+          setIsLoading(false)
+          return
+        }
+
         const refreshed = await attemptTokenRefresh()
         if (!refreshed) {
           tokenService.clearTokens()
-
-          const currentPath = window.location.pathname
-          const publicRoutes = ['/sign-in', '/forgot-password']
-          const isPublicRoute = publicRoutes.some((route) =>
-            currentPath.startsWith(route)
-          )
-
-          if (!isPublicRoute) {
-            window.location.href = `/sign-in?redirect=${encodeURIComponent(getRedirectUrl())}`
-            return
-          }
-
-          setIsLoading(false)
-        } else {
-          setIsLoading(false)
+          window.location.href = `/sign-in?redirect=${encodeURIComponent(getRedirectUrl())}`
+          return
         }
+
+        setIsLoading(false)
       }
     }
 

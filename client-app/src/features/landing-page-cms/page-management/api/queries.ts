@@ -11,7 +11,6 @@ export const landingPageKeys = {
   lists: () => [...landingPageKeys.all, 'list'] as const,
   list: (params?: GetLandingPagesRequest) =>
     [...landingPageKeys.lists(), params] as const,
-  summary: () => [...landingPageKeys.all, 'summary'] as const,
   filters: () => [...landingPageKeys.all, 'filters'] as const,
 }
 
@@ -19,14 +18,6 @@ export function useGetLandingPages(params?: GetLandingPagesRequest) {
   return useQuery({
     queryKey: landingPageKeys.list(params),
     queryFn: () => landingPageApi.getLandingPages(params),
-    select: (data) => data.data,
-  })
-}
-
-export function useGetLandingPageSummary() {
-  return useQuery({
-    queryKey: landingPageKeys.summary(),
-    queryFn: () => landingPageApi.getSummary(),
     select: (data) => data.data,
   })
 }

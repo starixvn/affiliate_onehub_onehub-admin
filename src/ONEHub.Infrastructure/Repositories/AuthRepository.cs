@@ -82,8 +82,6 @@ public class AuthRepository(
             UserName = param.UserName,
             PasswordHash = param.PasswordHash,
             IsAdmin = param.IsAdmin,
-            Roles = param.Roles,
-            Avatar = param.Avatar,
             UserId = param.UserId,
             Ip = param.Ip,
             Host = param.Host

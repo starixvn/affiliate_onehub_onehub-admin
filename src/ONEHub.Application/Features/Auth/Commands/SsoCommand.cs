@@ -1,5 +1,5 @@
+using Fanex.Logging;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Application.Services;
@@ -25,7 +25,6 @@ public class SsoHandler(
     IJwtTokenService jwtTokenService,
     ICacheProvider cacheProvider,
     IAuthRepository authRepository,
-    ILogger<SsoHandler> logger,
     IOptions<JwtSetting> jwtSetting)
     : IRequestHandler<SsoCommand, Result<SsoResponse>>
 {
@@ -36,13 +35,30 @@ public class SsoHandler(
             return Result<SsoResponse>.Failure(AuthError.InvalidToken);
         }
 
-        var validationResult = await externalAuthService.ValidateTokenAsync(
-            request.ExternalAccessToken,
-            request.ExternalRefreshToken);
+        var validationResult = await externalAuthService.ValidateTokenAsync(request.ExternalAccessToken);
 
         if (validationResult.IsFailure)
         {
-            return Result<SsoResponse>.Failure(validationResult.Error);
+            if (validationResult.Error.Code == AuthError.ExpiredToken.Code && !string.IsNullOrEmpty(request.ExternalRefreshToken))
+            {
+                var refreshResult = await externalAuthService.RefreshTokenAsync(request.ExternalRefreshToken);
+
+                if (refreshResult.IsFailure)
+                {
+                    return Result<SsoResponse>.Failure(AuthError.InvalidToken);
+                }
+
+                validationResult = await externalAuthService.ValidateTokenAsync(refreshResult.Data!);
+
+                if (validationResult.IsFailure)
+                {
+                    return Result<SsoResponse>.Failure(validationResult.Error);
+                }
+            }
+            else
+            {
+                return Result<SsoResponse>.Failure(validationResult.Error);
+            }
         }
 
         var user = validationResult.Data;
@@ -58,9 +74,7 @@ public class SsoHandler(
                 UserName = user.UserName,
                 PasswordHash = user.PasswordHash,
                 IsAdmin = user.IsAdmin,
-                Roles = user.Roles,
-                Avatar = user.Avatar,
-                UserId = request.UserId,
+                UserId = user.UserId,
                 Ip = request.Ip,
                 Host = request.Host
             };
@@ -69,7 +83,7 @@ public class SsoHandler(
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to sync user {UserId} to database during SSO login", user.UserId);
+            await Logger.Log.InfoAsync($"Failed to sync user {user.UserId} to database during SSO login. Error: {ex.Message}");
         }
 
         var accessToken = jwtTokenService.GenerateAccessToken(user);

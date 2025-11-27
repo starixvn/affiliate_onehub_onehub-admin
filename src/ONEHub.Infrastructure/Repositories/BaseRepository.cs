@@ -23,6 +23,23 @@ public abstract class BaseRepository(IDynamicRepository dynamicRepository)
         return Result<PagingData<T>>.Success(pagingData);
     }
 
+    public virtual async Task<Result<PagingDataWithDashboard<T, TDashboard>>> FetchPagingDataWithDashboardAsync<T, TDashboard>(PagingCriteria criteria)
+        where T : class
+        where TDashboard : class, new()
+    {
+        var (data, dashboardData) = await dynamicRepository.FetchMultipleAsync<T, TDashboard>(criteria);
+        var result = new PagingDataWithDashboard<T, TDashboard>
+        {
+            Items = [.. data],
+            Dashboard = dashboardData.FirstOrDefault() ?? new TDashboard(),
+            TotalItem = criteria.TotalItem,
+            PageSize = criteria.PageSize,
+            PageIndex = criteria.PageIndex
+        };
+
+        return Result<PagingDataWithDashboard<T, TDashboard>>.Success(result);
+    }
+
     public virtual async Task<Result<IEnumerable<T>>> FetchDataAsync<T>(CriteriaBase criteria) where T : class
     {
         var data = await dynamicRepository.FetchAsync<T>(criteria);

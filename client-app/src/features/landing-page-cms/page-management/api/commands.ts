@@ -14,7 +14,6 @@ export function useDeleteLandingPage() {
     mutationFn: (id: number) => landingPageApi.deleteLandingPage(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing page deleted successfully')
     },
     onError: (error: { message: string }) => {
@@ -31,7 +30,6 @@ export function useDeleteBatchLandingPages() {
       landingPageApi.deleteBatchLandingPages(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing pages deleted successfully')
     },
     onError: (error: { message: string }) => {
@@ -48,7 +46,6 @@ export function useUpdateBatchLandingPageStatus() {
       landingPageApi.updateBatchLandingPageStatus(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: landingPageKeys.lists() })
-      queryClient.invalidateQueries({ queryKey: landingPageKeys.summary() })
       toast.success('Landing page status updated successfully')
     },
     onError: (error: { message: string }) => {

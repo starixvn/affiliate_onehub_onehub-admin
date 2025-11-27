@@ -12,7 +12,7 @@ import {
   isSameDay,
 } from 'date-fns'
 import { Check } from 'lucide-react'
-import { DateRange } from 'react-day-picker'
+import { type DateRange } from 'react-day-picker'
 import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 

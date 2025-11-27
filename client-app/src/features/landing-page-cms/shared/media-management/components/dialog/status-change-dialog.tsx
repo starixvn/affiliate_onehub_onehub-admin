@@ -1,4 +1,4 @@
-import { UseMutationResult } from '@tanstack/react-query'
+import { type UseMutationResult } from '@tanstack/react-query'
 import { useTranslation } from 'react-i18next'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 import { status } from '../../data/data'
