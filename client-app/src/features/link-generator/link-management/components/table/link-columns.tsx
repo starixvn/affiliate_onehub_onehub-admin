@@ -209,7 +209,7 @@ export const getLinkColumns = (
       cell: ({ row }) => {
         const date = row.getValue('createdDate') as string
         const formattedDate = date ? format(new Date(date), 'yyyy-MM-dd') : ''
-        return <div className='text-nowrap'>{formattedDate}</div>
+        return <div className='text-nowrap text-center'>{formattedDate}</div>
       },
       meta: {
         displayName: t('table.columns.createdDate'),

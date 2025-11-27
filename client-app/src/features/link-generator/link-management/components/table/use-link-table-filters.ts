@@ -68,30 +68,14 @@ export function useLinkTableFilters(
     setSearchValue((search.search as string) ?? '')
   }, [search.search])
 
-  const getHasChangedFilters = (table: Table<LinkInfo>) => {
-    const searchDiffers = searchValue !== ''
-    const countryFilter = table.getColumn('filter_country')?.getFilterValue() as string[] | undefined
-    const channelFilter = table.getColumn('filter_channel')?.getFilterValue() as string[] | undefined
-    const statusFilter = table.getColumn('filter_status')?.getFilterValue() as string[] | undefined
-    const countryDiffers = countryFilter && countryFilter.length > 0
-    const channelDiffers = channelFilter && channelFilter.length > 0
-    const statusDiffers = statusFilter && (statusFilter.length === 0 || statusFilter.join(',') !== '1')
-    const dateDiffers =
-      formatDateToString(dateRange.from) !== getDefaultStartDate() ||
-      formatDateToString(dateRange.to) !== getDefaultEndDate()
-
-    return searchDiffers || countryDiffers || channelDiffers || statusDiffers || dateDiffers
-  }
-
-  const getHandleSubmit = (table: Table<LinkInfo>) => (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = (searchValueFromToolbar: string, table: Table<LinkInfo>) => {
     const countryFilter = table.getColumn('filter_country')?.getFilterValue() as string[] | undefined
     const channelFilter = table.getColumn('filter_channel')?.getFilterValue() as string[] | undefined
     const statusFilter = table.getColumn('filter_status')?.getFilterValue() as string[] | undefined
     navigate({
       search: {
         ...search,
-        search: searchValue || undefined,
+        search: searchValueFromToolbar || undefined,
         countryCodes: countryFilter?.length ? countryFilter.join(',') : '',
         channelIds: channelFilter?.length ? channelFilter.join(',') : '',
         statusIds: statusFilter?.length ? statusFilter.join(',') : '',
@@ -102,15 +86,12 @@ export function useLinkTableFilters(
     })
   }
 
-  const getHandleReset = (table: Table<LinkInfo>) => () => {
+  const handleReset = () => {
     setSearchValue('')
     setDateRange({
       from: parseDateString(getDefaultStartDate()),
       to: parseDateString(getDefaultEndDate()),
     })
-    table.getColumn('filter_country')?.setFilterValue([])
-    table.getColumn('filter_channel')?.setFilterValue([])
-    table.getColumn('filter_status')?.setFilterValue(['1'])
     navigate({
       search: {
         ...search,
@@ -132,8 +113,7 @@ export function useLinkTableFilters(
     setDateRange,
     columnFilters,
     setColumnFilters,
-    getHandleSubmit,
-    getHandleReset,
-    getHasChangedFilters
+    handleSubmit,
+    handleReset,
   }
 }

@@ -2,7 +2,6 @@ import { useState, useMemo, useEffect } from 'react'
 import {
   type SortingState,
   type VisibilityState,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
@@ -20,12 +19,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { DataTablePagination } from '@/components/data-table'
+import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { type LinkInfo } from '../../data/schema'
 import { getLinkColumns } from './link-columns'
 import { useLinks } from '../link-provider'
-import { LinkTableToolbar } from './link-table-toolbar'
 import { useLinkTableFilters } from './use-link-table-filters'
+import { useLinkFilters } from './link-filters'
+import { getDefaultStartDate, getDefaultEndDate, parseDateString, formatDateToString } from '../../utils/date'
 
 declare module '@tanstack/react-table' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -56,6 +56,7 @@ export function LinkTable({
   const { t } = useTranslation('link-management')
   const { setCurrentRow, setOpen } = useLinks()
   const [sorting, setSorting] = useState<SortingState>([])
+  const filters = useLinkFilters()
 
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
     () => {
@@ -158,15 +159,25 @@ export function LinkTable({
         'flex flex-1 flex-col gap-4'
       )}
     >
-      <LinkTableToolbar
+      <DataTableToolbar
         table={table}
-        searchValue={filterState.searchValue}
-        onSearchChange={filterState.setSearchValue}
-        dateRange={filterState.dateRange}
-        onDateRangeChange={filterState.setDateRange}
-        onSubmit={filterState.getHandleSubmit(table)}
-        onReset={filterState.getHandleReset(table)}
-        hasChangedFilters={filterState.getHasChangedFilters(table)}
+        searchPlaceholder={t('table.search')}
+        searchClassName='w-[250px] lg:w-[350px]'
+        filters={filters}
+        initialSearchValue={filterState.searchValue}
+        defaultSearchValue=''
+        submitLabel={t('searchToolbar.submit')}
+        dateRange={{
+          title: t('filters.createdDate'),
+          value: filterState.dateRange,
+          onChange: filterState.setDateRange,
+          defaultValue: {
+            from: parseDateString(getDefaultStartDate()),
+            to: parseDateString(getDefaultEndDate()),
+          },
+        }}
+        onSubmit={(searchValue) => filterState.handleSubmit(searchValue, table)}
+        onReset={filterState.handleReset}
       />
       <div className='overflow-hidden rounded-md border'>
         <Table>

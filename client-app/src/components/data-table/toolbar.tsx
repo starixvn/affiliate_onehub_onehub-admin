@@ -6,8 +6,14 @@ import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { DateRangeFilter } from '@/components/date-range-filter'
 import { DataTableFacetedFilter } from './faceted-filter'
 import { DataTableViewOptions } from './view-options'
+
+type DateRange = {
+  from: Date | undefined
+  to: Date | undefined
+}
 
 type DataTableToolbarProps<TData> = {
   table: Table<TData>
@@ -26,10 +32,18 @@ type DataTableToolbarProps<TData> = {
     hidden?: boolean
   }[]
   submitLabel?: string
-  onSubmit: (searchValue: string) => void
+  onSubmit: (searchValue: string, dateRange?: DateRange) => void
   onReset?: () => void
   initialSearchValue?: string
   defaultSearchValue?: string
+  dateRange?: {
+    title?: string
+    value: DateRange
+    onChange: (range: DateRange) => void
+    defaultValue?: DateRange
+    minDate?: Date
+    maxDate?: Date
+  }
 }
 
 export function DataTableToolbar<TData>({
@@ -43,13 +57,14 @@ export function DataTableToolbar<TData>({
   onReset,
   initialSearchValue = '',
   defaultSearchValue,
+  dateRange,
 }: DataTableToolbarProps<TData>) {
   const { t } = useTranslation('common')
   const [searchValue, setSearchValue] = useState(initialSearchValue)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(searchValue)
+    onSubmit(searchValue, dateRange?.value)
   }
 
   const handleClear = () => {
@@ -62,6 +77,9 @@ export function DataTableToolbar<TData>({
       const column = table.getColumn(filter.columnId)
       column?.setFilterValue(filter.defaultValue)
     })
+    if (dateRange?.defaultValue) {
+      dateRange.onChange(dateRange.defaultValue)
+    }
     if (onReset) {
       onReset()
     }
@@ -108,8 +126,13 @@ export function DataTableToolbar<TData>({
       }
     })
 
-    return searchDiffers || filterDiffers
-  }, [searchValue, defaultSearchValue, filters, table, columnFilters])
+    const dateRangeDiffers = dateRange && dateRange.defaultValue
+      ? (dateRange.value.from?.getTime() !== dateRange.defaultValue.from?.getTime() ||
+         dateRange.value.to?.getTime() !== dateRange.defaultValue.to?.getTime())
+      : false
+
+    return searchDiffers || filterDiffers || dateRangeDiffers
+  }, [searchValue, defaultSearchValue, filters, table, columnFilters, dateRange])
 
   return (
     <div className='flex items-center justify-between'>
@@ -148,6 +171,16 @@ export function DataTableToolbar<TData>({
               />
             )
           })}
+          {dateRange && (
+            <DateRangeFilter
+              title={dateRange.title}
+              from={dateRange.value.from}
+              to={dateRange.value.to}
+              onSelect={dateRange.onChange}
+              minDate={dateRange.minDate}
+              maxDate={dateRange.maxDate}
+            />
+          )}
           <Button type='submit' size='sm' className='h-8'>
             <Search className='me-2 h-4 w-4' />
             {submitLabel ?? t('dataTable.submit')}
