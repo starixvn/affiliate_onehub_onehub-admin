@@ -41,17 +41,12 @@ public class SsoHandler(
         {
             if (validationResult.Error.Code == AuthError.ExpiredToken.Code && !string.IsNullOrEmpty(request.ExternalRefreshToken))
             {
-                await Logger.Log.InfoAsync("External token expired, attempting refresh");
-
                 var refreshResult = await externalAuthService.RefreshTokenAsync(request.ExternalRefreshToken);
 
                 if (refreshResult.IsFailure)
                 {
-                    await Logger.Log.InfoAsync("Token refresh failed: {ErrorMessage}", refreshResult.ErrorMessage);
                     return Result<SsoResponse>.Failure(AuthError.InvalidToken);
                 }
-
-                await Logger.Log.InfoAsync("Token refresh succeeded, retrying validation with new token");
 
                 validationResult = await externalAuthService.ValidateTokenAsync(refreshResult.Data!);
 
@@ -79,9 +74,7 @@ public class SsoHandler(
                 UserName = user.UserName,
                 PasswordHash = user.PasswordHash,
                 IsAdmin = user.IsAdmin,
-                Roles = user.Roles,
-                Avatar = user.Avatar,
-                UserId = request.UserId,
+                UserId = user.UserId,
                 Ip = request.Ip,
                 Host = request.Host
             };
@@ -90,7 +83,7 @@ public class SsoHandler(
         }
         catch (Exception ex)
         {
-            await Logger.Log.InfoAsync("Failed to sync user {UserId} to database during SSO login", ex, user.UserId);
+            await Logger.Log.InfoAsync($"Failed to sync user {user.UserId} to database during SSO login. Error: {ex.Message}");
         }
 
         var accessToken = jwtTokenService.GenerateAccessToken(user);
