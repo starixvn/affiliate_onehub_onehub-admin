@@ -43,7 +43,7 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
             {
                 UserId = body.Result.UserId,
                 UserName = body.Result.Username,
-                Roles = body.Result.Roles ?? "",
+                Roles = body.Result.Roles is not null ? string.Join(",", body.Result.Roles) : "",
                 Avatar = body.Result.Avatar ?? "",
                 IsAdmin = body.Result.IsAdmin,
                 PasswordHash = body.Result.PasswordHash
@@ -103,7 +103,7 @@ internal record ExternalValidationResult(
     string Email,
     bool IsAdmin,
     string PasswordHash,
-    string? Roles,
+    List<string>? Roles,
     string? Avatar,
     DateTime ExpiresAt,
     DateTime IssuedAt);
