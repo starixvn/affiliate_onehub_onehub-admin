@@ -106,6 +106,7 @@ export function ThemeProvider({
 
       if (event.data.type === 'THEME_CHANGE') {
         _setTheme(event.data.theme)
+        setCookie(storageKey, event.data.theme, THEME_COOKIE_MAX_AGE)
       }
     }
 

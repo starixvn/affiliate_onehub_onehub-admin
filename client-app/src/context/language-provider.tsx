@@ -49,13 +49,13 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
       if (event.data.type === 'LANGUAGE_CHANGE') {
         _setLanguage(event.data.language)
-        i18n.changeLanguage(event.data.language)
+        setCookie(LANGUAGE_COOKIE_NAME, event.data.language, LANGUAGE_COOKIE_MAX_AGE)
       }
     }
 
     window.addEventListener('message', handleMessage)
     return () => window.removeEventListener('message', handleMessage)
-  }, [i18n])
+  }, [])
 
   return (
     <LanguageContext
