@@ -1,8 +1,11 @@
+using System.Net;
 using Amazon;
+using Amazon.Runtime;
 using Amazon.S3;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Services;
+using ONEHub.WebApi.HostedServices;
 
 namespace ONEHub.WebApi.Configurations;
 
@@ -13,23 +16,84 @@ public class AwsS3ServiceInstaller : IServiceInstaller
         var s3Setting = configuration.GetSection(AwsS3Setting.SETTING_NAME).Get<AwsS3Setting>();
         var proxySetting = configuration.GetSection(ProxySetting.SETTING_NAME).Get<ProxySetting>();
 
-        var s3Config = new AmazonS3Config
+        ArgumentNullException.ThrowIfNull(s3Setting);
+        ArgumentNullException.ThrowIfNull(proxySetting);
+
+        services.AddSingleton<IAmazonS3>(provider =>
         {
-            RegionEndpoint = RegionEndpoint.GetBySystemName(s3Setting!.Region)
+            var s3Config = CreateS3Config(s3Setting, proxySetting);
+            var credentials = CreateAwsCredentials(s3Setting, proxySetting);
+
+            _ = credentials.GetCredentials();
+
+            return new AmazonS3Client(credentials, s3Config);
+        });
+
+        services.AddSingleton<IStorageService, S3StorageService>();
+
+        // Force warm-up immediately after service registration
+        services.AddHostedService<S3WarmupService>();
+    }
+
+    private static AmazonS3Config CreateS3Config(AwsS3Setting s3Setting, ProxySetting proxySetting)
+    {
+        var config = new AmazonS3Config
+        {
+            RegionEndpoint = RegionEndpoint.GetBySystemName(s3Setting.Region)
         };
 
-        if (proxySetting!.IsUseProxy)
+        ConfigureProxy(config, proxySetting);
+
+        return config;
+    }
+
+    private static AWSCredentials CreateAwsCredentials(AwsS3Setting s3Setting, ProxySetting proxySetting)
+    {
+        var credentials = GetBaseCredentials(s3Setting);
+
+        if (!string.IsNullOrWhiteSpace(s3Setting.RoleArn))
         {
-            s3Config.ProxyHost = proxySetting.ProxyHost;
-            s3Config.ProxyPort = proxySetting.ProxyPort;
+            credentials = AssumeRole(credentials, s3Setting, proxySetting);
         }
 
-        services.AddSingleton<IAmazonS3>(_ =>
-            new AmazonS3Client(
-                s3Setting.AccessKey,
-                s3Setting.SecretKey,
-                s3Config
-            ));
-        services.AddSingleton<IStorageService, S3StorageService>();
+        return credentials;
+    }
+
+    private static AWSCredentials GetBaseCredentials(AwsS3Setting s3Setting)
+    {
+        if (!string.IsNullOrWhiteSpace(s3Setting.AccessKey) && !string.IsNullOrWhiteSpace(s3Setting.SecretKey))
+        {
+            return new BasicAWSCredentials(s3Setting.AccessKey, s3Setting.SecretKey);
+        }
+
+#pragma warning disable CS0618 // Type or member is obsolete
+        return FallbackCredentialsFactory.GetCredentials();
+#pragma warning restore CS0618 // Type or member is obsolete
+    }
+
+    private static AWSCredentials AssumeRole(AWSCredentials baseCredentials, AwsS3Setting s3Setting, ProxySetting proxySetting)
+    {
+        var assumeRoleOptions = new AssumeRoleAWSCredentialsOptions
+        {
+            DurationSeconds = s3Setting.RoleSessionDurationSeconds,
+            ProxySettings = proxySetting.IsUseProxy
+                ? new WebProxy(proxySetting.ProxyHost, proxySetting.ProxyPort)
+                : null
+        };
+
+        return new AssumeRoleAWSCredentials(
+            baseCredentials,
+            s3Setting.RoleArn,
+            "ONEHubAdminSession",
+            assumeRoleOptions);
+    }
+
+    private static void ConfigureProxy(ClientConfig config, ProxySetting proxySetting)
+    {
+        if (proxySetting?.IsUseProxy == true)
+        {
+            config.ProxyHost = proxySetting.ProxyHost;
+            config.ProxyPort = proxySetting.ProxyPort;
+        }
     }
 }

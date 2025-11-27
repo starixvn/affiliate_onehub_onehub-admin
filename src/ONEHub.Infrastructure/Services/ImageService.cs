@@ -1,4 +1,3 @@
-using Fanex.Logging;
 using ONEHub.Application.Services;
 using ONEHub.Application.Utils;
 using ONEHub.Domain.Errors;
@@ -6,7 +5,7 @@ using ONEHub.Domain.Results;
 using SixLabors.ImageSharp;
 
 namespace ONEHub.Infrastructure.Services;
-public class ImageService(ILogger logger) : IImageService
+public class ImageService(ILogProvider logger) : IImageService
 {
     private const string DEFAULT_DIMENSIONS = "0x0";
 
@@ -27,7 +26,7 @@ public class ImageService(ILogger logger) : IImageService
         }
         catch (Exception ex)
         {
-            logger.Critical(LoggerUtils.GenerateMessage(ex));
+            logger.LogFileMessage(LoggerUtils.GenerateMessage(ex));
             return DEFAULT_DIMENSIONS;
         }
     }

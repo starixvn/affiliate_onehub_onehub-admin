@@ -59,6 +59,7 @@ public static class DependencyInjection
                         });
             });
 
+        services.AddSingleton<ILogProvider, LogProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IDateTimeProvider, SystemDateTimeProvider>();
         services.AddSingleton<ICacheProvider, DistributedCacheProvider>();

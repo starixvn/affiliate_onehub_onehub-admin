@@ -1,4 +1,5 @@
-import { apiClient, type IAxiosErrorData } from '@/lib/api/client'
+import { apiClient } from '@/lib/api/client'
+import { createApiErrorResponse } from '@/features/landing-page-cms/shared'
 import type {
   DeleteMediaResponse,
   GetMediaListRequest,
@@ -11,6 +12,10 @@ import type {
   GetMediaDetailResponse,
   GetMediaFiltersResponse,
   UpdateMediaStatusResponse,
+  CreateMediaResponseData,
+  DeleteMediaResponseData,
+  UpdateMediaResponseData,
+  UpdateMediaStatusResponseData,
 } from '@/features/landing-page-cms/shared'
 import { REGISTER_FORM_MODULE_ID } from '../data/schema'
 
@@ -68,12 +73,9 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: null,
-        result: null,
-      } as unknown as CreateMediaResponse
+      return createApiErrorResponse<CreateMediaResponseData>(
+        error
+      ) as CreateMediaResponse
     }
   },
 
@@ -85,12 +87,9 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: null,
-        result: null,
-      } as unknown as DeleteMediaResponse
+      return createApiErrorResponse<DeleteMediaResponseData>(
+        error
+      ) as DeleteMediaResponse
     }
   },
 
@@ -116,12 +115,9 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: null,
-        result: null,
-      } as unknown as UpdateMediaResponse
+      return createApiErrorResponse<UpdateMediaResponseData>(
+        error
+      ) as UpdateMediaResponse
     }
   },
 
@@ -136,12 +132,9 @@ export const registrationFormManagementApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as IAxiosErrorData
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: null,
-        result: null,
-      } as unknown as UpdateMediaStatusResponse
+      return createApiErrorResponse<UpdateMediaStatusResponseData>(
+        error
+      ) as UpdateMediaStatusResponse
     }
   },
 

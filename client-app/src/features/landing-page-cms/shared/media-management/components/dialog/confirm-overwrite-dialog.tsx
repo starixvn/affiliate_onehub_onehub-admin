@@ -39,7 +39,7 @@ export function ConfirmOverwriteDialog({
       handleConfirm={handleConfirm}
       title={t('dialogs.confirmOverwriteTitle')}
       desc={t('dialogs.confirmOverwriteMessage', { fileName })}
-      confirmText={t('buttons.confirm')}
+      confirmText={t('buttons.ok')}
       cancelBtnText={t('buttons.cancel')}
     />
   )
