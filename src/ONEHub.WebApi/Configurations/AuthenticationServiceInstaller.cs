@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using ONEHub.Domain.Constants;
 using ONEHub.Domain.Settings;
 
 namespace ONEHub.WebApi.Configurations;
@@ -32,7 +33,7 @@ public class AuthenticationServiceInstaller : IServiceInstaller
                 {
                     OnMessageReceived = context =>
                     {
-                        if (context.Request.Cookies.TryGetValue("accessToken", out var token))
+                        if (context.Request.Cookies.TryGetValue(CookieKeys.INTERNAL_ACCESS_TOKEN, out var token))
                         {
                             context.Token = token;
                         }
