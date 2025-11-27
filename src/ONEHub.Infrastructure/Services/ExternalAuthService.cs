@@ -27,7 +27,6 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
             }
 
             var body = await response.Content.ReadFromJsonAsync<ExternalValidationResponse>();
-            await Logger.Log.InfoAsync($"Validate Token body Return: {body}");
 
             if (body?.Code == 1004)
             {
@@ -73,9 +72,6 @@ public class ExternalAuthService(HttpClient httpClient) : IExternalAuthService
 
             var body = await response.Content.ReadFromJsonAsync<ExternalRefreshResponse>();
 
-            await Logger.Log.InfoAsync($"Refresh token body Return: {body}");
-
-            // Combined invalid check: null body, null result, empty access token, or code != 0
             if (body is null || body.Code != 0 || body.Result is null || string.IsNullOrEmpty(body.Result.AccessToken))
             {
                 return Result<string>.Failure(AuthError.InvalidToken);

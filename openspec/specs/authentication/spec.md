@@ -221,3 +221,72 @@ All existing code that references the old cookie key constants MUST be updated t
 
 **Implementation Note**: Verify cache key construction in handlers doesn't hardcode old constant values
 
+### Requirement: SSO route must bypass automatic token refresh in AuthProvider
+
+The `AuthProvider` component MUST NOT attempt automatic token refresh when users navigate to SSO routes. SSO authentication uses external tokens and handles its own authentication flow independently from internal token management.
+
+#### Scenario: SSO route is treated as public route
+
+**Given** a user navigates to `/sso?target=campaign-management`
+
+**And** the user has no access token in localStorage
+
+**When** the `AuthProvider` component mounts and runs initialization
+
+**Then**:
+- MUST detect the current path is `/sso`
+- MUST treat `/sso` as a public route (like `/sign-in`, `/forgot-password`)
+- MUST set `isLoading = false` without attempting token refresh
+- MUST NOT call `/api/auth/refresh` endpoint
+- MUST allow `SsoPage` component to handle authentication independently
+
+**Implementation Note**: Add `/sso` to the `publicRoutes` array in `auth-provider.tsx` and skip `attemptTokenRefresh()` for public routes.
+
+#### Scenario: SSO route bypasses refresh even with expired token
+
+**Given** a user navigates to `/sso?target=campaign-management`
+
+**And** the user has an expired or invalid access token in localStorage
+
+**When** the `AuthProvider` component mounts and runs initialization
+
+**Then**:
+- MUST detect the current path is `/sso`
+- MUST NOT attempt to refresh the expired token
+- MUST NOT call `/api/auth/refresh` endpoint
+- MUST set `isLoading = false` and allow SSO flow to proceed
+- SSO authentication MUST replace expired token with new token from external auth
+
+**Implementation Note**: Path detection happens before token refresh logic, so expired tokens are ignored on SSO routes.
+
+#### Scenario: Normal routes still trigger token refresh
+
+**Given** a user navigates to a protected route (e.g., `/campaign-management`)
+
+**And** the user has no access token in localStorage
+
+**When** the `AuthProvider` component mounts and runs initialization
+
+**Then**:
+- MUST detect the path is NOT a public route
+- MUST attempt token refresh via `attemptTokenRefresh()`
+- MUST call `/api/auth/refresh` endpoint
+- On refresh failure, MUST redirect to `/sign-in` with redirect parameter
+- Existing token refresh behavior MUST remain unchanged for non-SSO routes
+
+**Implementation Note**: Ensure adding SSO to public routes doesn't affect normal authentication flow for protected routes.
+
+#### Scenario: Public route list includes SSO
+
+**Given** the `AuthProvider` initialization logic
+
+**When** defining the list of public routes that don't require authentication
+
+**Then**:
+- MUST include `/sign-in` in public routes
+- MUST include `/forgot-password` in public routes
+- MUST include `/sso` in public routes
+- Public route detection MUST use `startsWith()` to match paths with query parameters (e.g., `/sso?target=...`)
+
+**Implementation Note**: Update the `publicRoutes` array constant in `initializeAuth()` function.
+
