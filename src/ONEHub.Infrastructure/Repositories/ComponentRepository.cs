@@ -1,5 +1,6 @@
 using Fanex.Data.Repository;
 using ONEHub.Domain.Entities;
+using ONEHub.Domain.Errors;
 using ONEHub.Domain.Params;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Results;
@@ -36,7 +37,7 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
         return await FetchPagingDataAsync<Component>(criteria);
     }
 
-    public async Task<Result> CreateComponentAsync(CreateComponentParam param)
+    public async Task<Result<Component>> CreateComponentAsync(CreateComponentParam param)
     {
         var command = new CreateComponentCommand
         {
@@ -52,7 +53,11 @@ public class ComponentRepository(IDynamicRepository dynamicRepository)
 
         var result = await ExecuteCommandAsync(command);
 
-        return result;
+        if (result.IsFailure)
+        {
+            return Result<Component>.Failure(ComponentError.CreateComponentFailed);
+        }
+        return Result<Component>.Success(new Component { ComponentId = command.ComponentId });
     }
 
     public async Task<Result> UpdateComponentAsync(UpdateComponentParam param)

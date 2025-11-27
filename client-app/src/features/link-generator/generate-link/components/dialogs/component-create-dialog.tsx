@@ -22,12 +22,9 @@ import { Input } from '@/components/ui/input'
 import { SelectDropdown } from '@/components/select-dropdown'
 import { useCreateComponent } from '../../api/commands'
 import { useGetStatusOptions } from '../../api/queries'
-import {
-  COMPONENT_CONFIG,
-  componentCreateFormSchema,
-  type ComponentType,
-  type ComponentCreateForm,
-} from '../../data/schema'
+import { COMPONENT_CONFIG, type ComponentType } from '../../data/data'
+import { componentCreateFormSchema, type ComponentCreateForm } from '../../data/schema'
+import { useGenerateLink } from '../generate-link-provider'
 
 type ComponentCreateDialogProps = {
   componentType: ComponentType
@@ -43,6 +40,7 @@ export function ComponentCreateDialog({
   const config = COMPONENT_CONFIG[componentType]
   const title = `Create New ${config.label}`
   const createButtonLabel = `Create ${config.label}`
+  const { form: generateLinkForm } = useGenerateLink()
   const createMutation = useCreateComponent()
 
   const { data: statusData, isLoading: isLoadingStatus } = useGetStatusOptions()
@@ -76,10 +74,51 @@ export function ComponentCreateDialog({
       },
       {
         onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            form.reset()
-            onOpenChange(false)
+          if (values.statusId === 1 && response.errorCode === 0 && response.data && typeof response.data === 'object' && 'componentId' in response.data) {
+            const componentData = response.data as { componentId: number }
+            const component = {
+              componentId: componentData.componentId,
+              componentCode: values.componentCode,
+              componentName: values.componentName
+            }
+
+            if (componentType === 'event') {
+              const currentEvents = generateLinkForm.getValues('event') || ''
+              const eventIds = currentEvents ? currentEvents.split(',').filter(Boolean) : []
+              if (!eventIds.includes(String(component.componentId))) {
+                eventIds.push(String(component.componentId))
+                generateLinkForm.setValue('event', eventIds.join(','))
+
+                const currentCodes = generateLinkForm.getValues('eventCodes') || ''
+                const eventCodes = currentCodes ? currentCodes.split(',').filter(Boolean) : []
+                if (!eventCodes.includes(component.componentCode)) {
+                  eventCodes.push(component.componentCode)
+                  generateLinkForm.setValue('eventCodes', eventCodes.join(','))
+                }
+              }
+            } else {
+              switch (componentType) {
+                case 'group':
+                  generateLinkForm.setValue('group', String(component.componentId))
+                  generateLinkForm.setValue('groupCode', component.componentCode)
+                  break
+                case 'channel':
+                  generateLinkForm.setValue('channel', String(component.componentId))
+                  generateLinkForm.setValue('channelCode', component.componentCode)
+                  break
+                case 'agency':
+                  generateLinkForm.setValue('agency', String(component.componentId))
+                  generateLinkForm.setValue('agencyCode', component.componentCode)
+                  break
+                case 'type':
+                  generateLinkForm.setValue('type', String(component.componentId))
+                  generateLinkForm.setValue('typeCode', component.componentCode)
+                  break
+              }
+            }
           }
+          form.reset()
+          onOpenChange(false)
         },
       }
     )

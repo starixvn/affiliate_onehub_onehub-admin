@@ -24,6 +24,8 @@ public class CreateComponentParam : BaseParam
     public int StatusId { get; set; }
 
     public int? DeviceId { get; set; }
+
+    public int ComponentId { get; set; }
 }
 
 public class UpdateComponentParam : BaseParam

@@ -5,13 +5,15 @@ import enComponentManagement from '@/locales/en/component-management.json'
 import enLinkGenerator from '@/locales/en/link-generator.json'
 import enPageManagement from '@/locales/en/page-management.json'
 import enRegistrationFormManagement from '@/locales/en/registration-form-management.json'
+import enLinkManagement from '@/locales/en/link-management.json'
 import zhAssetUploader from '@/locales/zh/asset-uploader.json'
 import zhCampaignManagement from '@/locales/zh/campaign-management.json'
-import zhCommon from '@/locales/zh/common.json'
 import zhComponentManagement from '@/locales/zh/component-management.json'
 import zhLinkGenerator from '@/locales/zh/link-generator.json'
 import zhPageManagement from '@/locales/zh/page-management.json'
 import zhRegistrationFormManagement from '@/locales/zh/registration-form-management.json'
+import zhLinkManagement from '@/locales/zh/link-management.json'
+import zhCommon from '@/locales/zh/common.json'
 import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import { initReactI18next } from 'react-i18next'
@@ -25,6 +27,7 @@ const resources = {
     'asset-uploader': enAssetUploader,
     'registration-form-management': enRegistrationFormManagement,
     'page-management': enPageManagement,
+    'link-management': enLinkManagement,
   },
   zh: {
     common: zhCommon,
@@ -34,6 +37,7 @@ const resources = {
     'asset-uploader': zhAssetUploader,
     'registration-form-management': zhRegistrationFormManagement,
     'page-management': zhPageManagement,
+    'link-management': zhLinkManagement,
   },
 }
 
@@ -52,6 +56,7 @@ i18n
       'asset-uploader',
       'registration-form-management',
       'page-management',
+      'link-management',
     ],
     interpolation: {
       escapeValue: false,

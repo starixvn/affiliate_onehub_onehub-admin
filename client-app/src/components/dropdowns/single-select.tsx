@@ -185,7 +185,7 @@ export function SingleSelect<T extends SelectOption = SelectOption>({
                 type='button'
                 onClick={() => toggleGroup(groupLabel)}
                 aria-expanded={isExpanded}
-                className='text-muted-foreground hover:text-foreground flex w-full cursor-pointer items-center text-left text-xs font-medium'
+                className="flex items-center text-muted-foreground text-sm font-medium hover:text-foreground cursor-pointer w-full text-left"
               >
                 <IconComponent className='mr-1 h-3 w-3' />
                 {groupLabel}

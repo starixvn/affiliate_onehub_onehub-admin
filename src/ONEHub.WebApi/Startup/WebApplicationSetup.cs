@@ -16,6 +16,7 @@ using ONEHub.WebApi.Features.LandingPage.RegistrationForm;
 using ONEHub.WebApi.Features.PageBuilder;
 using ONEHub.WebApi.Features.PageManagement;
 using ONEHub.WebApi.Features.Settings;
+using ONEHub.WebApi.Features.Link;
 using Serilog;
 using Serilog.Events;
 
@@ -238,6 +239,7 @@ public static class WebApplicationSetup
         app.RegisterSettingsEndpoints();
         app.RegisterAssetUploaderEndpoints();
         app.RegisterRegistrationFormEndpoint();
+        app.RegisterLinkEndpoints();
         return app;
     }
 }

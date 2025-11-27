@@ -1,0 +1,98 @@
+{
+  "page": {
+    "title": "Link Management",
+    "description": "Manage and track all generated links",
+    "loading": "Loading..."
+  },
+  "buttons": {
+    "export": "Export"
+  },
+  "filters": {
+    "all": "All",
+    "active": "Active",
+    "inactive": "Inactive",
+    "country": "Country",
+    "channel": "Channel",
+    "status": "Status",
+    "createdDate": "Created Date"
+  },
+  "summary": {
+    "totalLinks": "Total Links",
+    "uniqueClicks": "Unique Clicks",
+    "totalRegistrations": "Total Registrations",
+    "totalFtds": "Total FTDs",
+    "avgFtdAmount": "Avg. FTD Amount",
+    "totalBonusUsers": "Total Bonus Users"
+  },
+  "table": {
+    "search": "Search by name, domain, campaign, ID code...",
+    "noResults": "No results found.",
+    "updateFrequency": "Update regularly every {{minutes}} minutes.",
+    "copySuccess": "Short link copied to clipboard",
+    "copyError": "Failed to copy link",
+    "columns": {
+      "select": "Select all",
+      "selectRow": "Select row",
+      "linkName": "Link Name",
+      "shortUrl": "Short URL",
+      "domainName": "Domain",
+      "campaignName": "Campaign",
+      "countryName": "Country",
+      "channelName": "Channel",
+      "idCode": "ID Code",
+      "createdDate": "Created Date",
+      "click": "Unique Click",
+      "registration": "Registration",
+      "bonusUser": "Bonus User",
+      "ftd": "FTD",
+      "avgFtdAmount": "Avg. FTD Amount",
+      "status": "Status"
+    },
+    "actions": {
+      "openMenu": "Open menu",
+      "viewDetails": "View Details",
+      "duplicate": "Duplicate"
+    }
+  },
+  "searchToolbar": {
+    "submit": "Search"
+  },
+  "dialogs": {
+    "detail": {
+      "title": "Link Details",
+      "description": "View tracking link details, including parameters, targeting, and domain.",
+      "event": "Event",
+      "landingPage": "Landing Page",
+      "group": "Group",
+      "agency": "Agency",
+      "language": "Language",
+      "type": "Type",
+      "note": "Note",
+      "fullUrl": "Full URL",
+      "shortUrl": "Short URL"
+    },
+    "statusChange": {
+      "title": "Confirm Status Change",
+      "description": "Are you sure you want to change the status of \"{{name}}\"?",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "updating": "Updating..."
+    }
+  },
+  "excel": {
+    "titlePrefix": "Links",
+    "searchPrefix": "Search",
+    "allLinks": "All Links",
+    "statusPrefix": "Status",
+    "allStatus": "All Status",
+    "rowNumber": "#"
+  },
+  "errors": {
+    "loadingFailed": "Failed to load dashboard data"
+  },
+  "export": {
+    "success": "Links exported successfully",
+    "error": "Failed to export links"
+  }
+}
+

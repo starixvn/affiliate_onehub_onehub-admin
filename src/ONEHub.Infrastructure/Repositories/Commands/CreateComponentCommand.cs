@@ -22,4 +22,6 @@ public class CreateComponentCommand : BaseCommand
         && !string.IsNullOrWhiteSpace(ComponentName)
         && !string.IsNullOrWhiteSpace(ComponentCode)
         && CategoryId > 0;
+
+    public int ComponentId { get; set; }
 }

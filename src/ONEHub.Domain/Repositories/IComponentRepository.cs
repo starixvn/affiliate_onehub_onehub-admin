@@ -10,7 +10,7 @@ public interface IComponentRepository
 
     public Task<Result<PagingData<Component>>> GetComponentListAsync(ComponentListParam param);
 
-    public Task<Result> CreateComponentAsync(CreateComponentParam param);
+    public Task<Result<Component>> CreateComponentAsync(CreateComponentParam param);
 
     public Task<Result> UpdateComponentAsync(UpdateComponentParam param);
 

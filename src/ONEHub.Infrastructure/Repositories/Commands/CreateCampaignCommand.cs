@@ -11,4 +11,8 @@ public class CreateCampaignCommand : BaseCommand
     public override string GetSettingKey() => "OH_Campaign_Ins";
 
     public override bool IsValid() => StatusId >= 0 && !string.IsNullOrWhiteSpace(CampaignName);
+
+    public int CampaignId { get; set; }
+
+    public string CampaignCode { get; set; }
 }

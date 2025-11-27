@@ -78,6 +78,7 @@ public static class DependencyInjection
         services.AddSingleton<IAssetUploaderRepository, AssetUploaderRepository>();
         services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
         services.AddSingleton<IPageManagementRepository, PageManagementRepository>();
+        services.AddSingleton<ILinkRepository, LinkRepository>();
 
         return services;
     }

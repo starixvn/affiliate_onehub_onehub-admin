@@ -42,37 +42,33 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
   }
 
   return (
-    <div
-      ref={resultRef}
-      className='bg-card space-y-4 rounded-lg border p-4 sm:p-6'
-    >
+    <div ref={resultRef} className='rounded-lg border bg-card p-4 sm:p-6 space-y-4'>
       <h3 className='text-lg font-semibold'>Link Generated</h3>
 
       <div className='space-y-4'>
         <div className='flex items-center gap-2'>
-          <Label className='bg-primary text-primary-foreground flex w-24 items-center justify-center rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap'>
-            Full Link
-          </Label>
-          <div className='bg-muted/50 flex-1 rounded-md border p-2'>
-            <p className='font-mono text-sm break-all select-none'>
-              {result.fullLink}
-            </p>
+          <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md whitespace-nowrap w-24 flex items-center justify-center'>Full Link</Label>
+          <div className='flex-1 rounded-md border bg-muted/50 p-2'>
+            <p className='text-sm break-all select-none font-mono'>{result.fullLink}</p>
           </div>
         </div>
 
         <div className='flex items-center gap-2'>
-          <Label className='bg-primary text-primary-foreground flex w-24 items-center justify-center rounded-md px-4 py-2 text-sm font-medium whitespace-nowrap'>
-            Short Link
-          </Label>
-          <div className='bg-muted/50 flex flex-1 items-center gap-2 rounded-md border p-2'>
-            <p className='flex-1 font-mono text-sm break-all select-all'>
+          <Label className='text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-md whitespace-nowrap w-24 flex items-center justify-center'>Short Link</Label>
+          <div className='flex-1 flex items-center gap-2 rounded-md border bg-muted/50 p-2'>
+            <a
+              href={result.shortLink}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-sm break-all select-all font-mono flex-1 text-blue-600 hover:text-blue-800 underline decoration-1 underline-offset-2'
+            >
               {result.shortLink}
-            </p>
+            </a>
             <Button
               variant='ghost'
               size='icon'
               onClick={handleCopyShortLink}
-              className='h-6 w-6 shrink-0'
+              className='shrink-0 h-6 w-6'
             >
               {copied ? (
                 <Check className='h-4 w-4 text-green-500' />
@@ -86,3 +82,4 @@ export function GenerateLinkResult({ result }: GenerateLinkResultProps) {
     </div>
   )
 }
+

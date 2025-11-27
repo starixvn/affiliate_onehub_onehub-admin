@@ -1,4 +1,4 @@
-import { format } from 'date-fns'
+import { format, startOfDay, endOfDay } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
@@ -12,12 +12,16 @@ type DatePickerProps = {
   selected: Date | undefined
   onSelect: (date: Date | undefined) => void
   placeholder?: string
+  minDate?: Date
+  maxDate?: Date
 }
 
 export function DatePicker({
   selected,
   onSelect,
   placeholder = 'Pick a date',
+  minDate,
+  maxDate,
 }: DatePickerProps) {
   return (
     <Popover>
@@ -41,9 +45,11 @@ export function DatePicker({
           captionLayout='dropdown'
           selected={selected}
           onSelect={onSelect}
-          disabled={(date: Date) =>
-            date > new Date() || date < new Date('1900-01-01')
-          }
+          disabled={(date: Date) => {
+            const max = maxDate || endOfDay(new Date())
+            const min = minDate || startOfDay(new Date('2025-01-01'))
+            return date > max || date < min
+          }}
         />
       </PopoverContent>
     </Popover>

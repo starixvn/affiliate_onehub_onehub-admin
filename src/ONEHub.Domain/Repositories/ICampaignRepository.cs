@@ -10,7 +10,7 @@ public interface ICampaignRepository
 
     public Task<Result<PagingData<Campaign>>> GetCampaignListAsync(CampaignListParam param);
 
-    public Task<Result> CreateCampaignAsync(CreateCampaignParam param);
+    public Task<Result<CampaignBase>> CreateCampaignAsync(CreateCampaignParam param);
 
     public Task<Result> UpdateCampaignAsync(UpdateCampaignParam param);
 

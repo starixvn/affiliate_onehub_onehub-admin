@@ -19,6 +19,7 @@ export type TargetCountry = {
   languageCode: string
   languageName: string
   shortedLanguageCode: string
+  targetLanguageCode: string
   status: number
 }
 

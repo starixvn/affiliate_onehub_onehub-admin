@@ -27,6 +27,7 @@
     "shortLinkNamePlaceholder": "请选择短链接名称",
     "shortLinkValue": "短链接值",
     "shortLinkValuePlaceholder": "请输入短链接值",
+    "shortLinkValueTooltip": "自定义链接的短路径部分。您的自定义路径必须为 5–20 个字符，且只能包含小写字母、数字、连字符或点号。",
     "channel": "渠道",
     "channelPlaceholder": "请选择渠道",
     "type": "类型",

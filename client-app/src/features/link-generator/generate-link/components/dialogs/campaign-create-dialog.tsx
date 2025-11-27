@@ -22,14 +22,15 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { SelectDropdown } from '@/components/select-dropdown'
-import { status } from '@/features/campaign-management/data/data'
+import { status, STATUS_IDS } from '../../data/data'
 import { useCreateCampaign } from '../../api/commands'
+import { useGenerateLink } from '../generate-link-provider'
 
 const getFormSchema = (t: (key: string) => string) =>
   z.object({
     campaignName: z.string().trim().min(1, t('dialog.form.nameRequired')),
     description: z.string().max(500).optional(),
-    statusId: z.number().optional(),
+    statusId: z.number(),
   })
 
 type CampaignCreateDialogProps = {
@@ -42,6 +43,7 @@ export function CampaignCreateDialog({
   onOpenChange,
 }: CampaignCreateDialogProps) {
   const { t } = useTranslation('campaign-management')
+  const { form: generateLinkForm } = useGenerateLink()
   const formSchema = getFormSchema(t)
   type CampaignForm = z.infer<typeof formSchema>
   const createMutation = useCreateCampaign()
@@ -60,14 +62,29 @@ export function CampaignCreateDialog({
       {
         campaignName: values.campaignName,
         description: values.description || '',
-        statusId: values.statusId ?? 0,
+        statusId: values.statusId,
       },
       {
         onSuccess: (response) => {
-          if (response.errorCode === 0) {
-            form.reset()
-            onOpenChange(false)
+          if (
+            values.statusId === STATUS_IDS.ACTIVE &&
+            response.errorCode === 0 &&
+            response.data &&
+            typeof response.data === 'object' &&
+            'campaignId' in response.data &&
+            'campaignCode' in response.data
+          ) {
+            const data = response.data
+            if (
+              typeof data.campaignId === 'number' &&
+              typeof data.campaignCode === 'string'
+            ) {
+              generateLinkForm.setValue('campaign', String(data.campaignId))
+              generateLinkForm.setValue('campaignCode', data.campaignCode)
+            }
           }
+          form.reset()
+          onOpenChange(false)
         },
       }
     )

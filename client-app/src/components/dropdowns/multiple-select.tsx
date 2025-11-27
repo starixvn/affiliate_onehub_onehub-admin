@@ -219,13 +219,13 @@ export function MultipleSelect({
                   aria-label={`Toggle all ${group.groupLabel}`}
                 >
                   <Checkbox checked={checkboxState} className='mr-2' />
-                  <span className='text-muted-foreground text-xs font-medium'>
+                  <span className='text-muted-foreground text-sm font-medium'>
                     {group.groupLabel}
                   </span>
                 </button>
               )}
               {!enableGroupSelect && (
-                <div className='text-muted-foreground px-2 py-1.5 text-xs font-medium'>
+                <div className='text-muted-foreground px-2 py-1.5 text-sm font-medium'>
                   {group.groupLabel}
                 </div>
               )}

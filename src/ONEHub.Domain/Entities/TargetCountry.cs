@@ -12,5 +12,7 @@ public class TargetCountry
 
     public string ShortedLanguageCode { get; set; } = string.Empty;
 
+    public string TargetLanguageCode { get; set; } = string.Empty;
+
     public byte Status { get; set; }
 }

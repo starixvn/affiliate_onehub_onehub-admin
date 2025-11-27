@@ -9,6 +9,7 @@ import type {
   InsertLinkRequest,
   InsertLinkResponse,
 } from '../types'
+import { COMPONENT_CONFIG } from '../data/data'
 
 type InsertComponentRequest = {
   componentName: string
@@ -52,23 +53,23 @@ export const linkGeneratorApi = {
   },
 
   async getEvents(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByCategory(1)
+    return this.getComponentsByCategory(COMPONENT_CONFIG.event.categoryId)
   },
 
   async getGroups(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByCategory(2)
+    return this.getComponentsByCategory(COMPONENT_CONFIG.group.categoryId)
   },
 
   async getChannels(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByCategory(3)
+    return this.getComponentsByCategory(COMPONENT_CONFIG.channel.categoryId)
   },
 
   async getAgencies(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByCategory(4)
+    return this.getComponentsByCategory(COMPONENT_CONFIG.agency.categoryId)
   },
 
   async getTypes(): Promise<IAxiosResponse<ComponentInfo[]>> {
-    return this.getComponentsByCategory(5)
+    return this.getComponentsByCategory(COMPONENT_CONFIG.type.categoryId)
   },
 
   async getLandingPages(): Promise<

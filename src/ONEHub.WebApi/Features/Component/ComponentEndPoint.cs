@@ -79,7 +79,7 @@ public static class ComponentEndPoint
         return TypedResults.Ok(result);
     }
 
-    private static async Task<Results<Ok<Result>, ValidationProblem>> Create(
+    private static async Task<Results<Ok<Result<ComponentCreatedResponse>>, ValidationProblem>> Create(
         [FromBody] CreateComponentRequest request,
         IMediator mediator)
     {
