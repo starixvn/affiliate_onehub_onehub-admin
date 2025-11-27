@@ -1,4 +1,5 @@
 import { apiClient } from '@/lib/api/client'
+import { createApiErrorResponse } from '@/features/landing-page-cms/shared'
 import type {
   DeleteMediaResponse,
   GetMediaListRequest,
@@ -11,6 +12,10 @@ import type {
   GetMediaFiltersResponse,
   UpdateMediaStatusResponse,
   BaseFile,
+  CreateMediaResponseData,
+  DeleteMediaResponseData,
+  UpdateMediaResponseData,
+  UpdateMediaStatusResponseData,
 } from '@/features/landing-page-cms/shared'
 
 export const assetUploaderApi = {
@@ -57,16 +62,9 @@ export const assetUploaderApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode: number,
-        message: string,
-        errorMessage: string
-      }
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: err.message || err.errorMessage,
-        result: null,
-      } as unknown as CreateMediaResponse
+      return createApiErrorResponse<CreateMediaResponseData>(
+        error
+      ) as CreateMediaResponse
     }
   },
 
@@ -78,16 +76,9 @@ export const assetUploaderApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode: number,
-        message: string,
-        errorMessage: string
-      }
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: err.message || err.errorMessage,
-        result: null,
-      } as unknown as DeleteMediaResponse
+      return createApiErrorResponse<DeleteMediaResponseData>(
+        error
+      ) as DeleteMediaResponse
     }
   },
 
@@ -113,16 +104,9 @@ export const assetUploaderApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode: number,
-        message: string,
-        errorMessage: string
-      }
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: err.message || err.errorMessage,
-        result: null,
-      } as unknown as UpdateMediaResponse
+      return createApiErrorResponse<UpdateMediaResponseData>(
+        error
+      ) as UpdateMediaResponse
     }
   },
 
@@ -137,16 +121,9 @@ export const assetUploaderApi = {
       )
       return response.data
     } catch (error: unknown) {
-      const err = error as {
-        errorCode: number,
-        message: string,
-        errorMessage: string
-      }
-      return {
-        errorCode: err.errorCode || 1,
-        errorMessage: err.message || err.errorMessage,
-        result: null,
-      } as unknown as UpdateMediaStatusResponse
+      return createApiErrorResponse<UpdateMediaStatusResponseData>(
+        error
+      ) as UpdateMediaStatusResponse
     }
   },
 

@@ -4,7 +4,7 @@
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup Label="Core Packages">
-    <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.4.1" />
+    <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.5.1" />
     <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageVersion Include="AWSSDK.S3" Version="4.0.13.1" />
     <PackageVersion Include="Fanex.Logging.Sentry" Version="1.0.6" />

@@ -2,7 +2,6 @@ using System.Net;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
-using Amazon.SecurityToken;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Services;
@@ -17,9 +16,12 @@ public class AwsS3ServiceInstaller : IServiceInstaller
         var s3Setting = configuration.GetSection(AwsS3Setting.SETTING_NAME).Get<AwsS3Setting>();
         var proxySetting = configuration.GetSection(ProxySetting.SETTING_NAME).Get<ProxySetting>();
 
+        ArgumentNullException.ThrowIfNull(s3Setting);
+        ArgumentNullException.ThrowIfNull(proxySetting);
+
         services.AddSingleton<IAmazonS3>(provider =>
         {
-            var s3Config = CreateS3Config(s3Setting!, proxySetting!);
+            var s3Config = CreateS3Config(s3Setting, proxySetting);
             var credentials = CreateAwsCredentials(s3Setting, proxySetting);
 
             _ = credentials.GetCredentials();
@@ -71,13 +73,6 @@ public class AwsS3ServiceInstaller : IServiceInstaller
 
     private static AWSCredentials AssumeRole(AWSCredentials baseCredentials, AwsS3Setting s3Setting, ProxySetting proxySetting)
     {
-        var stsConfig = new AmazonSecurityTokenServiceConfig
-        {
-            RegionEndpoint = RegionEndpoint.GetBySystemName(s3Setting.Region)
-        };
-
-        ConfigureProxy(stsConfig, proxySetting);
-
         var assumeRoleOptions = new AssumeRoleAWSCredentialsOptions
         {
             DurationSeconds = s3Setting.RoleSessionDurationSeconds,
@@ -95,7 +90,7 @@ public class AwsS3ServiceInstaller : IServiceInstaller
 
     private static void ConfigureProxy(ClientConfig config, ProxySetting proxySetting)
     {
-        if (proxySetting.IsUseProxy)
+        if (proxySetting?.IsUseProxy == true)
         {
             config.ProxyHost = proxySetting.ProxyHost;
             config.ProxyPort = proxySetting.ProxyPort;
