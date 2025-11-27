@@ -5,6 +5,7 @@ import enComponentManagement from '@/locales/en/component-management.json'
 import enLinkGenerator from '@/locales/en/link-generator.json'
 import enPageManagement from '@/locales/en/page-management.json'
 import enRegistrationFormManagement from '@/locales/en/registration-form-management.json'
+import enPageBuilder from '@/locales/en/page-builder.json'
 import enLinkManagement from '@/locales/en/link-management.json'
 import zhAssetUploader from '@/locales/zh/asset-uploader.json'
 import zhCampaignManagement from '@/locales/zh/campaign-management.json'
@@ -12,6 +13,7 @@ import zhComponentManagement from '@/locales/zh/component-management.json'
 import zhLinkGenerator from '@/locales/zh/link-generator.json'
 import zhPageManagement from '@/locales/zh/page-management.json'
 import zhRegistrationFormManagement from '@/locales/zh/registration-form-management.json'
+import zhPageBuilder from '@/locales/zh/page-builder.json'
 import zhLinkManagement from '@/locales/zh/link-management.json'
 import zhCommon from '@/locales/zh/common.json'
 import i18n from 'i18next'
@@ -26,6 +28,7 @@ const resources = {
     'link-generator': enLinkGenerator,
     'asset-uploader': enAssetUploader,
     'registration-form-management': enRegistrationFormManagement,
+    'page-builder': enPageBuilder,
     'page-management': enPageManagement,
     'link-management': enLinkManagement,
   },
@@ -36,6 +39,7 @@ const resources = {
     'link-generator': zhLinkGenerator,
     'asset-uploader': zhAssetUploader,
     'registration-form-management': zhRegistrationFormManagement,
+    'page-builder': zhPageBuilder,
     'page-management': zhPageManagement,
     'link-management': zhLinkManagement,
   },

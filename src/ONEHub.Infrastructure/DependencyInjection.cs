@@ -81,6 +81,8 @@ public static class DependencyInjection
         services.AddSingleton<IPageManagementRepository, PageManagementRepository>();
         services.AddSingleton<ILinkRepository, LinkRepository>();
 
+        services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
+
         return services;
     }
 }

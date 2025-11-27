@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { ChevronsUpDown, Plus } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -37,6 +37,7 @@ interface MultipleSelectProps {
   onCreateNew?: () => void
   createNewLabel?: string
   className?: string
+  renderOptionLabel?: (option: SelectOption) => ReactNode
 }
 
 function isSelectOption(item: unknown): item is SelectOption {
@@ -109,6 +110,7 @@ export function MultipleSelect({
   onCreateNew,
   createNewLabel = 'Create new...',
   className,
+  renderOptionLabel,
 }: MultipleSelectProps) {
   const [open, setOpen] = useState(false)
   const [searchValue, setSearchValue] = useState('')
@@ -122,6 +124,8 @@ export function MultipleSelect({
 
   const getLabel = (option: SelectOption): string => String(option[labelKey])
   const getValue = (option: SelectOption): string => String(option[valueKey])
+  const getDisplayContent = (option: SelectOption): ReactNode =>
+    renderOptionLabel ? renderOptionLabel(option) : getLabel(option)
 
   const getSelectedLabel = () => {
     if (value.length === 0) return null
@@ -196,7 +200,7 @@ export function MultipleSelect({
             checked={value.includes(getValue(option))}
             className='mr-2'
           />
-          {getLabel(option)}
+          {getDisplayContent(option)}
         </CommandItem>
       ))
     }
@@ -239,7 +243,7 @@ export function MultipleSelect({
                     checked={value.includes(getValue(option))}
                     className='mr-2'
                   />
-                  {getLabel(option)}
+                  {getDisplayContent(option)}
                 </CommandItem>
               ))}
             </CommandGroup>
@@ -304,7 +308,7 @@ export function MultipleSelect({
                     checked={value.includes(getValue(option))}
                     className='mr-2'
                   />
-                  {getLabel(option)}
+                  {getDisplayContent(option)}
                 </CommandItem>
               ))}
               {filteredSubGroups.map((group) => {
@@ -340,7 +344,7 @@ export function MultipleSelect({
                           checked={value.includes(getValue(option))}
                           className='mr-2'
                         />
-                        {getLabel(option)}
+                        {getDisplayContent(option)}
                       </CommandItem>
                     ))}
                   </div>
