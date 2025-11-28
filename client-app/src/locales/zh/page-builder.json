@@ -6,7 +6,7 @@
   },
   "form": {
     "createNewPage": "创建新页面",
-    "pageConfigurationDetails": "页面配置详情",
+    "pageConfigurationDetails": "点击此图标将打开指南弹出窗口，如上方模拟图所示",
     "pageName": "页面名称",
     "pageNamePlaceholder": "例如：新年促销页面",
     "pageCode": "页面代码",
@@ -74,8 +74,9 @@
   },
   "validation": {
     "pageNameRequired": "页面名称为必填项",
-    "pageNameMaxLength": "页面名称最多 200 个字符",
+    "pageNameMaxLength": "页面名称最多 50 个字符",
     "pageCodeRequired": "页面代码为必填项",
+    "pageCodeMaxLength": "页面代码最多 50 个字符",
     "pageCodeInvalid": "页面代码只能包含字母和数字",
     "campaignRequired": "活动为必填项",
     "countryRequired": "国家为必填项",

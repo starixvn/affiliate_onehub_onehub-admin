@@ -64,7 +64,7 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
             id='pageName'
             placeholder={t('form.pageNamePlaceholder')}
             {...register('pageName')}
-            maxLength={200}
+            maxLength={50}
             disabled={isDisabled}
             className={cn(errors.pageName ? 'border-destructive focus-visible:border-destructive' : '')}
           />
@@ -88,7 +88,7 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
                 }
               },
             })}
-            maxLength={20}
+            maxLength={50}
             disabled={isDisabled}
             className={cn(errors.pageCode ? 'border-destructive focus-visible:border-destructive' : '')}
           />

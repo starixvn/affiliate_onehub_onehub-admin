@@ -1,8 +1,8 @@
 import { z } from 'zod'
 
 export const createPageBuilderFormSchema = (t: (key: string) => string) => z.object({
-  pageName: z.string().trim().min(1, t('validation.pageNameRequired')).max(200, t('validation.pageNameMaxLength')),
-  pageCode: z.string().trim().min(1, t('validation.pageCodeRequired')).regex(/^[a-zA-Z0-9-_]+$/, t('validation.pageCodeInvalid')),
+  pageName: z.string().trim().min(1, t('validation.pageNameRequired')).max(50, t('validation.pageNameMaxLength')),
+  pageCode: z.string().trim().min(1, t('validation.pageCodeRequired')).max(50, t('validation.pageCodeMaxLength')).regex(/^[a-zA-Z0-9-_]+$/, t('validation.pageCodeInvalid')),
   campaign: z.string().min(1, t('validation.campaignRequired')),
   campaignCode: z.string(),
   country: z.string().min(1, t('validation.countryRequired')),
