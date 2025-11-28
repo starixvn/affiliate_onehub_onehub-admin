@@ -7,3 +7,6 @@ public record GetDomainListRequest(
     int DomainType
 );
 
+public record RefreshDomainRequest(
+    [Required] int DomainType
+);

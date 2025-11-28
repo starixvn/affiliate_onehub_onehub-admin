@@ -46,7 +46,16 @@ export function LinkConfigSection() {
     form,
     languages,
   })
-  const { domains, domainsForShortLink } = useCountryOptions({
+  const {
+    domains,
+    domainsForShortLink,
+    refreshDomains,
+    isRefreshingRedirect,
+    isRefreshingShortLink,
+    domainTypeFullLink,
+    domainTypeShortLink,
+    canRefresh,
+  } = useCountryOptions({
     form,
     selectedLandingPage,
   })
@@ -192,8 +201,10 @@ export function LinkConfigSection() {
             variant='ghost'
             size='icon'
             className='h-5 w-5'
+            onClick={() => refreshDomains(domainTypeFullLink)}
+            disabled={isDisabled || isRefreshingRedirect || !canRefresh}
           >
-            <RefreshCw className='h-3.5 w-3.5' />
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshingRedirect ? 'animate-spin' : ''}`} />
           </Button>
           <span className='text-xs text-green-600'>
             ({getAvailableDomainsText(domains?.length || 0)})
@@ -250,8 +261,10 @@ export function LinkConfigSection() {
             variant='ghost'
             size='icon'
             className='h-5 w-5'
+            onClick={() => refreshDomains(domainTypeShortLink)}
+            disabled={isDisabled || isRefreshingShortLink || !canRefresh}
           >
-            <RefreshCw className='h-3.5 w-3.5' />
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshingShortLink ? 'animate-spin' : ''}`} />
           </Button>
           <span className='text-xs text-green-600'>
             ({getAvailableDomainsText(domainsForShortLink?.length || 0)})

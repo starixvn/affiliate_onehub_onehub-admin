@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { linkGeneratorApi } from './client'
 
 export const linkGeneratorKeys = {
@@ -110,5 +111,23 @@ export function useGetDomains(countryCode: string, domainType: number) {
     queryFn: () => linkGeneratorApi.getDomains(countryCode, domainType),
     select: (data) => data.data,
     enabled: !!countryCode && domainType != null,
+  })
+}
+
+export function useRefreshDomains() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ domainType }: { domainType: number; countryCode: string }) => 
+      linkGeneratorApi.refreshDomains(domainType),
+    onSuccess: async (_, variables) => {
+      await queryClient.refetchQueries({ 
+        queryKey: linkGeneratorKeys.domains(variables.countryCode, variables.domainType)
+      })
+    },
+    onError: (error: unknown) => {
+      const apiError = error as { response?: { data?: { errorMessage?: string } } }
+      toast.error(apiError?.response?.data?.errorMessage || 'Failed to refresh domains')
+    },
   })
 }
