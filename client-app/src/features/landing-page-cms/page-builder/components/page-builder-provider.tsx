@@ -34,8 +34,11 @@ type PageBuilderContextType = {
   previewError: string | null
   setPreviewError: (error: string | null) => void
   pageId: number | undefined
+  internalPageId: number | undefined
+  setInternalPageId: (pageId: number | undefined) => void
   isCloneMode: boolean
   resetToInitialData: () => void
+  skipDataReloadOnPageIdChange: () => void
 }
 
 const PageBuilderContext = React.createContext<PageBuilderContextType | null>(null)
@@ -55,7 +58,10 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
   const [isPreviewLoading, setIsPreviewLoading] = React.useState(false)
   const [isIframeLoading, setIsIframeLoading] = React.useState(false)
   const [previewError, setPreviewError] = React.useState<string | null>(null)
+  const [internalPageId, setInternalPageId] = React.useState<number | undefined>(undefined)
   const queryClient = useQueryClient()
+  const previousPageIdRef = React.useRef<number | undefined>(pageId)
+  const skipDataReloadRef = React.useRef(false)
 
   const form = useForm<PageBuilderFormValues>({
     resolver: zodResolver(createPageBuilderFormSchema(t)),
@@ -66,11 +72,33 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
 
   const { data: campaigns, isLoading: isLoadingCampaigns, isError: isErrorCampaigns } = useGetCampaigns()
   const { data: countries, isLoading: isLoadingCountries, isError: isErrorCountries } = useGetCountries()
-  const { data: pageDetails, isLoading: isLoadingPageDetails } = useGetPageBuilderDetails(pageId, isPreview)
+  // Only fetch page details if we have pageId from URL and no internalPageId (not just created)
+  const shouldFetchPageDetails = !!pageId && !internalPageId
+  const { data: pageDetails, isLoading: isLoadingPageDetails } = useGetPageBuilderDetails(
+    shouldFetchPageDetails ? pageId : undefined,
+    isPreview
+  )
   const { data: modules } = useGetModules()
 
   const countryCode = form.watch('country')
   const { data: languages, isLoading: isLoadingLanguages } = useGetLanguages(countryCode || '')
+
+  // Reset isDataLoaded when pageId changes, but skip if transitioning from create to edit
+  React.useEffect(() => {
+    // If skipDataReloadRef is set, it means we're transitioning from create to edit
+    // Don't reset isDataLoaded to avoid reloading data
+    if (skipDataReloadRef.current) {
+      skipDataReloadRef.current = false
+      previousPageIdRef.current = pageId
+      return
+    }
+    
+    // Only reset if pageId actually changed (not just from undefined to a value after create)
+    if (previousPageIdRef.current !== pageId) {
+      setIsDataLoaded(false)
+      previousPageIdRef.current = pageId
+    }
+  }, [pageId])
 
   React.useEffect(() => {
     if (pageDetails && !isDataLoaded && campaigns && countries && modules) {
@@ -182,13 +210,14 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
   const isLoading =
     isLoadingCampaigns ||
     isLoadingCountries ||
-    (!!pageId && isLoadingPageDetails)
+    (shouldFetchPageDetails && isLoadingPageDetails)
 
   const isError =
     isErrorCampaigns ||
     isErrorCountries 
 
-  const isCloneMode = mode === 'clone'
+  // isCloneMode should be false if we have internalPageId (just created)
+  const isCloneMode = mode === 'clone' && !internalPageId
 
   const resetToInitialData = React.useCallback(() => {
     if (pageId) {
@@ -198,6 +227,10 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
       })
     }
   }, [pageId, isPreview, queryClient])
+
+  const skipDataReloadOnPageIdChange = React.useCallback(() => {
+    skipDataReloadRef.current = true
+  }, [])
 
   const contextValue = React.useMemo(
     () => ({
@@ -217,8 +250,11 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
       previewError,
       setPreviewError,
       pageId,
+      internalPageId,
+      setInternalPageId,
       isCloneMode,
       resetToInitialData,
+      skipDataReloadOnPageIdChange,
     }),
     [
       form,
@@ -232,8 +268,10 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
       isIframeLoading,
       previewError,
       pageId,
+      internalPageId,
       isCloneMode,
       resetToInitialData,
+      skipDataReloadOnPageIdChange,
       setDialogOpen,
       setGeneratedResult,
       setIsPreviewLoading,

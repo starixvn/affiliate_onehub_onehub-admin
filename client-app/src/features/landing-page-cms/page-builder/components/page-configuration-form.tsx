@@ -64,7 +64,7 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
             id='pageName'
             placeholder={t('form.pageNamePlaceholder')}
             {...register('pageName')}
-            maxLength={200}
+            maxLength={50}
             disabled={isDisabled}
             className={cn(errors.pageName ? 'border-destructive focus-visible:border-destructive' : '')}
           />
@@ -78,8 +78,17 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
           <Input
             id='pageCode'
             placeholder={t('form.pageCodePlaceholder')}
-            {...register('pageCode')}
-            maxLength={20}
+            {...register('pageCode', {
+              onChange: (e) => {
+                const value = e.target.value
+                const pageCodePattern = /^[a-zA-Z0-9-_]+$/
+                if (value && !pageCodePattern.test(value)) {
+                  e.target.value = value.replace(/[^a-zA-Z0-9-_]/g, '')
+                  form.setValue('pageCode', e.target.value)
+                }
+              },
+            })}
+            maxLength={50}
             disabled={isDisabled}
             className={cn(errors.pageCode ? 'border-destructive focus-visible:border-destructive' : '')}
           />

@@ -6,7 +6,7 @@
   },
   "form": {
     "createNewPage": "Create New Page",
-    "pageConfigurationDetails": "Page configuration details",
+    "pageConfigurationDetails": "Clicking on this icon will open Guideline pop-up as mockup above",
     "pageName": "Page Name",
     "pageNamePlaceholder": "e.g., New Year Promotion Page",
     "pageCode": "Page Code",
@@ -74,8 +74,9 @@
   },
   "validation": {
     "pageNameRequired": "Page name is required",
-    "pageNameMaxLength": "Page name must be at most 200 characters",
+    "pageNameMaxLength": "Page name must be at most 50 characters",
     "pageCodeRequired": "Page code is required",
+    "pageCodeMaxLength": "Page code must be at most 50 characters",
     "pageCodeInvalid": "Page code must contain only letters and numbers",
     "campaignRequired": "Campaign is required",
     "countryRequired": "Country is required",
