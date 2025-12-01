@@ -6,16 +6,84 @@ using Google.Apis.Sheets.v4;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Services;
+using IHttpClientFactory = Google.Apis.Http.IHttpClientFactory;
 
 namespace ONEHub.Worker.Configurations;
 
-public class ProxyHttpClientFactory(HttpClientHandler handler) : Google.Apis.Http.IHttpClientFactory
+public class TimeoutHttpClientFactory(int timeoutSeconds) : IHttpClientFactory
 {
-    public ConfigurableHttpClient CreateHttpClient(CreateHttpClientArgs args) => new(new ConfigurableMessageHandler(handler));
+    public ConfigurableHttpClient CreateHttpClient(CreateHttpClientArgs args)
+    {
+        var handler = new HttpClientHandler();
+        var configurableHandler = new ConfigurableMessageHandler(handler)
+        {
+            ApplicationName = args.ApplicationName
+        };
+
+        GSheetsServiceInstaller.AddInitializers(configurableHandler, args.Initializers);
+
+        var httpClient = new ConfigurableHttpClient(configurableHandler)
+        {
+            Timeout = TimeSpan.FromSeconds(timeoutSeconds)
+        };
+
+        return httpClient;
+    }
+}
+
+public class ProxyHttpClientFactory(IWebProxy proxy, int timeoutSeconds = 300) : IHttpClientFactory
+{
+    public ConfigurableHttpClient CreateHttpClient(CreateHttpClientArgs args)
+    {
+        var handler = new HttpClientHandler
+        {
+            Proxy = proxy,
+            UseProxy = true
+        };
+
+        var configurableHandler = new ConfigurableMessageHandler(handler)
+        {
+            ApplicationName = args.ApplicationName
+        };
+
+        GSheetsServiceInstaller.AddInitializers(configurableHandler, args.Initializers);
+
+        // Create ConfigurableHttpClient with custom timeout
+        var httpClient = new ConfigurableHttpClient(configurableHandler)
+        {
+            Timeout = TimeSpan.FromSeconds(timeoutSeconds)
+        };
+
+        return httpClient;
+    }
 }
 
 public class GSheetsServiceInstaller : IServiceInstaller
 {
+    internal static void AddInitializers(ConfigurableMessageHandler handler, IEnumerable<IConfigurableHttpClientInitializer>? initializers)
+    {
+        if (initializers is null)
+        {
+            return;
+        }
+
+        foreach (var initializer in initializers)
+        {
+            if (initializer is IHttpExecuteInterceptor executeInterceptor)
+            {
+                handler.AddExecuteInterceptor(executeInterceptor);
+            }
+            else if (initializer is IHttpUnsuccessfulResponseHandler unsuccessfulResponseHandler)
+            {
+                handler.AddUnsuccessfulResponseHandler(unsuccessfulResponseHandler);
+            }
+            else
+            {
+                // Other initializer types are not supported in this context
+            }
+        }
+    }
+
     public void Install(IServiceCollection services, IConfiguration configuration)
     {
         var gSheetsSettings = configuration.GetSection(GSheetsSettings.SettingName).Get<GSheetsSettings>();
@@ -29,31 +97,32 @@ public class GSheetsServiceInstaller : IServiceInstaller
         services.AddSingleton<IGSheetsService>(_ =>
         {
             using var stream = new FileStream(gSheetsSettings.CredentialPath, FileMode.Open, FileAccess.Read);
-            var credential = GoogleCredential
-                .FromServiceAccountCredential(ServiceAccountCredential.FromServiceAccountData(stream))
-                .CreateScoped(gSheetsSettings.Scopes);
+#pragma warning disable CS0618
+            var credential = GoogleCredential.FromStream(stream).CreateScoped(gSheetsSettings.Scopes);
+#pragma warning restore CS0618
+
+            IHttpClientFactory httpClientFactory;
+            if (!string.IsNullOrEmpty(gSheetsSettings.ProxyUrl))
+            {
+                var proxy = new WebProxy(gSheetsSettings.ProxyUrl);
+                httpClientFactory = new ProxyHttpClientFactory(proxy, gSheetsSettings.TimeoutSeconds);
+            }
+            else
+            {
+                httpClientFactory = new TimeoutHttpClientFactory(gSheetsSettings.TimeoutSeconds);
+            }
+
+            credential = credential.CreateWithHttpClientFactory(httpClientFactory);
 
             var initializer = new BaseClientService.Initializer
             {
                 HttpClientInitializer = credential,
                 ApplicationName = gSheetsSettings.ApplicationName,
+                HttpClientFactory = httpClientFactory,
+                DefaultExponentialBackOffPolicy = ExponentialBackOffPolicy.None
             };
 
-            // Configure proxy if specified
-            if (!string.IsNullOrEmpty(gSheetsSettings.ProxyUrl))
-            {
-                var handler = new HttpClientHandler
-                {
-                    Proxy = new WebProxy(gSheetsSettings.ProxyUrl, true),
-                    UseProxy = true
-                };
-
-                initializer.HttpClientFactory = new ProxyHttpClientFactory(handler);
-            }
-
-            var sheetsService = new SheetsService(initializer);
-
-            return new GSheetsService(sheetsService);
+            return new GSheetsService(new SheetsService(initializer));
         });
 
         services.AddSingleton<IGSheetsDataService, GSheetsDataService>();
