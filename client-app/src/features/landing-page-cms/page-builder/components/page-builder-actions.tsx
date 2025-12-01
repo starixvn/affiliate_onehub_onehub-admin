@@ -28,7 +28,6 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   const createPageBuilderMutation = useCreatePageBuilder()
   const updatePageBuilderMutation = useUpdatePageBuilder()
   const { isCloneMode } = usePageBuilder()
-  // Use effectivePageId (internalPageId or pageId) to determine edit mode
   const effectivePageId = internalPageId ?? pageId
   const isEditMode = !!effectivePageId && !isCloneMode
   const pageBuilderMutation = isEditMode ? updatePageBuilderMutation : createPageBuilderMutation
@@ -129,11 +128,10 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
         languageCode: data.language || '',
         isPreview: true,
         statusId: data.statusId || 0,
-        ...(isEditMode && effectivePageId && !isCloneMode ? { pageId: effectivePageId } : {}),
         moduleComponentSettings,
       }
 
-      pageBuilderMutation.mutate(request, {
+      createPageBuilderMutation.mutate(request, {
         onSuccess: (result: CreatePageBuilderResult | undefined) => {
           if (result?.landingPageUrl) {
             setGeneratedResult(result)
@@ -246,7 +244,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
       <Button 
         variant='outline' 
         className='flex-1 gap-0.5 px-1 py-1 text-xs lg:text-sm lg:gap-1 lg:px-1.5 lg:py-1.5' 
-        disabled={isDisabled || pageBuilderMutation.isPending || isPreviewLoading}
+        disabled={isDisabled || createPageBuilderMutation.isPending || isPreviewLoading}
         onClick={handlePreviewPage}
         type='button'
       >
