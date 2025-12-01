@@ -70,7 +70,8 @@
       "exampleUrl": "https://www.youtube.com/embed/pVnWpWP-LYY"
     },
     "emptyStateTitle": "Create a new page, then select components in order to start building.",
-    "emptyStateSubtitle": "Reference the Best Practice tips for optimal layout."
+    "emptyStateSubtitle": "Reference the Best Practice tips for optimal layout.",
+    "inactiveStatusMessage": "Cannot load Landing Page with status Inactive"
   },
   "validation": {
     "pageNameRequired": "Page name is required",
@@ -100,6 +101,7 @@
     "resetForm": {
       "title": "Reset Form",
       "description": "Are you sure you want to reset the form? All unsaved changes will be lost.",
+      "descriptionEditOrClone": "Are you sure you want to reset the form? All changes will be reverted to the original values.",
       "confirm": "Reset",
       "cancel": "Cancel"
     },

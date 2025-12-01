@@ -7,6 +7,7 @@ type PagePreviewIframeProps = {
   isIframeLoading: boolean
   onLoad: () => void
   onError: () => void
+  statusId?: number
 }
 
 export function PagePreviewIframe({
@@ -16,8 +17,11 @@ export function PagePreviewIframe({
   isIframeLoading,
   onLoad,
   onError,
+  statusId,
 }: PagePreviewIframeProps) {
   const { t } = useTranslation('page-builder')
+  
+  const isInactive = statusId === 2
 
   const getIframeUrl = (iframeUrl: string) => {
     try {
@@ -32,7 +36,11 @@ export function PagePreviewIframe({
 
   return (
     <div className='aspect-[9/16] w-full overflow-hidden rounded border bg-muted/10 relative'>
-      {isPreviewLoading ? (
+      {isInactive && url ? (
+        <div className='flex h-full flex-col items-center justify-center p-4 text-center'>
+          <p className='text-destructive text-sm'>{t('form.inactiveStatusMessage')}</p>
+        </div>
+      ) : isPreviewLoading ? (
         <div className='absolute inset-0 flex items-center justify-center bg-background z-10'>
           <div className='flex flex-col items-center gap-2'>
             <div className='h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent' />

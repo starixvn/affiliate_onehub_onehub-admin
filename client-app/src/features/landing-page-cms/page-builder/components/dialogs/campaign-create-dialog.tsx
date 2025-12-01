@@ -35,11 +35,13 @@ const getFormSchema = (t: (key: string) => string) =>
 type CampaignCreateDialogProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onCampaignCreated?: (campaignName: string) => void
 }
 
 export function CampaignCreateDialog({
   open,
   onOpenChange,
+  onCampaignCreated,
 }: CampaignCreateDialogProps) {
   const { t } = useTranslation('campaign-management')
   const formSchema = getFormSchema(t)
@@ -67,6 +69,9 @@ export function CampaignCreateDialog({
           if (response.errorCode === 0) {
             form.reset()
             onOpenChange(false)
+            if (onCampaignCreated) {
+              onCampaignCreated(values.campaignName)
+            }
           }
         },
       }

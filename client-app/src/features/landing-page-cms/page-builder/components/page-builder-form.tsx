@@ -27,6 +27,7 @@ export function PageBuilderForm() {
     dialogOpen,
     setDialogOpen,
     setGeneratedResult,
+    isCloneMode,
   } = usePageBuilder()
   
   const { control } = form
@@ -109,6 +110,7 @@ export function PageBuilderForm() {
         open={dialogOpen === 'reset'}
         onOpenChange={(open) => setDialogOpen(open ? 'reset' : null)}
         onConfirm={performReset}
+        isEditOrCloneMode={!!pageId || isCloneMode}
       />
 
       <PageBuilderDialogs />

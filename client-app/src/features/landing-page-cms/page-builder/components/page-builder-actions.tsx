@@ -1,9 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { useQueryClient } from '@tanstack/react-query'
 import { Eye, FilePlus, RotateCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { usePageBuilder } from './page-builder-provider'
 import { useCreatePageBuilder, useUpdatePageBuilder } from '../api/commands'
-import { useGetModules } from '../api/queries'
+import { useGetModules, pageBuilderKeys } from '../api/queries'
 import type { CreatePageBuilderResult } from '../types'
 import type { PageBuilderFormValues } from '../data/schema'
 
@@ -13,6 +14,7 @@ type PageBuilderActionsProps = {
 
 export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   const { t } = useTranslation('page-builder')
+  const queryClient = useQueryClient()
   const { 
     form, 
     pageId, 
@@ -22,7 +24,8 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
     setIsPreviewLoading, 
     setIsIframeLoading, 
     setPreviewError,
-    setDialogOpen
+    setDialogOpen,
+    reloadPageData
   } = usePageBuilder()
   
   const createPageBuilderMutation = useCreatePageBuilder()
@@ -33,6 +36,9 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   const pageBuilderMutation = isEditMode ? updatePageBuilderMutation : createPageBuilderMutation
   const { isPreviewLoading } = usePageBuilder()
   const { data: modules } = useGetModules()
+  const statusId = form.watch('statusId')
+  const isInactive = statusId === 2
+  const shouldDisablePreview = isEditMode && isInactive
 
   const mapModulesToComponentSettings = (modulesData: PageBuilderFormValues['modules']) => {
     const result: Array<{
@@ -200,10 +206,23 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
           if (result?.landingPageUrl) {
             setGeneratedResult(result)
             setIsPreviewLoading(false)
-            setIsIframeLoading(true)
             setPreviewError(null)
             
-            if (!isEditMode && result.pageId) {
+            if (data.statusId === 2) {
+              setIsIframeLoading(false)
+            } else {
+              setIsIframeLoading(true)
+            }
+            
+            if (isEditMode && effectivePageId) {
+              const pageIdToSync = internalPageId ?? pageId
+              if (internalPageId) {
+                setInternalPageId(undefined)
+              }
+              queryClient.invalidateQueries({
+                queryKey: [...pageBuilderKeys.all, 'page-details', pageIdToSync, false],
+              })
+            } else if (!isEditMode && result.pageId) {
               setInternalPageId(result.pageId)
               
               const currentUrl = new URL(window.location.href)
@@ -213,8 +232,12 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
               currentUrl.searchParams.delete('isPreview')
               currentUrl.searchParams.delete('IsPreview')
               
-              // Use replaceState to update URL without triggering React Router navigation
               window.history.replaceState({}, '', currentUrl.toString())
+              
+              setTimeout(() => {
+                setInternalPageId(undefined)
+                reloadPageData(result.pageId)
+              }, 0)
             }
           } else {
             setIsPreviewLoading(false)
@@ -244,7 +267,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
       <Button 
         variant='outline' 
         className='flex-1 gap-0.5 px-1 py-1 text-xs lg:text-sm lg:gap-1 lg:px-1.5 lg:py-1.5' 
-        disabled={isDisabled || createPageBuilderMutation.isPending || isPreviewLoading}
+        disabled={isDisabled || createPageBuilderMutation.isPending || isPreviewLoading || shouldDisablePreview}
         onClick={handlePreviewPage}
         type='button'
       >
