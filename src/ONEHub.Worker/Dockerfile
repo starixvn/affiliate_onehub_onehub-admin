@@ -19,7 +19,8 @@ RUN --mount=type=cache,target=/root/.nuget/packages \
 
 COPY src ./src
 
-RUN dotnet restore "$PROJECT"
+RUN --mount=type=cache,target=/root/.nuget/packages \
+    dotnet restore "$PROJECT"
 
 RUN --mount=type=cache,target=/root/.nuget/packages \
     dotnet publish "$PROJECT" \
@@ -40,8 +41,6 @@ WORKDIR "/app"
 
 COPY --from=builder /app/publish .
 
-# Copy service account credentials (if available)
-COPY src/ONEHub.Worker/service-account.json* ./
 ENV TZ="America/La_Paz"
 
 ENV ASPNETCORE_URLS=http://+:5000
