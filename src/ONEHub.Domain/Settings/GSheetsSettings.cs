@@ -10,6 +10,10 @@ public class GSheetsSettings
 
     public string CredentialPath { get; set; }
 
+    public string? ProxyUrl { get; set; }
+
+    public int TimeoutSeconds { get; set; } = 30;
+
     public List<GetGSheetsInfo> GetGSheetsInfos { get; set; }
 
     public List<PutGSheetsInfo> PutGSheetsInfos { get; set; }
