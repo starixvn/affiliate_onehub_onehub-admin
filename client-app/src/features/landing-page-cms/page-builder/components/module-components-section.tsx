@@ -21,6 +21,10 @@ export function ModuleComponentsSection({ form, isDisabled }: ModuleComponentsSe
     name: 'modules',
   })
 
+  const handleAddRow = (index: number) => {
+    insert(index + 1, { moduleId: 0, sourceId: "", contactPath: undefined })
+  }
+
   return (
     <div className='h-full rounded-lg border p-4 lg:col-span-6'>
       <h3 className='mb-4 font-semibold'>{t('form.moduleComponents')}</h3>
@@ -54,7 +58,7 @@ export function ModuleComponentsSection({ form, isDisabled }: ModuleComponentsSe
                     isErrorModules={isErrorModules}
                     isDisabled={isDisabled}
                     hasError={hasError}
-                    onAdd={() => insert(index + 1, { moduleId: undefined, sourceId: undefined, contactPath: undefined })}
+                    onAdd={() => handleAddRow(index)}
                     onRemove={() => remove(index)}
                   />
                 )
