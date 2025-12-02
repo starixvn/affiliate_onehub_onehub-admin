@@ -102,7 +102,7 @@ export function ThemeProvider({
     if (!isInIframe()) return
 
     const handleMessage = (event: MessageEvent) => {
-      if (!isValidIframeMessage(event, window.location.origin)) return
+      if (!isValidIframeMessage(event)) return
 
       if (event.data.type === 'THEME_CHANGE') {
         _setTheme(event.data.theme)

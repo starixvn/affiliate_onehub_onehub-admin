@@ -19,6 +19,32 @@ export type IframeMessage =
   | { type: 'LANGUAGE_CHANGE'; language: Language }
   | { type: 'DIRECTION_CHANGE'; direction: Direction }
 
+export const TRUSTED_IFRAME_ORIGINS = [
+  '*.owmkt.com',
+  '*.klc.nexdev.net',
+  'localhost',
+]
+
+function matchesWhitelistPattern(origin: string, pattern: string): boolean {
+  try {
+    const url = new URL(origin)
+    const hostname = url.hostname
+
+    if (pattern === 'localhost') {
+      return hostname === 'localhost' || hostname === '127.0.0.1'
+    }
+
+    if (pattern.startsWith('*.')) {
+      const domain = pattern.slice(2)
+      return hostname === domain || hostname.endsWith('.' + domain)
+    }
+
+    return hostname === pattern
+  } catch {
+    return false
+  }
+}
+
 export function broadcastToIframes(message: IframeMessage) {
   const iframes = document.querySelectorAll('iframe')
   iframes.forEach((iframe) => {
@@ -34,10 +60,15 @@ export function broadcastToIframes(message: IframeMessage) {
 }
 
 export function isValidIframeMessage(
-  event: MessageEvent,
-  expectedOrigin: string
+  event: MessageEvent
 ): event is MessageEvent<IframeMessage> {
-  if (event.origin !== '*' && event.origin !== expectedOrigin) return false
+  const isWhitelisted = TRUSTED_IFRAME_ORIGINS.some((pattern) =>
+    matchesWhitelistPattern(event.origin, pattern)
+  )
+
+  if (!isWhitelisted) {
+    return false
+  }
 
   const message = event.data
   if (!message || typeof message !== 'object' || !('type' in message)) {

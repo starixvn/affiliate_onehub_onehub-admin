@@ -57,7 +57,7 @@ export function DirectionProvider({ children }: { children: React.ReactNode }) {
     if (!isInIframe()) return
 
     const handleMessage = (event: MessageEvent) => {
-      if (!isValidIframeMessage(event, window.location.origin)) return
+      if (!isValidIframeMessage(event)) return
 
       if (event.data.type === 'DIRECTION_CHANGE') {
         _setDir(event.data.direction)
