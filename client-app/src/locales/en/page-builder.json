@@ -2,10 +2,12 @@
   "page": {
     "title": "Page Builder",
     "description": "Create New Landing Page",
+    "descriptionEdit": "Edit Landing Page",
     "loading": "Loading options..."
   },
   "form": {
     "createNewPage": "Create New Page",
+    "editLandingPage": "Edit Landing Page",
     "pageConfigurationDetails": "Clicking on this icon will open Guideline pop-up as mockup above",
     "pageName": "Page Name",
     "pageNamePlaceholder": "e.g., New Year Promotion Page",

@@ -2,10 +2,12 @@
   "page": {
     "title": "页面构建器",
     "description": "创建新着陆页",
+    "descriptionEdit": "编辑着陆页",
     "loading": "加载选项中..."
   },
   "form": {
     "createNewPage": "创建新页面",
+    "editLandingPage": "编辑着陆页",
     "pageConfigurationDetails": "点击此图标将打开指南弹出窗口，如上方模拟图所示",
     "pageName": "页面名称",
     "pageNamePlaceholder": "例如：新年促销页面",
