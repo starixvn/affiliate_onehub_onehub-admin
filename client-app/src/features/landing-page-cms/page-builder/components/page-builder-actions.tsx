@@ -38,7 +38,7 @@ export function PageBuilderActions({ isDisabled }: PageBuilderActionsProps) {
   const { data: modules } = useGetModules()
   const statusId = form.watch('statusId')
   const isInactive = statusId === 2
-  const shouldDisablePreview = isEditMode && isInactive
+  const shouldDisablePreview = isInactive
 
   const mapModulesToComponentSettings = (modulesData: PageBuilderFormValues['modules']) => {
     const result: Array<{
