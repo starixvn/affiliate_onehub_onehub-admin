@@ -23,7 +23,7 @@ public static class HttpContextUtils
             Path = "/",
             Expires = DateTimeOffset.UtcNow.AddDays(30)
         };
-        
+
         response.Cookies.Append(key, value, options);
     }
 

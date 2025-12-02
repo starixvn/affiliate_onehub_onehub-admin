@@ -16,7 +16,7 @@ public class GetCountriesQueryHandler(ISystemRepository settingsRepository)
         CancellationToken cancellationToken)
     {
         var countriesListResult = await settingsRepository.GetTargetCountryAsync();
-        
+
         if (countriesListResult.IsFailure)
         {
             return Result<IEnumerable<TargetCountry>>.Failure(countriesListResult.Error);

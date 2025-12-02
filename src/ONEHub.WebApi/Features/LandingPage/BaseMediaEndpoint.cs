@@ -19,7 +19,7 @@ internal static class BaseMediaEndpoint
         string functionName)
     {
         const int MaxRequestSize = ONEHub.Domain.Constants.LandingPages.FileUpload.MaxRequestSizeBytes;
-        
+
         var groupEndpoint = endpoints.MapGroup(routePrefix)
             .RequireAuthorization()
             .WithTags(tagName);
@@ -206,7 +206,7 @@ internal static class BaseMediaEndpoint
 
         var command = new DeleteAssetsCommand
         {
-            MediaIds =  request.MediaIds
+            MediaIds = request.MediaIds
         };
 
         var result = await mediator.Send(command);

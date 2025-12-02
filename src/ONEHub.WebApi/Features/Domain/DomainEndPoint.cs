@@ -45,8 +45,7 @@ public static class DomainEndPoint
     }
 
     private static async Task<Results<Ok<Result>, ValidationProblem, BadRequest<Result>>> RefreshDomains(
-        [FromBody] RefreshDomainRequest request,
-        IMediator mediator)
+        [FromBody] RefreshDomainRequest request)
     {
         if (!MiniValidator.TryValidate(request, out var errors))
         {

@@ -1,7 +1,8 @@
-using System.Text;
 using System.Security.Cryptography;
+using System.Text;
 using MediatR;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Services;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Enums;
 using ONEHub.Domain.Errors;
@@ -63,7 +64,8 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
 }
 
 public class InsertLinkCommandHandler(
-    ILinkGeneratorRepository linkGeneratorRepository)
+    ILinkGeneratorRepository linkGeneratorRepository,
+    ITriggerJobService triggerJobService)
     : IRequestHandler<InsertLinkCommand, Result<LinkGeneratedResult>>
 {
     private const int MAX_ATTEMPTS = 3;
@@ -72,6 +74,7 @@ public class InsertLinkCommandHandler(
     public async Task<Result<LinkGeneratedResult>> Handle(InsertLinkCommand request, CancellationToken cancellationToken)
     {
         var idCodeResult = await RetrieveIDCodeAsync(request);
+        TriggerJobInBackground(cancellationToken);
         if (idCodeResult.IsFailure)
         {
             return Result<LinkGeneratedResult>.Failure(idCodeResult.Error);
@@ -100,6 +103,8 @@ public class InsertLinkCommandHandler(
 
         return Result<LinkGeneratedResult>.Failure(LinkGeneratorError.UniqueCodeGenerationFailed);
     }
+
+    private void TriggerJobInBackground(CancellationToken cancellationToken) => Task.Run(triggerJobService.TriggerIdCodePushJobAsync, cancellationToken);
 
     private async Task<Result<string>> RetrieveIDCodeAsync(InsertLinkCommand request)
     {

@@ -11,9 +11,9 @@ namespace ONEHub.Application.Features.Campaign.Queries;
 
 public class GetCampaignListQuery : PagingQuery<CampaignResponse>
 {
-    public string? Search { get; set; } 
+    public string? Search { get; set; }
 
-    public string? StatusIds { get; set; } 
+    public string? StatusIds { get; set; }
 
     public bool IsExportExcel { get; set; }
 }
