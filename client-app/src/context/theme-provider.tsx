@@ -112,7 +112,7 @@ export function ThemeProvider({
 
     window.addEventListener('message', handleMessage)
     return () => window.removeEventListener('message', handleMessage)
-  }, [])
+  }, [storageKey])
 
   const contextValue = {
     defaultTheme,

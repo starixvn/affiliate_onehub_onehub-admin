@@ -22,8 +22,13 @@ export type IframeMessage =
 export function broadcastToIframes(message: IframeMessage) {
   const iframes = document.querySelectorAll('iframe')
   iframes.forEach((iframe) => {
-    if (iframe.contentWindow) {
-      iframe.contentWindow.postMessage(message, window.location.origin)
+    if (!iframe.contentWindow) return
+
+    try {
+      const iframeOrigin = new URL(iframe.src).origin
+      iframe.contentWindow.postMessage(message, iframeOrigin)
+    } catch (_) {
+      iframe.contentWindow.postMessage(message, '*')
     }
   })
 }
@@ -32,7 +37,7 @@ export function isValidIframeMessage(
   event: MessageEvent,
   expectedOrigin: string
 ): event is MessageEvent<IframeMessage> {
-  if (event.origin !== expectedOrigin) return false
+  if (event.origin !== '*' && event.origin !== expectedOrigin) return false
 
   const message = event.data
   if (!message || typeof message !== 'object' || !('type' in message)) {
