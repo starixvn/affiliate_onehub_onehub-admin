@@ -9,6 +9,7 @@ using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Repositories;
 using ONEHub.Infrastructure.Services;
+using ONEHub.Infrastructure.Services.Rabbit;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -67,6 +68,7 @@ public static class DependencyInjection
         services.AddSingleton<ILandingPageService, LandingPageService>();
         services.AddSingleton<IFileService, S3FileService>();
         services.AddSingleton<IImageService, ImageService>();
+        services.AddSingleton<IRabbitBus, RabbitBus>();
 
         services.AddSingleton<IDynamicRepository, DynamicRepository>();
         services.AddSingleton<ISystemRepository, SystemRepository>();
@@ -80,8 +82,8 @@ public static class DependencyInjection
         services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
         services.AddSingleton<IPageManagementRepository, PageManagementRepository>();
         services.AddSingleton<ILinkRepository, LinkRepository>();
-
         services.AddSingleton<IPageBuilderRepository, PageBuilderRepository>();
+        services.AddSingleton<IGSheetsDomainRepository, GSheetsDomainRepository>();
 
         return services;
     }

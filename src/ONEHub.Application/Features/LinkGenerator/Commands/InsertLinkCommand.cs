@@ -2,6 +2,8 @@ using System.Text;
 using System.Security.Cryptography;
 using MediatR;
 using ONEHub.Application.Features.Shared;
+using ONEHub.Application.Services;
+using ONEHub.Domain.Constants;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Enums;
 using ONEHub.Domain.Errors;
@@ -63,6 +65,7 @@ public class InsertLinkCommand : BaseCommand<LinkGeneratedResult>
 }
 
 public class InsertLinkCommandHandler(
+    IGSheetsDataService service,
     ILinkGeneratorRepository linkGeneratorRepository)
     : IRequestHandler<InsertLinkCommand, Result<LinkGeneratedResult>>
 {
@@ -141,6 +144,24 @@ public class InsertLinkCommandHandler(
         if (insertResult.IsFailure)
         {
             return Result<LinkGeneratedResult>.Failure(insertResult.Error);
+        }
+
+        foreach (var d in GSheets.PutDomainTypes)
+        {
+            var gSheetsQueueParam = new GSheetsQueueParam
+            {
+                GSheetType = d,
+                ActionType = GSheetActionType.Put,
+                Priority = 255,
+                DomainName = request.DomainName,
+                Note = request.DomainNote
+            };
+
+            var putGSheetsResult = await service.PublishDataAsync(gSheetsQueueParam);
+            if (putGSheetsResult.IsFailure)
+            {
+                return Result<LinkGeneratedResult>.Failure(putGSheetsResult.Error);
+            }
         }
 
         var result = new LinkGeneratedResult

@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MiniValidation;
+using ONEHub.Application.Features.Domain.Commands;
 using ONEHub.Application.Features.Domain.Queries;
 using ONEHub.Domain.Entities;
 using ONEHub.Domain.Errors;
@@ -65,8 +66,10 @@ public static class DomainEndPoint
             _lastRefreshTime = DateTimeOffset.UtcNow;
         }
 
-        await Task.Delay(500);
+        var command = new RefreshDomainListCommand { DomainType = request.DomainType };
 
-        return TypedResults.Ok(Result.Success());
+        var result = await mediator.Send(command);
+
+        return TypedResults.Ok(result);
     }
 }

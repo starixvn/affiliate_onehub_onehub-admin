@@ -16,7 +16,11 @@ public static class GSheets
     public const int HeaderRowOffset = 1;
     public const int MinimumDataRows = 1;
 
-    public static readonly int[] GetDomainTypes = [0, 1, 2];
+    public static readonly int[] NormalDomainTypes = [0, 1];
+
+    public static readonly int[] ShortDomainTypes = [2];
+
+    public static readonly int[] GetDomainTypes = [..NormalDomainTypes, ..ShortDomainTypes];
 
     public static readonly int[] PutDomainTypes = [3];
 

@@ -4,6 +4,7 @@ using ONEHub.Application;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure;
 using ONEHub.WebApi.Configurations;
+using ONEHub.WebApi.HostedServices;
 
 namespace ONEHub.WebApi.Startup;
 
@@ -21,6 +22,9 @@ public static class DependencyInjection
         services
             .AddApplication()
             .AddInfrastructure(configuration);
+
+
+        services.AddHostedService<RabbitMqBusHostedService>();
 
         services.AddCors(configuration);
 

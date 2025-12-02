@@ -8,5 +8,5 @@ public record GetDomainListRequest(
 );
 
 public record RefreshDomainRequest(
-    [Required] int DomainType
+    [Required] byte DomainType
 );
