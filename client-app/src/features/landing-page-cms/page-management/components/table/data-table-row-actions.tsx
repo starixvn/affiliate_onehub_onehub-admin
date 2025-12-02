@@ -29,15 +29,23 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
 
   const handleEdit = () => {
     savePageManagementFilters(search)
-    if (window.parent) {
-      window.parent.location.href = `/landing-page-cms/page-builder?mode=edit&pageId=${row.original.pageId}`
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.location.href = `/landing-page-cms/page-builder?mode=edit&pageId=${row.original.pageId}`
+      }
+    } catch (error) {
+      window.location.href = `/iframe/landing-page-cms/page-builder?mode=edit&pageId=${row.original.pageId}`
     }
   }
 
   const handleDuplicate = () => {
     savePageManagementFilters(search)
-    if (window.parent) {
-      window.parent.location.href = `/landing-page-cms/page-builder?mode=clone&pageId=${row.original.pageId}`
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.location.href = `/landing-page-cms/page-builder?mode=clone&pageId=${row.original.pageId}`
+      }
+    } catch (error) {
+      window.location.href = `/iframe/landing-page-cms/page-builder?mode=clone&pageId=${row.original.pageId}`
     }
   }
 
