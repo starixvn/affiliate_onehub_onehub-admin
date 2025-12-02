@@ -32,7 +32,7 @@ public class RefreshDomainListCommandHandler(
                 Priority = 100
             };
 
-            var result = await service.PublishDataAsync(param);
+            var result = await service.RequestDataAsync(param);
             if (result.IsFailure)
             {
                 return result;

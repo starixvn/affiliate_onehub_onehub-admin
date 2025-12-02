@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.Configure<JwtSetting>(configuration.GetSection(JwtSetting.SettingName));
         services.Configure<AwsS3Setting>(configuration.GetSection(AwsS3Setting.SETTING_NAME));
         services.Configure<ProxySetting>(configuration.GetSection(ProxySetting.SETTING_NAME));
+        services.Configure<GSheetsSettings>(configuration.GetSection(GSheetsSettings.SettingName));
 
         services
             .AddApplication()

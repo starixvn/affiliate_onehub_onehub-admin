@@ -38,6 +38,26 @@ public class GSheetsDataService(
         return Result.Success();
     }
 
+    public async Task<Result> RequestDataAsync(GSheetsQueueParam param)
+    {
+        var response = await rabbitBus.RequestAsync<GSheetsQueueParam, GSheetsQueueResponse>(
+            param,
+            timeout: TimeSpan.FromSeconds(30));
+
+        if (response == null)
+        {
+            logger.LogFileMessage($"RabbitMQ request-reply failed or timeout for {param.RequestId}, processing directly");
+            return await ProcessDataAsync(param);
+        }
+
+        if (!response.IsSuccess)
+        {
+            return Result.Failure(new Error(response.ErrorCode, response.ErrorMessage));
+        }
+
+        return Result.Success();
+    }
+
     public async Task<Result> ProcessDataAsync(GSheetsQueueParam param)
     {
         try

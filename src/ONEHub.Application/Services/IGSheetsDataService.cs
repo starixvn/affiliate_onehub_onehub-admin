@@ -7,5 +7,7 @@ public interface IGSheetsDataService
 {
     Task<Result> PublishDataAsync(GSheetsQueueParam param);
 
+    Task<Result> RequestDataAsync(GSheetsQueueParam param);
+
     Task<Result> ProcessDataAsync(GSheetsQueueParam param);
 }

@@ -12,7 +12,8 @@ public sealed class GSheetsConsumer(
     IGSheetsDataService gSheetsDataService,
     ILogProvider logger) : BackgroundService
 {
-    private IDisposable? _consumerHandle;
+    private IDisposable? _rpcConsumerHandle;
+    private IDisposable? _queueConsumerHandle;
     private readonly SemaphoreSlim _rateLimiter = new(1, 1);
     private const int RATE_LIMIT_DELAY_MILLISECONDS = 1000;
     private const int MAX_RETRY_COUNT = 5;
@@ -23,9 +24,63 @@ public sealed class GSheetsConsumer(
     private Exchange _errorExchange;
     private Queue _mainQueue;
 
-    private void StartConsumer()
+    private async Task StartRpcConsumerAsync()
     {
-        _consumerHandle = bus.Advanced.Consume(_mainQueue, async (body, properties, _) =>
+        _rpcConsumerHandle = await bus.Rpc.RespondAsync<GSheetsQueueParam, GSheetsQueueResponse>(async request =>
+        {
+            await _rateLimiter.WaitAsync();
+            try
+            {
+                logger.LogFileMessage($"[RPC] Processing request: {request.RequestId}");
+
+                var result = await gSheetsDataService.ProcessDataAsync(request);
+
+                if (result.IsFailure)
+                {
+                    await logger.SentryErrorAsync($"[RPC] Processing failed for {request.RequestId}: {result.ErrorMessage}");
+
+                    return new GSheetsQueueResponse
+                    {
+                        IsSuccess = false,
+                        ErrorCode = result.ErrorCode,
+                        ErrorMessage = result.ErrorMessage,
+                        Data = null
+                    };
+                }
+
+                logger.LogFileMessage($"[RPC] Successfully processed: {request.RequestId}");
+
+                return new GSheetsQueueResponse
+                {
+                    IsSuccess = true,
+                    ErrorCode = 0,
+                    ErrorMessage = string.Empty,
+                    Data = "Processed successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                await logger.SentryErrorAsync($"[RPC] Exception processing: {request?.RequestId}", ex);
+
+                return new GSheetsQueueResponse
+                {
+                    IsSuccess = false,
+                    ErrorCode = 500,
+                    ErrorMessage = ex.Message,
+                    Data = null
+                };
+            }
+            finally
+            {
+                await Task.Delay(RATE_LIMIT_DELAY_MILLISECONDS);
+                _rateLimiter.Release();
+            }
+        });
+    }
+
+    private void StartQueueConsumer()
+    {
+        _queueConsumerHandle = bus.Advanced.Consume(_mainQueue, async (body, properties, _) =>
         {
             await _rateLimiter.WaitAsync();
             try
@@ -33,22 +88,22 @@ public sealed class GSheetsConsumer(
                 var message = System.Text.Json.JsonSerializer.Deserialize<GSheetsQueueParam>(body.Span);
                 if (message == null)
                 {
-                    logger.LogFileMessage("Failed to deserialize message");
+                    logger.LogFileMessage("[Queue] Failed to deserialize message");
                     return AckStrategies.Ack;
                 }
 
-                logger.LogFileMessage($"Processing message: {message}");
+                logger.LogFileMessage($"[Queue] Processing message: {message.RequestId}");
 
                 var result = await gSheetsDataService.ProcessDataAsync(message);
 
                 if (result.IsFailure)
                 {
                     var errMessage = await ProcessMessageWhenError(body, properties);
-                    await logger.SentryErrorAsync($"{errMessage} - {result.ErrorMessage}");
+                    await logger.SentryErrorAsync($"[Queue] {errMessage} - {result.ErrorMessage}");
                 }
                 else
                 {
-                    logger.LogFileMessage($"Successfully processed message: {message}");
+                    logger.LogFileMessage($"[Queue] Successfully processed: {message.RequestId}");
                 }
 
                 await Task.Delay(RATE_LIMIT_DELAY_MILLISECONDS);
@@ -57,7 +112,7 @@ public sealed class GSheetsConsumer(
             catch (Exception ex)
             {
                 var errMessage = await ProcessMessageWhenError(body, properties);
-                await logger.SentryErrorAsync(errMessage, ex);
+                await logger.SentryErrorAsync($"[Queue] {errMessage}", ex);
                 await Task.Delay(RATE_LIMIT_DELAY_MILLISECONDS);
                 return AckStrategies.Ack;
             }
@@ -99,11 +154,11 @@ public sealed class GSheetsConsumer(
         return errorMessage;
     }
 
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         await Task.Delay(INITIAL_DELAY_MILLISECONDS, stoppingToken).ConfigureAwait(false);
 
-        // Setup exchanges and queues
         var mainExchange = await bus.Advanced.ExchangeDeclareAsync(GSheetsQueueKeys.MainExchangeName, ExchangeType.Direct, cancellationToken: stoppingToken);
         _retryExchange = await bus.Advanced.ExchangeDeclareAsync(GSheetsQueueKeys.RetryQueueName, ExchangeType.Direct, cancellationToken: stoppingToken);
         _errorExchange = await bus.Advanced.ExchangeDeclareAsync(GSheetsQueueKeys.ErrorQueueName, ExchangeType.Direct, cancellationToken: stoppingToken);
@@ -132,18 +187,20 @@ public sealed class GSheetsConsumer(
         await bus.Advanced.BindAsync(_retryExchange, retryQueue, GSheetsQueueKeys.RoutingKey, stoppingToken);
         await bus.Advanced.BindAsync(_errorExchange, errorQueue, GSheetsQueueKeys.RoutingKey, stoppingToken);
 
-        StartConsumer();
+        await StartRpcConsumerAsync();
+        StartQueueConsumer();
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            logger.LogFileMessage($"GoogleSheetsConsumer running at: {DateTimeOffset.Now}");
+            logger.LogFileMessage($"GoogleSheetsConsumer (RPC + Queue) running at: {DateTimeOffset.Now}");
             await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken).ConfigureAwait(false);
         }
     }
 
     public override void Dispose()
     {
-        _consumerHandle?.Dispose();
+        _rpcConsumerHandle?.Dispose();
+        _queueConsumerHandle?.Dispose();
         _rateLimiter.Dispose();
         base.Dispose();
     }
