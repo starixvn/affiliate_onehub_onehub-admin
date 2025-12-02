@@ -70,7 +70,8 @@
       "exampleUrl": "https://www.youtube.com/embed/pVnWpWP-LYY"
     },
     "emptyStateTitle": "创建新页面，然后选择组件以开始构建。",
-    "emptyStateSubtitle": "参考最佳实践提示以获得最佳布局。"
+    "emptyStateSubtitle": "参考最佳实践提示以获得最佳布局。",
+    "inactiveStatusMessage": "无法加载状态为 Inactive 的着陆页"
   },
   "validation": {
     "pageNameRequired": "页面名称为必填项",
@@ -100,6 +101,7 @@
     "resetForm": {
       "title": "重置表单",
       "description": "您确定要重置表单吗？所有未保存的更改将丢失。",
+      "descriptionEditOrClone": "您确定要重置表单吗？所有更改将恢复为原始值。",
       "confirm": "重置",
       "cancel": "取消"
     },

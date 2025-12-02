@@ -38,6 +38,7 @@ type PageBuilderContextType = {
   setInternalPageId: (pageId: number | undefined) => void
   isCloneMode: boolean
   resetToInitialData: () => void
+  reloadPageData: (pageId: number) => void
   skipDataReloadOnPageIdChange: () => void
 }
 
@@ -72,10 +73,19 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
 
   const { data: campaigns, isLoading: isLoadingCampaigns, isError: isErrorCampaigns } = useGetCampaigns()
   const { data: countries, isLoading: isLoadingCountries, isError: isErrorCountries } = useGetCountries()
+  
+  const sortedCountries = React.useMemo(() => {
+    if (!countries) return undefined
+    return [...countries].sort((a, b) => 
+      a.targetCountryName.localeCompare(b.targetCountryName)
+    )
+  }, [countries])
+  
+  const effectivePageId = internalPageId ?? pageId
   // Only fetch page details if we have pageId from URL and no internalPageId (not just created)
-  const shouldFetchPageDetails = !!pageId && !internalPageId
+  const shouldFetchPageDetails = !!effectivePageId && !internalPageId
   const { data: pageDetails, isLoading: isLoadingPageDetails } = useGetPageBuilderDetails(
-    shouldFetchPageDetails ? pageId : undefined,
+    shouldFetchPageDetails ? effectivePageId : undefined,
     isPreview
   )
   const { data: modules } = useGetModules()
@@ -101,9 +111,9 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
   }, [pageId])
 
   React.useEffect(() => {
-    if (pageDetails && !isDataLoaded && campaigns && countries && modules) {
+    if (pageDetails && !isDataLoaded && campaigns && sortedCountries && modules) {
       const campaign = campaigns.find((c) => c.campaignId === pageDetails.campaignId)
-      const country = countries.find((c) => c.targetCountryCode === pageDetails.targetCountryCode)
+      const country = sortedCountries.find((c) => c.targetCountryCode === pageDetails.targetCountryCode)
 
       if (campaign && country) {
         if (!countryCode || countryCode !== pageDetails.targetCountryCode) {
@@ -205,7 +215,7 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
         setIsDataLoaded(true)
       }
     }
-  }, [pageDetails, isDataLoaded, campaigns, countries, languages, modules, form, countryCode, isLoadingLanguages])
+  }, [pageDetails, isDataLoaded, campaigns, sortedCountries, languages, modules, form, countryCode, isLoadingLanguages])
 
   const isLoading =
     isLoadingCampaigns ||
@@ -220,13 +230,23 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
   const isCloneMode = mode === 'clone' && !internalPageId
 
   const resetToInitialData = React.useCallback(() => {
-    if (pageId) {
+    const currentEffectivePageId = internalPageId ?? pageId
+    if (currentEffectivePageId) {
       setIsDataLoaded(false)
-      queryClient.invalidateQueries({
-        queryKey: [...pageBuilderKeys.all, 'page-details', pageId, isPreview],
-      })
+      if (!internalPageId) {
+        queryClient.invalidateQueries({
+          queryKey: [...pageBuilderKeys.all, 'page-details', currentEffectivePageId, isPreview],
+        })
+      }
     }
-  }, [pageId, isPreview, queryClient])
+  }, [internalPageId, pageId, isPreview, queryClient])
+
+  const reloadPageData = React.useCallback((targetPageId: number) => {
+    setIsDataLoaded(false)
+    queryClient.invalidateQueries({
+      queryKey: [...pageBuilderKeys.all, 'page-details', targetPageId, isPreview],
+    })
+  }, [isPreview, queryClient])
 
   const skipDataReloadOnPageIdChange = React.useCallback(() => {
     skipDataReloadRef.current = true
@@ -236,7 +256,7 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
     () => ({
       form,
       campaigns,
-      countries,
+      countries: sortedCountries,
       isLoading,
       isError,
       dialogOpen,
@@ -254,12 +274,13 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
       setInternalPageId,
       isCloneMode,
       resetToInitialData,
+      reloadPageData,
       skipDataReloadOnPageIdChange,
     }),
     [
       form,
       campaigns,
-      countries,
+      sortedCountries,
       isLoading,
       isError,
       dialogOpen,
@@ -271,6 +292,7 @@ export function PageBuilderProvider({ children, pageId, isPreview = false, mode 
       internalPageId,
       isCloneMode,
       resetToInitialData,
+      reloadPageData,
       skipDataReloadOnPageIdChange,
       setDialogOpen,
       setGeneratedResult,

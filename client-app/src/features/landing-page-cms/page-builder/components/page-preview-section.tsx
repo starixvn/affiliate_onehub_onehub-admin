@@ -22,7 +22,8 @@ export function PagePreviewSection({
   onIframeError,
 }: PagePreviewSectionProps) {
   const { t } = useTranslation('page-builder')
-  const { generatedResult } = usePageBuilder()
+  const { generatedResult, form } = usePageBuilder()
+  const statusId = form.watch('statusId')
 
   return (
     <div className='h-full rounded-lg border p-4 lg:col-span-3'>
@@ -44,6 +45,7 @@ export function PagePreviewSection({
         isIframeLoading={isIframeLoading}
         onLoad={onIframeLoad}
         onError={onIframeError}
+        statusId={statusId}
       />
     </div>
   )
