@@ -14,7 +14,6 @@
     <PackageReference Include="Serilog.Sinks.Console" />
     <PackageReference Include="Serilog.Sinks.File" />
     <PackageReference Include="Serilog.Sinks.Network" />
-    <PackageReference Include="RabbitMQ.Client" />
   </ItemGroup>
   
   <ItemGroup>
