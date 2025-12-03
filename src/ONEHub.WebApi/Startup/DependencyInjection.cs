@@ -1,4 +1,3 @@
-using System.Reflection;
 using Microsoft.AspNetCore.HttpOverrides;
 using ONEHub.Application;
 using ONEHub.Domain.Settings;
@@ -24,7 +23,6 @@ public static class DependencyInjection
             .AddApplication()
             .AddInfrastructure(configuration);
 
-
         services.AddHostedService<RabbitMqBusHostedService>();
 
         services.AddCors(configuration);
@@ -41,7 +39,8 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
 
-        services.InstallServices(configuration, typeof(IServiceInstaller).Assembly);
+        services.InstallServicesFromInfrastructure(configuration);
+        services.InstallServicesFromAssembly<AuthenticationServiceInstaller>(configuration);
 
         return services;
     }
@@ -94,19 +93,5 @@ public static class DependencyInjection
                     .AllowCredentials();
             });
         });
-    }
-
-    private static void InstallServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
-    {
-        var serviceInstallers = assemblies
-            .SelectMany(a => a.DefinedTypes)
-            .Where(t => typeof(IServiceInstaller).IsAssignableFrom(t) && t.IsClass)
-            .Select(Activator.CreateInstance)
-            .Cast<IServiceInstaller>();
-
-        foreach (var serviceInstaller in serviceInstallers)
-        {
-            serviceInstaller.Install(services, configuration);
-        }
     }
 }

@@ -1,4 +1,5 @@
 using ONEHub.Domain.Settings;
+using ONEHub.Infrastructure.Configurations;
 using StackExchange.Redis;
 
 namespace ONEHub.WebApi.Configurations;

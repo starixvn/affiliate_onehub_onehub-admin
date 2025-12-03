@@ -3,12 +3,14 @@ using Google.Apis.Auth.OAuth2;
 using Google.Apis.Http;
 using Google.Apis.Services;
 using Google.Apis.Sheets.v4;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
 using ONEHub.Infrastructure.Services;
 using IHttpClientFactory = Google.Apis.Http.IHttpClientFactory;
 
-namespace ONEHub.Worker.Configurations;
+namespace ONEHub.Infrastructure.Configurations;
 
 public class TimeoutHttpClientFactory(int timeoutSeconds) : IHttpClientFactory
 {

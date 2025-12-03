@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
+using ONEHub.Infrastructure.Configurations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace ONEHub.WebApi.Configurations;

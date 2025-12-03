@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Settings;
+using ONEHub.Infrastructure.Configurations;
 
 namespace ONEHub.WebApi.Configurations;
 

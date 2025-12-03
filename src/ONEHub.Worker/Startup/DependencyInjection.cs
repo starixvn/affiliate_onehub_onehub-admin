@@ -1,4 +1,3 @@
-using System.Reflection;
 using EasyNetQ;
 using Fanex.Data.Repository;
 using Fanex.Logging;
@@ -8,9 +7,9 @@ using ONEbook.UM.Services;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Settings;
+using ONEHub.Infrastructure;
 using ONEHub.Infrastructure.Repositories;
 using ONEHub.Infrastructure.Services;
-using ONEHub.Worker.Configurations;
 using ONEHub.Worker.Consumers;
 using ONEHub.Worker.Jobs;
 using ILogger = Fanex.Logging.ILogger;
@@ -27,7 +26,6 @@ public static class DependencyInjection
         services.Configure<JobSettings>(configuration.GetSection(JobSettings.SettingName));
         services.Configure<ProxySetting>(configuration.GetSection(ProxySetting.SETTING_NAME));
 
-        // Configure RabbitMQ
         var rabbitMqConnectionString = configuration["RabbitMQConnectionString"];
         if (!string.IsNullOrEmpty(rabbitMqConnectionString))
         {
@@ -36,7 +34,6 @@ public static class DependencyInjection
 
         services.AddOneBookUmForService(configuration);
 
-        // Register background services
         services.AddHostedService<RabbitMqBusHostedService>();
         services.AddHostedService<GSheetsJob>();
         services.AddHostedService<GSheetsConsumer>();
@@ -62,22 +59,8 @@ public static class DependencyInjection
 
         services.AddControllers();
 
-        services.InstallServices(configuration, typeof(IServiceInstaller).Assembly);
+        services.InstallServicesFromInfrastructure(configuration);
 
         return services;
-    }
-
-    private static void InstallServices(this IServiceCollection services, IConfiguration configuration, params Assembly[] assemblies)
-    {
-        var serviceInstallers = assemblies
-            .SelectMany(a => a.DefinedTypes)
-            .Where(t => typeof(IServiceInstaller).IsAssignableFrom(t) && t.IsClass)
-            .Select(Activator.CreateInstance)
-            .Cast<IServiceInstaller>();
-
-        foreach (var serviceInstaller in serviceInstallers)
-        {
-            serviceInstaller.Install(services, configuration);
-        }
     }
 }

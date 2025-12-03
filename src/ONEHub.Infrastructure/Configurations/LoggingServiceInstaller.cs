@@ -1,10 +1,12 @@
 using Fanex.Logging;
 using Fanex.Logging.Sentry;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using ONEHub.Domain.Settings;
 using Sentry;
 using Serilog;
 
-namespace ONEHub.Worker.Configurations;
+namespace ONEHub.Infrastructure.Configurations;
 
 public class LoggingServiceInstaller : IServiceInstaller
 {
@@ -33,7 +35,7 @@ public class LoggingServiceInstaller : IServiceInstaller
         services.AddSerilog((s, l) => l
             .ReadFrom.Configuration(configuration)
             .ReadFrom.Services(s)
-            .Enrich.FromLogContext()
-            .Enrich.WithMachineName());
+            .Enrich.FromLogContext());
     }
 }
+

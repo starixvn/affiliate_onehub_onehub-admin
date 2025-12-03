@@ -1,3 +1,4 @@
+using ONEHub.Infrastructure.Configurations;
 using ONEHub.WebApi.HealthChecks;
 
 namespace ONEHub.WebApi.Configurations;
