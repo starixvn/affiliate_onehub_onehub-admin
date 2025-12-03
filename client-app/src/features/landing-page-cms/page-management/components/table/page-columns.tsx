@@ -1,10 +1,17 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { type TFunction } from 'i18next'
+import { Info } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { IframeHoverPreview } from '@/components/iframe-hover-preview'
 import { LongText } from '@/components/long-text'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip'
 import { type LandingPage } from '../../data/schema'
 import { DataTableRowActions } from './data-table-row-actions'
 import { PageStatusCell } from './page-status-cell'
@@ -94,7 +101,11 @@ export const getPageColumns = (
       const previewUrl = `${landingPageUrl}/${targetLanguageCode}/${lpCode}`
 
       return (
-        <IframeHoverPreview src={previewUrl} disabled={!isCanPreview}>
+        <IframeHoverPreview
+          src={previewUrl}
+          disabled={!isCanPreview}
+          maxPreviewSize={{ width: 440, height: 852 }}
+        >
           <a
             href={previewUrl}
             target='_blank'
@@ -279,13 +290,13 @@ export const getPageColumns = (
   {
     accessorKey: 'click',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('table.columns.click')} />
+      <DataTableColumnHeader column={column} title={t('table.columns.uniqueClick')} />
     ),
     cell: ({ row }) => (
       <div className='text-right'>{row.getValue('click')}</div>
     ),
     meta: {
-      displayName: t('table.columns.click'),
+      displayName: t('table.columns.uniqueClick'),
       className: '',
     },
     enableSorting: false,
@@ -293,10 +304,22 @@ export const getPageColumns = (
   {
     accessorKey: 'registration',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={t('table.columns.registration')}
-      />
+      <div className='flex items-center justify-end gap-1'>
+        <DataTableColumnHeader
+          column={column}
+          title={t('table.columns.registration')}
+        />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('table.updateFrequency', { minutes: 5 })}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     ),
     cell: ({ row }) => (
       <div className='text-right'>{row.getValue('registration')}</div>
@@ -308,9 +331,50 @@ export const getPageColumns = (
     enableSorting: false,
   },
   {
+    accessorKey: 'bonus',
+    header: ({ column }) => (
+      <div className='flex items-center justify-end gap-1'>
+        <DataTableColumnHeader
+          column={column}
+          title={t('table.columns.bonusUser')}
+        />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('table.updateFrequency', { minutes: 45 })}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='text-right'>{row.getValue('bonus')}</div>
+    ),
+    meta: {
+      displayName: t('table.columns.bonusUser'),
+      className: '',
+    },
+    enableSorting: false,
+  },
+  {
     accessorKey: 'ftd',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('table.columns.ftd')} />
+      <div className='flex items-center justify-end gap-1'>
+        <DataTableColumnHeader column={column} title={t('table.columns.ftd')} />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('table.updateFrequency', { minutes: 11 })}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     ),
     cell: ({ row }) => <div className='text-right'>{row.getValue('ftd')}</div>,
     meta: {
@@ -320,18 +384,31 @@ export const getPageColumns = (
     enableSorting: false,
   },
   {
-    accessorKey: 'revenue',
+    accessorKey: 'avgFtd',
     header: ({ column }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={t('table.columns.revenue')}
-      />
+      <div className='flex items-center justify-end gap-1'>
+        <DataTableColumnHeader
+          column={column}
+          title={t('table.columns.avgFtdAmount')}
+        />
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Info className='h-3.5 w-3.5 text-muted-foreground cursor-help' />
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{t('table.updateFrequency', { minutes: 11 })}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     ),
-    cell: ({ row }) => (
-      <div className='text-right'>${row.getValue('revenue')}</div>
-    ),
+    cell: ({ row }) => {
+      const amount = row.getValue('avgFtd') as number
+      return <div className='text-right'>{(amount ?? 0).toFixed(2)}</div>
+    },
     meta: {
-      displayName: t('table.columns.revenue'),
+      displayName: t('table.columns.avgFtdAmount'),
       className: '',
     },
     enableSorting: false,
