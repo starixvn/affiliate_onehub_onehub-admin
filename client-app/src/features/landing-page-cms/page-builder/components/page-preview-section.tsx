@@ -34,7 +34,18 @@ export function PagePreviewSection({
       <div className='mb-4 flex gap-2'>
         <CopyLinkButton />
         <div className='bg-muted/30 flex-1 rounded border p-2 text-xs text-muted-foreground break-all min-h-[2.5rem] flex items-center'>
-          {generatedResult?.landingPageUrl || ''}
+          {generatedResult?.landingPageUrl ? (
+            <a
+              href={generatedResult.landingPageUrl}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-blue-600 hover:underline dark:text-blue-500'
+            >
+              {generatedResult.landingPageUrl}
+            </a>
+          ) : (
+            ''
+          )}
         </div>
       </div>
 
