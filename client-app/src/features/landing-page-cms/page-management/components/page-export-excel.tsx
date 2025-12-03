@@ -132,7 +132,7 @@ export const formatLandingPagesForExcel = (
       },
       {
         field: 'click',
-        header: t('table.columns.click'),
+        header: t('table.columns.uniqueClick'),
         width: 15,
         style: { alignment: 'center' },
       },
@@ -143,15 +143,21 @@ export const formatLandingPagesForExcel = (
         style: { alignment: 'center' },
       },
       {
+        field: 'bonus',
+        header: t('table.columns.bonusUser'),
+        width: 15,
+        style: { alignment: 'center' },
+      },
+      {
         field: 'ftd',
         header: t('table.columns.ftd'),
         width: 15,
         style: { alignment: 'center' },
       },
       {
-        field: 'revenue',
-        header: t('table.columns.revenue'),
-        width: 15,
+        field: (row: LandingPage) => (row.avgFtd ?? 0).toFixed(2),
+        header: t('table.columns.avgFtdAmount'),
+        width: 18,
         style: { alignment: 'center' },
       },
       {

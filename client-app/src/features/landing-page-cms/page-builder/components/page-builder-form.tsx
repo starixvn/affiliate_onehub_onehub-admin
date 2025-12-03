@@ -60,8 +60,12 @@ export function PageBuilderForm() {
       
       const inIframe = isInIframe()
       if (inIframe && window.top) {
-        const currentUrl = new URL(window.top.location.href)
-        window.top.history.replaceState({}, '', currentUrl.toString())
+        try {
+          const currentUrl = new URL(window.top.location.href)
+          window.top.history.replaceState({}, '', currentUrl.toString())
+        } catch (error) {
+          // Cannot access parent window due to sandbox restrictions
+        }
       }
       
       navigate({

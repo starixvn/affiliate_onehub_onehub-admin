@@ -1,3 +1,4 @@
+using System.Linq;
 using MediatR;
 using ONEHub.Application.Features.Shared;
 using ONEHub.Domain.Entities;
@@ -44,8 +45,9 @@ public record LandingPageResponse(
     string Status,
     int Click,
     int Registration,
+    int Bonus,
     int FTD,
-    int Revenue,
+    decimal AvgFtd,
     int RowIdx);
 
 public class PageManagementDashboardResponse
@@ -107,8 +109,9 @@ public class GetLandingPageListHandler(IPageManagementRepository pageManagementR
                 landingPage.Status,
                 landingPage.Click,
                 landingPage.Registration,
-                landingPage.FTD,
-                landingPage.Revenue,
+                landingPage.Bonus,
+                landingPage.Ftd,
+                landingPage.AvgFtd,
                 landingPage.RowIdx
             ))],
             TotalItem = landingPageListResult.Data.TotalItem,

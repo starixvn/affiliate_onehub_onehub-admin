@@ -32,6 +32,7 @@ public class LandingPage
     public int RowIdx { get; set; }
     public int Click { get; set; }
     public int Registration { get; set; }
-    public int FTD { get; set; }
-    public int Revenue { get; set; }
+    public int Bonus { get; set; }
+    public int Ftd { get; set; }
+    public decimal AvgFtd { get; set; }
 }

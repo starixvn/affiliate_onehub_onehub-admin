@@ -27,11 +27,14 @@ type PageConfigurationFormProps = {
 
 export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFormProps) {
   const { t } = useTranslation('page-builder')
-  const { campaigns, countries, setDialogOpen } = usePageBuilder()
+  const { campaigns, countries, setDialogOpen, pageId, internalPageId, isCloneMode } = usePageBuilder()
   const { register, control, formState: { errors } } = form
 
   const selectedCountryCode = form.watch('country')
   const { data: languages } = useGetLanguages(selectedCountryCode || '')
+
+  const effectivePageId = internalPageId ?? pageId
+  const isEditMode = !!effectivePageId && !isCloneMode
 
   const handleCreateNew = (type: 'campaign') => {
     setDialogOpen(type)
@@ -46,7 +49,7 @@ export function PageConfigurationForm({ form, isDisabled }: PageConfigurationFor
   return (
     <div className='h-full rounded-lg border p-4 lg:col-span-3'>
       <div className='mb-4 flex items-center gap-2'>
-        <h3 className='font-semibold'>{t('form.createNewPage')}</h3>
+        <h3 className='font-semibold'>{isEditMode ? t('form.editLandingPage') : t('form.createNewPage')}</h3>
         <Tooltip>
           <TooltipTrigger>
             <Info className='text-muted-foreground h-4 w-4' />

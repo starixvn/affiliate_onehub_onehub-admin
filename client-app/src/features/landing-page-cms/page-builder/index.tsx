@@ -6,7 +6,10 @@ import { PageBuilderForm } from './components/page-builder-form'
 
 function PageBuilderContent() {
   const { t } = useTranslation('page-builder')
-  const { isLoading } = usePageBuilder()
+  const { isLoading, pageId, internalPageId, isCloneMode } = usePageBuilder()
+
+  const effectivePageId = internalPageId ?? pageId
+  const isEditMode = !!effectivePageId && !isCloneMode
 
   if (isLoading) {
     return (
@@ -15,7 +18,7 @@ function PageBuilderContent() {
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>{t('page.title')}</h2>
             <p className='text-muted-foreground'>
-              {t('page.description')}
+              {isEditMode ? t('page.descriptionEdit') : t('page.description')}
             </p>
           </div>
         </div>
@@ -32,7 +35,7 @@ function PageBuilderContent() {
         <div>
           <h2 className='text-xl sm:text-2xl font-bold tracking-tight'>{t('page.title')}</h2>
           <p className='text-muted-foreground text-sm sm:text-base'>
-            {t('page.description')}
+            {isEditMode ? t('page.descriptionEdit') : t('page.description')}
           </p>
         </div>
       </div>

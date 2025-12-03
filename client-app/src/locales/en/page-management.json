@@ -34,6 +34,7 @@
   "table": {
     "search": "Search campaigns or landing page...",
     "noResults": "No results.",
+    "updateFrequency": "Update regularly every {{minutes}} minutes.",
     "columns": {
       "no": "#",
       "select": "Select all",
@@ -48,10 +49,11 @@
       "createdBy": "Created By",
       "modifiedDate": "Modified Date",
       "modifiedBy": "Modified By",
-      "click": "Click",
+      "uniqueClick": "Unique Click",
       "registration": "Registration",
+      "bonusUser": "Bonus User",
       "ftd": "FTD",
-      "revenue": "Revenue",
+      "avgFtdAmount": "Avg. FTD Amount",
       "status": "Status",
       "actions": "Open menu"
     }
