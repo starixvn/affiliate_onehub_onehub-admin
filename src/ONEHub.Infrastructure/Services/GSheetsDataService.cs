@@ -127,16 +127,25 @@ public class GSheetsDataService(
         var rawData = await gSheetsService.GetGSheetsDataAsync(param);
         var formatData = GetFormatData(rawData, param.HeaderRowIndex);
 
-        return [.. formatData
-            .Select(row => new GSheetsDomain
+        var result = formatData
+            .Select((row, index) => new
             {
-                DmN = BuildDomainName(row),
-                Nt = row.GetValueOrDefault(GSheets.NoteColumn, string.Empty),
-                Dts = BuildCountryScores(row)
-            })];
+                Index = index,
+                Domain = new GSheetsDomain
+                {
+                    DmN = BuildDomainName(row),
+                    Nt = row.GetValueOrDefault(GSheets.NoteColumn, string.Empty),
+                    Dts = BuildCountryScores(row)
+                }
+            })
+            .GroupBy(x => x.Domain.DmN)
+            .Select(g => g.OrderBy(x => x.Index).First().Domain)
+            .ToList();
+
+        return result;
     }
 
-    private static List<Dictionary<string, string>> GetFormatData(IList<IList<object>> rawData, int headerRowIndex, bool skipCondition = false)
+    private List<Dictionary<string, string>> GetFormatData(IList<IList<object>> rawData, int headerRowIndex, bool skipCondition = false)
     {
         var headerRow = rawData[headerRowIndex - GSheets.HeaderRowOffset];
         var headers = MapHeaders(headerRow);
@@ -172,8 +181,14 @@ public class GSheetsDataService(
             .ToDictionary(x => x.First, x => x.Second);
     }
 
-    private static bool RowIsValid(Dictionary<string, string> row)
+    private bool RowIsValid(Dictionary<string, string> row)
     {
+        var note = row.GetValueOrDefault(GSheets.NoteColumn);
+        if (note?.Equals(_settings.SpecialNoteBypass, StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return true;
+        }
+
         if (!string.IsNullOrWhiteSpace(row.GetValueOrDefault(GSheets.NoteColumn)))
         {
             return false;

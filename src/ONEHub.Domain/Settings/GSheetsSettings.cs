@@ -10,6 +10,8 @@ public class GSheetsSettings
 
     public string CredentialPath { get; set; }
 
+    public string SpecialNoteBypass { get; set; }
+
     public string? ProxyUrl { get; set; }
 
     public int TimeoutSeconds { get; set; } = 30;
