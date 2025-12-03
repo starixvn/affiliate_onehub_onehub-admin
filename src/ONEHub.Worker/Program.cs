@@ -15,7 +15,8 @@ try
     app.UseForwardedHeaders();
 
     app.MapGet("/", () => "ONEHub Worker is running");
-    app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTimeOffset.UtcNow }));
+
+    app.MapControllers();
 
     await app.RunAsync();
 }

@@ -60,6 +60,8 @@ public static class DependencyInjection
 
         services.AddHttpContextAccessor();
 
+        services.AddControllers();
+
         services.InstallServices(configuration, typeof(IServiceInstaller).Assembly);
 
         return services;
