@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Options;
+using ONEbook.UM.Services;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Constants;
 using ONEHub.Domain.Params;
@@ -7,6 +8,7 @@ using ONEHub.Domain.Settings;
 namespace ONEHub.Worker.Jobs;
 
 public class GSheetsJob(
+    IMaintenanceService maintenanceService,
     IGSheetsDataService service,
     IOptions<JobSettings> settings,
     ILogProvider logger)
@@ -22,6 +24,12 @@ public class GSheetsJob(
         {
             try
             {
+                if (await maintenanceService.IsUnderMaintenanceAsync())
+                {
+                    await logger.SentryInfoAsync("System is currently unavailable due to scheduled maintenance!");
+                    continue;
+                }
+
                 foreach (var dt in GSheets.GetDomainTypes)
                 {
                     await ProcessDomainTypeAsync(dt);

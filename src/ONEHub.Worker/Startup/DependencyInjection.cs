@@ -1,7 +1,10 @@
 using System.Reflection;
+using EasyNetQ;
 using Fanex.Data.Repository;
 using Fanex.Logging;
 using Microsoft.AspNetCore.HttpOverrides;
+using ONEbook.UM.DependencyInjection;
+using ONEbook.UM.Services;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Repositories;
 using ONEHub.Domain.Settings;
@@ -24,11 +27,21 @@ public static class DependencyInjection
         services.Configure<JobSettings>(configuration.GetSection(JobSettings.SettingName));
         services.Configure<ProxySetting>(configuration.GetSection(ProxySetting.SETTING_NAME));
 
+        // Configure RabbitMQ
+        var rabbitMqConnectionString = configuration["RabbitMQConnectionString"];
+        if (!string.IsNullOrEmpty(rabbitMqConnectionString))
+        {
+            services.AddSingleton(RabbitHutch.CreateBus(rabbitMqConnectionString));
+        }
+
+        services.AddOneBookUmForService(configuration);
+
         // Register background services
         services.AddHostedService<RabbitMqBusHostedService>();
         services.AddHostedService<GSheetsJob>();
         services.AddHostedService<GSheetsConsumer>();
 
+        services.AddSingleton<IMaintenanceService, MaintenanceService>();
         services.AddSingleton<ILogger, Logger>();
         services.AddSingleton<ILogProvider, LogProvider>();
         services.AddSingleton<IRabbitBus, RabbitBus>();

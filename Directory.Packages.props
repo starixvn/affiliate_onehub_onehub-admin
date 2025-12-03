@@ -16,6 +16,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.10" />
     <PackageVersion Include="MiniValidation" Version="0.9.2" />
+    <PackageVersion Include="ONEbook.UM" Version="3.2.6.2" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />

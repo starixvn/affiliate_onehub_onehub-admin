@@ -1,16 +1,7 @@
-using EasyNetQ;
 using Fanex.Logging;
 using ONEHub.Worker.Startup;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Configure RabbitMQ
-var rabbitMqConnectionString = builder.Configuration["RabbitMQConnectionString"];
-if (!string.IsNullOrEmpty(rabbitMqConnectionString))
-{
-    builder.Services.AddSingleton(RabbitHutch.CreateBus(rabbitMqConnectionString));
-}
-
 
 builder.Services.AddDependencyInjection(builder.Configuration);
 
