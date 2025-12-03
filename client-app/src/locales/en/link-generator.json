@@ -23,7 +23,7 @@
     "domainName": "Redirect Domain",
     "domainNamePlaceholder": "Select domain",
     "domainReservedNotePlaceholder": "Reserved note *",
-    "shortLinkName": "Short Link Name",
+    "shortLink": "Short Link",
     "shortLinkNamePlaceholder": "Select short link name",
     "shortLinkValuePlaceholder": "e.g., wc2016 (leave empty for auto-generate)",
     "shortLinkValueTooltip": "Customize the short part of the link. Your custom path must be 5–20 characters, and may include only lowercase letters, numbers, hyphens, or dots.",

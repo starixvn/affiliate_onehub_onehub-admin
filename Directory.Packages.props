@@ -7,13 +7,16 @@
     <PackageVersion Include="AWSSDK.SecurityToken" Version="4.0.5.1" />
     <PackageVersion Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageVersion Include="AWSSDK.S3" Version="4.0.13.1" />
+    <PackageVersion Include="EasyNetQ" Version="7.8.0" />
     <PackageVersion Include="Fanex.Logging.Sentry" Version="1.0.6" />
+    <PackageVersion Include="Google.Apis.Sheets.v4" Version="1.72.0.3966" />
     <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Http.Polly" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
     <PackageVersion Include="Microsoft.Extensions.Caching.Abstractions" Version="9.0.10" />
     <PackageVersion Include="MiniValidation" Version="0.9.2" />
+    <PackageVersion Include="ONEbook.UM" Version="3.2.6.2" />
     <PackageVersion Include="Serilog.Enrichers.Environment" Version="3.0.1" />
     <PackageVersion Include="Serilog.Exceptions" Version="8.4.0" />
     <PackageVersion Include="SixLabors.ImageSharp" Version="3.1.12" />
@@ -37,6 +40,9 @@
     <PackageVersion Include="StackExchange.Redis" Version="2.8.24" />
     <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.0" />
     <PackageVersion Include="MessagePack" Version="3.1.4" />
+  </ItemGroup>
+  <ItemGroup Label="Message Queue">
+    <PackageVersion Include="RabbitMQ.Client" Version="6.8.1" />
   </ItemGroup>
   <ItemGroup Label="Authentication">
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.0" />

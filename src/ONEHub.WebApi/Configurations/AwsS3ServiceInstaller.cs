@@ -4,6 +4,7 @@ using Amazon.Runtime;
 using Amazon.S3;
 using ONEHub.Application.Services;
 using ONEHub.Domain.Settings;
+using ONEHub.Infrastructure.Configurations;
 using ONEHub.Infrastructure.Services;
 using ONEHub.WebApi.HostedServices;
 

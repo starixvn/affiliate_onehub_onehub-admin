@@ -1,8 +1,10 @@
 using Fanex.Data;
 using Fanex.Data.Vault;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
-namespace ONEHub.WebApi.Configurations;
+namespace ONEHub.Infrastructure.Configurations;
 
 public class FanexDataServiceInstaller : IServiceInstaller
 {
@@ -16,3 +18,4 @@ public class FanexDataServiceInstaller : IServiceInstaller
         services.TryAddSingleton<VaultDbAliasService, VaultDbAliasServiceImp>();
     }
 }
+

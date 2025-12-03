@@ -23,7 +23,7 @@
     "domainName": "域名",
     "domainNamePlaceholder": "请选择域名",
     "domainReservedNotePlaceholder": "保留备注 *",
-    "shortLinkName": "短链接名称",
+    "shortLink": "短链接名称",
     "shortLinkNamePlaceholder": "请选择短链接名称",
     "shortLinkValue": "短链接值",
     "shortLinkValuePlaceholder": "请输入短链接值",

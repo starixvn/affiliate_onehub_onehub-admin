@@ -1,4 +1,5 @@
 using ONEHub.Application.Services;
+using ONEHub.Application.Utils;
 using Serilog;
 
 namespace ONEHub.Infrastructure.Services;
@@ -21,7 +22,7 @@ public class LogProvider(Fanex.Logging.ILogger logger) : ILogProvider
         => await logger.ErrorAsync(errMsg);
 
     public async Task SentryErrorAsync(Exception exception)
-        => await logger.ErrorAsync(exception.ToString());
+        => await logger.ErrorAsync(LoggerUtils.GenerateMessage(exception));
 
     public async Task SentryInfoAsync(string info)
         => await logger.InfoAsync(info);

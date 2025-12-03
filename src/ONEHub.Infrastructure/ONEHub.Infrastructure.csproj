@@ -7,6 +7,9 @@
   <ItemGroup>
     <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="AWSSDK.SecurityToken" />
+    <PackageReference Include="EasyNetQ" />
+    <PackageReference Include="RabbitMQ.Client" />
+    <PackageReference Include="Google.Apis.Sheets.v4" />
     <PackageReference Include="MessagePack" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />

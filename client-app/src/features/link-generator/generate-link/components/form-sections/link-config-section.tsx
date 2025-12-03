@@ -1,6 +1,7 @@
 import { Controller } from 'react-hook-form'
-import { Info } from 'lucide-react'
+import { Info, RefreshCw } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -45,7 +46,16 @@ export function LinkConfigSection() {
     form,
     languages,
   })
-  const { domains, domainsForShortLink } = useCountryOptions({
+  const {
+    domains,
+    domainsForShortLink,
+    refreshDomains,
+    isRefreshingRedirect,
+    isRefreshingShortLink,
+    domainTypeFullLink,
+    domainTypeShortLink,
+    canRefresh,
+  } = useCountryOptions({
     form,
     selectedLandingPage,
   })
@@ -182,12 +192,24 @@ export function LinkConfigSection() {
       </div>
 
       <div className='space-y-1.5'>
-        <Label htmlFor='domainName' className='text-sm'>
-          {t('form.domainName')}{' '}
+        <div className='flex items-center gap-1'>
+          <Label htmlFor='domainName' className='text-sm'>
+            {t('form.domainName')}
+          </Label>
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon'
+            className='h-5 w-5'
+            onClick={() => refreshDomains(domainTypeFullLink)}
+            disabled={isDisabled || isRefreshingRedirect || !canRefresh}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshingRedirect ? 'animate-spin' : ''}`} />
+          </Button>
           <span className='text-xs text-green-600'>
             ({getAvailableDomainsText(domains?.length || 0)})
           </span>
-        </Label>
+        </div>
         <div className='flex flex-col gap-2 sm:flex-row'>
           <div className='w-full sm:w-80 sm:flex-shrink-0'>
             <Controller
@@ -230,12 +252,24 @@ export function LinkConfigSection() {
       </div>
 
       <div className='space-y-1.5'>
-        <Label htmlFor='shortDomain' className='text-sm'>
-          {t('form.shortLinkName')}{' '}
+        <div className='flex items-center gap-1'>
+          <Label htmlFor='shortDomain' className='text-sm'>
+            {t('form.shortLink')}
+          </Label>
+          <Button
+            type='button'
+            variant='ghost'
+            size='icon'
+            className='h-5 w-5'
+            onClick={() => refreshDomains(domainTypeShortLink)}
+            disabled={isDisabled || isRefreshingShortLink || !canRefresh}
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isRefreshingShortLink ? 'animate-spin' : ''}`} />
+          </Button>
           <span className='text-xs text-green-600'>
             ({getAvailableDomainsText(domainsForShortLink?.length || 0)})
           </span>
-        </Label>
+        </div>
         <div className='flex flex-col gap-1 sm:flex-row'>
           <div className='w-full sm:w-80 sm:flex-shrink-0'>
             <Controller

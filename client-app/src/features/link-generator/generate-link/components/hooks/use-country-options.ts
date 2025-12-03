@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useWatch, type UseFormReturn } from 'react-hook-form'
-import { useGetDomains, useGetLanguages } from '../../api/queries'
+import { useGetDomains, useGetLanguages, useRefreshDomains } from '../../api/queries'
 import type { LandingPageOption } from '../../types'
 import type { GenerateLinkFormValues } from '../../data/schema'
 
@@ -14,6 +14,7 @@ export function useCountryOptions({
   selectedLandingPage,
 }: UseCountryOptionsParams) {
   const selectedCountryCode = useWatch({ control: form.control, name: 'country' })
+  const [refreshingType, setRefreshingType] = useState<number | null>(null)
 
   const { data: languages } = useGetLanguages(selectedCountryCode || '')
 
@@ -28,6 +29,19 @@ export function useCountryOptions({
     selectedCountryCode || '',
     domainTypeShortLink
   )
+
+  const { mutate: refreshDomainsMutation, isPending } = useRefreshDomains()
+
+  const handleRefreshDomains = (domainType: number) => {
+    if (!selectedCountryCode) return
+    
+    setRefreshingType(domainType)
+    refreshDomainsMutation({ domainType, countryCode: selectedCountryCode }, {
+      onSettled: () => {
+        setTimeout(() => setRefreshingType(null), 1500)
+      },
+    })
+  }
 
   useEffect(() => {
     if (languages && languages.length > 0 && selectedCountryCode) {
@@ -69,6 +83,16 @@ export function useCountryOptions({
     }
   }, [domainsForShortLink, form])
 
-  return { languages, domains, domainsForShortLink }
+  return {
+    languages,
+    domains,
+    domainsForShortLink,
+    refreshDomains: handleRefreshDomains,
+    isRefreshingRedirect: refreshingType === domainTypeFullLink && isPending,
+    isRefreshingShortLink: refreshingType === domainTypeShortLink && isPending,
+    domainTypeFullLink,
+    domainTypeShortLink,
+    canRefresh: !!selectedCountryCode,
+  }
 }
 

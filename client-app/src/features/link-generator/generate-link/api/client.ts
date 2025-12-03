@@ -113,4 +113,12 @@ export const linkGeneratorApi = {
     const response = await apiClient.post<IAxiosResponse>('/campaign', data)
     return response.data
   },
+
+  async refreshDomains(domainType: number): Promise<IAxiosResponse> {
+    const response = await apiClient.post<IAxiosResponse>(
+      '/domain/refresh',
+      { domainType }
+    )
+    return response.data
+  },
 }
